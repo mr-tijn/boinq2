@@ -270,3 +270,18 @@ boinqApp.controller('AuditsController', ['$scope', '$translate', '$filter', 'Aud
         });
     }]);
 
+boinqApp.controller('FusekiController', ['$scope', 'fuseki',
+    function ($scope, fuseki) {
+		$scope.sendCommand = function(command) {
+			fuseki.save(
+					{command:command},
+					function (value, responseHeaders) {
+						$scope.success = "OK";
+                		$scope.serverStatus = value.serverStatus;
+            		},
+            		function (httpResponse) {
+            			$scope.success = null;
+            			$scope.error = 'ola'; 
+            		});
+		};
+    }]);

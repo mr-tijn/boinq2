@@ -33,7 +33,11 @@ boinqApp.factory('Sessions', ['$resource',
             'get': { method: 'GET', isArray: true}
         });
     }]);
-
+boinqApp.factory('fuseki', ['$resource', 
+    function($resource) {
+		return $resource('app/rest/management/fuseki', {}, {
+		});
+    }]);
 boinqApp.factory('MetricsService', ['$resource',
     function ($resource) {
         return $resource('metrics/metrics', {}, {

@@ -43,6 +43,14 @@ boinqApp
                         authorizedRoles: [USER_ROLES.all]
                     }
                 })
+                .when('/fusekiserver', {
+                    templateUrl: 'views/fusekiserver.html',
+                    controller: 'FusekiController',
+                    access: {
+                        authorizedRoles: [USER_ROLES.admin]
+                    }
+                })
+
                 .when('/password', {
                     templateUrl: 'views/password.html',
                     controller: 'PasswordController',

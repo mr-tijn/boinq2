@@ -1,14 +1,14 @@
 {
     "global": {
         "title": "boinq",
-        "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
+        "browsehappy": "Je gebruikt een <strong>outdated</strong> browser. <a href=\"http://browsehappy.com/?locale=en\">Upgrade je browser</a> voor een betere ervaring.",
         "menu": {
             "home": "Home",
             "account": {
                 "main": "Account",
-                "settings": "Settings",
-                "password": "Password",
-                "sessions": "Sessions",
+                "settings": "Instellingen",
+                "password": "Paswoord",
+                "sessions": "Sessies",
                 "tracker": "User tracker",
                 "metrics": "Metrics",
                 "logs": "Logs",
@@ -16,62 +16,62 @@
                 "login": "Authenticate",
                 "logout": "Log out",
                 "apidocs": "API",
-                "register": "Register"
+                "register": "Registreer"
             },
-            "admin": "Administration",
+            "admin": "Administratie",
             "management": {
-            	"title" : "Management",
+            	"title" : "Beheer",
             	"datasets" : "Datasets" ,
-            	"projects" : "Projects" ,
+            	"projects" : "Projecten" ,
             	"fusekiserver" : "Fuseki server",
             	"SPARQL" : "SPARQL"
             },
-            "language": "Language"
+            "language": "Taal"
         },
         "language": {
             "da": "Danish",
             "en": "English",
             "fr": "French",
             "de": "German",
-            "nl": "Dutch",
+            "nl": "Nederlands",
             "pl": "Polish",
             "ru": "Russian"
         },
         "form": {
             "username": "Login",
-            "username.placeholder": "Your login",
-            "newpassword": "New password",
-            "newpassword.placeholder": "New password",
-            "confirmpassword": "New password confirmation",
-            "confirmpassword.placeholder": "Confirm the new password",
+            "username.placeholder": "Je login",
+            "newpassword": "Nieuw paswoord",
+            "newpassword.placeholder": "Nieuw paswoord",
+            "confirmpassword": "Bevestig nieuw paswoord",
+            "confirmpassword.placeholder": "Bevestig nieuw paswoord",
             "email": "E-mail",
-            "email.placeholder": "Your e-mail"
+            "email.placeholder": "Jouw e-mail"
         },
         "messages": {
             "info": {
-                "authenticated": "If you want to <a href=\"#/login\">authenticate</a>, you can try the default accounts:<br/>- Admnistrator (login=\"admin\" and password=\"admin\") <br/>- User (login=\"user\" and password=\"user\").",
-                "register": "You don't have an account yet? <a href=\"#/register\">Register a new account</a>"
+                "ingelogd": "Als je wil <a href=\"#/login\">inloggen</a>, probeer de default accounts:<br/>- Administrator (login=\"admin\" en paswoord=\"admin\") <br/>- User (login=\"user\" en paswoord=\"user\").",
+                "register": "Nog geen account? <a href=\"#/register\">Registreer</a>"
             },
             "error": {
-                "dontmatch" : "The password and its confirmation do not match!"
+                "dontmatch" : "Paswoord en bevestiging komen niet overeen!"
             },
             "validate": {
                 "newpassword": {
-                    "required": "Your password is required.",
-                    "minlength": "Your password is required to be at least 5 characters",
-                    "maxlength": "Your password cannot be longer than 50 characters",
-                    "strength": "Password strength:"
+                    "required": "Paswoord vereist.",
+                    "minlength": "Paswoord moet langer zijn dan 5 karakters",
+                    "maxlength": "Paswoord moet korter zijn dan 50 karakters",
+                    "strength": "Paswoord sterkte:"
                 },
                 "confirmpassword": {
-                    "required": "Your confirmation password is required.",
-                    "minlength": "Your confirmation password is required to be at least 5 characters",
-                    "maxlength": "Your confirmation password cannot be longer than 50 characters"
+                    "required": "Bevestigingspaswoord is vereist.",
+                    "minlength": "Bevestigingpsaswoord moet langer zijn dan 5 karakters",
+                    "maxlength": "Bevestigingspaswoord moet korter zijn dan 50 karakters"
                 },
                 "email": {
-                    "required": "Your e-mail is required.",
-                    "invalid": "Your e-mail is invalid.",
-                    "minlength": "Your e-mail is required to be at least 1 character",
-                    "maxlength": "Your e-mail cannot be longer than 50 characters"
+                    "required": "Je e-mail is vereist.",
+                    "invalid": "Je e-mail is ongeldig.",
+                    "minlength": "Je e-mail moet langer zijn dan 1 karakter",
+                    "maxlength": "Je e-mail moet korter zijn dan 50 karakters"
                 }
             }
         }

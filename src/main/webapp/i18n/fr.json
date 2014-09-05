@@ -19,6 +19,14 @@
                 "register": "Register"
             },
             "admin": "Administration",
+            "management": {
+            	"title" : "Gestion",
+            	"datasets" : "Sources de données" ,
+            	"projects" : "Projets" ,
+            	"fusekiserver" : "Serveur Fuseki",
+            	"SPARQL" : "SPARQL"
+            },
+            
             "language": "Langue"
         },
         "language": {
