@@ -50,7 +50,13 @@ boinqApp
                         authorizedRoles: [USER_ROLES.admin]
                     }
                 })
-
+                .when('/sparqlbrowser', {
+                    templateUrl: 'views/sparqlbrowser.html',
+                    controller: 'SparqlBrowserController',
+                    access: {
+                        authorizedRoles: [USER_ROLES.admin]
+                    }
+                })
                 .when('/password', {
                     templateUrl: 'views/password.html',
                     controller: 'PasswordController',

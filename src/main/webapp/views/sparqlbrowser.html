@@ -1,0 +1,23 @@
+<div ng-controller='SparqlBrowserController'>
+	<div class="input-group">
+		<span class="input-group-addon">Query</span> 
+		<input ng-enter="callLocalEndpoint(sparqlQuery)"
+			class="form-control" type="text" ng-model="sparqlQuery"></input>
+	</div>
+	<button type="button" class="submitButton btn btn-default btn-xs"
+		ng-click="callLocalEndpoint(sparqlQuery)"><span translate="sparqlbrowser.submit">Submit</span></button>
+	<div ng-show="sparqlError" class="alert alert-danger">
+		<strong>Could not launch query:</strong>
+		{{sparqlErrorText}}
+	</div>
+	<table class="table table-condensed table-striped" ng-show="!sparqlError">
+		<thead>
+			<th ng-repeat="varname in sparqlResult.head.vars">?{{varname}}</th>
+		</thead>
+		<tbody>
+			<tr ng-repeat="binding in sparqlResult.results.bindings">
+				<td ng-repeat="varname in sparqlResult.head.vars">{{binding[varname].value}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

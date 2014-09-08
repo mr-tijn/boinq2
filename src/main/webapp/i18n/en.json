@@ -24,7 +24,7 @@
             	"datasets" : "Datasets" ,
             	"projects" : "Projects" ,
             	"fusekiserver" : "Fuseki server",
-            	"SPARQL" : "SPARQL"
+            	"sparqlbrowser" : "SPARQL browser"
             },
             "language": "Language"
         },
