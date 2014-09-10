@@ -3,7 +3,7 @@
 /* App Module */
 
 var boinqApp = angular.module('boinqApp', ['http-auth-interceptor', 'tmh.dynamicLocale',
-    'ngResource', 'ngRoute', 'ngCookies', 'boinqAppUtils', 'pascalprecht.translate', 'truncate']);
+    'ngResource', 'ngRoute', 'ngCookies', 'boinqAppUtils', 'pascalprecht.translate', 'truncate', 'angularFileUpload']);
 
 boinqApp
     .config(['$routeProvider', '$httpProvider', '$translateProvider',  'tmhDynamicLocaleProvider', 'USER_ROLES',

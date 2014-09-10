@@ -28,7 +28,7 @@ spring:
 
 
 swagger:
-    apiDocsLocation: http://localhost:8080
+    apiDocsLocation: http://localhost:8888
     title: boinq API
     description: boinq applications and beyond!
     termsOfServiceUrl: http://jhipster.github.io/
