@@ -73,7 +73,6 @@ public class DatasourceResourceTest {
 
         datasource = new Datasource();
         datasource.setId(DEFAULT_ID);
-    	datasource.setSampleDateAttribute(DEFAULT_SAMPLE_DATE_ATTR);
     	datasource.setEndpointUrl(DEFAULT_ENDPOINT_URL);
     }
 
@@ -95,7 +94,6 @@ public class DatasourceResourceTest {
     			.andExpect(jsonPath("$.endpointUrl").value(DEFAULT_ENDPOINT_URL));
 
     	// Update Datasource
-    	datasource.setSampleDateAttribute(UPD_SAMPLE_DATE_ATTR);
     	datasource.setEndpointUrl(UPD_ENDPOINT_URL);
   
     	restDatasourceMockMvc.perform(post("/app/rest/datasources")

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" logicalFilePath="none" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="jhipster" id="1410960573120-10" logicalFilePath="none">
+        <addColumn catalogName="" schemaName="public" tableName="T_DATASOURCE">
+            <column name="graph_name" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="jhipster" id="1410960573120-11" logicalFilePath="none">
+        <addColumn catalogName="" schemaName="public" tableName="T_DATASOURCE">
+            <column name="is_public" type="boolean"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="jhipster" id="1410960573120-12" logicalFilePath="none">
+        <addColumn catalogName="" schemaName="public" tableName="T_DATASOURCE">
+            <column name="name" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="jhipster" id="1410960573120-13" logicalFilePath="none">
+        <addColumn catalogName="" schemaName="public" tableName="T_DATASOURCE">
+            <column name="owner_id" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="jhipster" id="1410960573120-14" logicalFilePath="none">
+        <addColumn catalogName="" schemaName="public" tableName="T_DATASOURCE">
+            <column name="status" type="integer"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="jhipster" id="1410960573120-15" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableCatalogName="" baseTableName="T_DATASOURCE" baseTableSchemaName="public" constraintName="FK_nacyl39t0jqfg2i80af976s6b" deferrable="false" initiallyDeferred="false" referencedColumnNames="login" referencedTableCatalogName="" referencedTableName="T_USER" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1410960573120-16" logicalFilePath="none">
+        <dropDefaultValue catalogName="" columnDataType="boolean" columnName="activated" schemaName="public" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1410960573120-17" logicalFilePath="none">
+        <dropDefaultValue catalogName="" columnDataType="varchar(255)" columnName="created_by" schemaName="public" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1410960573120-18" logicalFilePath="none">
+        <dropDefaultValue catalogName="" columnDataType="timestamp" columnName="created_date" schemaName="public" tableName="T_USER"/>
+    </changeSet>
+</databaseChangeLog>

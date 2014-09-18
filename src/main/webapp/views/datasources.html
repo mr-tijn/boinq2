@@ -2,7 +2,7 @@
 
 	<h2>Datasources</h2>
 
-	<button class="btn btn-primary btn-lg" data-toggle="modal"
+	<button class="btn btn-primary btn-sm" data-toggle="modal"
 		data-target="#saveDatasourceModal" ng-click="clear()">
 		<span class="glyphicon glyphicon-flash"></span> Create a new
 		Datasource
@@ -29,17 +29,44 @@
 
 						<div class="form-group">
 							<label>Endpoint url</label> <input type="text"
-								class="form-control" name="test"
+								class="form-control" name="endpoint_url"
 								ng-model="datasource.endpointUrl" ng-minlength=1 ng-maxlength=50
 								required>
 						</div>
 
 						<div class="form-group">
-							<label>Sample date attribute</label> <input type="date"
-								class="form-control" name="test"
-								ng-model="datasource.sampleDateAttribute" required>
+							<label>Graph name</label> <input type="text"
+								class="form-control" name="graph-name"
+								ng-model="datasource.graphName" ng-minlength=1 ng-maxlength=50
+								required>
 						</div>
+						
+						<div class="form-group">
+							<label>Name</label> <input type="text"
+								class="form-control" name="name"
+								ng-model="datasource.name" ng-minlength=1 ng-maxlength=50
+								required>
+						</div>
+						
+						<div class="form-group">
+							<label>Type</label>
+							<select name="type" ng-model="datasource.type" class="form-control">
+								<option ng-repeat="(key,value) in typeItems" ng-selected="key == datasource.type" value="{{key}}">{{value}}</option>
+							</select>
+							
+						</div>
+
+						<div class="form-group">
+							<label>Public datasource </label> 
+							<input type="checkbox" ng-model="datasource.isPublic">
+						</div>
+						
+						<input type="hidden" ng-model="datasource.ownerLogin">
+						<input type="hidden" ng-model="datasource.status">
+
 					</div>
+					
+					
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal"
 							ng-click="clear()">
@@ -61,7 +88,9 @@
 				<tr>
 					<th>ID</th>
 					<th>Endpoint url</th>
-					<th>Sample date</th>
+					<th>Type</th>
+					<th>Name</th>
+					<th>Public</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -69,22 +98,29 @@
 				<tr ng-repeat="datasource in datasources">
 					<td>{{datasource.id}}</td>
 					<td>{{datasource.endpointUrl}}</td>
-					<td>{{datasource.sampleDateAttribute}}</td>
+					<td>{{datasource.type | dstype}}</td>
+					<td>{{datasource.name}}</td>
+					<td><input type="checkbox" ng-model="datasource.isPublic" disabled></td>
 					<td>
 						<button type="submit" ng-click="update(datasource.id)" class="btn">
 							<span class="glyphicon glyphicon-pencil"></span> Edit
 						</button>
-						<button type="submit" ng-click="delete(datasource.id)"
+ 						<button type="submit" ng-click="manage(datasource)" ng-show="canmanage(datasource)"
+							class="btn">
+							<span class="glyphicon glyphicon-remove-circle"></span> Manage
+						</button>
+ 						<button type="submit" ng-click="delete(datasource.id)"
 							class="btn btn-danger">
 							<span class="glyphicon glyphicon-remove-circle"></span> Delete
 						</button>
+						
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 
-	<div class="row" uploader="uploader" ng-show="true || canupload(selecteddatasource)">
+	<div class="row" uploader="uploader" ng-show="canupload(manageddatasource)">
 
 		<div class="col-md-3">
 

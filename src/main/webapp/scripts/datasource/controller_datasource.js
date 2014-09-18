@@ -1,8 +1,11 @@
 'use strict';
 
-boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Datasource', 'FileUploader',
-    function ($scope, resolvedDatasource, Datasource, FileUploader) {
+boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Datasource', 'FileUploader', 'DatasourceConstants', 
+    function ($scope, resolvedDatasource, Datasource, FileUploader, DatasourceConstants) {
 
+	
+		$scope.typeItems = DatasourceConstants.TYPE_ITEMS;
+		
         $scope.datasources = resolvedDatasource;
 
         $scope.create = function () {
@@ -27,8 +30,22 @@ boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Da
         };
 
         $scope.clear = function () {
-            $scope.datasource = {id: null, endpointUrl: null, sampleDateAttribute: null};
+            $scope.datasource = {id: null, endpointUrl: null, type: null};
         };
+        
+        // management
+        
+        $scope.manageddatasource = null;
+        
+        $scope.canupload = function(datasource) {
+        	return $scope.manageddatasource != null && $scope.manageddatasource.type == DatasourceConstants.TYPE_LOCAL_FALDO;
+        }
+        $scope.manage= function(datasource) {
+        	$scope.manageddatasource = datasource;
+        }
+        $scope.canmanage = function(datasource) {
+        	return datasource.type == DatasourceConstants.TYPE_LOCAL_FALDO;
+        }
         
         // file uploader stuff
         
@@ -58,7 +75,9 @@ boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Da
         };
         uploader.onBeforeUploadItem = function(item) {
         	var filename = item.file.name;
-        	item.formData.push({name: filename });
+        	var dsurl = 'rest/datasources/' + $scope.manageddatasource.id + '/upload';
+        	item.formData.push({name: filename});
+        	item.url = dsurl;
             console.info('onBeforeUploadItem', item);
         };
         uploader.onProgressItem = function(fileItem, progress) {
@@ -83,6 +102,6 @@ boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Da
             console.info('onCompleteAll');
         };
 
-        console.info('uploader', uploader);
+        console.info('Loaded controller_datasources', DatasourceConstants.TYPE_ITEMS);
         
     }]);

@@ -21,7 +21,7 @@
             "admin": "Administration",
             "management": {
             	"title" : "Management",
-            	"datasets" : "Datasets" ,
+            	"datasets" : "Datasources" ,
             	"projects" : "Projects" ,
             	"fusekiserver" : "Fuseki server",
             	"sparqlbrowser" : "SPARQL browser"
