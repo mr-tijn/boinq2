@@ -1,7 +1,7 @@
 'use strict';
 
-boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Datasource', 'FileUploader', 'DatasourceConstants', 
-    function ($scope, resolvedDatasource, Datasource, FileUploader, DatasourceConstants) {
+boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Datasource', 'DatasourceDatafile', 'DatasourceConversion', 'FileUploader', 'DatasourceConstants', 
+    function ($scope, resolvedDatasource, Datasource, DatasourceDatafile,  DatasourceConversion, FileUploader, DatasourceConstants) {
 
 	
 		$scope.typeItems = DatasourceConstants.TYPE_ITEMS;
@@ -42,15 +42,32 @@ boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Da
         }
         $scope.manage= function(datasource) {
         	$scope.manageddatasource = datasource;
+        	$('#manageDatasourceModal').modal('show');
         }
         $scope.canmanage = function(datasource) {
         	return datasource.type == DatasourceConstants.TYPE_LOCAL_FALDO;
+        }
+        $scope.isLocal = function(datasource) {
+        	return datasource.type == DatasourceConstants.TYPE_LOCAL_FALDO;
+        }
+        $scope.removefile = function(rawdatafile_id) {
+        	var ds_id = $scope.manageddatasource.id;
+        	DatasourceDatafile.remove({id:ds_id, data_id:rawdatafile_id},
+        			function () {
+        				$scope.datasources = Datasource.query();
+        				$scope.manageddatasource = Datasource.get({id:ds_id});
+        	});
+        }
+        $scope.startconversion = function(rawdatafile_id) {
+        	var ds_id = $scope.manageddatasource.id;
+        	DatasourceConversion.start({id:ds_id}, rawdatafile_id);
         }
         
         // file uploader stuff
         
         var uploader = $scope.uploader = new FileUploader({
-            url: 'upload'
+            url: 'upload',
+            removeAfterUpload: true
         });
 
         // FILTERS
@@ -87,6 +104,9 @@ boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Da
             console.info('onProgressAll', progress);
         };
         uploader.onSuccessItem = function(fileItem, response, status, headers) {
+	        	//remove fileItem from queue
+        	$scope.manageddatasource = Datasource.get({id: $scope.manageddatasource.id});
+        	console.info('onSuccessItem', $scope.manageddatasource );
             console.info('onSuccessItem', fileItem, response, status, headers);
         };
         uploader.onErrorItem = function(fileItem, response, status, headers) {

@@ -37,7 +37,8 @@ angular.module('boinqApp')
                 });
             }
         };
-    }]).directive('passwordStrengthBar', function() {
+    }])
+    .directive('passwordStrengthBar', function() {
         return {
             replace: true,
             restrict: 'E',

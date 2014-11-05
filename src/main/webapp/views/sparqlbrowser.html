@@ -1,16 +1,40 @@
 <div ng-controller='SparqlBrowserController'>
-	<div class="input-group">
-		<span class="input-group-addon">Query</span> 
-		<input ng-enter="callLocalEndpoint(sparqlQuery)"
-			class="form-control" type="text" ng-model="sparqlQuery"></input>
-	</div>
-	<button type="button" class="submitButton btn btn-default btn-xs"
-		ng-click="callLocalEndpoint(sparqlQuery)"><span translate="sparqlbrowser.submit">Submit</span></button>
+
 	<div ng-show="sparqlError" class="alert alert-danger">
-		<strong>Could not launch query:</strong>
-		{{sparqlErrorText}}
+		<strong>Could not launch query:</strong> {{sparqlErrorText}}
 	</div>
-	<table class="table table-condensed table-striped" ng-show="!sparqlError">
+	<div ng-show="sparqlSuccess" class="alert alert-success">
+		<strong>Update successful:</strong> {{sparqlSuccessText}}
+	</div>
+
+	<h1>SPARQL Query</h1>
+
+	<div class="input-group">
+
+		<div class="form-group">
+			<label>Select endpoint</label> <select name="endpoint"
+				ng-model="selectEndpoint" class="form-control">
+				<option ng-repeat="endpoint in endpoints"
+					ng-selected="selectEndpoint == endpoint">{{endpoint}}</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label>Query</label>
+			<textarea class="form-control" name="graph-name"
+				ng-model="sparqlQuery" rows="3" style="font-family: monospace;"></textarea>
+		</div>
+
+	<button type="submit" ng-disabled="form.$invalid"
+		ng-click="callLocalEndpoint(sparqlQuery)"
+		class="btn btn-sm btn-primary">
+		<span class="glyphicon glyphicon-play-circle"></span> Go
+	</button>
+
+	</div>
+
+	<table class="table table-condensed table-striped"
+		ng-show="!sparqlError">
 		<thead>
 			<th ng-repeat="varname in sparqlResult.head.vars">?{{varname}}</th>
 		</thead>
@@ -20,4 +44,46 @@
 			</tr>
 		</tbody>
 	</table>
+	
+	<h1>SPARQL Update</h1>
+	
+	<div class="input-group">
+
+		<div class="form-group">
+			<label>Select endpoint</label> <select name="updateEndpoint"
+				ng-model="selectUpdateEndpoint" class="form-control">
+				<option ng-repeat="endpoint in updateEndpoints"
+					ng-selected="selectUpdateEndpoint == endpoint">{{endpoint}}</option>
+			</select>
+		</div>
+
+	<table class="table table-condensed table-striped">
+		<thead>
+			<th>Subject</th>
+			<th>Predicate</th>
+			<th>Object</th>
+			<th>Graph</th>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" ng-model="submitSubject"></input></td>
+				<td><input type="text" ng-model="submitPredicate"></input></td>
+				<td><input type="text" ng-model="submitObject"></input></td>
+				<td><input type="text" ng-model="submitGraph"></input></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<button type="submit" ng-disabled="form.$invalid"
+		ng-click="uploadData()"
+		class="btn btn-sm btn-primary">
+		<span class="glyphicon glyphicon-play-circle"></span> Go
+	</button>
+
+	</div>
+	
+	<h1>Brol</h1>
+	
+	<term-tree-picker select-handler="termPicked" source-endpoint="http://localhost:8899/META_DYNAMIC/sparql" source-graph="http://boinq.org/hierarchy">
+	
 </div>

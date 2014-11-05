@@ -47,6 +47,6 @@ public class FusekiManagementResource {
     		return new ResponseEntity<FusekiInfoDTO>(fusekiInfoDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     	}
         return new ResponseEntity<FusekiInfoDTO>(fusekiInfoDTO, HttpStatus.OK);
-    }	
+    }
 	
 }

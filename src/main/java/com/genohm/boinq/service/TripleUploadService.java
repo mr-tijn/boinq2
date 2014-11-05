@@ -24,7 +24,7 @@ public class TripleUploadService {
 	
 	@PostConstruct
 	public void init() {
-		this.sparqlEndpointUri = env.getProperty("spring.tripleupload.endpoint");
+		this.sparqlEndpointUri = env.getProperty("spring.tripleupload.endpoint.update");
 	}
 	
 	public void put(Node graphNode, Triple newTriple) {
@@ -33,6 +33,8 @@ public class TripleUploadService {
 		newData.addTriple(newTriple);
 		UpdateDataInsert insertStatement = new UpdateDataInsert(newData);
 		UpdateRequest req = new UpdateRequest(insertStatement);
+		req.setPrefix("xsd", "http://www.w3.org/2001/XMLSchema#");
+		//TODO: handle prefixes
 		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, sparqlEndpointUri);
 		processor.execute();
 	}

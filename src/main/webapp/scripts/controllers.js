@@ -286,20 +286,3 @@ boinqApp.controller('FusekiController', ['$scope', 'fuseki',
 		};
     }]);
 
-boinqApp.controller("SparqlBrowserController",['$scope','callEndpoint',function($scope,callEndpoint) {
-	console.log('Registering controller SparqlBrowserController');
-	$scope.sparqlQuery = "select * where { graph ?graph { ?subject ?predicate ?object . } } limit 10";
-	$scope.callLocalEndpoint = function(queryString) {
-		callEndpoint("http://localhost:3456/exampledata/sparql",null,queryString)
-		.then(
-			function(successResponse) {
-				console.log("Got response: "+successResponse.data);
-				$scope.sparqlError = false;
-				$scope.sparqlResult = successResponse.data;
-			},
-			function(errorResponse) {
-				$scope.sparqlError = true;
-				$scope.sparqlErrorText = errorResponse.data;
-				console.log(errorResponse);
-			})};
-}]);

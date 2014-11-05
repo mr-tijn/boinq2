@@ -1,21 +1,22 @@
 package com.genohm.boinq.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
-import com.genohm.boinq.domain.util.CustomLocalDateSerializer;
+import java.io.Serializable;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import java.io.Serializable;
 
 /**
  * A Datasource.
@@ -25,23 +26,27 @@ import java.io.Serializable;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Datasource implements Serializable {
 
-	public static final int DATASOURCE_TYPE_LOCAL_FALDO = 0;
-	public static final int DATASOURCE_TYPE_REMOTE_FALDO = 1;
+	private static final long serialVersionUID = -8065826415415661663L;
+	public static final int TYPE_LOCAL_FALDO = 0;
+	public static final int TYPE_REMOTE_FALDO = 1;
+	public static final int TYPE_LOCAL_SPARQL = 2;
+	public static final int TYPE_REMOTE_SPARQL = 3;
 
-	public static final int DATASOURCE_STATUS_EMPTY = 0;
-	public static final int DATASOURCE_STATUS_RAW_DATA = 1;
-	public static final int DATASOURCE_STATUS_LOADING = 2;
-	public static final int DATASOURCE_STATUS_COMPLETE = 3;
-	public static final int DATASOURCE_STATUS_ERROR = 4;
+	public static final int STATUS_EMPTY = 0;
+	public static final int STATUS_RAW_DATA = 1;
 	
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private long id;
+    private Long id;
 
     @Size(min = 1, max = 200)
     @Column(name = "endpoint_url", nullable = true)
     private String endpointUrl;
 
+    @Size(min = 1, max = 200)
+    @Column(name = "endpoint_update_url", nullable = true)
+    private String endpointUpdateUrl;
+   
     @Size(min = 1, max = 200)
     @Column(name = "graph_name", nullable = true)
     private String graphName;
@@ -53,7 +58,6 @@ public class Datasource implements Serializable {
     @Column(name = "is_public")
     private Boolean isPublic;
     
-    
     @Size(min = 1, max = 200)
     @Column(name = "name")
     private String name;
@@ -64,11 +68,14 @@ public class Datasource implements Serializable {
     @Column(name="status")
     private int status;
     
-    public long getId() {
+    @OneToMany(fetch=FetchType.EAGER, orphanRemoval=true)
+    private Set<RawDataFile> rawDataFiles;
+    
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -80,7 +87,15 @@ public class Datasource implements Serializable {
         this.endpointUrl = endpointUrl;
     }
 
-    public String getGraphName() {
+    public String getEndpointUpdateUrl() {
+		return endpointUpdateUrl;
+	}
+
+	public void setEndpointUpdateUrl(String endpointUpdateUrl) {
+		this.endpointUpdateUrl = endpointUpdateUrl;
+	}
+
+	public String getGraphName() {
 		return graphName;
 	}
 
@@ -128,6 +143,14 @@ public class Datasource implements Serializable {
 		this.status = status;
 	}
 
+	public Set<RawDataFile> getRawDataFiles() {
+		return rawDataFiles;
+	}
+
+	public void setRawDataFiles(Set<RawDataFile> rawDataFiles) {
+		this.rawDataFiles = rawDataFiles;
+	}
+
 	@Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -153,12 +176,22 @@ public class Datasource implements Serializable {
 
     @Override
     public String toString() {
+    	String rawDataFilesString = "";
+    	for (RawDataFile rawDataFile : rawDataFiles) {
+    		rawDataFilesString += rawDataFile + ",";
+    	}
+    	if (rawDataFilesString.length() > 0) {
+    		rawDataFilesString = rawDataFilesString.substring(0,rawDataFilesString.length() - 1);
+    	}
         return "Datasource{" +
                 "id=" + id +
                 ", endpointUrl='" + endpointUrl + '\'' +
+                ", endpointUpdateUrl='" + endpointUpdateUrl + '\'' +
                 ", graphName='" + graphName + "'" +
-                ", public='" + isPublic +"'" +
-                ", type=" + type + ", status=" + status +
+                ", public=" + isPublic +
+                ", type=" + type + 
+                ", status=" + status +
+                ", raw data files= [" +rawDataFilesString + "] " +
                 '}';
     }
 }

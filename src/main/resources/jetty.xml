@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+ 
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+<New id="AddAjaxHandlerForUpdate" class="org.eclipse.jetty.rewrite.handler.RewriteHandler">
+  <Set name="rules">
+    <Array type="org.eclipse.jetty.rewrite.handler.Rule">
+
+      <Item>
+        <New id="header" class="org.eclipse.jetty.rewrite.handler.HeaderPatternRule">
+          <Set name="pattern">update</Set>
+          <Set name="name">Access-Control-Allow-Origin</Set>
+          <Set name="value">*</Set>
+        </New>
+      </Item>
+
+    </Array>
+  </Set>
+</New>
+
+<Set name="handler">
+  <New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
+    <Set name="handlers">
+      <Array type="org.eclipse.jetty.server.Handler">
+        <Item>
+          <Ref refid="AddAjaxHandlerForUpdate"/>
+        </Item>
+      </Array>
+    </Set>
+  </New>
+</Set>
+</Configure>
+
+
+

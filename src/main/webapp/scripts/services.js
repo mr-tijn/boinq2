@@ -95,31 +95,6 @@ boinqApp.factory('AuditsService', ['$http',
         }
     }]);
 
-boinqApp.factory('callEndpoint', ['$http',function($http) {
-	console.log('Registering factory callEndPoint');
-	var callEndpoint = function(endpointUrl, graphUri, sparqlQuery) {
-
-		console.log(['Calling endpoint', endpointUrl, 'Graph', graphUri, 'Query', sparqlQuery].join('\n'));
-		var params = {
-				query: 	sparqlQuery,
-		};
-		if (graphUri != null) {
-			params.defaultGraphUri = graphUri;
-		}
-
-		var promise = $http({
-			method : 'GET',
-			url: endpointUrl,
-			params: params,
-			headers: {
-				'Accept': 'application/sparql-results+json'
-			}
-		});
-
-		return promise;
-	};
-	return callEndpoint;
-}]);
 
 boinqApp.factory('Session', [
     function () {

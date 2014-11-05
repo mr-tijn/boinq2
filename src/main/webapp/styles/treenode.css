@@ -1,0 +1,27 @@
+ul.treeNode,ul.treeNode ul {
+	list-style-type: none;
+	background: url(/images/treenode/vline.png) repeat-y;
+	margin: 0;
+	padding: 0;
+}
+
+ul.treeNode ul {
+	margin-left: 10px;
+}
+
+ul.treeNode li {
+	margin: 0;
+	padding: 0 12px;
+	line-height: 20px;
+	background: url(/images/treenode/node.png) no-repeat;
+	color: #369;
+	font-weight: bold;
+}
+
+ul.treeNode li:last-child {
+	background: #fff url(/images/treenode/lastnode.png) no-repeat;
+}
+
+li.treeNode {
+	cursor: pointer;
+}

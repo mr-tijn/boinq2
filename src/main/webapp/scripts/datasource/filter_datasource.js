@@ -15,3 +15,12 @@ boinqApp.filter('dsstatus', ['DatasourceConstants', function(DatasourceConstants
 		return DatasourceConstants.STATUS_ITEMS[status];
 	};
 }]);
+
+boinqApp.filter('dfstatus', ['DataFileConstants', function(DataFileConstants) {
+
+	console.log('Registering filter dfstatus');
+
+	return function(status) {
+		return DataFileConstants.STATUS_ITEMS[status];
+	};
+}]);

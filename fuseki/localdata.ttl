@@ -1,0 +1,36 @@
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ja:      <http://jena.hpl.hp.com/2005/11/Assembler#> .
+@prefix reasoner: <http://jena.hpl.hp.com/2003/RuleReasoner#> .
+@prefix lm: <http://jena.hpl.hp.com/2004/08/location-mapping#> .
+@prefix owl: 	<http://www.w3.org/2002/07/owl#> .
+@prefix local: <http://www.boinq.org/localdata#> .
+@prefix tdb:     <http://jena.hpl.hp.com/2008/tdb#> .
+@prefix fuseki:  <http://jena.apache.org/fuseki#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+
+tdb:DatasetTDB  rdfs:subClassOf  ja:RDFDataset .
+tdb:GraphTDB    rdfs:subClassOf  ja:Model      .
+
+
+[] a fuseki:Server
+	; ja:context [ 
+		ja:cxtName "arq:queryTimeout" ;  
+		ja:cxtValue "1000000" ]
+	; ja:loadClass "com.hp.hpl.jena.tdb.TDB"
+	; fuseki:services (
+		<#META_DYNAMIC> )
+	.
+
+
+<#META_DYNAMIC> rdf:type fuseki:Service
+        ; fuseki:name "META_DYNAMIC"
+        ; fuseki:serviceQuery "query"
+        ; fuseki:serviceQuery "sparql"
+        ; fuseki:serviceUpdate "update"
+        ; fuseki:serviceUpdate "sparul"
+        ; fuseki:serviceReadWriteGraphStore "data"
+        ; fuseki:dataset [
+                rdf:type tdb:DatasetTDB;
+                tdb:location "fuseki/metaTDB/" ]
+        .

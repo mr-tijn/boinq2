@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="styles/bootstrap.css">
         <link rel="stylesheet" href="styles/main.css">
         <link rel="stylesheet" href="styles/famfamfam-flags.css">
+        <link rel="stylesheet" href="styles/treenode.css">
         <!-- endbuild -->
     </head>
     <body ng-app="boinqApp" ng-controller="MainController">
@@ -97,7 +98,7 @@
                             <ul class="dropdown-menu">
                                 <li><a href="#/datasource"><span class="glyphicon glyphicon-hdd"></span>
                                     &nbsp;<span translate="global.menu.management.datasets">Datasources</span></a></li>
-                                <li><a href="#/projects"><span class="glyphicon glyphicon-folder-close"></span>
+                                <li><a href="#/project"><span class="glyphicon glyphicon-folder-close"></span>
                                     &nbsp;<span translate="global.menu.management.projects">Projects</span></a></li>
                                 <li><a href="#/fusekiserver"><span class="glyphicon glyphicon-off"></span>
                                     &nbsp;<span translate="global.menu.management.fusekiserver">Fuseki server</span></a></li>
@@ -196,10 +197,20 @@
         <script src="bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/scrollspy.js"></script>
         <script src="bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/collapse.js"></script>
         <script src="bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/tab.js"></script>
+        <script src="scripts/sparql/controller_sparql.js"></script>
+        <script src="scripts/sparql/service_sparql.js"></script>
         <script src="scripts/datasource/router_datasource.js"></script>
         <script src="scripts/datasource/controller_datasource.js"></script>
         <script src="scripts/datasource/service_datasource.js"></script>
         <script src="scripts/datasource/filter_datasource.js"></script>
+        <script src="scripts/project/router_project.js"></script>
+        <script src="scripts/project/controller_project.js"></script>
+        <script src="scripts/project/service_project.js"></script>
+        <script src="scripts/rawdatafile/router_rawdatafile.js"></script>
+        <script src="scripts/rawdatafile/controller_rawdatafile.js"></script>
+        <script src="scripts/rawdatafile/service_rawdatafile.js"></script>
+		<script src="scripts/term_tree/directive_term_tree.js"></script>
+		<script src="scripts/term_tree/controller_term_tree.js"></script>
         <!-- endbuild -->
 </body>
 </html>

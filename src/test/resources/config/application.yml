@@ -45,6 +45,13 @@ spring:
         tls: false
         auth: false
 
+    fuseki:
+        port: 8899
+        configfile: fuseki/localdata.ttl
+
+    tripleupload:
+        endpoint: http://localhost:8899/upload
+
 metrics:
     jmx.enabled: false
     

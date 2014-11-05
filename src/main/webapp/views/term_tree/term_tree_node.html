@@ -1,0 +1,14 @@
+<div class="nav-tabs-justified">
+	{{term.label.value}}[{{term.uri.value}}]
+</div>
+<div ng-click="getChildTerms(term)" class="btn btn-xs btn-primary">
+	<span class="glyphicon glyphicon-circle-arrow-down"></span>
+</div>
+<div ng-click="selectHandler(term)" class="btn btn-xs btn-primary">
+	<span class="glyphicon glyphicon-ok"></span>
+</div>
+<ul class="treeNode">
+	<li class="treeNode" ng-repeat="term in term.subTerms">
+		<term-tree-node></term-tree-node>
+	</li>
+</ul>

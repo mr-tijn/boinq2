@@ -1,0 +1,11 @@
+<div ng-controller='TermTreeController' ng-init="getRootTerms()">
+	<!-- Browse -->
+	<ul class="treeNode" ng-show="!sparqlError">
+		<li class="treeNode" ng-repeat="term in rootTerms">
+			<term-tree-node></term-tree-node>
+		</li>
+	</ul>
+	<div ng-show="sparqlError" class="alert alert-danger">
+		<strong>Could not launch query:</strong> {{sparqlErrorText}}
+	</div>
+</div>

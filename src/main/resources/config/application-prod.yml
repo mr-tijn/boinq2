@@ -35,7 +35,6 @@ spring:
         mode: XHTML
         cache: true
 
-
 metrics:
     jmx.enabled: true
     graphite:

@@ -25,6 +25,17 @@ spring:
 
     messageSource:
         cacheSeconds: 1
+        
+    fuseki:
+        port: 8899
+        configfile: fuseki/localdata.ttl
+        jettyconfigfile: fuseki/jetty-fuseki.xml
+
+    tripleupload:
+        endpoint: 
+            update: http://localhost:8899/META_DYNAMIC/update
+            sparql: http://localhost:8888/fuseki/sparql
+        graphbase: http://www.boinq.org/data/graph/
 
 
 swagger:

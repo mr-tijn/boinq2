@@ -7,4 +7,8 @@
 	<include file="classpath:config/liquibase/changelog/db-changelog-002.xml" relativeToChangelogFile="false"/>
 	<include file="classpath:config/liquibase/changelog/db-changelog-003.xml" relativeToChangelogFile="false"/>
 	<include file="classpath:config/liquibase/changelog/db-changelog-004.xml" relativeToChangelogFile="false"/>
+	<include file="classpath:config/liquibase/changelog/db-changelog-005.xml" relativeToChangelogFile="false"/>
+	<include file="classpath:config/liquibase/changelog/db-changelog-006.xml" relativeToChangelogFile="false"/>
+	<include file="classpath:config/liquibase/changelog/db-changelog-007.xml" relativeToChangelogFile="false"/>
+	<include file="classpath:config/liquibase/changelog/db-changelog-008.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
