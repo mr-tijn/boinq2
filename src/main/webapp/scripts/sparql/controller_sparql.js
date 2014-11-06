@@ -63,5 +63,5 @@ boinqApp.controller("SparqlBrowserController",['$scope','callEndpoint','updateEn
 	};
 	$scope.termPicked = function(term) {
 		console.log("term picked: " + term.uri.value);
-	}
+	};
 }]);

@@ -65,3 +65,24 @@ boinqApp.factory('SPARQLTools',function() {
 	};
 
 });
+
+boinqApp.factory('QueryBuilderService', ['$http', function ($http) {
+	console.info("Registering factory QueryBuilderService");
+	return {
+		rootNodesQuery: function() {
+			var promise = $http.get('app/rest/querybuilder/rootNodesQuery').then(function (response) {
+				return response.data;
+			});
+			return promise;
+		},
+		childNodesQuery: function(parentUri) {
+			var promise = $http.get('app/rest/querybuilder/childNodesQuery', {params: {parentUri: parentUri}}).then(function (response) {
+				return response.data;
+			});
+			return promise;
+		}
+	};
+}]);
+
+
+
