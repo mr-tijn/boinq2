@@ -1,5 +1,7 @@
 package com.genohm.boinq.service;
 
+import org.apache.jena.riot.system.PrefixMap;
+import org.apache.jena.riot.system.PrefixMapStd;
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
@@ -13,10 +15,14 @@ import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
 import com.hp.hpl.jena.sparql.expr.E_LogicalNot;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
+import com.hp.hpl.jena.sparql.modify.request.QuadDataAcc;
+import com.hp.hpl.jena.sparql.modify.request.UpdateDataInsert;
 import com.hp.hpl.jena.sparql.syntax.ElementFilter;
 import com.hp.hpl.jena.sparql.syntax.ElementGroup;
 import com.hp.hpl.jena.sparql.syntax.ElementOptional;
 import com.hp.hpl.jena.sparql.syntax.ElementTriplesBlock;
+import com.hp.hpl.jena.sparql.util.NodeFactoryExtra;
+import com.hp.hpl.jena.update.UpdateRequest;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 @Service
@@ -32,6 +38,14 @@ public class QueryBuilderService {
 		commonPrefixes.setNsPrefix("owl", CommonVocabulary.owlBaseURI);
 	}
 
+	public static PrefixMap commonPrefixMap = new PrefixMapStd();
+	{
+		commonPrefixMap.add("rdf", CommonVocabulary.rdfBaseURI);
+		commonPrefixMap.add("rdfs", CommonVocabulary.rdfsBaseURI);
+		commonPrefixMap.add("obo", CommonVocabulary.oboBaseURI);
+		commonPrefixMap.add("xmlschema", CommonVocabulary.xmlSchemaURI);
+		commonPrefixMap.add("owl", CommonVocabulary.owlBaseURI);
+	}
 	
 	public String getRootNodes() {
 		Query query = new Query();
@@ -71,6 +85,14 @@ public class QueryBuilderService {
 		group.addElement(triples);
 		query.setQueryPattern(group);
 		return query.toString(Syntax.syntaxSPARQL_11);
+	}
+	
+	public String insertStatement(String graphUri, String subject, String predicate, String object) {
+		QuadDataAcc newData = new QuadDataAcc();
+		newData.setGraph(NodeFactoryExtra.parseNode(graphUri));
+		newData.addTriple(new Triple(NodeFactoryExtra.parseNode(subject,commonPrefixMap),NodeFactoryExtra.parseNode(predicate,commonPrefixMap),NodeFactoryExtra.parseNode(object,commonPrefixMap)));
+		UpdateDataInsert insertStatement = new UpdateDataInsert(newData);
+		return insertStatement.toString(commonPrefixes);
 	}
 	
 }

@@ -1,0 +1,30 @@
+<form name="matchLocation">
+<div class="input-group">
+	<span class="input-group-addon">type</span> 
+	<select class="form-control" ng-model="mainData.activeNode.type">
+		<option ng-repeat="nodeType in mainData.nodeTypes">{{nodeType}}</option>
+	</select>
+</div>
+<div class="input-group">
+	<span class="input-group-addon">contig</span> 
+	<select class="form-control" ng-model="mainData.activeNode.contig">
+		<option ng-repeat="contig in mainData.contigs">{{contig}}</option>
+	</select>
+</div>
+<div class="input-group">
+	<span class="input-group-addon">start</span> 
+	<input class="form-control" type="number" ng-model="mainData.activeNode.start"></input>
+</div>
+<div class="input-group">
+	<span class="input-group-addon">end</span> 
+	<input class="form-control" type="number" ng-model="mainData.activeNode.end" greater-than="{{mainData.activeNode.start}}"></input>
+</div>
+<div class="input-group">
+	<span class="input-group-addon">Strand</span> 
+	<select class="form-control" ng-model="mainData.activeNode.strand">
+		<option value=null>Any</option>
+		<option value=true>Positive</option>
+		<option value=false>Negative</option>
+	</select>
+</div>
+</form>

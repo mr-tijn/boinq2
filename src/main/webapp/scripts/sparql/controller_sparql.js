@@ -1,4 +1,4 @@
-boinqApp.controller("SparqlBrowserController",['$scope','callEndpoint','updateEndpoint','Datasource',function($scope,callEndpoint,updateEndpoint,Datasource) {
+boinqApp.controller("SparqlBrowserController",['$scope','callEndpoint','updateEndpoint','Datasource','QueryBuilderService',function($scope,callEndpoint,updateEndpoint,Datasource,QueryBuilderService) {
 	console.info('Registering controller SparqlBrowserController');
 	$scope.sparqlQuery = "select * where { graph ?graph { ?subject ?predicate ?object . } } limit 10";
 	$scope.endpoints = [];
@@ -14,6 +14,12 @@ boinqApp.controller("SparqlBrowserController",['$scope','callEndpoint','updateEn
 			}
 		}
 	});
+	var processError = function(errorResponse) {
+		$scope.sparqlError = true;
+		$scope.sparqlSuccess = false;
+		$scope.sparqlErrorText = errorResponse.data;
+		console.log(errorResponse);
+	};
 	$scope.callLocalEndpoint = function(queryString) {
 		$scope.successResponse = null;
 		$scope.sparqlSuccess = false;
@@ -24,44 +30,35 @@ boinqApp.controller("SparqlBrowserController",['$scope','callEndpoint','updateEn
 				$scope.sparqlError = false;
 				$scope.sparqlResult = successResponse.data;
 			},
-			function(errorResponse) {
-				$scope.sparqlError = true;
-				$scope.sparqlSuccess = false;
-				$scope.sparqlErrorText = errorResponse.data;
-				console.log(errorResponse);
-			});
+			processError);
 		};
-	var chevron = function(input) {
-		if (typeof input == 'string' || input instanceof String) {
-			var matches = input.match(/^<.*>$/);
-			if (matches != null && matches.length) return input;
-			else return "<"+input+">";
-		}
-	};
 	$scope.uploadData = function() {
 		$scope.updateResult = "";
 		$scope.sparqlSuccess = false;
-		var queryString = ["INSERT DATA { GRAPH " + chevron($scope.submitGraph) , "  {",
-		             "  " + $scope.submitSubject + " " + $scope.submitPredicate + " " + $scope.submitObject + ".",
-		             "  }","}"].join('\n'); 
-		updateEndpoint($scope.selectUpdateEndpoint,$scope.submitGraph,queryString)
+		QueryBuilderService.insertQuery($scope.submitGraph,$scope.submitSubject,$scope.submitPredicate,$scope.submitObject).then(function (queryString) {
+			updateEndpoint($scope.selectUpdateEndpoint,$scope.submitGraph,queryString)
 			.then(
-				function(successResponse) {
-					console.log("Got response: "+ successResponse.data);
-					var el = document.createElement( 'div' );
-					el.innerHTML = successResponse.data;
-					$scope.sparqlError = false;
-					$scope.sparqlSuccess = true;
-					$scope.sparqlSuccessText = el.innerHTML;
-				},
-				function(errorResponse) {
-					$scope.sparqlError = true;
-					$scope.sparqlSuccess = false;
-					$scope.sparqlErrorText = errorResponse.data;
-					console.log(errorResponse);
-				});
+					function(successResponse) {
+						console.log("Got response: "+ successResponse.data);
+						var el = document.createElement( 'div' );
+						el.innerHTML = successResponse.data;
+						$scope.sparqlError = false;
+						$scope.sparqlSuccess = true;
+						$scope.sparqlSuccessText = el.innerHTML;
+					},
+					processError);
+		},processError);
+				
 	};
+	
+	//brol
 	$scope.termPicked = function(term) {
 		console.log("term picked: " + term.uri.value);
 	};
+	$scope.rootNode = {
+		name: "Node",
+		type: "MatchAll",
+		nodes: [],
+	};
+
 }]);

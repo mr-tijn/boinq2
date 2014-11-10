@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.genohm.boinq.service.QueryBuilderService;
+import com.hp.hpl.jena.sparql.modify.request.UpdateDataInsert;
 
 
 @RestController
@@ -50,5 +51,20 @@ public class QueryBuilderResource {
     		return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     	}
     }
+    
+    @RequestMapping(value = "/rest/querybuilder/insertQuery",
+    		method = RequestMethod.GET,
+    		produces = "application/json")
+    public ResponseEntity<String> getInsertQuery(@RequestParam String graphUri, @RequestParam String subject, @RequestParam String predicate, @RequestParam String object) {
+    	try {
+    		String result = queryBuilderService.insertStatement(graphUri, subject, predicate, object);
+    		return new ResponseEntity<String>(result, HttpStatus.OK);
+    	} catch (Exception e) {
+    		log.error("Could not create insert statement",e);
+    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
+	}
+
+    
 
 }

@@ -80,9 +80,62 @@ boinqApp.factory('QueryBuilderService', ['$http', function ($http) {
 				return response.data;
 			});
 			return promise;
+		},
+		insertQuery: function(graphUri, subject, predicate, object)  {
+			var promise = $http.get('app/rest/querybuilder/insertQuery', {params: {graphUri: graphUri, subject:subject, predicate: predicate, object: object}}).then(function (response) {
+				return response.data;
+			});
+			return promise;
 		}
 	};
 }]);
 
+boinqApp.directive('rdfnode', function() {
+	console.info("Registering directive rdfnode");
+	var RDFNODE_REGEXP = /^<.+>|".+"$/;
+	return {
+		require: 'ngModel',
+		link: function(scope, elm, attr, ngModel) {
+			
+			ngModel.$parsers.unshift(function(value) {
+				var valid = false;
+				if (value == null || RDFNODE_REGEXP.test(value)) {
+					valid = true;
+				}
+				ngModel.$setValidity('rdfnode', valid);
+	            return valid ? value : undefined;
+			});
+			
+			ngModel.$formatters.unshift(function(value) {
+				ngModel.$setValidity('rdfnode', RDFNODE_REGEXP.test(value));
+				return value;
+			});
+			
+		}
+	};
+});
 
-
+boinqApp.directive('regex', function() {
+	console.info("Registering directive regex");
+	return {
+		require: 'ngModel',
+		restrict: 'A',
+		link: function(scope, elm, attr, ngModel) {
+			var regex = new RegExp(attr.regex);
+			ngModel.$parsers.unshift(function(value) {
+				var valid = false;
+				if (value == undefined || value == "" || regex.test(value)) {
+					valid = true;
+				}
+				ngModel.$setValidity('regex', valid);
+	            return valid ? value : undefined;
+			});
+			
+			ngModel.$formatters.unshift(function(value) {
+				ngModel.$setValidity('regex', regex.test(value));
+				return value;
+			});
+			
+		}
+	};
+});

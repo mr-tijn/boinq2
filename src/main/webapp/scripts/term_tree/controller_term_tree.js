@@ -29,10 +29,6 @@ boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','
 		console.log('Getting query from query builder');
 		QueryBuilderService.childNodesQuery(parentTerm.uri.value).then(function(query) {
 			console.log('Fetching child terms for ' + parentTerm.label.value);
-//			var query = [SPARQLConstants.DEFAULT_PREFIXES,
-//			             "SELECT ?uri ?label WHERE {",
-//			             "  ?uri rdfs:label ?label.",
-//			             "  ?uri rdfs:subClassOf " + SPARQLTools.angle_bracket(parentTerm.uri.value), "}"].join('\n');
 			callEndpoint($scope.sourceEndpoint,$scope.sourceGraph,query).then(
 					function(successResponse) {
 						parentTerm.subTerms = successResponse.data.results.bindings;

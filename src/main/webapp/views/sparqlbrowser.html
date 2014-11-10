@@ -1,89 +1,157 @@
 <div ng-controller='SparqlBrowserController'>
 
-	<div ng-show="sparqlError" class="alert alert-danger">
-		<strong>Could not launch query:</strong> {{sparqlErrorText}}
-	</div>
-	<div ng-show="sparqlSuccess" class="alert alert-success">
-		<strong>Update successful:</strong> {{sparqlSuccessText}}
-	</div>
+	<div class="row">
 
-	<h1>SPARQL Query</h1>
-
-	<div class="input-group">
-
-		<div class="form-group">
-			<label>Select endpoint</label> <select name="endpoint"
-				ng-model="selectEndpoint" class="form-control">
-				<option ng-repeat="endpoint in endpoints"
-					ng-selected="selectEndpoint == endpoint">{{endpoint}}</option>
-			</select>
+		<div ng-show="sparqlError" class="alert alert-danger">
+			<strong>Could not launch query:</strong> {{sparqlErrorText}}
+		</div>
+		<div ng-show="sparqlSuccess" class="alert alert-success">
+			<strong>Update successful:</strong> {{sparqlSuccessText}}
 		</div>
 
-		<div class="form-group">
-			<label>Query</label>
-			<textarea class="form-control" name="graph-name"
-				ng-model="sparqlQuery" rows="3" style="font-family: monospace;"></textarea>
-		</div>
-
-	<button type="submit" ng-disabled="form.$invalid"
-		ng-click="callLocalEndpoint(sparqlQuery)"
-		class="btn btn-sm btn-primary">
-		<span class="glyphicon glyphicon-play-circle"></span> Go
-	</button>
-
 	</div>
 
-	<table class="table table-condensed table-striped"
-		ng-show="!sparqlError">
-		<thead>
-			<th ng-repeat="varname in sparqlResult.head.vars">?{{varname}}</th>
-		</thead>
-		<tbody>
-			<tr ng-repeat="binding in sparqlResult.results.bindings">
-				<td ng-repeat="varname in sparqlResult.head.vars">{{binding[varname].value}}</td>
-			</tr>
-		</tbody>
-	</table>
-	
-	<h1>SPARQL Update</h1>
-	
-	<div class="input-group">
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
 
-		<div class="form-group">
-			<label>Select endpoint</label> <select name="updateEndpoint"
-				ng-model="selectUpdateEndpoint" class="form-control">
-				<option ng-repeat="endpoint in updateEndpoints"
-					ng-selected="selectUpdateEndpoint == endpoint">{{endpoint}}</option>
-			</select>
+			<h1>SPARQL Query</h1>
+
+			<form class="form-horizontal" role="form">
+
+				<div class="form-group">
+					<label for="selectEndpoint" class="col-sm-2 control-label">Select
+						endpoint</label>
+					<div class="col-sm-10">
+						<select name="endpoint" ng-model="selectEndpoint"
+							class="form-control">
+							<option id="selectEndpoint" ng-repeat="endpoint in endpoints"
+								ng-selected="selectEndpoint == endpoint">{{endpoint}}</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="sparqlQuery" class="col-sm-2 control-label">Query</label>
+					<div class="col-sm-10">
+						<textarea id="sparqlQuery" class="form-control col-sm-8"
+							name="graph-name" ng-model="sparqlQuery" rows="3"
+							style="font-family: monospace;"></textarea>
+					</div>
+				</div>
+
+				<button type="submit" ng-disabled="form.$invalid"
+					ng-click="callLocalEndpoint(sparqlQuery)"
+					class="btn btn-sm btn-primary col-sm-2">
+					<span class="glyphicon glyphicon-play-circle"></span> Go
+				</button>
+
+
+				<table class="table table-condensed table-striped table-hover"
+					ng-show="!sparqlError">
+					<thead>
+						<th ng-repeat="varname in sparqlResult.head.vars">?{{varname}}</th>
+					</thead>
+					<tbody>
+						<tr ng-repeat="binding in sparqlResult.results.bindings">
+							<td ng-repeat="varname in sparqlResult.head.vars">{{binding[varname].value}}</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</form>
 		</div>
-
-	<table class="table table-condensed table-striped">
-		<thead>
-			<th>Subject</th>
-			<th>Predicate</th>
-			<th>Object</th>
-			<th>Graph</th>
-		</thead>
-		<tbody>
-			<tr>
-				<td><input type="text" ng-model="submitSubject"></input></td>
-				<td><input type="text" ng-model="submitPredicate"></input></td>
-				<td><input type="text" ng-model="submitObject"></input></td>
-				<td><input type="text" ng-model="submitGraph"></input></td>
-			</tr>
-		</tbody>
-	</table>
-
-	<button type="submit" ng-disabled="form.$invalid"
-		ng-click="uploadData()"
-		class="btn btn-sm btn-primary">
-		<span class="glyphicon glyphicon-play-circle"></span> Go
-	</button>
-
 	</div>
-	
-	<h1>Brol</h1>
-	
-	<term-tree-picker select-handler="termPicked" source-endpoint="http://localhost:8899/META_DYNAMIC/sparql" source-graph="http://boinq.org/hierarchy">
-	
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+
+			<h1>SPARQL Update</h1>
+
+			<form name="updateForm" class="form-horizontal" novalidate>
+
+				<div class="form-group">
+					<label for="selectUpdateEndpoint" class="col-sm-2 control-label">Select
+						endpoint</label>
+					<div class="col-sm-10">
+						<select id="selectUpdateEndpoint" name="updateEndpoint"
+							ng-model="selectUpdateEndpoint" class="form-control">
+							<option ng-repeat="endpoint in updateEndpoints"
+								ng-selected="selectUpdateEndpoint == endpoint">{{endpoint}}</option>
+						</select>
+					</div>
+				</div>
+
+
+
+				<div class="form-group">
+					<label for="submitSubject" class="col-sm-2 control-label">Subject</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="text" name="submitSubject"
+							ng-model="submitSubject" placeholder="<http://example/subject>"
+							regex="^<.+>$" required></input>
+					</div>
+					<div class="col-sm-4"
+						ng-show="updateForm.submitSubject.$error.regex">Please fill
+						in a URI value (in angle brackets)</div>
+				</div>
+				<div class="form-group">
+					<label for="submitPredicate" class="col-sm-2 control-label">Predicate</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="text" name="submitPredicate"
+							ng-model="submitPredicate"
+							placeholder="<http://example/predicate>" regex="^<.+>$" required></input>
+					</div>
+					<div class="col-sm-4"
+						ng-show="updateForm.submitPredicate.$error.regex">Please
+						fill in a URI value (in angle brackets)</div>
+				</div>
+				<div class="form-group">
+					<label for="submitObject" class="col-sm-2 control-label">Object</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="text" name="submitObject"
+							ng-model="submitObject" placeholder="<http://example/object>"
+							regex='^<.+>|".+"$' required></input>
+					</div>
+					<div class="col-sm-4"
+						ng-show="updateForm.submitObject.$error.regex">Please fill
+						in a URI value (in angle brackets) or literal (in between double
+						quotes)</div>
+				</div>
+				<div class="form-group">
+					<label for="submitGraph" class="col-sm-2 control-label">Graph</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="text" name="submitGraph"
+							ng-model="submitGraph"
+							placeholder="<http://boinq.org/examplegraph>" regex="^<.+>$"
+							required></input>
+					</div>
+					<div class="col-sm-4"
+						ng-show="updateForm.submitGraph.$error.regex">Please
+						fill in a URI value (in angle brackets)</div>
+				</div>
+
+				<button type="submit" ng-disabled="updateForm.$invalid"
+					ng-click="uploadData()" class="btn btn-sm btn-primary col-sm-2">
+					<span class="glyphicon glyphicon-play-circle"></span> Go
+				</button>
+
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+
+			<h1>Brol</h1>
+
+			<term-tree-picker select-handler="termPicked"
+				source-endpoint="http://localhost:8899/META_DYNAMIC/sparql"
+				source-graph="http://boinq.org/hierarchy"> </term-tree-picker>
+				
+			<match-tree-node root-node="rootNode"></match-tree-node>
+			
+			<pre>{{rootNode | json}}</pre>
+		</div>
+	</div>
 </div>
