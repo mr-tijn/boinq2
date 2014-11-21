@@ -11,7 +11,9 @@ public class DatasourceDTO {
 	private long id;
 	private String endpointUrl;
 	private String endpointUpdateUrl;
+	private String metaEndpointUrl;
 	private String graphName;
+	private String metaGraphName;
 	private String ownerLogin;
 	private Boolean isPublic;
 	private String name;
@@ -37,11 +39,23 @@ public class DatasourceDTO {
 	public void setEndpointUpdateUrl(String endpointUpdateUrl) {
 		this.endpointUpdateUrl = endpointUpdateUrl;
 	}
+	public String getMetaEndpointUrl() {
+		return metaEndpointUrl;
+	}
+	public void setMetaEndpointUrl(String metaEndpointUrl) {
+		this.metaEndpointUrl = metaEndpointUrl;
+	}
 	public String getGraphName() {
 		return graphName;
 	}
 	public void setGraphName(String graphName) {
 		this.graphName = graphName;
+	}
+	public String getMetaGraphName() {
+		return metaGraphName;
+	}
+	public void setMetaGraphName(String metaGraphName) {
+		this.metaGraphName = metaGraphName;
 	}
 	public String getOwnerLogin() {
 		return ownerLogin;
@@ -83,13 +97,18 @@ public class DatasourceDTO {
 
 	public DatasourceDTO() {}
 
-	public DatasourceDTO(long id, String endpointUrl, String graphName,
-			String ownerLogin, Boolean isPublic, String name, int type,
-			int status, Set<RawDataFileDTO> rawDataFiles) {
+
+	public DatasourceDTO(long id, String endpointUrl, String endpointUpdateUrl,
+			String metaEndpointUrl, String graphName, String metaGraphName, String ownerLogin,
+			Boolean isPublic, String name, int type, int status,
+			Set<RawDataFileDTO> rawDataFiles) {
 		super();
 		this.id = id;
 		this.endpointUrl = endpointUrl;
+		this.endpointUpdateUrl = endpointUpdateUrl;
+		this.metaEndpointUrl = metaEndpointUrl;
 		this.graphName = graphName;
+		this.metaGraphName = metaGraphName;
 		this.ownerLogin = ownerLogin;
 		this.isPublic = isPublic;
 		this.name = name;
@@ -97,12 +116,14 @@ public class DatasourceDTO {
 		this.status = status;
 		this.rawDataFiles = rawDataFiles;
 	}
-
+	
 	public DatasourceDTO(Datasource datasource) {
 		this.id = datasource.getId();
 		this.endpointUrl = datasource.getEndpointUrl();
 		this.endpointUpdateUrl = datasource.getEndpointUpdateUrl();
+		this.metaEndpointUrl = datasource.getMetaEndpointUrl();
 		this.graphName = datasource.getGraphName();
+		this.metaGraphName = datasource.getMetaGraphName();
 		this.ownerLogin = datasource.getOwner().getLogin();
 		this.isPublic = datasource.getIsPublic();
 		this.name = datasource.getName();
@@ -122,8 +143,11 @@ public class DatasourceDTO {
 				rawDataFilesString += rawDataFile;
 			}
 		}
-		return "DatasourceDTO {id=" + id + ", endpointUrl=" + endpointUrl + ", endpointUpdateUrl=" + endpointUpdateUrl
-				+ ", graphName=" + graphName + ", ownerLogin=" + ownerLogin
+		return "DatasourceDTO {id=" + id + ", endpointUrl=" + endpointUrl 
+				+ ", endpointUpdateUrl=" + endpointUpdateUrl
+				+ ", metaEndpointUrl=" + metaEndpointUrl
+				+ ", graphName=" + graphName + ", metaGraphName=" + metaGraphName 
+				+ ", ownerLogin=" + ownerLogin
 				+ ", isPublic=" + isPublic + ", name=" + name + ", type="
 				+ type + ", status=" + status + ", rawDataFiles=[" + rawDataFilesString + "]}";
 	}

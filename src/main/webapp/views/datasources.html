@@ -41,6 +41,12 @@
 						</div>
 
 						<div class="form-group">
+							<label>Meta graph name</label> <input type="text" class="form-control"
+								name="graph-name" ng-model="datasource.metaGraphName" ng-minlength=1
+								ng-maxlength=50 required ng-disabled="isLocal(datasource)">
+						</div>
+
+						<div class="form-group">
 							<label>Name</label> <input type="text" class="form-control"
 								name="name" ng-model="datasource.name" ng-minlength=1
 								ng-maxlength=50 required>

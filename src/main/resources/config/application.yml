@@ -35,7 +35,9 @@ spring:
         endpoint: 
             update: http://localhost:8899/META_DYNAMIC/update
             sparql: http://localhost:8888/fuseki/sparql
+            meta: http://localhost:8899/META_DYNAMIC/update
         graphbase: http://www.boinq.org/data/graph/
+        metagraph: http://www.boinq.org/data/meta/
 
 
 swagger:

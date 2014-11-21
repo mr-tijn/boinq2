@@ -48,8 +48,16 @@ public class Datasource implements Serializable {
     private String endpointUpdateUrl;
    
     @Size(min = 1, max = 200)
+    @Column(name = "meta_endpoint_url", nullable = true)
+    private String metaEndpointUrl;
+    
+    @Size(min = 1, max = 200)
     @Column(name = "graph_name", nullable = true)
     private String graphName;
+    
+    @Size(min = 1, max = 200)
+    @Column(name = "meta_graph_name", nullable = true)
+    private String metaGraphName;
     
     @ManyToOne
     @JoinColumn(name = "owner_id")
@@ -95,12 +103,28 @@ public class Datasource implements Serializable {
 		this.endpointUpdateUrl = endpointUpdateUrl;
 	}
 
+	public String getMetaEndpointUrl() {
+		return metaEndpointUrl;
+	}
+
+	public void setMetaEndpointUrl(String metaEndpointUrl) {
+		this.metaEndpointUrl = metaEndpointUrl;
+	}
+
 	public String getGraphName() {
 		return graphName;
 	}
 
 	public void setGraphName(String graphName) {
 		this.graphName = graphName;
+	}
+
+	public String getMetaGraphName() {
+		return metaGraphName;
+	}
+
+	public void setMetaGraphName(String metaGraphName) {
+		this.metaGraphName = metaGraphName;
 	}
 
 	public User getOwner() {
@@ -187,7 +211,9 @@ public class Datasource implements Serializable {
                 "id=" + id +
                 ", endpointUrl='" + endpointUrl + '\'' +
                 ", endpointUpdateUrl='" + endpointUpdateUrl + '\'' +
+                ", metaEndpointUrl='" + metaEndpointUrl + '\'' +
                 ", graphName='" + graphName + "'" +
+                ", metaGraphName='" + metaGraphName + "'" +
                 ", public=" + isPublic +
                 ", type=" + type + 
                 ", status=" + status +

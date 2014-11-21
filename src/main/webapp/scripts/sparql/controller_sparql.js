@@ -56,7 +56,7 @@ boinqApp.controller("SparqlBrowserController",['$scope','callEndpoint','updateEn
 		console.log("term picked: " + term.uri.value);
 	};
 	$scope.rootNode = {
-		name: "Node",
+		name: "MatchTree",
 		type: "MatchAll",
 		nodes: [],
 	};

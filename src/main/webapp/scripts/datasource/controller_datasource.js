@@ -22,8 +22,8 @@ boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Da
             $('#saveDatasourceModal').modal('show');
         };
 
-        $scope.delete = function (id) {
-            Datasource.delete({id: id},
+        $scope['delete'] = function (id) {
+            Datasource['delete']({id: id},
                 function () {
                     $scope.datasources = Datasource.query();
                 });
@@ -39,17 +39,17 @@ boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Da
         
         $scope.canupload = function(datasource) {
         	return $scope.manageddatasource != null && $scope.manageddatasource.type == DatasourceConstants.TYPE_LOCAL_FALDO;
-        }
+        };
         $scope.manage= function(datasource) {
         	$scope.manageddatasource = datasource;
         	$('#manageDatasourceModal').modal('show');
-        }
+        };
         $scope.canmanage = function(datasource) {
         	return datasource.type == DatasourceConstants.TYPE_LOCAL_FALDO;
-        }
+        };
         $scope.isLocal = function(datasource) {
         	return datasource.type == DatasourceConstants.TYPE_LOCAL_FALDO;
-        }
+        };
         $scope.removefile = function(rawdatafile_id) {
         	var ds_id = $scope.manageddatasource.id;
         	DatasourceDatafile.remove({id:ds_id, data_id:rawdatafile_id},
@@ -57,11 +57,11 @@ boinqApp.controller('DatasourceController', ['$scope', 'resolvedDatasource', 'Da
         				$scope.datasources = Datasource.query();
         				$scope.manageddatasource = Datasource.get({id:ds_id});
         	});
-        }
+        };
         $scope.startconversion = function(rawdatafile_id) {
         	var ds_id = $scope.manageddatasource.id;
         	DatasourceConversion.start({id:ds_id}, rawdatafile_id);
-        }
+        };
         
         // file uploader stuff
         

@@ -1,5 +1,5 @@
-<div ng-controller="MatchTreeController">
-	<div class="nav-tabs-justified" ng-click="setActive(node)">
+<div>
+	<div ng-click="setActive(node)">
 		{{node | nodesummary}}
 		<div class="btn btn-xs" ng-click="remove(node)"
 			ng-show="node != mainData.rootNode">
@@ -12,9 +12,8 @@
 		ng-show="canHaveChildren(node)">
 		<span class="glyphicon glyphicon-plus"></span>
 	</div>
-
 	<ul class="treeNode">
 		<li class="treeNode nav-tabs-justified" ng-repeat="node in node.nodes"
 			ng-include="'views/match_tree/match_tree_node.html'"></li>
-	</ul>
+	</ul>	
 </div>

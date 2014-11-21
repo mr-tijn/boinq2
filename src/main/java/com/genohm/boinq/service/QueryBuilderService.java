@@ -4,7 +4,11 @@ import org.apache.jena.riot.system.PrefixMap;
 import org.apache.jena.riot.system.PrefixMapStd;
 import org.springframework.stereotype.Service;
 
+import com.genohm.boinq.domain.match.Match;
+import com.genohm.boinq.domain.match.MatchFactory;
+import com.genohm.boinq.tools.generators.ARQGenerator;
 import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
+import com.genohm.boinq.web.rest.dto.MatchDTO;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
@@ -93,6 +97,12 @@ public class QueryBuilderService {
 		newData.addTriple(new Triple(NodeFactoryExtra.parseNode(subject,commonPrefixMap),NodeFactoryExtra.parseNode(predicate,commonPrefixMap),NodeFactoryExtra.parseNode(object,commonPrefixMap)));
 		UpdateDataInsert insertStatement = new UpdateDataInsert(newData);
 		return insertStatement.toString(commonPrefixes);
+	}
+
+	public String getQueryFromMatch(MatchDTO matchDTO) throws Exception {
+		ARQGenerator generator = new ARQGenerator();
+		Match rootMatch = MatchFactory.fromDTO(matchDTO);
+		return generator.generateQuery(rootMatch);
 	}
 	
 }

@@ -14,8 +14,6 @@ ul.treeNode li {
 	padding: 0 12px;
 	line-height: 20px;
 	background: url(/images/treenode/node.png) no-repeat;
-	color: #369;
-	font-weight: bold;
 }
 
 ul.treeNode li:last-child {
@@ -24,4 +22,9 @@ ul.treeNode li:last-child {
 
 li.treeNode {
 	cursor: pointer;
+}
+
+.treeNode {
+	color: #369;
+	font-weight: bold;
 }

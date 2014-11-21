@@ -8,12 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.genohm.boinq.service.QueryBuilderService;
+import com.genohm.boinq.web.rest.dto.MatchDTO;
 import com.hp.hpl.jena.sparql.modify.request.UpdateDataInsert;
 
 
@@ -65,6 +67,19 @@ public class QueryBuilderResource {
     	}
 	}
 
-    
+    @RequestMapping(value = "/rest/querybuilder/from_match",
+    		method = RequestMethod.POST,
+    		consumes = "application/json",
+    		produces = "application/json")
+    public ResponseEntity<String> getQueryFromMatch(@RequestBody MatchDTO matchDTO) {
+    	try {
+    		String result = queryBuilderService.getQueryFromMatch(matchDTO);
+    		return new ResponseEntity<String>(result, HttpStatus.OK);
+    	} catch (Exception e) {
+    		log.error("Could not create insert statement",e);
+    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
+	}
+
 
 }

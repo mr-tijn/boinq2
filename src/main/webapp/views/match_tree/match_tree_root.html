@@ -1,0 +1,26 @@
+<div ng-controller='MatchTreeController'>
+	<!-- Browse -->
+	<div class="treeNode">
+		{{rootNode | nodesummary}}
+		<div class="btn btn-xs" ng-click="setActive(add(node))"
+			ng-show="canHaveChildren(node)">
+			<span class="glyphicon glyphicon-plus"></span>
+		</div>
+	</div>
+	<ul class="treeNode">
+		<li class="treeNode nav-tabs-justified" ng-repeat="node in node.nodes">
+			<match-tree-node node="node"></match-tree-node>
+		</li>
+	</ul>
+	<div class ="form-group" ng-show="generatedQuery">
+		<label for="generatedQuery">Generated query:</label>
+		<textarea class="form-control" rows="5" id="generatedQuery">{{generatedQuery}}</textarea>
+	</div>
+	<div class="alert alert-danger" role="alert" ng-show="errorMessage">
+  		<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		{{errorMessage}}
+	</div>
+	<div class="btn btn-primary btn-sm" ng-click="submit(mainData.tree)">
+		<span class="glyphicon glyphicon-flash"></span> Get query
+	</div>
+</div>
