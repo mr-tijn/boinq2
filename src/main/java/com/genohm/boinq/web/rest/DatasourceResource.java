@@ -90,6 +90,7 @@ public class DatasourceResource {
         	saveddatasource.setGraphName(gd.graphURI);
         	saveddatasource.setEndpointUrl(gd.endpointURI);
         	saveddatasource.setEndpointUpdateUrl(gd.endpointUpdateURI);
+        	saveddatasource.setMetaEndpointUrl(gd.metaEndpointURI);
         	datasourceRepository.save(saveddatasource);
         }
     }

@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.genohm.boinq.tools.queries.Prefixes;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.modify.request.QuadDataAcc;
@@ -33,7 +34,7 @@ public class TripleUploadService {
 		newData.addTriple(newTriple);
 		UpdateDataInsert insertStatement = new UpdateDataInsert(newData);
 		UpdateRequest req = new UpdateRequest(insertStatement);
-		req.setPrefix("xsd", "http://www.w3.org/2001/XMLSchema#");
+		req.setPrefixMapping(Prefixes.getCommonPrefixes());
 		//TODO: handle prefixes
 		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, sparqlEndpointUri);
 		processor.execute();

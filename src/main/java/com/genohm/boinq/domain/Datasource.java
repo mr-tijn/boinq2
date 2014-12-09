@@ -42,7 +42,7 @@ public class Datasource implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "endpoint_url", nullable = true)
     private String endpointUrl;
-
+    
     @Size(min = 1, max = 200)
     @Column(name = "endpoint_update_url", nullable = true)
     private String endpointUpdateUrl;

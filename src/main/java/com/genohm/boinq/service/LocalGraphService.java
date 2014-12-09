@@ -4,13 +4,16 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import net.wimpi.telnetd.io.terminal.ansi;
+
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.GraphDescriptor;
-import com.genohm.boinq.tools.vocabularies.DatasourceVocabulary;
+import com.genohm.boinq.tools.queries.Prefixes;
+import com.genohm.boinq.tools.vocabularies.TrackVocabulary;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.modify.request.QuadDataAcc;
@@ -55,9 +58,10 @@ public class LocalGraphService implements EnvironmentAware {
 	private void updateMetaGraph(GraphDescriptor graph) {
 		QuadDataAcc newData = new QuadDataAcc();
 		newData.setGraph(NodeFactory.createURI(graph.metaGraphURI));
-		newData.addTriple(new Triple(NodeFactory.createURI(graph.graphURI), RDF.type.asNode(), DatasourceVocabulary.datasource));
+		newData.addTriple(new Triple(NodeFactory.createURI(graph.graphURI), RDF.type.asNode(), TrackVocabulary.Datasource));
 		UpdateDataInsert insertStatement = new UpdateDataInsert(newData);
 		UpdateRequest req = new UpdateRequest(insertStatement);
+		req.setPrefixMapping(Prefixes.getCommonPrefixes());
 		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, graph.metaEndpointURI);
 		processor.execute();
 	}

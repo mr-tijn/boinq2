@@ -1,0 +1,300 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <Ontology rdf:about="http://www.boinq.org/ontologies/track"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#endpoint -->
+
+    <ObjectProperty rdf:about="http://www.boinq.org/ontologies/track#endpoint"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#holds -->
+
+    <ObjectProperty rdf:about="http://www.boinq.org/ontologies/track#holds"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#provides -->
+
+    <ObjectProperty rdf:about="http://www.boinq.org/ontologies/track#provides"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#references -->
+
+    <ObjectProperty rdf:about="http://www.boinq.org/ontologies/track#references"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#supports -->
+
+    <ObjectProperty rdf:about="http://www.boinq.org/ontologies/track#supports"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#targets -->
+
+    <ObjectProperty rdf:about="http://www.boinq.org/ontologies/track#targets"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#endpointUrl -->
+
+    <DatatypeProperty rdf:about="http://www.boinq.org/ontologies/track#endpointUrl"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#graphUri -->
+
+    <DatatypeProperty rdf:about="http://www.boinq.org/ontologies/track#graphUri"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#motherTerm -->
+
+    <DatatypeProperty rdf:about="http://www.boinq.org/ontologies/track#motherTerm"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#Datasource -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#Datasource">
+        <rdfs:label rdf:datatype="&xsd;string">Datasource</rdfs:label>
+        <rdfs:comment rdf:datatype="&rdfs;Literal">A Datasource is a source of information. It is usually a SPARQL Endpoint</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#FaldoDatasource -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#FaldoDatasource">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#FeatureDatasource"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#provides"/>
+                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#FaldoTrack"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#references"/>
+                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#ReferenceAssembly"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">A FaldoDatasource that uses FALDO for referencing an assembly</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#FaldoTrack -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#FaldoTrack">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#Track"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#graphUri"/>
+                <qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</qualifiedCardinality>
+                <onDataRange rdf:resource="&xsd;anyURI"/>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#FeatureDatasource -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#FeatureDatasource">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#SPARQLDatasource"/>
+        <rdfs:comment xml:lang="en">A SPARQLDatasource offering features.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#FeatureType -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#FeatureType"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#Field -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#Field">
+        <rdfs:comment xml:lang="en">A field. An attribute of a feature that can be used to filter on.</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#Match -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#Match">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#Operator"/>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#MatchField -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#MatchField">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#Match"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#targets"/>
+                <onClass rdf:resource="http://www.boinq.org/ontologies/track#Field"/>
+                <qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</qualifiedCardinality>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#MatchNumber -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#MatchNumber">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#MatchField"/>
+        <rdfs:comment xml:lang="en">Match a numeric value</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#MatchString -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#MatchString">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#MatchField"/>
+        <rdfs:comment xml:lang="en">Match a string value</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#MatchTerm -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#MatchTerm">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#MatchField"/>
+        <rdfs:comment xml:lang="en">match a term from a target graph</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#Operator -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#Operator"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#ReferenceAssembly -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#ReferenceAssembly"/>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#SPARQLDatasource -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#SPARQLDatasource">
+        <rdfs:label rdf:datatype="&xsd;string">SPARQLDatasource</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#Datasource"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#endpointUrl"/>
+                <someValuesFrom rdf:resource="&xsd;anyURI"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">A Datasource that you can query using a SPARQL Endpoint</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#TermDatasource -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#TermDatasource">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#SPARQLDatasource"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#graphUri"/>
+                <qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</qualifiedCardinality>
+                <onDataRange rdf:resource="&xsd;anyURI"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#motherTerm"/>
+                <maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</maxQualifiedCardinality>
+                <onDataRange rdf:resource="&xsd;anyURI"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">A SPARQL Datasource offering terms</rdfs:comment>
+    </Class>
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#Track -->
+
+    <Class rdf:about="http://www.boinq.org/ontologies/track#Track">
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#holds"/>
+                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#FeatureType"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#supports"/>
+                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#Operator"/>
+            </Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">A collection of features of the same type</rdfs:comment>
+    </Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+

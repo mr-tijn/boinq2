@@ -19,7 +19,8 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model      .
 		ja:cxtValue "1000000" ]
 	; ja:loadClass "com.hp.hpl.jena.tdb.TDB"
 	; fuseki:services (
-		<#META_DYNAMIC> )
+		<#META_DYNAMIC>
+		<#STATIC> )
 	.
 
 
@@ -30,7 +31,29 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model      .
         ; fuseki:serviceUpdate "update"
         ; fuseki:serviceUpdate "sparul"
         ; fuseki:serviceReadWriteGraphStore "data"
-        ; fuseki:dataset [
-                rdf:type tdb:DatasetTDB;
-                tdb:location "fuseki/metaTDB/" ]
+        ; fuseki:dataset <#metadataset>
         .
+
+<#metadataset> rdf:type tdb:DatasetTDB
+		; tdb:location "fuseki/metaTDB/"
+		; tdb:unionDefaultGraph true
+		.
+		
+<#STATIC> rdf:type fuseki:Service
+		; fuseki:name "STATIC"
+		; fuseki:serviceQuery "sparql"
+		; fuseki:serviceQuery "query"
+		; fuseki:dataset <#staticdataset>
+		.
+
+<#staticdataset> rdf:type ja:RDFDataset
+		; ja:defaultGraph <#staticmodel>
+		.
+
+<#staticmodel> rdf:type ja:MemoryModel
+		; rdfs:label "Datasource repository"
+		; ja:content [ 
+					   ja:externalContent <file:../ontologies/track.owl> ;
+				   	   ja:externalContent <file:../ontologies/faldo.ttl> ]
+		.
+
