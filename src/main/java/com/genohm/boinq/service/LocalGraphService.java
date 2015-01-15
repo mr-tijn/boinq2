@@ -70,15 +70,41 @@ public class LocalGraphService implements EnvironmentAware {
 		GraphDescriptor newGraph = new GraphDescriptor();
 		newGraph.endpointURI = this.sparqlEndpoint;
 		newGraph.endpointUpdateURI = this.updateEndpoint;
-		newGraph.graphURI = this.graphBase + id;
+		newGraph.graphURI = graphNameFromId(id);
 		newGraph.metaEndpointURI = this.metaEndpoint;
 		newGraph.metaGraphURI = this.metaGraph;
 		updateMetaGraph(newGraph);
 		return newGraph;
 	}
 	
+	public String graphNameFromId(Object id) {
+		return this.graphBase + id.toString();
+	}
+	
 	public GraphDescriptor createLocalGraph() {
 		return createLocalGraph(UUID.randomUUID().toString());
 	}
+
+	public String getGraphBase() {
+		return graphBase;
+	}
+
+	public String getUpdateEndpoint() {
+		return updateEndpoint;
+	}
+
+	public String getSparqlEndpoint() {
+		return sparqlEndpoint;
+	}
+
+	public String getMetaEndpoint() {
+		return metaEndpoint;
+	}
+
+	public String getMetaGraph() {
+		return metaGraph;
+	}
+	
+	
 	
 }

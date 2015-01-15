@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
+import com.genohm.boinq.domain.Track;
 
 
 public class DatasourceDTO {
@@ -12,14 +13,12 @@ public class DatasourceDTO {
 	private String endpointUrl;
 	private String endpointUpdateUrl;
 	private String metaEndpointUrl;
-	private String graphName;
 	private String metaGraphName;
 	private String ownerLogin;
 	private Boolean isPublic;
 	private String name;
 	private int type;
-	private int status;
-	private Set<RawDataFileDTO> rawDataFiles;
+	private Set<TrackDTO> tracks;
 	
 	public long getId() {
 		return id;
@@ -44,12 +43,6 @@ public class DatasourceDTO {
 	}
 	public void setMetaEndpointUrl(String metaEndpointUrl) {
 		this.metaEndpointUrl = metaEndpointUrl;
-	}
-	public String getGraphName() {
-		return graphName;
-	}
-	public void setGraphName(String graphName) {
-		this.graphName = graphName;
 	}
 	public String getMetaGraphName() {
 		return metaGraphName;
@@ -81,40 +74,32 @@ public class DatasourceDTO {
 	public void setType(int type) {
 		this.type = type;
 	}
-	public int getStatus() {
-		return status;
-	}
-	public void setStatus(int status) {
-		this.status = status;
-	}
 	
-	public Set<RawDataFileDTO> getRawDataFiles() {
-		return rawDataFiles;
+	public Set<TrackDTO> getTracks() {
+		return tracks;
 	}
-	public void setRawDataFiles(Set<RawDataFileDTO> rawDataFiles) {
-		this.rawDataFiles = rawDataFiles;
+	public void setTracks(Set<TrackDTO> tracks) {
+		this.tracks = tracks;
 	}
 
 	public DatasourceDTO() {}
 
 
 	public DatasourceDTO(long id, String endpointUrl, String endpointUpdateUrl,
-			String metaEndpointUrl, String graphName, String metaGraphName, String ownerLogin,
-			Boolean isPublic, String name, int type, int status,
-			Set<RawDataFileDTO> rawDataFiles) {
+			String metaEndpointUrl, String metaGraphName, String ownerLogin,
+			Boolean isPublic, String name, int type,
+			Set<TrackDTO> tracks) {
 		super();
 		this.id = id;
 		this.endpointUrl = endpointUrl;
 		this.endpointUpdateUrl = endpointUpdateUrl;
 		this.metaEndpointUrl = metaEndpointUrl;
-		this.graphName = graphName;
 		this.metaGraphName = metaGraphName;
 		this.ownerLogin = ownerLogin;
 		this.isPublic = isPublic;
 		this.name = name;
 		this.type = type;
-		this.status = status;
-		this.rawDataFiles = rawDataFiles;
+		this.tracks = tracks;
 	}
 	
 	public DatasourceDTO(Datasource datasource) {
@@ -122,34 +107,32 @@ public class DatasourceDTO {
 		this.endpointUrl = datasource.getEndpointUrl();
 		this.endpointUpdateUrl = datasource.getEndpointUpdateUrl();
 		this.metaEndpointUrl = datasource.getMetaEndpointUrl();
-		this.graphName = datasource.getGraphName();
 		this.metaGraphName = datasource.getMetaGraphName();
 		this.ownerLogin = datasource.getOwner().getLogin();
 		this.isPublic = datasource.getIsPublic();
 		this.name = datasource.getName();
 		this.type = datasource.getType();
-		this.status = datasource.getStatus();
-		this.rawDataFiles = new HashSet<RawDataFileDTO>();
-		for (RawDataFile rawDataFile: datasource.getRawDataFiles()) {
-			rawDataFiles.add(new RawDataFileDTO(rawDataFile));
+		this.tracks = new HashSet<TrackDTO>();
+		for (Track track: datasource.getTracks()) {
+			this.tracks.add(new TrackDTO(track));
 		}
 	}
 
 	@Override
 	public String toString() {
-		String rawDataFilesString = "";
-		if (rawDataFiles != null) {
-			for (RawDataFileDTO rawDataFile: rawDataFiles) {
-				rawDataFilesString += rawDataFile;
+		String tracksString = "";
+		if (tracks != null) {
+			for (TrackDTO track: tracks) {
+				tracksString += tracks;
 			}
 		}
 		return "DatasourceDTO {id=" + id + ", endpointUrl=" + endpointUrl 
 				+ ", endpointUpdateUrl=" + endpointUpdateUrl
 				+ ", metaEndpointUrl=" + metaEndpointUrl
-				+ ", graphName=" + graphName + ", metaGraphName=" + metaGraphName 
+				+ ", metaGraphName=" + metaGraphName 
 				+ ", ownerLogin=" + ownerLogin
 				+ ", isPublic=" + isPublic + ", name=" + name + ", type="
-				+ type + ", status=" + status + ", rawDataFiles=[" + rawDataFilesString + "]}";
+				+ type + ", tracks=[" + tracksString + "]}";
 	}
 
 }

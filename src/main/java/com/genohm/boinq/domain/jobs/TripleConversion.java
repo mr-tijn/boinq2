@@ -9,10 +9,13 @@ import org.slf4j.LoggerFactory;
 
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
+import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.repository.DatasourceRepository;
 import com.genohm.boinq.service.TripleUploadService;
+import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.fileformats.BedTripleIterator;
 import com.genohm.boinq.tools.fileformats.GFF3TripleIterator;
+import com.genohm.boinq.tools.queries.Prefixes;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
@@ -38,8 +41,8 @@ public class TripleConversion implements AsynchronousJob {
 		// some stuff is initialized upon job launch
 		this.inputData = inputData;
 		this.description = "Triple conversion of "
-				+ inputData.getFilePath() + " into datasource "
-				+ inputData.getDatasource().getId();
+				+ inputData.getFilePath() + " into track "
+				+ inputData.getTrack().getId();
 		this.name = this.description;
 	}
 
@@ -91,19 +94,23 @@ public class TripleConversion implements AsynchronousJob {
 	@Override
 	public void execute() {
 		try {
-			Datasource datasource = inputData.getDatasource();
+			Track track = inputData.getTrack();
+			if (track == null) {
+				throw new Exception("Track is null");
+			}
+			Datasource datasource = track.getDatasource();
 			if (datasource == null) {
-				throw new Exception("Datasource is null");
+				throw new Exception("Datasource is null");				
 			}
 			if (Datasource.TYPE_LOCAL_FALDO != datasource.getType()) {
 				throw new Exception("Datasource should be of type local faldo in order to support upload");
 			}
 			File inputFile = new File(inputData.getFilePath());
 			Iterator<Triple> tripleIterator = getTripleIteratorByExtension(inputFile);
-			Node targetGraph = NodeFactory.createURI(datasource.getGraphName());
+			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
 			inputData.setStatus(RawDataFile.STATUS_LOADING);
 			while (tripleIterator.hasNext()) {
-				tripleUploadService.put(targetGraph, tripleIterator.next());
+				uploader.put(tripleIterator.next());
 			}
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
 		} catch (Exception e) {

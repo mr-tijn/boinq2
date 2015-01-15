@@ -121,14 +121,14 @@
         <rdfs:subClassOf rdf:resource="http://www.boinq.org/ontologies/track#FeatureDatasource"/>
         <rdfs:subClassOf>
             <Restriction>
-                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#provides"/>
-                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#FaldoTrack"/>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#references"/>
+                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#ReferenceAssembly"/>
             </Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <Restriction>
-                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#references"/>
-                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#ReferenceAssembly"/>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#provides"/>
+                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#FaldoTrack"/>
             </Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A FaldoDatasource that uses FALDO for referencing an assembly</rdfs:comment>
@@ -280,18 +280,37 @@
     <Class rdf:about="http://www.boinq.org/ontologies/track#Track">
         <rdfs:subClassOf>
             <Restriction>
-                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#holds"/>
-                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#FeatureType"/>
-            </Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <Restriction>
                 <onProperty rdf:resource="http://www.boinq.org/ontologies/track#supports"/>
                 <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#Operator"/>
             </Restriction>
         </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://www.boinq.org/ontologies/track#holds"/>
+                <someValuesFrom rdf:resource="http://www.boinq.org/ontologies/track#FeatureType"/>
+            </Restriction>
+        </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A collection of features of the same type</rdfs:comment>
     </Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.boinq.org/ontologies/track#GRCh37 -->
+
+    <NamedIndividual rdf:about="http://www.boinq.org/ontologies/track#GRCh37">
+        <rdf:type rdf:resource="http://www.boinq.org/ontologies/track#ReferenceAssembly"/>
+    </NamedIndividual>
 </rdf:RDF>
 
 

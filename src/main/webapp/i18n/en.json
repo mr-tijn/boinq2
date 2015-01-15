@@ -77,8 +77,8 @@
         }
     },
     "main": {
-        "title": "Welcome, Java Hipster!",
-        "subtitle": "This is your homepage",
+        "title": "Welcome !",
+        "subtitle": "This is boinq",
         "logged": {
             "message": "You are logged in as user \"{{username}}\"."
         },
@@ -316,5 +316,5 @@
         "title": "Error page!",
         "403": "You are not authorized to access the page."
     },
-    "footer": "This is your footer"
+    "footer": "boinq 2014"
 }

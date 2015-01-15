@@ -40,7 +40,7 @@ public class RawDataFile implements Serializable {
     private int status;
 
     @ManyToOne
-    private Datasource datasource;
+    private Track track;
     
     public long getId() {
         return id;
@@ -66,12 +66,12 @@ public class RawDataFile implements Serializable {
 		this.status = status;
 	}
 
-    public Datasource getDatasource() {
-		return datasource;
+	public Track getTrack() {
+		return track;
 	}
 
-	public void setDatasource(Datasource datasource) {
-		this.datasource = datasource;
+	public void setTrack(Track track) {
+		this.track = track;
 	}
 
 	public boolean equals(Object o) {
@@ -101,7 +101,7 @@ public class RawDataFile implements Serializable {
         return "RawDataFile{" +
                 "id=" + id +
                 "status=" + status +
-                "datasource='" + (datasource==null?"":datasource.getName()) + "'" +
+                "trackId='" + (track==null?"":track.getId()) + "'" +
                 ", filePath='" + filePath + '\'' +
                 '}';
     }

@@ -29,8 +29,8 @@ public class Project implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 	
-    @ManyToMany(fetch = FetchType.EAGER,targetEntity=Datasource.class)
-    private Set<Datasource> datasources;
+    @ManyToMany(fetch = FetchType.EAGER,targetEntity=Track.class)
+    private Set<Track> tracks;
     
     @ManyToOne
     @JoinColumn(name = "owner_id")
@@ -48,12 +48,12 @@ public class Project implements Serializable {
         this.id = id;
     }
 
-    public Set<Datasource> getDatasources() {
-		return datasources;
+    public Set<Track> getTracks() {
+		return tracks;
 	}
 
-	public void setDatasources(Set<Datasource> datasources) {
-		this.datasources = datasources;
+	public void setTracks(Set<Track> tracks) {
+		this.tracks = tracks;
 	}
 
 	public User getOwner() {
@@ -97,17 +97,18 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-    	
-    	String dsList = "{";
-    	for (Datasource ds: datasources) {
-    		dsList += ds;
+       	String tracksString = "";
+    	for (Track track : tracks) {
+    		tracksString += track + ",";
     	}
-    	dsList += "}";
-    	
+    	if (tracksString.length() > 0) {
+    		tracksString = tracksString.substring(0,tracksString.length() - 1);
+    	}
+   	    	
         return "Project{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", datasources=" + dsList +
+                ", tracks= " + tracksString + "]" +
                 '}';
     }
 }

@@ -4,10 +4,12 @@ import com.codahale.metrics.annotation.Timed;
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.GraphDescriptor;
 import com.genohm.boinq.domain.RawDataFile;
+import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.User;
 import com.genohm.boinq.domain.jobs.TripleConversion;
 import com.genohm.boinq.repository.DatasourceRepository;
 import com.genohm.boinq.repository.RawDataFileRepository;
+import com.genohm.boinq.repository.TrackRepository;
 import com.genohm.boinq.repository.UserRepository;
 import com.genohm.boinq.security.AuthoritiesConstants;
 import com.genohm.boinq.service.AsynchronousJobService;
@@ -15,6 +17,7 @@ import com.genohm.boinq.service.FileManagerService;
 import com.genohm.boinq.service.LocalGraphService;
 import com.genohm.boinq.web.rest.dto.DatasourceDTO;
 import com.genohm.boinq.web.rest.dto.RawDataFileDTO;
+import com.genohm.boinq.web.rest.dto.TrackDTO;
 import com.mongodb.RawDBObject;
 
 import org.slf4j.Logger;
@@ -49,11 +52,8 @@ public class DatasourceResource {
     private UserRepository userRepository;
     
     @Inject
-    private AsynchronousJobService jobService;
-    
-    @Inject
-    private FileManagerService fileService;
-    
+    private TrackRepository	trackRepository;
+            
     @Inject
     private LocalGraphService localGraphService;
 
@@ -70,29 +70,27 @@ public class DatasourceResource {
         if (datasource == null) {
         	datasource = new Datasource();
         	datasource.setEndpointUrl(datasourceDTO.getEndpointUrl());
-        	datasource.setGraphName(datasourceDTO.getGraphName());
-        	datasource.setIsPublic(datasourceDTO.getIsPublic());
+        	datasource.setIsPublic(datasourceDTO.getIsPublic()!=null?datasourceDTO.getIsPublic():false);
         	datasource.setName(datasourceDTO.getName());
         	datasource.setType(datasourceDTO.getType());
+            datasource.setTracks(new HashSet<Track>());
             User currentUser = userRepository.findOne(principal.getName());
             datasource.setOwner(currentUser);
-            datasource.setRawDataFiles(new HashSet<RawDataFile>());
-       } else {
+        } else {
         	datasource.setEndpointUrl(datasourceDTO.getEndpointUrl());
-        	datasource.setGraphName(datasourceDTO.getGraphName());
-        	datasource.setIsPublic(datasourceDTO.getIsPublic());
+        	datasource.setIsPublic(datasourceDTO.getIsPublic()!=null?datasourceDTO.getIsPublic():false);
         	datasource.setName(datasourceDTO.getName());
         	datasource.setType(datasourceDTO.getType());
         }
-        Datasource saveddatasource = datasourceRepository.save(datasource);
         if (Datasource.TYPE_LOCAL_FALDO == datasource.getType()) {
-        	GraphDescriptor gd = localGraphService.createLocalGraph(saveddatasource.getId().toString());
-        	saveddatasource.setGraphName(gd.graphURI);
-        	saveddatasource.setEndpointUrl(gd.endpointURI);
-        	saveddatasource.setEndpointUpdateUrl(gd.endpointUpdateURI);
-        	saveddatasource.setMetaEndpointUrl(gd.metaEndpointURI);
-        	datasourceRepository.save(saveddatasource);
+        	// there is one single meta graph for all local faldo datasources
+        	// there is one read and one update endpoint
+        	// each track will create its own graph and put info in the meta graph
+        	datasource.setEndpointUrl(localGraphService.getSparqlEndpoint());
+        	datasource.setEndpointUpdateUrl(localGraphService.getUpdateEndpoint());
+        	datasource.setMetaEndpointUrl(localGraphService.getMetaEndpoint());
         }
+    	datasourceRepository.save(datasource);
     }
 
     /**
@@ -129,45 +127,6 @@ public class DatasourceResource {
     }
 
     
-    @RequestMapping(value="/rest/datasources/{id}/startconversion", method=RequestMethod.PUT)
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<String> startTripleConversion(Principal principal, @PathVariable Long id, @RequestBody Long data_id) {
-    	//TODO: allow accessing your own ds if not admin
-    	try {
-        	Datasource datasource = datasourceRepository.findOne(id);
-        		for (RawDataFile file : datasource.getRawDataFiles()) {
-        			if (data_id == null || file.getId() == data_id) {
-        				jobService.add(new TripleConversion(file));
-        			}
-        		}
-    	} catch (Exception e) {
-    		return new ResponseEntity<String>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-    	return new ResponseEntity<String>(HttpStatus.OK);
-    }
-    
-    @RequestMapping(value="/rest/datasources/{id}/rawdatafiles/{data_id}", method=RequestMethod.DELETE)
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<String> delete(Principal principal, @PathVariable Long id, @PathVariable Long data_id) {
-    	try {
-    		Datasource ds = datasourceRepository.findOne(id);
-    		RawDataFile toRemove = null;
-    		for (RawDataFile data: ds.getRawDataFiles()) {
-    			if (data_id == data.getId()) {
-    				toRemove = data;
-    				break;
-    			}
-    		}
-    		if (toRemove != null) {
-    			fileService.remove(toRemove);
-    			ds.getRawDataFiles().remove(toRemove);
-    			datasourceRepository.save(ds);
-    		}
-    	} catch (Exception e) {
-    		return new ResponseEntity<String>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-    	return new ResponseEntity<String>(HttpStatus.OK);
-    }
     
     /**
      * DELETE  /rest/datasources/:id -> delete the "id" datasource.

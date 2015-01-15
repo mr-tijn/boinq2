@@ -3,12 +3,15 @@ package com.genohm.boinq.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.Project;
+import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.User;
 import com.genohm.boinq.repository.DatasourceRepository;
 import com.genohm.boinq.repository.ProjectRepository;
+import com.genohm.boinq.repository.TrackRepository;
 import com.genohm.boinq.repository.UserRepository;
 import com.genohm.boinq.web.rest.dto.DatasourceDTO;
 import com.genohm.boinq.web.rest.dto.ProjectDTO;
+import com.genohm.boinq.web.rest.dto.TrackDTO;
 import com.mchange.v2.c3p0.DataSources;
 
 import org.slf4j.Logger;
@@ -42,6 +45,8 @@ public class ProjectResource {
     @Inject
     private DatasourceRepository datasourceRepository;
     @Inject
+    private TrackRepository trackRepository;
+    @Inject
     private UserRepository userRepository;
 
     /**
@@ -67,18 +72,18 @@ public class ProjectResource {
         if (owner == null) {
         	owner = userRepository.findOne(principal.getName());
         }
-        Set<Datasource> datasources = project.getDatasources();
-        if (datasources == null) {
-        	datasources = new HashSet<Datasource>();
-        	project.setDatasources(datasources);
+        Set<Track> tracks = project.getTracks();
+        if (tracks == null) {
+        	tracks = new HashSet<Track>();
+        	project.setTracks(tracks);
         }
-    	datasources.clear();
-        for (DatasourceDTO datasourceDTO : projectDTO.getDatasources()) {
-        	Datasource datasource = datasourceRepository.findOne(datasourceDTO.getId());
-        	if (datasource != null) {
-        		datasources.add(datasource);
-        	}
-        }
+    	tracks.clear();
+    	for (TrackDTO trackDTO: projectDTO.getTracks()) {
+    		Track track = trackRepository.findOne(trackDTO.getId());
+    		if (track != null) {
+    			tracks.add(track);
+    		}
+    	}
         project.setOwner(owner);
         project.setTitle(projectDTO.getTitle());
         project = projectRepository.save(project);

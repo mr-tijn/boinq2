@@ -12,6 +12,10 @@ boinqApp.constant('DatasourceConstants', {
 		'3' : 'Remote generic SPARQL'
 	},
 	
+});
+
+boinqApp.constant('TrackConstants', {
+
 	STATUS_EMPTY : 0,
 	STATUS_RAW_DATA : 1,
 	
@@ -20,7 +24,6 @@ boinqApp.constant('DatasourceConstants', {
   		'1': "Contains raw data"
 	}
 	
-
 });
 
 boinqApp.constant('DataFileConstants', {

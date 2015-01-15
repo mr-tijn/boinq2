@@ -32,8 +32,6 @@ public class Datasource implements Serializable {
 	public static final int TYPE_LOCAL_SPARQL = 2;
 	public static final int TYPE_REMOTE_SPARQL = 3;
 
-	public static final int STATUS_EMPTY = 0;
-	public static final int STATUS_RAW_DATA = 1;
 	
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
@@ -50,11 +48,7 @@ public class Datasource implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "meta_endpoint_url", nullable = true)
     private String metaEndpointUrl;
-    
-    @Size(min = 1, max = 200)
-    @Column(name = "graph_name", nullable = true)
-    private String graphName;
-    
+        
     @Size(min = 1, max = 200)
     @Column(name = "meta_graph_name", nullable = true)
     private String metaGraphName;
@@ -72,18 +66,16 @@ public class Datasource implements Serializable {
 
     @Column(name = "type")
     private int type;
-    
-    @Column(name="status")
-    private int status;
-    
+        
     @OneToMany(fetch=FetchType.EAGER, orphanRemoval=true)
-    private Set<RawDataFile> rawDataFiles;
+    private Set<Track> tracks;
     
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
+    	String pipo = "pipo";
         this.id = id;
     }
 
@@ -109,14 +101,6 @@ public class Datasource implements Serializable {
 
 	public void setMetaEndpointUrl(String metaEndpointUrl) {
 		this.metaEndpointUrl = metaEndpointUrl;
-	}
-
-	public String getGraphName() {
-		return graphName;
-	}
-
-	public void setGraphName(String graphName) {
-		this.graphName = graphName;
 	}
 
 	public String getMetaGraphName() {
@@ -159,21 +143,14 @@ public class Datasource implements Serializable {
 		this.type = type;
 	}
 
-    public int getStatus() {
-		return status;
+	public Set<Track> getTracks() {
+		return tracks;
 	}
 
-	public void setStatus(int status) {
-		this.status = status;
+	public void setTracks(Set<Track> tracks) {
+		this.tracks = tracks;
 	}
-
-	public Set<RawDataFile> getRawDataFiles() {
-		return rawDataFiles;
-	}
-
-	public void setRawDataFiles(Set<RawDataFile> rawDataFiles) {
-		this.rawDataFiles = rawDataFiles;
-	}
+	
 
 	@Override
     public boolean equals(Object o) {
@@ -200,24 +177,22 @@ public class Datasource implements Serializable {
 
     @Override
     public String toString() {
-    	String rawDataFilesString = "";
-    	for (RawDataFile rawDataFile : rawDataFiles) {
-    		rawDataFilesString += rawDataFile + ",";
+    	String tracksString = "";
+    	for (Track track : tracks) {
+    		tracksString += track + ",";
     	}
-    	if (rawDataFilesString.length() > 0) {
-    		rawDataFilesString = rawDataFilesString.substring(0,rawDataFilesString.length() - 1);
+    	if (tracksString.length() > 0) {
+    		tracksString = tracksString.substring(0,tracksString.length() - 1);
     	}
         return "Datasource{" +
                 "id=" + id +
                 ", endpointUrl='" + endpointUrl + '\'' +
                 ", endpointUpdateUrl='" + endpointUpdateUrl + '\'' +
                 ", metaEndpointUrl='" + metaEndpointUrl + '\'' +
-                ", graphName='" + graphName + "'" +
                 ", metaGraphName='" + metaGraphName + "'" +
                 ", public=" + isPublic +
                 ", type=" + type + 
-                ", status=" + status +
-                ", raw data files= [" +rawDataFilesString + "] " +
+                ", tracks= [" +tracksString + "] " +
                 '}';
     }
 }

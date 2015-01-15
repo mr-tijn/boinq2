@@ -111,11 +111,11 @@ describe('Controllers Tests ', function () {
             $scope.invalidate($scope.series);
 
             //THEN
-            expect(SessionsService.delete).toHaveBeenCalled();
-            expect(SessionsService.delete).toHaveBeenCalledWith({series: "123456789"}, jasmine.any(Function), jasmine.any(Function));
+            expect(SessionsService['delete']).toHaveBeenCalled();
+            expect(SessionsService['delete']).toHaveBeenCalledWith({series: "123456789"}, jasmine.any(Function), jasmine.any(Function));
 
             //SIMULATE SUCCESS CALLBACK CALL FROM SERVICE
-            SessionsService.delete.calls.mostRecent().args[1]();
+            SessionsService['delete'].calls.mostRecent().args[1]();
             expect($scope.error).toBeNull();
             expect($scope.success).toBe('OK');
         });

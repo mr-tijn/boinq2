@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.genohm.boinq.Application;
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.Project;
+import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.User;
 import com.genohm.boinq.repository.DatasourceRepository;
 import com.genohm.boinq.repository.ProjectRepository;
@@ -80,7 +81,10 @@ public class ProjectResourceTest {
     Datasource ds0;
     Datasource ds1;
     Datasource ds2;
-
+    Track t1;
+    Track t2;
+    Track t3;
+    
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -97,18 +101,35 @@ public class ProjectResourceTest {
         ds1.setName("Dataset 1");
         ds2.setOwner(user);
         ds2.setName("Dataset 2");
+        
+        
         ds0 = datasourceRepository.save(ds0);
         ds1 = datasourceRepository.save(ds1);
         ds2 = datasourceRepository.save(ds2);
 
+        t1 = new Track();
+        t2 = new Track();
+        t3 = new Track();
         
-        datasources.add(ds0);
-        datasources.add(ds1);
-        datasources.add(ds2);
-               
+        ds0.setTracks(new HashSet<Track>());
+        t1.setDatasource(ds0);
+        ds0.getTracks().add(t1);
+        
+        ds0.setTracks(new HashSet<Track>());
+        t2.setDatasource(ds0);
+        ds0.getTracks().add(t2);
+        
+        ds1.setTracks(new HashSet<Track>());
+        t3.setDatasource(ds1);
+        ds1.getTracks().add(t3);
+        
         project = new Project();
         project.setId(DEFAULT_ID);
-    	project.setDatasources(datasources);
+    	project.setTracks(new HashSet<Track>());
+    	project.getTracks().add(t1);
+    	project.getTracks().add(t2);
+    	project.getTracks().add(t3);
+    	
     	project.setOwner(user);
     	project.setTitle(DEFAULT_TITLE);
  
@@ -136,13 +157,13 @@ public class ProjectResourceTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(DEFAULT_ID.intValue()))
     			.andExpect(jsonPath("$.title").value(DEFAULT_TITLE.toString()))
-    			.andExpect(jsonPath("$.datasources", hasSize(3)))
+    			.andExpect(jsonPath("$.tracks", hasSize(3)))
     			.andExpect(jsonPath("$.ownerLogin").value(user.getLogin()));
     	//TODO: count elements in datasources and check contents
     	
     	// Update Project
     	project.setTitle(UPD_TITLE);
-    	project.getDatasources().remove(ds1);
+    	project.getTracks().remove(ds1);
   
     	restProjectMockMvc.perform(post("/app/rest/projects")
     			.contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -153,7 +174,7 @@ public class ProjectResourceTest {
     	restProjectMockMvc.perform(get("/app/rest/projects/{id}", DEFAULT_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-    			.andExpect(jsonPath("$.datasources", hasSize(2)));
+    			.andExpect(jsonPath("$.tracks", hasSize(2)));
 
     	// Delete Project
     	restProjectMockMvc.perform(delete("/app/rest/projects/{id}", DEFAULT_ID)

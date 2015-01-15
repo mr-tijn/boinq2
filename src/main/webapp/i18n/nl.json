@@ -77,10 +77,10 @@
         }
     },
     "main": {
-        "title": "Welcome, Java Hipster!",
-        "subtitle": "This is your homepage",
+        "title": "Welkom !",
+        "subtitle": "Dit is boinq",
         "logged": {
-            "message": "You are logged in as user \"{{username}}\"."
+            "message": "Je bent ingelogd als \"{{username}}\"."
         },
         "question": "If you have any question on JHipster:",
         "link": {
@@ -313,8 +313,8 @@
 
     },
     "errors": {
-        "title": "Error page!",
-        "403": "You are not authorized to access the page."
+        "title": "Oeps!",
+        "403": "Je hebt geen toegang tot deze pagina."
     },
-    "footer": "This is your footer"
+    "footer": "boinq 2014"
 }

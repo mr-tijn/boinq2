@@ -5,10 +5,11 @@ import java.util.Set;
 
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.Project;
+import com.genohm.boinq.domain.Track;
 
 public class ProjectDTO {
     private Long id;
-    private Set<DatasourceDTO> datasources;
+    private Set<TrackDTO> tracks;
     private String ownerLogin;
     private String title;
     
@@ -18,11 +19,11 @@ public class ProjectDTO {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Set<DatasourceDTO> getDatasources() {
-		return datasources;
+	public Set<TrackDTO> getTracks() {
+		return tracks;
 	}
-	public void setDatasourceIds(Set<DatasourceDTO> datasources) {
-		this.datasources = datasources;
+	public void setDatasourceIds(Set<TrackDTO> tracks) {
+		this.tracks = tracks;
 	}
 	public String getOwnerLogin() {
 		return ownerLogin;
@@ -39,22 +40,23 @@ public class ProjectDTO {
 	
 	public ProjectDTO() {}
 	
-	public ProjectDTO(Long id, Set<DatasourceDTO> datasources, String ownerLogin,
+	public ProjectDTO(Long id, Set<TrackDTO> tracks, String ownerLogin,
 			String title) {
 		super();
 		this.id = id;
-		this.datasources = datasources;
+		this.tracks = tracks;
 		this.ownerLogin = ownerLogin;
 		this.title = title;
 	}
     
 	public ProjectDTO(Project project) {
-		HashSet<DatasourceDTO> datasources = new HashSet<DatasourceDTO>();
-		for (Datasource datasource: project.getDatasources()) {
-			datasources.add(new DatasourceDTO(datasource));
+
+		HashSet<TrackDTO> tracks = new HashSet<TrackDTO>();
+		for (Track track: project.getTracks()) {
+			tracks.add(new TrackDTO(track));
 		}
 		this.id = project.getId();
-		this.datasources = datasources;
+		this.tracks = tracks;
 		this.ownerLogin = project.getOwner().getLogin();
 		this.title = project.getTitle();
 	}

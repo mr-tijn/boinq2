@@ -6,7 +6,7 @@ public class RawDataFileDTO {
     private long id;
     private String filePath;
     private int status;
-    private long datasource_id;
+    private long track_id;
     
 	public long getId() {
 		return id;
@@ -32,21 +32,21 @@ public class RawDataFileDTO {
 		this.status = status;
 	}
 
-	public long getDatasource_id() {
-		return datasource_id;
+	public long getTrack_id() {
+		return track_id;
 	}
 
-	public void setDatasource_id(long datasource_id) {
-		this.datasource_id = datasource_id;
+	public void setTrack_id(long track_id) {
+		this.track_id = track_id;
 	}
 
 	public RawDataFileDTO(long id, String filePath, int status,
-			Long datasource_id) {
+			Long track_id) {
 		super();
 		this.id = id;
 		this.filePath = filePath;
 		this.status = status;
-		this.datasource_id = datasource_id;
+		this.track_id = track_id;
 	}
     
 	public RawDataFileDTO() {}
@@ -56,13 +56,13 @@ public class RawDataFileDTO {
 		this.id = rawDataFile.getId();
 		this.filePath = rawDataFile.getFilePath();
 		this.status = rawDataFile.getStatus();
-		this.datasource_id = rawDataFile.getDatasource().getId();
+		this.track_id = rawDataFile.getTrack().getId();
 	}
 
 	@Override
 	public String toString() {
 		return "RawDataFileDTO [id=" + id + ", filePath=" + filePath
-				+ ", status=" + status + ", datasource_id=" + datasource_id
+				+ ", status=" + status + ", track_id=" + track_id
 				+ "]";
 	}
 	
