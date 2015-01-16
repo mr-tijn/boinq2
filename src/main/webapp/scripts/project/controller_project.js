@@ -1,12 +1,12 @@
 'use strict';
 
-boinqApp.controller('ProjectController', ['$scope', 'resolvedProject', 'Project', 'Datasource', 
-    function ($scope, resolvedProject, Project, Datasource) {
+boinqApp.controller('ProjectController', ['$scope', 'resolvedProject', 'Project', 'Track', 
+    function ($scope, resolvedProject, Project, Track) {
 
         $scope.projects = resolvedProject;
-        $scope.datasources = Datasource.query();
-        console.info($scope.datasources);
-        $scope.datasourceToAdd = {};
+        $scope.tracks = Track.queryAll();
+//        console.info($scope.tracks);
+        $scope.trackToAdd = {};
         
         $scope.create = function () {
             Project.save($scope.project,
@@ -22,42 +22,44 @@ boinqApp.controller('ProjectController', ['$scope', 'resolvedProject', 'Project'
             $('#saveProjectModal').modal('show');
         };
 
-        $scope.delete = function (id) {
-            Project.delete({id: id},
+        $scope['delete'] = function (id) {
+            Project['delete']({id: id},
                 function () {
                     $scope.projects = Project.query();
                 });
         };
 
         $scope.clear = function () {
-            $scope.project = {id: null, title: "Enter name", datasources: []};
+            $scope.project = {id: null, title: "Enter name", tracks: []};
         };
         
-        $scope.removeDatasourceFromProject = function(datasource, project) {
-        	var newDatasources = [];
-        	for (var idx in project.datasources) {
-        		var ds = project.datasources[idx];
-        		if (ds.id != datasource.id) newDatasources.push(ds);
+        $scope.removeTrackFromProject = function(track, project) {
+        	var newTracks = [];
+        	for (var idx in project.tracks) {
+        		var tr = project.tracks[idx];
+        		if (tr.id != track.id) newTracks.push(tr);
         	}
-        	project.datasources = newDatasources;
+        	project.tracks = newTracks;
         }
         
-        $scope.addDatasourceToProject = function(dsId,project) {
-        	var datasource = null;
-        	for (var idx in $scope.datasources) {
-        		var ds = $scope.datasources[idx];
-        		if (dsId == ds.id) datasource = ds;
+        $scope.addTrackToProject = function(trackId,project) {
+        	var track = null;
+        	for (var idx in $scope.tracks) {
+        		var tmp = $scope.tracks[idx];
+        		if (trackId == tmp.id) track = tmp;
         	}
-        	if (datasource == null) return;
-        	for (var idx in project.datasources) {
-        		var ds = project.datasources[idx];
-            	console.info('already in');
-            	console.info(ds.id);
-        		if (ds.id == dsId) return; 
+        	if (track == null) return;
+        	for (var idx in project.tracks) {
+        		var tmp = project.tracks[idx];
+        		if (tmp.id == trackId) {
+                	console.info('already in');
+                	console.info(tmp.id);
+        			return; 
+        		}
         	}
         	console.info('adding');
-        	console.info(datasource);
-        	project.datasources.push(datasource); //this is a string ???
+        	console.info(track);
+        	project.tracks.push(track); //this is a string ???
         	console.info('all');
         	console.info(project);
         }

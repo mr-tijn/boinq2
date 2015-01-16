@@ -4,6 +4,7 @@ boinqApp.factory('Track', ['$resource', function ($resource) {
 	console.info("Registering resource Track");
 	return $resource('app/rest/datasources/:ds_id/tracks/:id', {}, {
 		'query': { method: 'GET', isArray: true},
+		'queryAll' : { method: 'GET', url: 'app/rest/tracks/:id', isArray:true},
 		'get': { method: 'GET'}
 	});
 }]);

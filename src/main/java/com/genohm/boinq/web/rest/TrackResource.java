@@ -111,6 +111,28 @@ public class TrackResource {
         return new ResponseEntity<List<TrackDTO>>(tracks, HttpStatus.OK);
     }
 
+    
+    @RequestMapping(value = "/rest/tracks",
+            method = RequestMethod.GET,
+            produces = "application/json")
+    @Timed
+    public ResponseEntity<List<TrackDTO>> getAll(Principal principal, HttpServletResponse response) {
+        log.debug("REST request to get all Tracks");
+        List<TrackDTO> tracks = null;
+    	try {
+            tracks = new LinkedList<TrackDTO>();
+    		for (Track track: trackRepository.findAll()) {
+    			if (track.getDatasource().getIsPublic() || track.getDatasource().getOwner().getLogin().equals(principal.getName())) {
+    				tracks.add(new TrackDTO(track));
+    			}
+            }
+    	} catch (Exception e) {
+    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
+        return new ResponseEntity<List<TrackDTO>>(tracks, HttpStatus.OK);
+    }
+
+    
     /**
      * GET  /rest/tracks/:id -> get the "id" track.
      */
@@ -118,7 +140,7 @@ public class TrackResource {
             method = RequestMethod.GET,
             produces = "application/json")
     @Timed
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
+//    @RolesAllowed(AuthoritiesConstants.ADMIN)
     public ResponseEntity<TrackDTO> getDirect(Principal principal, @PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to get Track : {}", id);
         try {

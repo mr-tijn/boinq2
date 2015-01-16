@@ -32,9 +32,9 @@
                         </div>
 
 						<div class="form-group">
-							<label>Datasources</label>
+							<label>Tracks</label>
 							<table class="table table-striped"
-								ng-show="project.datasources != null && project.datasources.length > 0">
+								ng-show="project.tracks != null && project.tracks.length > 0">
 								<thead>
 									<tr>
 										<th>ID</th>
@@ -43,12 +43,12 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="datasource in project.datasources">
-										<td>{{datasource.id}}</td>
-										<td>{{datasource.name}}</td>
+									<tr ng-repeat="track in project.tracks">
+										<td>{{track.id}}</td>
+										<td>{{track.name}}</td>
 										<td>
 											<div
-												ng-click="removeDatasourceFromProject(datasource, project)"
+												ng-click="removeTrackFromProject(track, project)"
 												class="btn btn-danger btn-xs">
 												<span class="glyphicon glyphicon-remove-circle"></span>
 												Delete
@@ -59,16 +59,19 @@
 								</tbody>
 							</table>
 							<div class="input-group">
-								<select name="addDatasource" ng-model="datasourceToAdd"
+								<select name="addTrack" ng-model="trackToAdd"
 									class="form-control">
-									<option ng-repeat="datasource in datasources"
-										value="{{datasource.id}}">{{datasource.name}}</option>
+									<option ng-repeat="track in tracks"
+										value="{{track.id}}">{{track.name}}</option>
 								</select>
-								<div class="input-group-addon"
-									ng-click="addDatasourceToProject(datasourceToAdd,project)">
+								<span class="input-group-btn">
+        							<button class="btn btn-default" type="button" ng-click="addTrackToProject(trackToAdd,project)"><span class="glyphicon glyphicon-flash"></span>Add</button>
+      							</span>
+<!-- 								<div class="input-group-addon"
+									ng-click="addTrackToProject(trackToAdd,project)">
 									<span class="glyphicon glyphicon-flash"></span>Add
 								</div>
-							</div>
+ -->							</div>
 						</div>
 					</div>
                     <div class="modal-footer">
@@ -90,7 +93,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Title</th>
-                    <th>Datasources</th>
+                    <th>Tracks</th>
                     <th></th>
                 </tr>
             </thead>
@@ -107,9 +110,9 @@
                     			</tr>
                     		</thead>
                     		<tbody>
-                    			<tr ng-repeat="datasource in project.datasources">
-                    				<td>{{datasource.id}}</td>
-                    				<td>{{datasource.name}}</td>
+                    			<tr ng-repeat="track in project.tracks">
+                    				<td>{{track.id}}</td>
+                    				<td>{{track.name}}</td>
                     			</tr>
                     		</tbody>
                     	</table>
