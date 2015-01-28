@@ -40,7 +40,7 @@ public class ProxyConfiguration implements EnvironmentAware {
 		ServletRegistrationBean registration = new ServletRegistrationBean(proxyServlet(), "/fuseki/*");
         Map<String,String> params = new HashMap<String,String>();
         params.put("proxyHost", "localhost");
-        params.put("proxyPort", propertyResolver.getProperty(FusekiConfiguration.PROP_PORT, FusekiConfiguration.PROP_PORT_DEFAULT));
+        params.put("proxyPort", propertyResolver.getProperty(FusekiConfiguration.PROP_PORT));
         //FIXME: if more inputs to be handled, either read them from localdata.ttl
         //       or proxy to root and give service in client
         params.put("proxyPath", "/META_DYNAMIC/");

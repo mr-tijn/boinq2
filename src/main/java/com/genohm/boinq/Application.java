@@ -2,6 +2,7 @@ package com.genohm.boinq;
 
 import com.genohm.boinq.config.Constants;
 
+import org.apache.catalina.core.ApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -9,6 +10,7 @@ import org.springframework.boot.actuate.autoconfigure.MetricFilterAutoConfigurat
 import org.springframework.boot.actuate.autoconfigure.MetricRepositoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.MongoRepositoriesAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
@@ -23,7 +25,7 @@ import java.util.Arrays;
 @EnableAutoConfiguration(exclude = {MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class, MongoRepositoriesAutoConfiguration.class})
 public class Application {
 
-    private final Logger log = LoggerFactory.getLogger(Application.class);
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     @Inject
     private Environment env;
@@ -62,7 +64,12 @@ public class Application {
         // Fallback to set the list of liquibase package list
         addLiquibaseScanPackages();
 
-        app.run(args);
+        ConfigurableApplicationContext ctx = app.run(args);
+        // print some config
+        String[] beanNames = ctx.getBeanDefinitionNames();
+        for (String beanName: beanNames) {
+        	log.info(beanName);
+        }
     }
 
     /**

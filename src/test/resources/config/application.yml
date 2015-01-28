@@ -48,9 +48,15 @@ spring:
     fuseki:
         port: 8899
         configfile: fuseki/localdata.ttl
+        jettyconfigfile: fuseki/jetty-fuseki.xml
 
     tripleupload:
-        endpoint: http://localhost:8899/upload
+        endpoint: 
+            update: http://localhost:8899/META_DYNAMIC/update
+            sparql: http://localhost:8888/fuseki/sparql
+            meta: http://localhost:8899/META_DYNAMIC/update
+        graphbase: http://www.boinq.org/data/graph/
+        metagraph: http://www.boinq.org/data/meta/
 
 metrics:
     jmx.enabled: false

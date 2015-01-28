@@ -4,5 +4,8 @@
         <addColumn catalogName="" schemaName="public" tableName="T_TRACK">
             <column name="name" type="varchar(255)"/>
         </addColumn>
+        <addColumn catalogName="" schemaName="public" tableName="T_TRACK">
+            <column name="type" type="varchar(255)"/>
+        </addColumn>
     </changeSet>
  </databaseChangeLog>

@@ -16,14 +16,19 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.shared.PrefixMapping;
 import com.hp.hpl.jena.shared.impl.PrefixMappingImpl;
+import com.hp.hpl.jena.sparql.core.TriplePath;
 import com.hp.hpl.jena.sparql.expr.E_Bound;
 import com.hp.hpl.jena.sparql.expr.E_LogicalNot;
+import com.hp.hpl.jena.sparql.expr.E_Regex;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.modify.request.QuadDataAcc;
 import com.hp.hpl.jena.sparql.modify.request.UpdateDataInsert;
+import com.hp.hpl.jena.sparql.path.P_Link;
+import com.hp.hpl.jena.sparql.path.P_ZeroOrMoreN;
 import com.hp.hpl.jena.sparql.syntax.ElementFilter;
 import com.hp.hpl.jena.sparql.syntax.ElementGroup;
 import com.hp.hpl.jena.sparql.syntax.ElementOptional;
+import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
 import com.hp.hpl.jena.sparql.syntax.ElementTriplesBlock;
 import com.hp.hpl.jena.sparql.util.NodeFactoryExtra;
 import com.hp.hpl.jena.update.UpdateRequest;
@@ -88,6 +93,34 @@ public class QueryBuilderService {
 		ElementGroup group = new ElementGroup();
 		group.addElement(triples);
 		query.setQueryPattern(group);
+		return query.toString(Syntax.syntaxSPARQL_11);
+	}
+	
+	public String getFilteredTree(String match) {
+		Query query = new Query();
+		query.setQuerySelectType();
+		query.setPrefixMapping(commonPrefixes);
+		Node matchingTerm = NodeFactory.createVariable("matchingterm");
+		Node parent = NodeFactory.createVariable("parent");
+		Node label = NodeFactory.createVariable("label");
+		Node term = NodeFactory.createVariable("term");
+		ElementTriplesBlock optionalTriples = new ElementTriplesBlock();
+		optionalTriples.addTriple(new Triple(term, RDFS.subClassOf.asNode(), parent));
+		ElementOptional optional = new ElementOptional(optionalTriples);
+		ElementPathBlock pathTriples = new ElementPathBlock();
+		TriplePath allParents = new TriplePath(matchingTerm, new P_ZeroOrMoreN(new P_Link(RDFS.subClassOf.asNode())), term);
+		pathTriples.addTriplePath(allParents);
+		pathTriples.addTriple(new Triple(matchingTerm, RDFS.label.asNode(), label));
+		ElementFilter filter= new ElementFilter(new E_Regex(new ExprVar(label),match,"i"));
+		ElementGroup group = new ElementGroup();
+		group.addElement(pathTriples);
+		group.addElement(optional);
+		group.addElement(filter);
+		query.addResultVar(parent);
+		query.addResultVar(term);
+		query.setDistinct(true);
+		query.setQueryPattern(group);
+		//TODO: matchingterm not interesting; add termlabel to term and retrieve
 		return query.toString(Syntax.syntaxSPARQL_11);
 	}
 	

@@ -14,11 +14,8 @@ public class FusekiConfiguration implements EnvironmentAware {
 
     public static final String ENV_SPRING_FUSEKI = "spring.fuseki.";
 	public static final String PROP_PORT = "port";
-	public static final String PROP_PORT_DEFAULT = "3456";
 	public static final String PROP_CONFIGFILE = "configfile";
-	public static final String PROP_CONFIGFILE_DEFAULT = "localdata.ttl";
 	public static final String PROP_JETTYCONFIGFILE = "jettyconfigfile";
-	public static final String PROP_JETTYCONFIGFILE_DEFAULT = "jetty.xml";
     
 	protected Environment environment;
     protected RelaxedPropertyResolver propertyResolver;
@@ -32,9 +29,9 @@ public class FusekiConfiguration implements EnvironmentAware {
 	
 	@Bean
 	public SPARQLServer sparqlServer() {
-		ServerConfig serverConfig = FusekiConfig.configure(propertyResolver.getProperty(PROP_CONFIGFILE, PROP_CONFIGFILE_DEFAULT));
-		serverConfig.port = Integer.parseInt(propertyResolver.getProperty(PROP_PORT, PROP_PORT_DEFAULT));
-		serverConfig.jettyConfigFile = propertyResolver.getProperty(PROP_JETTYCONFIGFILE, PROP_JETTYCONFIGFILE_DEFAULT);
+		ServerConfig serverConfig = FusekiConfig.configure(propertyResolver.getProperty(PROP_CONFIGFILE));
+		serverConfig.port = Integer.parseInt(propertyResolver.getProperty(PROP_PORT));
+		serverConfig.jettyConfigFile = propertyResolver.getProperty(PROP_JETTYCONFIGFILE);
 		return new SPARQLServer(serverConfig);
 	}
 	

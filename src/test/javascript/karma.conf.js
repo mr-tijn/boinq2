@@ -20,6 +20,7 @@ module.exports = function (config) {
             'src/main/webapp/bower_components/angular-cookies/angular-cookies.js',
             'src/main/webapp/bower_components/angular-sanitize/angular-sanitize.js',
             'src/main/webapp/bower_components/angular-translate/angular-translate.js',
+            'src/main/webapp/bower_components/angular-file-upload/angular-file-upload.js',
             'src/main/webapp/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js',
             'src/main/webapp/bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
             'src/main/webapp/bower_components/angular-dynamic-locale/src/tmhDinamicLocale.js',

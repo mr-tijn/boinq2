@@ -71,6 +71,15 @@ boinqApp.controller('TrackController', ['$scope', 'Track', 'Datasource', 'TrackD
         	TrackConversion.start({ds_id:$scope.datasource.id, id:ds_id}, rawdatafile_id);
         };
         
+        $scope.pickTerm = function() {
+        	$('#selectTermModal').modal('show');
+        };
+        $scope.termPicked = function(term) {
+        	console.info(term);
+        	$scope.track.type = term.uri.value;
+        	$('#selectTermModal').modal('hide');
+        };
+        
         // file uploader stuff
         
         var uploader = $scope.uploader = new FileUploader({
