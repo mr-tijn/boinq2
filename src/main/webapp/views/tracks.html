@@ -74,9 +74,17 @@
         			<h4 class="modal-title">Select term</h4>
       			</div>
       			<div class="modal-body">
+      			
+  						<div class="form-group">
+							<label>Search labels</label> <input type="text" class="form-control"
+								name="name" ng-model="searchFilter" ng-minlength=1
+								ng-maxlength=50 required >
+						</div>
+      					
       					<term-tree-picker select-handler="termPicked" 
 							source-endpoint="http://localhost:8899/STATIC/sparql"
-							source-graph="http://purl.obolibrary.org/obo/so.owl"> 
+							source-graph="http://purl.obolibrary.org/obo/so.owl"
+							search-filter="searchFilter" > 
 						</term-tree-picker>
       			</div>
       			<div class="modal-footer">

@@ -54,6 +54,19 @@ public class QueryBuilderResource {
     	}
     }
     
+    @RequestMapping(value = "/rest/querybuilder/filteredTreeQuery",
+    		method = RequestMethod.GET,
+    		produces = "application/json")
+    public ResponseEntity<String> getFilteredTreeQuery(@RequestParam String filter) {
+    	try {
+    		String result = queryBuilderService.getFilteredTree(filter);
+    		return new ResponseEntity<String>(result, HttpStatus.OK);
+    	} catch (Exception e) {
+    		log.error("Could not get filteredTree Query",e);
+    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
+    }
+
     @RequestMapping(value = "/rest/querybuilder/insertQuery",
     		method = RequestMethod.GET,
     		produces = "application/json")

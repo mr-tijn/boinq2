@@ -66,7 +66,9 @@ boinqApp.directive('termTreePicker', function() {
 			sourceEndpoint: "@",
 			selectHandler : "=",
 			rootNodesQuery : "@",
-			searchFilter : "="
+			searchFilter : "=",
+			update: "=getFilteredTree"
 		}
 	};
 });
+

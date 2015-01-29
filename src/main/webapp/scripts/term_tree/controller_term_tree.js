@@ -6,6 +6,13 @@ boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','
 	$scope.$watch('sourceEndpoint', function() {
 	      $scope.getRootTerms();
 	 });
+	
+	$scope.$watch('searchFilter', function(value) {
+		console.info(value);
+		if (value.length > 3) {
+			$scope.getFilteredTree(value);
+		}
+	});
 
 	var processError = function(errorResponse) {
 		$scope.sparqlError = true;
@@ -34,12 +41,12 @@ boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','
 	};
 	
 	$scope.getFilteredTree = function(filter) {
-		QueryBuilderService.filteredTreeQuery({filter: filter}).then(function(query) {
+		QueryBuilderService.filteredTreeQuery(filter).then(function(query) {
 			console.log("Fetching matching tree");
 			callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
 					function (successResponse) {
 						$scope.terms = successResponse.data.results.bindings;
-						$scope.rootTerms = makeTree($scope.terms);
+						$scope.rootTerms = $scope.makeTree($scope.terms);
 					});
 		});
 	};
@@ -47,21 +54,23 @@ boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','
 	$scope.makeTree = function(terms) {
 		// find rootTerms
 		$scope.rootTerms = [];
-		for (term in terms) {
-			if (term.parent == null) {
-				$scope.fillChildren(term, terms);
-				$scope.rootTerms.push(term);
+		for (var idx in terms) {
+			if (terms[idx].parenturi == null) {
+				$scope.rootTerms.push($scope.fillChildren(terms[idx], terms));
 			}
 		}
+		return $scope.rootTerms;
 		console.info($scope.rootTerms);
 	};
 	
 	$scope.fillChildren = function(parent, terms) {
-		for (term in terms) {
-			if (term.parent != null && term.parent.value == parent.value) {
-				parent.subTerms.add($scope.fillChildren(term, terms));
+		parent.subTerms = [];
+		for (var idx in terms) {
+			if (terms[idx].parenturi != null && terms[idx].parenturi.value == parent.uri.value) {
+				parent.subTerms.push($scope.fillChildren(terms[idx], terms));
 			}
 		}
+		return parent;
 	};
 	
 	$scope.getChildTerms = function(parentTerm) {

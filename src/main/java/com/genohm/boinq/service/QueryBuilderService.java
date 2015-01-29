@@ -101,26 +101,28 @@ public class QueryBuilderService {
 		query.setQuerySelectType();
 		query.setPrefixMapping(commonPrefixes);
 		Node matchingTerm = NodeFactory.createVariable("matchingterm");
-		Node parent = NodeFactory.createVariable("parent");
+		Node matchingLabel = NodeFactory.createVariable("matchinglabel");
+		Node parenturi = NodeFactory.createVariable("parenturi");
+		Node uri = NodeFactory.createVariable("uri");
 		Node label = NodeFactory.createVariable("label");
-		Node term = NodeFactory.createVariable("term");
 		ElementTriplesBlock optionalTriples = new ElementTriplesBlock();
-		optionalTriples.addTriple(new Triple(term, RDFS.subClassOf.asNode(), parent));
+		optionalTriples.addTriple(new Triple(uri, RDFS.subClassOf.asNode(), parenturi));
 		ElementOptional optional = new ElementOptional(optionalTriples);
 		ElementPathBlock pathTriples = new ElementPathBlock();
-		TriplePath allParents = new TriplePath(matchingTerm, new P_ZeroOrMoreN(new P_Link(RDFS.subClassOf.asNode())), term);
-		pathTriples.addTriplePath(allParents);
-		pathTriples.addTriple(new Triple(matchingTerm, RDFS.label.asNode(), label));
-		ElementFilter filter= new ElementFilter(new E_Regex(new ExprVar(label),match,"i"));
+		pathTriples.addTriplePath(new TriplePath(matchingTerm, new P_ZeroOrMoreN(new P_Link(RDFS.subClassOf.asNode())), uri));
+		pathTriples.addTriple(new Triple(matchingTerm, RDFS.label.asNode(), matchingLabel));
+		pathTriples.addTriple(new Triple(uri, RDFS.label.asNode(), label));
+		ElementFilter filter= new ElementFilter(new E_Regex(new ExprVar(matchingLabel),match,"i"));
 		ElementGroup group = new ElementGroup();
 		group.addElement(pathTriples);
 		group.addElement(optional);
 		group.addElement(filter);
-		query.addResultVar(parent);
-		query.addResultVar(term);
+		query.addResultVar(parenturi);
+		query.addResultVar(uri);
+		query.addResultVar(label);
 		query.setDistinct(true);
 		query.setQueryPattern(group);
-		//TODO: matchingterm not interesting; add termlabel to term and retrieve
+		query.setLimit(1000);
 		return query.toString(Syntax.syntaxSPARQL_11);
 	}
 	
