@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.apache.commons.io.FilenameUtils;
+import org.quartz.JobKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ import com.hp.hpl.jena.graph.Triple;
 
 public class TripleConversion implements AsynchronousJob {
 
+	private Boolean interrupted = false;
 	private DatasourceRepository datasourceRepository;
 	private TripleUploadService tripleUploadService;
 	private int status = JOB_STATUS_UNKNOWN;
@@ -109,9 +111,10 @@ public class TripleConversion implements AsynchronousJob {
 			Iterator<Triple> tripleIterator = getTripleIteratorByExtension(inputFile);
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
 			inputData.setStatus(RawDataFile.STATUS_LOADING);
-			while (tripleIterator.hasNext()) {
+			while (!interrupted && tripleIterator.hasNext()) {
 				uploader.put(tripleIterator.next());
 			}
+			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
 		} catch (Exception e) {
 			setStatus(JOB_STATUS_ERROR);
@@ -131,4 +134,11 @@ public class TripleConversion implements AsynchronousJob {
 		}
 		throw new Exception("No triple iterator available for extension " + extension);
 	}
+
+	@Override
+	public void kill() {
+		this.interrupted = false;
+	}
+	
+	
 }

@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -55,11 +56,16 @@ public class AsynchronousJobService {
 		mainScheduler.scheduleJob(runJob,runTrigger);
 	}
 	
+	public void kill(String jobName) throws SchedulerException {
+		mainScheduler.interrupt(new JobKey(jobName));
+	}
+	
 	public List<AsynchronousJob> listJobs() throws SchedulerException {
 		List<AsynchronousJob> jobs = new LinkedList<AsynchronousJob>(); 
 		List<JobExecutionContext> contexts = mainScheduler.getCurrentlyExecutingJobs();
 		for (JobExecutionContext context: contexts) {
 			AsynchronousJob job = (AsynchronousJob) context.getJobDetail().getJobDataMap().get(JobRunner.IDENTIFIER_JOB);
+			
 			jobs.add(job);
 		}
 		return jobs;

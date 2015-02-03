@@ -25,5 +25,6 @@ public interface AsynchronousJob {
 	int getStatus();
 	String getDescription();
 	void execute();
+	void kill();
 	
 }

@@ -21,6 +21,7 @@
             "admin": "Administration",
             "management": {
             	"title" : "Management",
+            	"jobs" : "Running jobs",
             	"datasets" : "Datasources" ,
             	"projects" : "Projects" ,
             	"fusekiserver" : "Fuseki server",

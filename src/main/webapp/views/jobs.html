@@ -1,0 +1,33 @@
+<div>
+
+	<h2>Jobs</h2>
+
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Status</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="job in jobs">
+					<td>{{job.name}}</td>
+					<td>{{job.description}}</td>
+					<td>{{job.status | jobstatusfilter}}</td>
+					<td>
+						<button type="submit" ng-click="cancel(job.name)"
+							ng-disabled='cancancel(job)' class="btn btn-danger">
+							<span class="glyphicon glyphicon-remove-circle"></span> Cancel
+						</button>
+
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+		
+</div>

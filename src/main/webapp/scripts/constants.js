@@ -50,3 +50,22 @@ boinqApp.constant('SPARQLConstants',{
 	                        "  OPTIONAL{?uri rdfs:subClassOf ?super}",
 	                        "  FILTER(!bound(?super))","}"].join('\n')
 });
+
+boinqApp.constant('JobConstants',{
+	
+	STATUS_PENDING : 0,
+	STATUS_COMPUTING : 1,
+	STATUS_SUCCESS : 2,
+	STATUS_ERROR : 3,
+	STATUS_UNKNOWN : 4,
+	
+	STATUS_ITEMS : {
+		'0' : "Pending",
+		'1' : "Computing",
+		'2' : "Succesful",
+		'3' : "Error",
+		'4' : "Unknown"
+	}
+
+	
+});
