@@ -26,11 +26,11 @@ public class SPARQLClientService {
 
 	private static final Logger log = Logger.getLogger(SPARQLClientService.class);
 	
-	public SPARQLResultSet query(String serviceURL, Query query) throws Exception {
-		return query(serviceURL, query.toString(Syntax.syntaxSPARQL));
+	public SPARQLResultSet query(String serviceURL, String graphURL, Query query) throws Exception {
+		return query(serviceURL, graphURL, query.toString(Syntax.syntaxSPARQL));
 	}
 	
-	public RawSPARQLResultSet rawQuery(String serviceURL, String queryString, Boolean subClassReasoning, Boolean subPropertyReasoning) throws Exception {
+	public RawSPARQLResultSet rawQuery(String serviceURL, String graphURL, String queryString, Boolean subClassReasoning, Boolean subPropertyReasoning) throws Exception {
 		QueryExecution qe = null;
 		List<Map<String, RDFNode>> resultList = null;
 		List<String> varList = null;
@@ -45,6 +45,9 @@ public class SPARQLClientService {
 			qe = new QueryEngineHTTP(serviceURL, queryString);
 			if (rules.length() > 0) {
 				((QueryEngineHTTP) qe).addParam("rules", rules);
+			}
+			if (graphURL != null) {
+				((QueryEngineHTTP) qe).addDefaultGraph(graphURL);
 			}
 			ResultSet rs = qe.execSelect();
 			resultList = new LinkedList<Map<String,RDFNode>>();
@@ -72,8 +75,8 @@ public class SPARQLClientService {
 		return srs;		
 	}
 	
-	public SPARQLResultSet query(String serviceURL, String queryString, Boolean subClassReasoning, Boolean subPropertyReasoning) throws Exception {
-		RawSPARQLResultSet rrs = rawQuery(serviceURL, queryString, subClassReasoning, subPropertyReasoning);
+	public SPARQLResultSet query(String serviceURL, String graphURL, String queryString, Boolean subClassReasoning, Boolean subPropertyReasoning) throws Exception {
+		RawSPARQLResultSet rrs = rawQuery(serviceURL, graphURL, queryString, subClassReasoning, subPropertyReasoning);
 		List<String> varList = rrs.getVariableNames();
 		List<Map<String, String>> resultList = new LinkedList<Map<String,String>>();
 		SPARQLResultSet rs = new SPARQLResultSet();
@@ -92,44 +95,16 @@ public class SPARQLClientService {
 		return rs;
 	}
 	
-	public RawSPARQLResultSet rawQuery(String serviceURL, Query query) throws Exception {
-		return rawQuery(serviceURL, query.toString(Syntax.syntaxSPARQL), false, false);
+	public RawSPARQLResultSet rawQuery(String serviceURL, String graphURL, Query query) throws Exception {
+		return rawQuery(serviceURL, graphURL, query.toString(Syntax.syntaxSPARQL), false, false);
 	}
 
-	public RawSPARQLResultSet rawQuery(String serviceURL, String query) throws Exception {
-		return rawQuery(serviceURL, query, false, false);
+	public RawSPARQLResultSet rawQuery(String serviceURL, String graphURL, String query) throws Exception {
+		return rawQuery(serviceURL, graphURL, query, false, false);
 	}
 	
-	public SPARQLResultSet query(String serviceURL, String query) throws Exception {
-		return query(serviceURL, query, false, false);
+	public SPARQLResultSet query(String serviceURL, String graphURL, String query) throws Exception {
+		return query(serviceURL, graphURL, query, false, false);
 	}
-	
-	public List<Map<String,RDFNode>> queryForListOfNodeMaps(String serviceURL, String query) throws Exception {
-		QueryExecution qe = null;
-		List<Map<String, RDFNode>> resultList = null;
-		try {
-			qe = QueryExecutionFactory.sparqlService(serviceURL, query);
-			ResultSet rs = qe.execSelect();
-			resultList = new LinkedList<Map<String,RDFNode>>();
-			List<String> varList = rs.getResultVars();
-			while (rs.hasNext()) {
-				Map<String,RDFNode> result = new HashMap<String, RDFNode>();
-				QuerySolution qs = rs.nextSolution();
-				for (String var: varList) {
-					if (qs.get(var) != null) result.put(var, qs.get(var));
-				}
-				resultList.add(result);
-			}
-		} catch (Exception e) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			e.printStackTrace(new PrintStream(baos));
-			String error = "Could not perform query "+query+"\n"+e.getMessage()+"\n"+baos.toString();
-			log.error(error);
-			throw new Exception((Throwable) e); //recast to general type to ensure serialization
-		} finally {
-			if (qe != null) qe.close();
-		}
-		return resultList;		
-	}	
 	
 }

@@ -43,7 +43,7 @@ public class ProxyConfiguration implements EnvironmentAware {
         params.put("proxyPort", propertyResolver.getProperty(FusekiConfiguration.PROP_PORT));
         //FIXME: if more inputs to be handled, either read them from localdata.ttl
         //       or proxy to root and give service in client
-        params.put("proxyPath", "/META_DYNAMIC/");
+        params.put("proxyPath", "/DYNAMIC/");
         params.put("sourcePath", "/fuseki/");
         registration.setInitParameters(params);
         return registration;

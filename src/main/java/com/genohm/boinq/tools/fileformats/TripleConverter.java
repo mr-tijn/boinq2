@@ -3,13 +3,16 @@ package com.genohm.boinq.tools.fileformats;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import com.genohm.boinq.domain.faldo.FaldoFeature;
 import com.genohm.boinq.tools.vocabularies.FaldoVocabulary;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 import edu.unc.genomics.BedEntry;
 import edu.unc.genomics.GFFEntry;
@@ -207,6 +210,37 @@ public class TripleConverter {
 		}
 
 		return result;
+	}	
+	
+	public static List<Triple> convert(FaldoFeature faldoFeature) {
+		List<Triple> result = new LinkedList<Triple>();
+		// feature is the subject of all following triples except the FALDO exact position triples
+		String featureName = FEATUREBASEURI + faldoFeature.id;
+		Node feature = NodeFactory.createURI(featureName);
+
+		Node ref = NodeFactory.createURI(faldoFeature.assembly);
+
+		Node featureBegin = NodeFactory.createURI(FEATUREBEGINURI + faldoFeature.id);
+		Node featureEnd = NodeFactory.createURI(FEATUREENDURI + faldoFeature.id);
+		result.add(new Triple(feature, RDFS.label.asNode(), NodeFactory.createLiteral(faldoFeature.id)));
+		result.add(new Triple(feature, FaldoVocabulary.begin, featureBegin));
+		result.add(new Triple(feature, FaldoVocabulary.end, featureEnd));
+		result.add(new Triple(featureBegin, FaldoVocabulary.position,NodeFactory.createLiteral(faldoFeature.start.toString(),new XSDDatatype("int"))));
+		result.add(new Triple(featureBegin, FaldoVocabulary.reference, ref));
+		result.add(new Triple(featureEnd, FaldoVocabulary.position,NodeFactory.createLiteral(faldoFeature.end.toString(),new XSDDatatype("int"))));
+		result.add(new Triple(featureEnd, FaldoVocabulary.reference, ref));
+
+
+		if (faldoFeature.strand) {
+			result.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocabulary.ForwardStrandPosition));			
+			result.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocabulary.ForwardStrandPosition));			
+		} else {
+			result.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocabulary.ReverseStrandPosition));
+			result.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocabulary.ReverseStrandPosition));
+
+		}
+		return result;
+
 	}
 }
 

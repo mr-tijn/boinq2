@@ -59,7 +59,7 @@ public class DatasourceQueries {
 		query.addGraphURI(datasource.getMetaGraphName());
 		log.debug("Querying for tracks. Query: \n"+query.toString(Syntax.syntaxSPARQL));
 		try {
-			SPARQLResultSet sparqlResult = sparqlClient.query(datasource.getMetaEndpointUrl(), query);
+			SPARQLResultSet sparqlResult = sparqlClient.query(datasource.getMetaEndpointUrl(), datasource.getMetaGraphName(), query);
 			Set<String> result = new HashSet<String>();
 			for (Map<String,String> match: sparqlResult.getRecords()) {
 				if (match.get(trackString) != null) {
@@ -95,7 +95,7 @@ public class DatasourceQueries {
 		
 		log.debug("Querying for fields. Query: \n"+query.toString(Syntax.syntaxSPARQL));
 		try {
-			SPARQLResultSet sparqlResult = sparqlClient.query(datasource.getMetaEndpointUrl(), query);
+			SPARQLResultSet sparqlResult = sparqlClient.query(datasource.getMetaEndpointUrl(), datasource.getMetaGraphName(), query);
 			Set<String> result = new HashSet<String>();
 			for (Map<String,String> match: sparqlResult.getRecords()) {
 				if (match.get("operation") != null) {

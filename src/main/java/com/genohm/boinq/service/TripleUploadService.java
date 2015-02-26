@@ -32,19 +32,23 @@ public class TripleUploadService {
 		this.defaultSparqlEndpointUri = env.getProperty("spring.tripleupload.endpoint.update");
 	}
 		
-	public TripleUploader getUploader(Track track, PrefixMapping prefixes) {
-		return new TripleUploader(track, prefixes);
+	public TripleUploader getUploader(String endpoint, String graph, PrefixMapping prefixes) {
+		return new TripleUploader(endpoint, graph, prefixes);
 	}
-
+	
+	public TripleUploader getUploader(Track track, PrefixMapping prefixes) {
+		return new TripleUploader(track.getDatasource().getEndpointUpdateUrl(), track.getGraphName(), prefixes);
+	}
+	
 	public class TripleUploader {
 		private String sparqlEndpointUri;
 		private PrefixMapping prefixes;
 		private Node graphNode;
 		
-		public TripleUploader(Track track, PrefixMapping prefixes) {
+		public TripleUploader(String endpoint, String graph, PrefixMapping prefixes) {
 			this.prefixes = prefixes;
-			this.sparqlEndpointUri = track.getDatasource().getEndpointUpdateUrl();
-			this.graphNode = NodeFactory.createURI(track.getGraphName());
+			this.sparqlEndpointUri = endpoint;
+			this.graphNode = NodeFactory.createURI(graph);
 		}
 		
 		public void put(Triple newTriple) {

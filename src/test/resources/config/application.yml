@@ -47,7 +47,7 @@ spring:
 
     fuseki:
         port: 8899
-        configfile: fuseki/localdata.ttl
+        configfile: fuseki/localdata-test.ttl
         jettyconfigfile: fuseki/jetty-fuseki.xml
 
     tripleupload:
