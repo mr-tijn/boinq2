@@ -1,11 +1,24 @@
-<div class="nav-tabs-justified" data-toggle="tooltip" title="{{term.uri.value}}">
-	{{term.label.value}}
-<div ng-click="getChildTerms(term)" class="btn btn-xs">
-	<span class="glyphicon glyphicon-circle-arrow-down"></span>
-</div>
-<div ng-click="selectHandler(term)" class="btn btn-xs"> <!-- -->
-	<span class="glyphicon glyphicon-ok"></span>
-</div>
+<div class="nav-tabs-justified" data-toggle="tooltip"
+	title="{{term.uri.value}}">
+	<div class="checkbox" ng-show="multiValued">
+		<label> <input type="checkbox" value="" ng-model="term.selected">
+		 {{term.label.value}}
+		</label>
+		<div ng-click="getChildTerms(term)" class="btn btn-xs">
+			<span class="glyphicon glyphicon-circle-arrow-down"></span>
+		</div>
+		
+	</div>
+	<div ng-show="!multiValued">
+		{{term.label.value}}
+		<div ng-click="getChildTerms(term)" class="btn btn-xs">
+			<span class="glyphicon glyphicon-circle-arrow-down"></span>
+		</div>
+		<div ng-click="selectHandler(term)" ng-show="!multiValued"
+			class="btn btn-xs">
+			<span class="glyphicon glyphicon-ok"></span>
+		</div>
+	</div>
 </div>
 <ul class="treeNode">
 	<li class="treeNode" ng-repeat="term in term.subTerms">

@@ -54,6 +54,12 @@
 						</div>
 
 						<div class="form-group">
+							<label>IRI</label> <input type="text" class="form-control"
+								name="name" ng-model="datasource.iri" ng-minlength=1
+								ng-maxlength=50 required>
+						</div>
+
+						<div class="form-group">
 							<label>Type</label> <select name="type"
 								ng-model="datasource.type" class="form-control">
 								<option ng-repeat="(key,value) in typeItems"
@@ -102,9 +108,8 @@
 			<tbody>
 				<tr ng-repeat="datasource in datasources">
 					<td>{{datasource.id}}</td>
-					<td>{{datasource.endpointUrl}}</td>
-					<td>{{datasource.type | dstype}}</td>
 					<td>{{datasource.name}}</td>
+					<td>{{datasource.type | dstype}}</td>
 					<td><input type="checkbox" ng-model="datasource.isPublic"
 						disabled></td>
 					<td>

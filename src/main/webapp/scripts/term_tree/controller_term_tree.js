@@ -1,8 +1,10 @@
 boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','DatasourceConstants','SPARQLConstants','SPARQLTools','QueryBuilderService',function($scope,callEndpoint,Datasource,DatasourceConstants,SPARQLConstants,SPARQLTools,QueryBuilderService) {
 	console.info('Registering controller TermTreeController');
 
-	// from directive: 	<term-tree-picker sourceGraph="selectEndpoint" sourceEndpoint="selectGraph" rootNodesQuery="" >
+	// from directive: 	<term-tree-picker sourceGraph="selectEndpoint" sourceEndpoint="selectGraph" rootNodesQuery="" multiValued="" >
 
+	$scope.selectedTerms = [];
+	
 	$scope.$watch('sourceEndpoint', function() {
 	      $scope.getRootTerms();
 	 });
@@ -19,6 +21,8 @@ boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','
 		$scope.sparqlErrorText = errorResponse.data;
 		console.log(errorResponse);
 	};
+	
+	//TODO: add selected = false to all terms for multiValued term tree
 	
 	$scope.getRootTerms = function() {
 		console.log('Getting query from query builder');
@@ -38,6 +42,22 @@ boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','
 						processError);
 			});
 		}
+	};
+	
+	$scope.getSelectedTerms = function(terms) {
+		for (var idx in terms) {
+			var term = terms[idx];
+			if ('selected' in term && term.selected) {
+				$scope.selectedTerms.push(term);
+			}
+			$scope.getSelectedTerms(term.subTerms);
+		}
+	};
+	
+	$scope.computeSelection = function() {
+		$scope.selectedTerms = [];
+		$scope.getSelectedTerms($scope.rootTerms);
+		$scope.selectHandler($scope.selectedTerms);
 	};
 	
 	$scope.getFilteredTree = function(filter) {

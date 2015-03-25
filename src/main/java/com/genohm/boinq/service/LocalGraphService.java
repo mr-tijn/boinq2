@@ -4,16 +4,14 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
-import net.wimpi.telnetd.io.terminal.ansi;
-
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.genohm.boinq.domain.GraphDescriptor;
 import com.genohm.boinq.tools.queries.Prefixes;
 import com.genohm.boinq.tools.vocabularies.TrackVocabulary;
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.modify.request.QuadDataAcc;
@@ -27,9 +25,10 @@ import com.hp.hpl.jena.vocabulary.RDF;
 public class LocalGraphService implements EnvironmentAware {
 
 	static final private String PREFIX = "spring.tripleupload.";
-	static final private String ENDPOINT_UPDATE = "endpoint.update";
 	static final private String ENDPOINT_SPARQL = "endpoint.sparql";
 	static final private String ENDPOINT_META = "endpoint.meta";
+	static final private String ENDPOINT_UPDATE = "endpoint.update";
+	static final private String LOCAL_DATASOURCE_URI = "localdatasource";
 	static final private String GRAPH_META = "metagraph";
 	static final private String GRAPHBASE = "graphbase";
 	
@@ -38,6 +37,7 @@ public class LocalGraphService implements EnvironmentAware {
 	private String sparqlEndpoint;
 	private String metaEndpoint;
 	private String metaGraph;
+	private String localDatasourceUri;
 	
 	private RelaxedPropertyResolver propertyResolver;
 
@@ -49,39 +49,40 @@ public class LocalGraphService implements EnvironmentAware {
 	@PostConstruct
 	public void init() {
 		this.graphBase = propertyResolver.getProperty(GRAPHBASE);
-		this.updateEndpoint = propertyResolver.getProperty(ENDPOINT_UPDATE);
 		this.sparqlEndpoint = propertyResolver.getProperty(ENDPOINT_SPARQL);
 		this.metaEndpoint = propertyResolver.getProperty(ENDPOINT_META);
+		this.updateEndpoint = propertyResolver.getProperty(ENDPOINT_UPDATE);
 		this.metaGraph = propertyResolver.getProperty(GRAPH_META);
+		this.localDatasourceUri = propertyResolver.getProperty(LOCAL_DATASOURCE_URI);
 	}
 	
-	private void updateMetaGraph(GraphDescriptor graph) {
+	private void updateMetaGraph(String graphName) {
 		QuadDataAcc newData = new QuadDataAcc();
-		newData.setGraph(NodeFactory.createURI(graph.metaGraphURI));
-		newData.addTriple(new Triple(NodeFactory.createURI(graph.graphURI), RDF.type.asNode(), TrackVocabulary.Datasource));
+		newData.setGraph(NodeFactory.createURI(this.metaGraph));
+		Node graphIRI = NodeFactory.createURI(graphName);
+		newData.addTriple(new Triple(graphIRI, RDF.type.asNode(), TrackVocabulary.Track));
+		newData.addTriple(new Triple(NodeFactory.createURI(this.localDatasourceUri), TrackVocabulary.provides, graphIRI));
 		UpdateDataInsert insertStatement = new UpdateDataInsert(newData);
 		UpdateRequest req = new UpdateRequest(insertStatement);
 		req.setPrefixMapping(Prefixes.getCommonPrefixes());
-		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, graph.metaEndpointURI);
+		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, this.updateEndpoint);
 		processor.execute();
 	}
 	
-	public GraphDescriptor createLocalGraph(String id) {
-		GraphDescriptor newGraph = new GraphDescriptor();
-		newGraph.endpointURI = this.sparqlEndpoint;
-		newGraph.endpointUpdateURI = this.updateEndpoint;
-		newGraph.graphURI = graphNameFromId(id);
-		newGraph.metaEndpointURI = this.metaEndpoint;
-		newGraph.metaGraphURI = this.metaGraph;
-		updateMetaGraph(newGraph);
-		return newGraph;
+	public String createLocalGraph(String id) {
+		if (id == null) {
+			return createLocalGraph();
+		}
+		String graphName = graphNameFromId(id);
+		updateMetaGraph(graphName);
+		return graphName;
 	}
 	
 	public String graphNameFromId(Object id) {
 		return this.graphBase + id.toString();
 	}
 	
-	public GraphDescriptor createLocalGraph() {
+	public String createLocalGraph() {
 		return createLocalGraph(UUID.randomUUID().toString());
 	}
 

@@ -80,6 +80,10 @@ boinqApp.controller('TrackController', ['$scope', 'Track', 'Datasource', 'TrackD
         	$('#selectTermModal').modal('hide');
         };
         
+        $scope.termsPicked = function(terms) {
+        	console.info(terms);
+        };
+        
         // file uploader stuff
         
         var uploader = $scope.uploader = new FileUploader({

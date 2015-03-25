@@ -63,8 +63,9 @@ public class FaldoService {
 	}
 	
 	public void writeFeatures(String endpoint, String graph, List<FaldoFeature> features) {
+		TripleUploader uploader = tripleUploadService.getUploader(endpoint, graph, QueryBuilderService.faldoPrefixes);
 		for (FaldoFeature feature: features) {
-			writeFeature(endpoint, graph, feature);
+			writeFeature(uploader, feature);
 		}
 	}
 	
@@ -72,10 +73,9 @@ public class FaldoService {
 		writeFeatures(track.getDatasource().getEndpointUpdateUrl(), track.getGraphName(), features);
 	}
 
-	private void writeFeature(String endpoint, String graph, FaldoFeature feature) {
+	private void writeFeature(TripleUploader uploader, FaldoFeature feature) {
 		// when writing features ourselves: always use global reference
 		List<Triple> triples = TripleConverter.convert(feature);
-		TripleUploader uploader = tripleUploadService.getUploader(endpoint, graph, QueryBuilderService.faldoPrefixes);
 		for (Triple triple: triples) {
 			uploader.put(triple);
 		}

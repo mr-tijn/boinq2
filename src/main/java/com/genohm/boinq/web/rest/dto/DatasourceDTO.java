@@ -17,6 +17,7 @@ public class DatasourceDTO {
 	private String ownerLogin;
 	private Boolean isPublic;
 	private String name;
+	private String iri;
 	private int type;
 	private Set<TrackDTO> tracks;
 	
@@ -67,6 +68,12 @@ public class DatasourceDTO {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getIri() {
+		return iri;
+	}
+	public void setIri(String iri) {
+		this.iri = iri;
 	}
 	public int getType() {
 		return type;
@@ -131,8 +138,11 @@ public class DatasourceDTO {
 				+ ", metaEndpointUrl=" + metaEndpointUrl
 				+ ", metaGraphName=" + metaGraphName 
 				+ ", ownerLogin=" + ownerLogin
-				+ ", isPublic=" + isPublic + ", name=" + name + ", type="
-				+ type + ", tracks=[" + tracksString + "]}";
+				+ ", isPublic=" + isPublic 
+				+ ", name=" + name
+				+ ", iri=" + iri
+				+ ", type=" + type 
+				+ ", tracks=[" + tracksString + "]}";
 	}
 
 }

@@ -81,10 +81,11 @@
 								ng-maxlength=50 required >
 						</div>
       					
-      					<term-tree-picker select-handler="termPicked" 
+      					<term-tree-picker select-handler="termsPicked" 
 							source-endpoint="http://localhost:8899/STATIC/sparql"
 							source-graph="http://purl.obolibrary.org/obo/so.owl"
-							search-filter="searchFilter" > 
+							search-filter="searchFilter" 
+							multi-valued='true' > 
 						</term-tree-picker>
       			</div>
       			<div class="modal-footer">

@@ -64,6 +64,10 @@ public class Datasource implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Size(min = 1, max = 200)
+    @Column(name = "iri")
+    private String iri;
+
     @Column(name = "type")
     private int type;
         
@@ -75,7 +79,6 @@ public class Datasource implements Serializable {
     }
 
     public void setId(Long id) {
-    	String pipo = "pipo";
         this.id = id;
     }
 
@@ -116,6 +119,7 @@ public class Datasource implements Serializable {
 	}
 
 	public void setOwner(User owner) {
+		this.owner = null;
 		this.owner = owner;
 	}
 
@@ -133,6 +137,14 @@ public class Datasource implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getIri() {
+		return iri;
+	}
+
+	public void setIri(String iri) {
+		this.iri = iri;
 	}
 
 	public int getType() {
@@ -190,6 +202,8 @@ public class Datasource implements Serializable {
                 ", endpointUpdateUrl='" + endpointUpdateUrl + '\'' +
                 ", metaEndpointUrl='" + metaEndpointUrl + '\'' +
                 ", metaGraphName='" + metaGraphName + "'" +
+                ", name='" + name + "'" +
+                ", iri='" + iri + "'" +
                 ", public=" + isPublic +
                 ", type=" + type + 
                 ", tracks= [" +tracksString + "] " +

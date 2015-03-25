@@ -1,0 +1,2 @@
+ID|ENDPOINT_URL|TYPE|IS_PUBLIC|NAME|OWNER_ID|ENDPOINT_UPDATE_URL|META_GRAPH_NAME|META_ENDPOINT_URL|IRI
+1|http://localhost:8888/fuseki/sparql|0|TRUE|Default Local Endpoint|admin|http://localhost:8899/DYNAMIC/update|http://www.boinq.org/data/meta/|http://localhost:8899/DYNAMIC/update|

@@ -1,40 +1,34 @@
 package com.genohm.boinq.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.genohm.boinq.domain.Datasource;
-import com.genohm.boinq.domain.GraphDescriptor;
-import com.genohm.boinq.domain.RawDataFile;
-import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.domain.User;
-import com.genohm.boinq.domain.jobs.TripleConversion;
-import com.genohm.boinq.repository.DatasourceRepository;
-import com.genohm.boinq.repository.RawDataFileRepository;
-import com.genohm.boinq.repository.TrackRepository;
-import com.genohm.boinq.repository.UserRepository;
-import com.genohm.boinq.security.AuthoritiesConstants;
-import com.genohm.boinq.service.AsynchronousJobService;
-import com.genohm.boinq.service.FileManagerService;
-import com.genohm.boinq.service.LocalGraphService;
-import com.genohm.boinq.web.rest.dto.DatasourceDTO;
-import com.genohm.boinq.web.rest.dto.RawDataFileDTO;
-import com.genohm.boinq.web.rest.dto.TrackDTO;
-import com.mongodb.RawDBObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.codahale.metrics.annotation.Timed;
+import com.genohm.boinq.domain.Datasource;
+import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.domain.User;
+import com.genohm.boinq.repository.DatasourceRepository;
+import com.genohm.boinq.repository.TrackRepository;
+import com.genohm.boinq.repository.UserRepository;
+import com.genohm.boinq.security.AuthoritiesConstants;
+import com.genohm.boinq.service.LocalGraphService;
+import com.genohm.boinq.web.rest.dto.DatasourceDTO;
 
 /**
  * REST controller for managing Datasource.
@@ -83,12 +77,10 @@ public class DatasourceResource {
         	datasource.setType(datasourceDTO.getType());
         }
         if (Datasource.TYPE_LOCAL_FALDO == datasource.getType()) {
-        	// there is one single meta graph for all local faldo datasources
-        	// there is one read and one update endpoint
-        	// each track will create its own graph and put info in the meta graph
         	datasource.setEndpointUrl(localGraphService.getSparqlEndpoint());
         	datasource.setEndpointUpdateUrl(localGraphService.getUpdateEndpoint());
         	datasource.setMetaEndpointUrl(localGraphService.getMetaEndpoint());
+        	datasource.setMetaGraphName(localGraphService.getMetaGraph());
         }
     	datasourceRepository.save(datasource);
     }

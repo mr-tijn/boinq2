@@ -67,6 +67,7 @@ boinqApp.directive('termTreePicker', function() {
 			selectHandler : "=",
 			rootNodesQuery : "@",
 			searchFilter : "=",
+			multiValued : "=",
 			update: "=getFilteredTree"
 		}
 	};

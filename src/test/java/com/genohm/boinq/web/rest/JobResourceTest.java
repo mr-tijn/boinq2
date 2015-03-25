@@ -127,25 +127,21 @@ class LongRunningJob implements AsynchronousJob {
 	@Override
 	public void setDatasourceRepository(
 			DatasourceRepository datasourceRepository) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public DatasourceRepository getDatasourceRepository() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setTripleUploadService(TripleUploadService tripleUploadService) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public TripleUploadService getTripleUploadService() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -156,8 +152,6 @@ class LongRunningJob implements AsynchronousJob {
 
 	@Override
 	public void setName(String name) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

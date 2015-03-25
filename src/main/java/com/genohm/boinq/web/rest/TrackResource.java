@@ -2,7 +2,6 @@ package com.genohm.boinq.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.genohm.boinq.domain.Datasource;
-import com.genohm.boinq.domain.GraphDescriptor;
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.jobs.TripleConversion;
@@ -12,7 +11,6 @@ import com.genohm.boinq.security.AuthoritiesConstants;
 import com.genohm.boinq.service.AsynchronousJobService;
 import com.genohm.boinq.service.FileManagerService;
 import com.genohm.boinq.service.LocalGraphService;
-import com.genohm.boinq.web.rest.dto.DatasourceDTO;
 import com.genohm.boinq.web.rest.dto.TrackDTO;
 
 import org.slf4j.Logger;
@@ -74,14 +72,15 @@ public class TrackResource {
         	track.setGraphName(trackDTO.getGraphName());
         	track.setName(trackDTO.getName());
         	track.setStatus(Track.STATUS_EMPTY);
+        	track.setType(trackDTO.getType());
         	Track savedTrack = trackRepository.save(track);
         	datasource.getTracks().add(track);
         	datasourceRepository.save(datasource);
         	datasourceRepository.flush();
         	trackRepository.flush();
         	if (datasource.getType() == Datasource.TYPE_LOCAL_FALDO) {
-        		GraphDescriptor gd = localGraphService.createLocalGraph(savedTrack.getId().toString());
-        		savedTrack.setGraphName(gd.graphURI);
+        		String graphName  = localGraphService.createLocalGraph(datasource.getIri());
+        		savedTrack.setGraphName(graphName);
         		trackRepository.save(savedTrack);
         	}
         } catch (Exception e) {

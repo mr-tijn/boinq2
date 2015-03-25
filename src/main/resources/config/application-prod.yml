@@ -12,6 +12,9 @@ spring:
         username: boinq
         password: B01Nqkq!!
 
+    fuseki:
+        configfile: fuseki/localdata-test.ttl
+
     jpa:
         database-platform: org.hibernate.dialect.MySQLInnoDBDialect
         database: MYSQL

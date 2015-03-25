@@ -78,6 +78,7 @@ public class TrackDTO {
 		this.id = track.getId();
 		this.status = track.getStatus();
 		this.name = track.getName();
+		this.graphName = track.getGraphName();
 		this.type = track.getType();
 		this.rawDataFiles = new HashSet<RawDataFileDTO>();
 		for (RawDataFile dataFile: track.getRawDataFiles()) {

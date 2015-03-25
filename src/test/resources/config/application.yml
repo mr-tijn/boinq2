@@ -52,11 +52,12 @@ spring:
 
     tripleupload:
         endpoint: 
-            update: http://localhost:8899/META_DYNAMIC/update
+            update: http://localhost:8899/DYNAMIC/update
             sparql: http://localhost:8888/fuseki/sparql
-            meta: http://localhost:8899/META_DYNAMIC/update
+            meta: http://localhost:8899/DYNAMIC/update
         graphbase: http://www.boinq.org/data/graph/
         metagraph: http://www.boinq.org/data/meta/
+        localdatasource: http://www.boinq.org/data/localdatasource
 
 metrics:
     jmx.enabled: false

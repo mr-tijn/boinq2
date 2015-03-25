@@ -6,14 +6,14 @@ spring:
     
     datasource:
         dataSourceClassName: org.h2.jdbcx.JdbcDataSource
-        url: jdbc:h2:mem:jhipster
+        url: jdbc:h2:mem:boinq
         databaseName: 
         serverName: 
         username: 
         password:
 
     fuseki:
-        configfile: fuseki/localdata-new.ttl
+        configfile: fuseki/localdata-test.ttl
 
     jpa:
         database-platform: org.hibernate.dialect.H2Dialect
