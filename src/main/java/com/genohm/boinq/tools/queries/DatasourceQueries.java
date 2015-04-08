@@ -1,8 +1,5 @@
 package com.genohm.boinq.tools.queries;
 
-import static com.genohm.boinq.tools.vocabularies.TrackVocabulary.FaldoDatasource;
-import static com.genohm.boinq.tools.vocabularies.TrackVocabulary.FaldoTrack;
-import static com.genohm.boinq.tools.vocabularies.TrackVocabulary.provides;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -13,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.SPARQLResultSet;
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.SPARQLClientService;
-import com.genohm.boinq.tools.vocabularies.TrackVocabulary;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
@@ -52,9 +49,9 @@ public class DatasourceQueries {
 		query.addResultVar(track);
 		ElementPathBlock datasourceProvidesTrack = new ElementPathBlock();
 		datasourceProvidesTrack.addTriplePath(new TriplePath(datasourceGraph, instance, supertype));
-		datasourceProvidesTrack.addTriplePath(new TriplePath(supertype, substar, FaldoDatasource));
-		datasourceProvidesTrack.addTriplePath(new TriplePath(track, instance, FaldoTrack));
-		datasourceProvidesTrack.addTriple(new Triple(datasourceGraph, provides, track));
+		datasourceProvidesTrack.addTriplePath(new TriplePath(supertype, substar, TrackVocab.FaldoDatasource.asNode()));
+		datasourceProvidesTrack.addTriplePath(new TriplePath(track, instance, TrackVocab.FaldoTrack.asNode()));
+		datasourceProvidesTrack.addTriple(new Triple(datasourceGraph, TrackVocab.provides.asNode(), track));
 		query.setQueryPattern(datasourceProvidesTrack);
 		query.addGraphURI(datasource.getMetaGraphName());
 		log.debug("Querying for tracks. Query: \n"+query.toString(Syntax.syntaxSPARQL));
@@ -87,9 +84,9 @@ public class DatasourceQueries {
 		query.addResultVar(operation);
 		ElementPathBlock datasourceSuperTypes = new ElementPathBlock();
 		datasourceSuperTypes.addTriplePath(new TriplePath(datasourceGraph, instance, supertype));
-		datasourceSuperTypes.addTriplePath(new TriplePath(supertype, substar, TrackVocabulary.Datasource));
-		datasourceSuperTypes.addTriple(new Triple(supertype, TrackVocabulary.supports, operation));
-		datasourceSuperTypes.addTriple(new TriplePath(operation, instance, TrackVocabulary.Match));
+		datasourceSuperTypes.addTriplePath(new TriplePath(supertype, substar, TrackVocab.Datasource.asNode()));
+		datasourceSuperTypes.addTriple(new Triple(supertype, TrackVocab.supports.asNode(), operation));
+		datasourceSuperTypes.addTriple(new TriplePath(operation, instance, TrackVocab.Match.asNode()));
 		query.setQueryPattern(datasourceSuperTypes);
 		query.addGraphURI(datasource.getMetaGraphName());
 		

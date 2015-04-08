@@ -8,8 +8,6 @@ boinqApp.controller('TrackController', ['$scope', 'Track', 'Datasource', 'TrackD
         $scope.create = function () {
             Track.save({ds_id: $scope.datasource.id}, $scope.track,
                 function () {
-            		// hides datasource from parent scope ?
-//            		$scope.datasource = Datasource.get({id: $scope.datasource.id});
                     $scope.datasource.tracks = Track.query({ds_id: $scope.datasource.id});
                     $('#saveTrackModal').modal('hide');
                     $scope.clear();
@@ -24,8 +22,6 @@ boinqApp.controller('TrackController', ['$scope', 'Track', 'Datasource', 'TrackD
         $scope['delete'] = function (id) {
             Track['delete']({ds_id: $scope.datasource.id, id: id},
                 function () {
-//            		$scope.datasource = Datasource.get({id:$scope.datasource.id});
-
                     $scope.datasource.tracks = Track.query({ds_id: $scope.datasource.id});
                 });
         };
@@ -62,8 +58,6 @@ boinqApp.controller('TrackController', ['$scope', 'Track', 'Datasource', 'TrackD
         	TrackDatafile.remove({ds_id:$scope.datasource.id, track_id:$scope.managedtrack.id, data_id:rawdatafile_id},
         			function () {
         				$scope.managedtrack = Track.get({ds_id:$scope.datasource.id, id:ds_id});
-//        				$scope.datasource = Datasource.get({id:$scope.datasource.id});
-//        				$scope.tracks = Track.query({ds_id:$scope.datasource.id});
         	});
         };
         $scope.startconversion = function(rawdatafile_id) {
@@ -71,20 +65,18 @@ boinqApp.controller('TrackController', ['$scope', 'Track', 'Datasource', 'TrackD
         	TrackConversion.start({ds_id:$scope.datasource.id, id:ds_id}, rawdatafile_id);
         };
         
-        $scope.pickTerm = function() {
-        	$('#selectTermModal').modal('show');
-        };
-        $scope.termPicked = function(term) {
-        	console.info(term);
-        	$scope.track.type = term.uri.value;
-        	$('#selectTermModal').modal('hide');
-        };
-        
         $scope.termsPicked = function(terms) {
-        	console.info(terms);
+        	var uris = "";
+        	for (var idx in terms) {
+        		var term = terms[idx];
+        		uris += "|" + term.uri.value;
+        	}
+        	uris = uris.substring(1);
+        	$scope.track.type = uris;
+        	console.info(uris);
         };
-        
-        // file uploader stuff
+
+        // FILE UPLOADER
         
         var uploader = $scope.uploader = new FileUploader({
             url: 'upload',
@@ -127,8 +119,6 @@ boinqApp.controller('TrackController', ['$scope', 'Track', 'Datasource', 'TrackD
         uploader.onSuccessItem = function(fileItem, response, status, headers) {
 	        //remove fileItem from queue
         	$scope.managedtrack = Track.get({ds_id: $scope.datasource.id, id: $scope.managedtrack.id});
-//			$scope.datasource = Datasource.get({id:$scope.datasource.id});
-
         	console.info('onSuccessItem', $scope.managedtrack );
             console.info('onSuccessItem', fileItem, response, status, headers);
         };

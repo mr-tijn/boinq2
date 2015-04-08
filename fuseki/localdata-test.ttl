@@ -36,11 +36,11 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model      .
 
 <#dynamicdataset> rdf:type ja:RDFDataset
 		; ja:defaultGraph <#testMetaDataset>
-		; tdb:unionDefaultGraph true
 		.
 		
 <#testMetaDataset> rdf:type ja:MemoryModel
 		; rdfs:label "Memory metadataset for testing"
+		; tdb:unionDefaultGraph true
 		.
 		
 <#STATIC> rdf:type fuseki:Service

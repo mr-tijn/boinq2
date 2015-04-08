@@ -1,0 +1,58 @@
+<div ng-controller='TermTreeController' >
+
+	<div class="input-group">
+		<input type="text" class="form-control" name="name"
+			ng-model="ngModel" ng-minlength=1 ng-maxlength=500>
+		<span class="input-group-btn">
+			<button class="btn btn-default" type="button" ng-click="pickTerm()">
+				<span class="glyphicon glyphicon-flash"></span>Select
+			</button>
+		</span>
+	</div>
+	
+	<div class="modal fade" tabindex="-1" id="selectTermModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" ng-click="close()"
+						aria-hidden="true">×</button>
+					<h4 class="modal-title">Select term</h4>
+				</div>
+				<div class="modal-body" style="max-height: 100%; max-width: 100%; overflow-y: scroll; overflow-x: scroll">
+
+					<div class="form-group">
+						<label>Search labels</label>
+						
+						<div class="input-group">
+						
+						 	<input id="searchLabelTextBox" type="text"
+								class="form-control" name="name" ng-model="searchFilter" ng-keypress="searchFilterKeyPress($event)"
+								ng-minlength=1 ng-maxlength=50 required>
+							<div class="input-group-btn">
+								<button class="btn btn-primary" ng-click="getFilteredTree()"><span class="glyphicon glyphicon-search"></span></button>	
+							</div>
+							
+						</div>
+					</div>
+
+					<!-- Browse -->
+					<ul class="treeNode" ng-show="!sparqlError">
+						<li class="treeNode" ng-repeat="term in rootTerms"><term-tree-node></term-tree-node>
+						</li>
+					</ul>
+					<div ng-show="sparqlError" class="alert alert-danger">
+						<strong>Could not launch query:</strong> {{sparqlErrorText}}
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" ng-click="close()">Close</button>
+					<button type="submit" class="btn btn-primary"
+						ng-click="computeSelection()" ng-show="multiValued">
+						<span class="glyphicon glyphicon-save"></span> Select
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

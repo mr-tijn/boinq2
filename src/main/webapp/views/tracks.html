@@ -34,24 +34,18 @@
   						<div class="form-group">
 							<label>Name</label> <input type="text" class="form-control"
 								name="name" ng-model="track.name" ng-minlength=1
-								ng-maxlength=50 required >
+								ng-maxlength=500 required >
 						</div>
-
 						<div class="form-group">
 							<label>Type</label> 
-							<div class="input-group">
-								<input type="text" class="form-control"
-								name="name" ng-model="track.type" ng-minlength=1
-								ng-maxlength=50 required ng-enabled='false' >
-								<span class="input-group-btn">
-        							<button class="btn btn-default" type="button" ng-click="pickTerm()"><span class="glyphicon glyphicon-flash"></span>Select</button>
-      							</span>
-							</div>
+							<term-tree-picker select-handler="termsPicked" 
+								source-endpoint="http://localhost:8899/STATIC/sparql"
+								source-graph="http://purl.obolibrary.org/obo/so.owl"
+								search-filter="searchFilter" 
+								multi-valued='true' ng-model="track.type"> 
+							</term-tree-picker>
 						</div>
-
-
 						<input type="hidden" ng-model="track.status">
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
@@ -66,34 +60,6 @@
         </div>
     </div>
 	
-	<div class="modal fade" id="selectTermModal" style="max-height: 600px;overflow-y: scroll;" >
-  		<div class="modal-dialog">
-    		<div class="modal-content">
-      			<div class="modal-header">
-        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        			<h4 class="modal-title">Select term</h4>
-      			</div>
-      			<div class="modal-body">
-      			
-  						<div class="form-group">
-							<label>Search labels</label> <input type="text" class="form-control"
-								name="name" ng-model="searchFilter" ng-minlength=1
-								ng-maxlength=50 required >
-						</div>
-      					
-      					<term-tree-picker select-handler="termsPicked" 
-							source-endpoint="http://localhost:8899/STATIC/sparql"
-							source-graph="http://purl.obolibrary.org/obo/so.owl"
-							search-filter="searchFilter" 
-							multi-valued='true' > 
-						</term-tree-picker>
-      			</div>
-      			<div class="modal-footer">
-        			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-     			 </div>
-    		</div>
-  		</div>
-	</div>
 	
 
 	<div class="modal fade" id="manageTrackModal" tabindex="-1"
@@ -140,9 +106,7 @@
 						</tbody>
 					</table>
 
-
 					<h3 ng-show='uploader.queue.length'>Upload queue</h3>
-
 
 					<table ng-show='uploader.queue.length' class="table">
 						<thead>
@@ -189,7 +153,6 @@
 							</tr>
 						</tbody>
 					</table>
-
 					<div ng-show='uploader.queue.length'>
 						<div>
 							Queue progress:
@@ -214,11 +177,7 @@
 							<span class="glyphicon glyphicon-trash"></span> Remove all
 						</button>
 					</div>
-
 				</div>
-
-
-
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal"
 						ng-click="clear()">

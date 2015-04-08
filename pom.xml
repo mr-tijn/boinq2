@@ -633,6 +633,36 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-maven-tools</artifactId>
+				<version>0.8</version>
+				<configuration>
+					<includes>
+						<include>ontologies/track.owl</include>
+					</includes>
+					<fileOptions>
+						<source>
+							<input>default</input>
+							<package-name>com.genohm.boinq.generated.vocabularies</package-name>
+							<class-name-suffix>Vocab</class-name-suffix>
+						</source>
+						<source>
+							<input>ontologies/track.owl</input>
+							<ontology>true</ontology>
+							<individuals-section>// INDIVIDUALS</individuals-section>
+						</source>
+					</fileOptions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>schemagen</id>
+						<goals>
+							<goal>translate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -679,6 +709,21 @@
                                         <execute />
                                     </action>
                                 </pluginExecution>
+                                <pluginExecution>
+										<pluginExecutionFilter>
+											<groupId>org.apache.jena</groupId>
+											<artifactId>jena-maven-tools</artifactId>
+											<versionRange>[0.7,)</versionRange>
+											<goals>
+												<goal>translate</goal>
+											</goals>
+										</pluginExecutionFilter>
+										<action>
+											<execute>
+												<runOnIncremental>false</runOnIncremental>
+											</execute>
+										</action>
+					           </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>

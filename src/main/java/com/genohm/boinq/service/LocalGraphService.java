@@ -9,8 +9,8 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.tools.queries.Prefixes;
-import com.genohm.boinq.tools.vocabularies.TrackVocabulary;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
@@ -60,8 +60,8 @@ public class LocalGraphService implements EnvironmentAware {
 		QuadDataAcc newData = new QuadDataAcc();
 		newData.setGraph(NodeFactory.createURI(this.metaGraph));
 		Node graphIRI = NodeFactory.createURI(graphName);
-		newData.addTriple(new Triple(graphIRI, RDF.type.asNode(), TrackVocabulary.Track));
-		newData.addTriple(new Triple(NodeFactory.createURI(this.localDatasourceUri), TrackVocabulary.provides, graphIRI));
+		newData.addTriple(new Triple(graphIRI, RDF.type.asNode(), TrackVocab.Track.asNode()));
+		newData.addTriple(new Triple(NodeFactory.createURI(this.localDatasourceUri), TrackVocab.provides.asNode(), graphIRI));
 		UpdateDataInsert insertStatement = new UpdateDataInsert(newData);
 		UpdateRequest req = new UpdateRequest(insertStatement);
 		req.setPrefixMapping(Prefixes.getCommonPrefixes());
@@ -70,7 +70,7 @@ public class LocalGraphService implements EnvironmentAware {
 	}
 	
 	public String createLocalGraph(String id) {
-		if (id == null) {
+		if (id == null || id.length() == 0) {
 			return createLocalGraph();
 		}
 		String graphName = graphNameFromId(id);

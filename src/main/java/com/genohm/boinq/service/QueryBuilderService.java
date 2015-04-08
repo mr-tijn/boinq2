@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.match.Match;
 import com.genohm.boinq.domain.match.MatchFactory;
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.tools.generators.ARQGenerator;
 import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
 import com.genohm.boinq.tools.vocabularies.FaldoVocabulary;
-import com.genohm.boinq.tools.vocabularies.TrackVocabulary;
 import com.genohm.boinq.web.rest.dto.MatchDTO;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
@@ -252,10 +252,10 @@ public class QueryBuilderService {
 		mainQuery.addResultVar(originalReference);
 		
 		ElementTriplesBlock triples = new ElementTriplesBlock();
-		triples.addTriple(new Triple(trackGraph, RDF.type.asNode(), TrackVocabulary.Track));
-		triples.addTriple(new Triple(trackGraph, TrackVocabulary.entry, referenceMapEntry));
-		triples.addTriple(new Triple(referenceMapEntry, TrackVocabulary.originalReference, originalReference));
-		triples.addTriple(new Triple(referenceMapEntry, TrackVocabulary.targetReference, globalReference));
+		triples.addTriple(new Triple(trackGraph, RDF.type.asNode(), TrackVocab.Track.asNode()));
+		triples.addTriple(new Triple(trackGraph, TrackVocab.entry.asNode(), referenceMapEntry));
+		triples.addTriple(new Triple(referenceMapEntry, TrackVocab.originalReference.asNode(), originalReference));
+		triples.addTriple(new Triple(referenceMapEntry, TrackVocab.targetReference.asNode(), globalReference));
 		
 		mainSelect.addElement(triples);
 		mainQuery.setQueryPattern(mainSelect);

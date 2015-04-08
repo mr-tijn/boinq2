@@ -41,7 +41,7 @@ public class Track implements Serializable {
     @Column(name = "name", nullable = true)
     private String name;
 
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 500)
     @Column(name = "type", nullable = true)
     private String type;
     

@@ -37,13 +37,14 @@
 						<div class="form-group">
 							<label>Endpoint update url</label> <input type="text"
 								class="form-control" name="endpoint_update_url"
-								ng-model="datasource.endpointUpdateUrl" ng-minlength=1 ng-maxlength=50
-								required ng-disabled="isLocal(datasource)">
+								ng-model="datasource.endpointUpdateUrl" ng-minlength=1
+								ng-maxlength=50 required ng-disabled="isLocal(datasource)">
 						</div>
 
 						<div class="form-group">
-							<label>Meta graph name</label> <input type="text" class="form-control"
-								name="graph-name" ng-model="datasource.metaGraphName" ng-minlength=1
+							<label>Meta graph name</label> <input type="text"
+								class="form-control" name="graph-name"
+								ng-model="datasource.metaGraphName" ng-minlength=1
 								ng-maxlength=50 required ng-disabled="isLocal(datasource)">
 						</div>
 
@@ -73,7 +74,7 @@
 								ng-model="datasource.isPublic" value="false">
 						</div>
 
-						<input type="hidden" ng-model="datasource.ownerLogin"> 
+						<input type="hidden" ng-model="datasource.ownerLogin">
 
 					</div>
 
@@ -113,11 +114,13 @@
 					<td><input type="checkbox" ng-model="datasource.isPublic"
 						disabled></td>
 					<td>
-						<button type="submit" ng-click="update(datasource.id)" ng-disabled='manageddatasource != null' class="btn">
+						<button type="submit" ng-click="update(datasource.id)"
+							ng-disabled='manageddatasource != null' class="btn">
 							<span class="glyphicon glyphicon-pencil"></span> Edit
 						</button>
 						<button type="submit" ng-click="manage(datasource)"
-							ng-show="canmanage(datasource)" ng-disabled='manageddatasource == datasource' class="btn">
+							ng-show="canmanage(datasource)"
+							ng-disabled='manageddatasource == datasource' class="btn">
 							<span class="glyphicon glyphicon-remove-circle"></span> Tracks
 						</button>
 						<button type="submit" ng-click="delete(datasource.id)"
@@ -131,8 +134,8 @@
 		</table>
 	</div>
 	<!--  when using ng-show: controllers fails on datasource being null and script not loaded -->
-	<div ng-show='manageddatasource != null'> 
+	<div ng-show='manageddatasource != null'>
 		<track-view bind-datasource='manageddatasource'></track-view>
 	</div>
-		
+
 </div>

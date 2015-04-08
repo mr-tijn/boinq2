@@ -15,6 +15,7 @@
         <link rel="stylesheet" href="styles/main.css">
         <link rel="stylesheet" href="styles/famfamfam-flags.css">
         <link rel="stylesheet" href="styles/treenode.css">
+        <link rel="stylesheet" href="bower_components/bootstrap-modal/css/bootstrap-modal.css">
         <!-- endbuild -->
     </head>
     <body ng-app="boinqApp" ng-controller="MainController">
@@ -63,7 +64,6 @@
                                     &nbsp;<span translate="global.menu.account.logout">Log out</span></a></li>
                                 <li ng-switch-when="false"><a href="#/login"><span class="glyphicon glyphicon-log-in"></span>
                                     &nbsp;<span translate="global.menu.account.login">Authenticate</span></a></li>
-
                                 <li ng-switch-when="false"><a href="#/register"><span class="glyphicon glyphicon-plus-sign"></span>
                                     &nbsp;<span translate="global.menu.account.register">Register</span></a></li>
                             </ul>
@@ -199,6 +199,8 @@
         <script src="bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/scrollspy.js"></script>
         <script src="bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/collapse.js"></script>
         <script src="bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/tab.js"></script>
+    	<script src="bower_components/bootstrap-modal/js/bootstrap-modal.js"></script>
+    	<script src="bower_components/bootstrap-modal/js/bootstrap-modalmanager.js"></script>
         <script src="scripts/sparql/service_sparql.js"></script>
         <script src="scripts/sparql/controller_sparql.js"></script>
         <script src="scripts/datasource/router_datasource.js"></script>

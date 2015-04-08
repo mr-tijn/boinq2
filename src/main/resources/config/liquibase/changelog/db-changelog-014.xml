@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" logicalFilePath="none" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="jhipster" id="1427979293823-4" logicalFilePath="none">
+        <dropDefaultValue catalogName="" columnDataType="boolean" columnName="activated" schemaName="public" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1427979293823-5" logicalFilePath="none">
+        <dropDefaultValue catalogName="" columnDataType="varchar(255)" columnName="created_by" schemaName="public" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1427979293823-6" logicalFilePath="none">
+        <dropDefaultValue catalogName="" columnDataType="timestamp" columnName="created_date" schemaName="public" tableName="T_USER"/>
+    </changeSet>
+</databaseChangeLog>

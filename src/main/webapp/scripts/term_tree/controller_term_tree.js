@@ -3,26 +3,33 @@ boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','
 
 	// from directive: 	<term-tree-picker sourceGraph="selectEndpoint" sourceEndpoint="selectGraph" rootNodesQuery="" multiValued="" >
 
+	
+	
 	$scope.selectedTerms = [];
 	
-	$scope.$watch('sourceEndpoint', function() {
-	      $scope.getRootTerms();
-	 });
+//	$scope.$watch('sourceEndpoint', function() {
+//	      $scope.getRootTerms();
+//	 });
 	
-	$scope.$watch('searchFilter', function(value) {
-		console.info(value);
-		if (value.length > 3) {
-			$scope.getFilteredTree(value);
-		}
-	});
+//	$scope.$watch('searchFilter', function(value) {
+//		console.info(value);
+//		if (value && value.length > 3) {
+//			$scope.getFilteredTree(value);
+//		}
+//	});
 
+	$scope.searchFilterKeyPress = function(event) {
+		console.info(event);
+		if (event.which === 13) {
+			$scope.getFilteredTree();
+		}
+	};
+	
 	var processError = function(errorResponse) {
 		$scope.sparqlError = true;
 		$scope.sparqlErrorText = errorResponse.data;
 		console.log(errorResponse);
 	};
-	
-	//TODO: add selected = false to all terms for multiValued term tree
 	
 	$scope.getRootTerms = function() {
 		console.log('Getting query from query builder');
@@ -58,9 +65,11 @@ boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','
 		$scope.selectedTerms = [];
 		$scope.getSelectedTerms($scope.rootTerms);
 		$scope.selectHandler($scope.selectedTerms);
+		$scope.close();
 	};
 	
-	$scope.getFilteredTree = function(filter) {
+	$scope.getFilteredTree = function() {
+		var filter = $scope.searchFilter;
 		QueryBuilderService.filteredTreeQuery(filter).then(function(query) {
 			console.log("Fetching matching tree");
 			callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
@@ -109,5 +118,15 @@ boinqApp.controller("TermTreeController",["$scope",'callEndpoint','Datasource','
 		});
 
 	};
+	
+    $scope.pickTerm = function() {
+    	console.info("getting root terms now");
+    	$scope.getRootTerms();
+    	$('#selectTermModal').modal('show');
+    };
+
+    $scope.close = function() {
+    	$('#selectTermModal').modal('hide');
+    };
 		
 }]);

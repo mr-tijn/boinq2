@@ -17,7 +17,6 @@ import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.faldo.FaldoFeature;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.fileformats.TripleConverter;
-import com.genohm.boinq.tools.vocabularies.TrackVocabulary;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
 

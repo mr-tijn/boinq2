@@ -43,8 +43,6 @@ boinqApp.factory('RecursionHelper', ['$compile', function($compile){
     };
 }]);
 
-
-
 boinqApp.directive('termTreeNode', function(RecursionHelper) {
 	console.info('Registering directive termTreeNode');
 	return {
@@ -60,7 +58,7 @@ boinqApp.directive('termTreePicker', function() {
 	console.info('Registering directive termTreePicker');
 	return {
 		restrict: 'E',
-		templateUrl: 'views/term_tree/term_tree_root.html',
+		templateUrl: 'views/term_tree/term_tree_picker.html',
 		scope : {
 			sourceGraph: "@",
 			sourceEndpoint: "@",
@@ -68,8 +66,8 @@ boinqApp.directive('termTreePicker', function() {
 			rootNodesQuery : "@",
 			searchFilter : "=",
 			multiValued : "=",
+			ngModel: "=",
 			update: "=getFilteredTree"
 		}
 	};
 });
-
