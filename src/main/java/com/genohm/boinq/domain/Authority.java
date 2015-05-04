@@ -17,7 +17,8 @@ import java.io.Serializable;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Authority implements Serializable {
 
-    @NotNull
+	private static final long serialVersionUID = -3796557752698846344L;
+	@NotNull
     @Size(min = 0, max = 50)
     @Id
     private String name;

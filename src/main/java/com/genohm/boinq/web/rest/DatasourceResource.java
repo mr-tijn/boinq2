@@ -24,7 +24,6 @@ import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.User;
 import com.genohm.boinq.repository.DatasourceRepository;
-import com.genohm.boinq.repository.TrackRepository;
 import com.genohm.boinq.repository.UserRepository;
 import com.genohm.boinq.security.AuthoritiesConstants;
 import com.genohm.boinq.service.LocalGraphService;
@@ -45,9 +44,6 @@ public class DatasourceResource {
     @Inject
     private UserRepository userRepository;
     
-    @Inject
-    private TrackRepository	trackRepository;
-            
     @Inject
     private LocalGraphService localGraphService;
 

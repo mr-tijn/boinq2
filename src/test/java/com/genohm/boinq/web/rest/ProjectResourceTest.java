@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -77,7 +76,6 @@ public class ProjectResourceTest {
     
     private Project project;
     private User user;
-    private Set<Datasource> datasources;
     Datasource ds0;
     Datasource ds1;
     Datasource ds2;
@@ -91,7 +89,6 @@ public class ProjectResourceTest {
         
         user = userRepository.findOne("admin");
 
-        datasources = new HashSet<Datasource>();
         ds0 = new Datasource();
         ds1 = new Datasource();
         ds2 = new Datasource();

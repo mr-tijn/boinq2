@@ -1,7 +1,6 @@
 package com.genohm.boinq.repository;
 
 import javax.inject.Inject;
-import javax.ws.rs.DELETE;
 
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;

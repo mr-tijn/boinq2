@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" logicalFilePath="none" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="jhipster" id="1430740473697-21" logicalFilePath="none">
+        <addPrimaryKey catalogName="" columnNames="series" constraintName="T_PERSISTENT_PK" schemaName="public" tableName="T_PERSISTENT_TOKEN"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-22" logicalFilePath="none">
+        <addPrimaryKey catalogName="" columnNames="login" constraintName="T_USERPK" schemaName="public" tableName="T_USER"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-23" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="track_id" baseTableCatalogName="" baseTableName="T_RAWDATAFILE" baseTableSchemaName="public" constraintName="FK_1sr430mljt676vgn8mc98gvf4" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_TRACK" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-24" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="rawDataFiles_id" baseTableCatalogName="" baseTableName="T_TRACK_T_RAWDATAFILE" baseTableSchemaName="public" constraintName="FK_436vll7708q8p6oqjt16a0ah" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_RAWDATAFILE" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-25" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="datasource_id" baseTableCatalogName="" baseTableName="T_TRACK" baseTableSchemaName="public" constraintName="FK_79ifc99gxvpn74rs90bl9oroj" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_DATASOURCE" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-26" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableCatalogName="" baseTableName="T_PROJECT" baseTableSchemaName="public" constraintName="FK_a0kdmtvfioekufbkj7t3161qe" deferrable="false" initiallyDeferred="false" referencedColumnNames="login" referencedTableCatalogName="" referencedTableName="T_USER" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-27" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="event_id" baseTableCatalogName="" baseTableName="T_PERSISTENT_AUDIT_EVENT_DATA" baseTableSchemaName="public" constraintName="FK_clwvdsoybicb9nxw6whom5m26" deferrable="false" initiallyDeferred="false" referencedColumnNames="event_id" referencedTableCatalogName="" referencedTableName="T_PERSISTENT_AUDIT_EVENT" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-28" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableCatalogName="" baseTableName="T_DATASOURCE_T_TRACK" baseTableSchemaName="public" constraintName="FK_cyex7yx8vb80gi2vq2eswyu4q" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_TRACK" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-29" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="T_PROJECT_id" baseTableCatalogName="" baseTableName="T_PROJECT_T_TRACK" baseTableSchemaName="public" constraintName="FK_gxlx7clnpyr5voo4qxyyrn3kh" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_PROJECT" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-30" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="name" baseTableCatalogName="" baseTableName="T_USER_AUTHORITY" baseTableSchemaName="public" constraintName="FK_huidhlop1t5c0wprek7pg55c" deferrable="false" initiallyDeferred="false" referencedColumnNames="name" referencedTableCatalogName="" referencedTableName="T_AUTHORITY" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-31" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="T_TRACK_id" baseTableCatalogName="" baseTableName="T_TRACK_T_RAWDATAFILE" baseTableSchemaName="public" constraintName="FK_jrfqf4yqyf2c8v7khfbk9ar8a" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_TRACK" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-32" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableCatalogName="" baseTableName="T_DATASOURCE" baseTableSchemaName="public" constraintName="FK_nacyl39t0jqfg2i80af976s6b" deferrable="false" initiallyDeferred="false" referencedColumnNames="login" referencedTableCatalogName="" referencedTableName="T_USER" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-33" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="T_DATASOURCE_id" baseTableCatalogName="" baseTableName="T_DATASOURCE_T_TRACK" baseTableSchemaName="public" constraintName="FK_qahly5cqvghitfeqekbgeqk1t" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_DATASOURCE" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-34" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="user_login" baseTableCatalogName="" baseTableName="T_PERSISTENT_TOKEN" baseTableSchemaName="public" constraintName="FK_sajoxmtyermxa58p31mwr8hav" deferrable="false" initiallyDeferred="false" referencedColumnNames="login" referencedTableCatalogName="" referencedTableName="T_USER" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-35" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableCatalogName="" baseTableName="T_PROJECT_T_TRACK" baseTableSchemaName="public" constraintName="FK_sjplolmoi7krxotu85hr3mr24" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_TRACK" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-36" logicalFilePath="none">
+        <addForeignKeyConstraint baseColumnNames="login" baseTableCatalogName="" baseTableName="T_USER_AUTHORITY" baseTableSchemaName="public" constraintName="FK_st8euqgbo8n858cavo4lx34j9" deferrable="false" initiallyDeferred="false" referencedColumnNames="login" referencedTableCatalogName="" referencedTableName="T_USER" referencedTableSchemaName="public"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-37" logicalFilePath="none">
+        <addUniqueConstraint catalogName="" columnNames="tracks_id" constraintName="UC_T_DATASOURCE_T_TRACK_TRACKS_ID" deferrable="false" disabled="false" initiallyDeferred="false" schemaName="public" tableName="T_DATASOURCE_T_TRACK"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-38" logicalFilePath="none">
+        <addUniqueConstraint catalogName="" columnNames="rawDataFiles_id" constraintName="UC_T_TRACK_T_RAWDATAFILE_RAWDATAFILES_ID" deferrable="false" disabled="false" initiallyDeferred="false" schemaName="public" tableName="T_TRACK_T_RAWDATAFILE"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-39" logicalFilePath="none">
+        <dropPrimaryKey catalogName="" schemaName="public" tableName="T_PERSISTENT_AUDIT_EVENT_DATA"/>
+    </changeSet>
+    <changeSet author="jhipster" id="1430740473697-40" logicalFilePath="none">
+        <addPrimaryKey catalogName="" columnNames="event_id, name" schemaName="public" tableName="T_PERSISTENT_AUDIT_EVENT_DATA"/>
+    </changeSet>
+</databaseChangeLog>

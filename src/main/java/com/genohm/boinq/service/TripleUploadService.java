@@ -1,14 +1,10 @@
 package com.genohm.boinq.service;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.tools.queries.Prefixes;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
@@ -22,14 +18,8 @@ import com.hp.hpl.jena.update.UpdateRequest;
 @Service
 public class TripleUploadService {
 
-    @Inject
-    private Environment env;
-
-	private String defaultSparqlEndpointUri;
-	
 	@PostConstruct
 	public void init() {
-		this.defaultSparqlEndpointUri = env.getProperty("spring.tripleupload.endpoint.update");
 	}
 		
 	public TripleUploader getUploader(String endpoint, String graph, PrefixMapping prefixes) {

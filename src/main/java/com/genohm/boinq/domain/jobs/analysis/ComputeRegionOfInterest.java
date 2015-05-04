@@ -1,28 +1,25 @@
 package com.genohm.boinq.domain.jobs.analysis;
 
+import javax.inject.Inject;
+
 import com.genohm.boinq.domain.match.Match;
 import com.genohm.boinq.domain.match.MatchFactory;
-import com.genohm.boinq.repository.DatasourceRepository;
 import com.genohm.boinq.service.LocalGraphService;
-import com.genohm.boinq.service.SPARQLClientService;
-import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.tools.generators.ARQGenerator;
 import com.genohm.boinq.tools.generators.SPARQLGenerator;
 import com.genohm.boinq.web.rest.dto.MatchDTO;
 
 public class ComputeRegionOfInterest implements TrackBuildingAnalysis {
 
+	@Inject
 	private LocalGraphService localGraphService;
-	private SPARQLClientService sparqlClientService;
-	private DatasourceRepository datasourceRepository;
-	private TripleUploadService tripleUploadService;
+	
 	private String name;
 	private String description;
 	private MatchDTO matchDTO;
 	
-	private Boolean irq = false;
-	
 	private int status = JOB_STATUS_UNKNOWN;
+	private Boolean irq = false;
 	
 	public ComputeRegionOfInterest(MatchDTO matchDTO) {
 		this.matchDTO = matchDTO;
@@ -37,38 +34,6 @@ public class ComputeRegionOfInterest implements TrackBuildingAnalysis {
 	@Override
 	public LocalGraphService getLocalGraphService() {
 		return localGraphService;
-	}
-
-	@Override
-	public void setSPARQLClientService(SPARQLClientService client) {
-		this.sparqlClientService = client;
-	}
-
-	@Override
-	public SPARQLClientService getSPARQLClientService() {
-		return sparqlClientService;
-	}
-
-	@Override
-	public void setDatasourceRepository(
-			DatasourceRepository datasourceRepository) {
-		this.datasourceRepository = datasourceRepository;
-		
-	}
-
-	@Override
-	public DatasourceRepository getDatasourceRepository() {
-		return datasourceRepository;
-	}
-
-	@Override
-	public void setTripleUploadService(TripleUploadService tripleUploadService) {
-		this.tripleUploadService = tripleUploadService;
-	}
-
-	@Override
-	public TripleUploadService getTripleUploadService() {
-		return tripleUploadService;
 	}
 
 	@Override
@@ -98,6 +63,7 @@ public class ComputeRegionOfInterest implements TrackBuildingAnalysis {
 		try {
 			Match match = MatchFactory.fromDTO(this.matchDTO);
 			SPARQLGenerator generator = new ARQGenerator();
+			if (killed()) return;
 			match.acceptGenerator(generator, "brol");
 		} catch (Exception e) {
 			this.status = JOB_STATUS_ERROR;
@@ -106,7 +72,11 @@ public class ComputeRegionOfInterest implements TrackBuildingAnalysis {
 
 	@Override
 	public void kill() {
-		this.irq = true;
+		this.irq = false;
+	}
+
+	private Boolean killed() {
+		return this.irq;
 	}
 
 }

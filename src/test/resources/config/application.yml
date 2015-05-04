@@ -50,7 +50,7 @@ spring:
         configfile: fuseki/localdata-test.ttl
         jettyconfigfile: fuseki/jetty-fuseki.xml
 
-    tripleupload:
+    triplestore:
         endpoint: 
             update: http://localhost:8899/DYNAMIC/update
             sparql: http://localhost:8888/fuseki/sparql

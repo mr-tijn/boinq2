@@ -23,7 +23,9 @@ import java.io.Serializable;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class RegionOfInterest implements Serializable {
 
-    @Id
+	private static final long serialVersionUID = 7527315425886897950L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 

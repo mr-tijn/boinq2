@@ -36,10 +36,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.genohm.boinq.Application;
 import com.genohm.boinq.domain.jobs.AsynchronousJob;
-import com.genohm.boinq.repository.DatasourceRepository;
 import com.genohm.boinq.security.AuthoritiesConstants;
 import com.genohm.boinq.service.AsynchronousJobService;
-import com.genohm.boinq.service.TripleUploadService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -123,27 +121,6 @@ public class JobResourceTest {
 class LongRunningJob implements AsynchronousJob {
 	
 	private Boolean kill = false;
-
-	@Override
-	public void setDatasourceRepository(
-			DatasourceRepository datasourceRepository) {
-
-	}
-
-	@Override
-	public DatasourceRepository getDatasourceRepository() {
-		return null;
-	}
-
-	@Override
-	public void setTripleUploadService(TripleUploadService tripleUploadService) {
-
-	}
-
-	@Override
-	public TripleUploadService getTripleUploadService() {
-		return null;
-	}
 
 	@Override
 	public String getName() {

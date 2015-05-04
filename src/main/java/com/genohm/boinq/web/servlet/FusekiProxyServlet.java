@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.servlets.ProxyServlet;

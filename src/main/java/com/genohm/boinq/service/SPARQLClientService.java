@@ -14,7 +14,6 @@ import com.genohm.boinq.domain.RawSPARQLResultSet;
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;

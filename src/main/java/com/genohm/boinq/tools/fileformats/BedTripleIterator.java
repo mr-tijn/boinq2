@@ -22,8 +22,10 @@ public class BedTripleIterator implements Iterator<Triple> {
 	private Iterator<BedEntry> bedIterator;
 	private int idCounter = 0;
 	
+	TripleConverter converter;
 	
-	public BedTripleIterator(File file) throws FileNotFoundException, IOException{
+	public BedTripleIterator(TripleConverter converter, File file) throws FileNotFoundException, IOException{
+		this.converter = converter;
 		BedFileReader reader = new BedFileReader(file.toPath());
 		Iterator<BedEntry> bedIterator = reader.iterator();
 		this.bedIterator= bedIterator;
@@ -51,7 +53,7 @@ public class BedTripleIterator implements Iterator<Triple> {
 			if (id == null) {
 				id = "GFFASSEMBLER_GENERATED_ID_" + ++idCounter ;
 			}
-			currentTriples.addAll(TripleConverter.convert(entry, id));
+			currentTriples.addAll(converter.convert(entry, id));
 		}
 		
 		

@@ -20,7 +20,11 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 	private List<Triple> currentTriples = new LinkedList<Triple>();
 	private int idCounter = 0;
 
-	public GFF3TripleIterator(File file) throws FileNotFoundException, IOException {
+	
+	TripleConverter converter;
+	
+	public GFF3TripleIterator(TripleConverter converter, File file) throws FileNotFoundException, IOException {
+		this.converter = converter;
 		GFFFileReader reader = new GFFFileReader(file.toPath());
 		Iterator<GFFEntry> gffIterator = reader.iterator();
 		this.gffIterator = gffIterator;
@@ -43,7 +47,7 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 			if (id == null) {
 				id = "GFFASSEMBLER_GENERATED_ID_" + ++idCounter;
 			}
-			List<Triple> triples = TripleConverter.convert(entry, id);
+			List<Triple> triples = converter.convert(entry, id);
 			currentTriples.addAll(triples);
 		
 		}

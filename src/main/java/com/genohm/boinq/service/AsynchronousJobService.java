@@ -17,10 +17,10 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.jobs.AsynchronousJob;
-import com.genohm.boinq.repository.DatasourceRepository;
 
 @Service
 public class AsynchronousJobService {
@@ -29,17 +29,13 @@ public class AsynchronousJobService {
 	private Scheduler mainScheduler;
 	
 	@Inject
-	private DatasourceRepository datasourceRepository;
+	private ApplicationContext applicationContext;
 	
-	@Inject
-	private TripleUploadService tripleUploadService;
 	
 	@PostConstruct
 	private void init() throws SchedulerException {
-		// put stuff in context
-		// TODO: make @Inject work in the job
-		mainScheduler.getContext().put(JobRunner.IDENTIFIER_DATASOURCE_REPOSITORY, datasourceRepository);
-		mainScheduler.getContext().put(JobRunner.IDENTIFIER_TRIPLEUPLOAD_SERVICE, tripleUploadService);
+		// put application context in job context
+		mainScheduler.getContext().put(JobRunner.IDENTIFIER_SPRINGCONTEXT, applicationContext);
 	}
 
 	public void add(AsynchronousJob job) throws SchedulerException {

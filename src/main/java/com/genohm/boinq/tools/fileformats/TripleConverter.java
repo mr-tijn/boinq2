@@ -3,9 +3,13 @@ package com.genohm.boinq.tools.fileformats;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.faldo.FaldoFeature;
+import com.genohm.boinq.service.TripleGeneratorService;
 import com.genohm.boinq.tools.vocabularies.FaldoVocabulary;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.graph.Node;
@@ -18,6 +22,7 @@ import edu.unc.genomics.BedEntry;
 import edu.unc.genomics.GFFEntry;
 import edu.unc.genomics.ValuedInterval;
 
+@Service
 public class TripleConverter {
 	// genohm.com / bed-gff-bedgraph??? / feature ------> datasource 
 
@@ -25,12 +30,14 @@ public class TripleConverter {
 	// the variable names that are included in the valuedInterval are given a more generic name
 
 	// vInt static finals
-	public static final String FEATUREBASEURI ="http://www.genohm.com/datasource/feature#";
-	public static final String FEATUREBEGINURI = "http://www.genohm.com/datasource/feature_begin";
-	public static final String FEATUREENDURI = "http://www.genohm.com/datasource/feature_end";
-	public static final String CHRBASEURI = "http://www.genohm.com/datasource/chr";
-	public static final String VALUEURI = "http://www.genohm.com/datasource/value";
+	public static final String FEATUREBASEURI ="/feature#";
+	public static final String FEATUREBEGINURI = "feature_begin";
+	public static final String FEATUREENDURI = "feature_end";
+	public static final String CHRBASEURI = "http://www.genohm.com/chr";
+	public static final String VALUEURI = "http://www.genohm.com/value";
 
+	
+	// todo: manage these terms through ontology
 	// gff static finals
 	public static final String SOURCEURI = "http://www.genohm.com/datasource/source";
 	public static final String ATTRIBUTEURI ="http://www.genohm.com/datasource/attribute";
@@ -51,14 +58,15 @@ public class TripleConverter {
 	private static int blockCounter = 0;
 	private static String chrValue;
 
+	@Inject
+	TripleGeneratorService tripleGenerator;
 
-
-	public static List<Triple> convert(ValuedInterval vInt, String id) {
+	public List<Triple> convert(ValuedInterval vInt, String id) {
 
 		List<Triple> result = new LinkedList<Triple>();
 		// feature is the subject of all following triples except the FALDO exact position triples
 		String featureName = FEATUREBASEURI + id;
-		Node feature = NodeFactory.createURI(featureName);
+		Node feature = tripleGenerator.generateURI(featureName);
 
 		// TODO: check chr input for "chr#", or just "#" (if chr.startwith("chr")){ 	}
 		Node chrURI = NodeFactory.createURI(CHRBASEURI);
@@ -71,8 +79,8 @@ public class TripleConverter {
 		Node chr = NodeFactory.createLiteral(String.valueOf(chrValue), new XSDDatatype("string"));
 		result.add(new Triple(feature, chrURI, chr));
 
-		Node featureBegin = NodeFactory.createURI(FEATUREBEGINURI + id);
-		Node featureEnd = NodeFactory.createURI(FEATUREENDURI + id);
+		Node featureBegin = tripleGenerator.generateURI(FEATUREBEGINURI + id);
+		Node featureEnd = tripleGenerator.generateURI(FEATUREENDURI + id);
 		result.add(new Triple(feature, FaldoVocabulary.begin, featureBegin));
 		result.add(new Triple(feature, FaldoVocabulary.end, featureEnd));
 		result.add(new Triple(featureBegin, FaldoVocabulary.position,NodeFactory.createLiteral(String.valueOf(Math.min(vInt.getStart(),vInt.getStop())),new XSDDatatype("int"))));
@@ -107,9 +115,9 @@ public class TripleConverter {
 	//			
 	//		}
 
-	public static List<Triple> convert(GFFEntry entry, String id) {
+	public List<Triple> convert(GFFEntry entry, String id) {
 		List<Triple> result = convert((ValuedInterval) entry, id);
-		Node feature = NodeFactory.createURI(FEATUREBASEURI + id);
+		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
 
 		if(entry.getSource() != null && !entry.getSource().isEmpty() && !entry.getSource().equalsIgnoreCase(".")){
 			Node sourceURI = NodeFactory.createURI(SOURCEURI);
@@ -150,9 +158,9 @@ public class TripleConverter {
 		return result;
 	}
 
-	public static List<Triple> convert(BedEntry entry, String id) {
+	public List<Triple> convert(BedEntry entry, String id) {
 		List<Triple> result = convert((ValuedInterval) entry, id);
-		Node feature = NodeFactory.createURI(FEATUREBASEURI + entry.getId());
+		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + entry.getId());
 		String scoreString = String.valueOf(entry.getValue());
 		if(scoreString != null && !scoreString.isEmpty()){
 			Node featureScoreURI = NodeFactory.createURI(feature + "Value");
@@ -212,7 +220,7 @@ public class TripleConverter {
 		return result;
 	}	
 	
-	public static List<Triple> convert(FaldoFeature faldoFeature) {
+	public List<Triple> convert(FaldoFeature faldoFeature) {
 		List<Triple> result = new LinkedList<Triple>();
 		// feature is the subject of all following triples except the FALDO exact position triples
 		String featureName = FEATUREBASEURI + faldoFeature.id;

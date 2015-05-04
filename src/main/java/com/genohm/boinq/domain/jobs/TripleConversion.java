@@ -3,37 +3,33 @@ package com.genohm.boinq.domain.jobs;
 import java.io.File;
 import java.util.Iterator;
 
-import org.apache.commons.io.FilenameUtils;
-import org.quartz.JobKey;
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.repository.DatasourceRepository;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
-import com.genohm.boinq.tools.fileformats.BedTripleIterator;
-import com.genohm.boinq.tools.fileformats.GFF3TripleIterator;
+import com.genohm.boinq.tools.fileformats.TripleIteratorFactory;
 import com.genohm.boinq.tools.queries.Prefixes;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
 
 public class TripleConversion implements AsynchronousJob {
 
 	private Boolean interrupted = false;
-	private DatasourceRepository datasourceRepository;
+	@Inject
 	private TripleUploadService tripleUploadService;
+	@Inject
+	private TripleIteratorFactory tripleIteratorFactory;
 	private int status = JOB_STATUS_UNKNOWN;
 	private String name = "";
 	private String description = "";
 	
 	private RawDataFile inputData;
 	
-	private static final String GFF3_EXTENSIONS[] = {"GFF", "GFF3"};
-	private static final String BED_EXTENSIONS[] = {"BED" };
 	public static final String SUPPORTED_EXTENSIONS[] = {"GFF", "GFF3", "BED"};
 	
 	private static Logger log = LoggerFactory.getLogger(TripleConversion.class);
@@ -46,26 +42,6 @@ public class TripleConversion implements AsynchronousJob {
 				+ inputData.getFilePath() + " into track "
 				+ inputData.getTrack().getId();
 		this.name = this.description;
-	}
-
-	@Override
-	public void setDatasourceRepository(DatasourceRepository datasourceRepository) {
-		this.datasourceRepository = datasourceRepository;
-	}
-
-	@Override
-	public DatasourceRepository getDatasourceRepository() {
-		return datasourceRepository;
-	}
-
-	@Override
-	public TripleUploadService getTripleUploadService() {
-		return tripleUploadService;
-	}
-
-	@Override
-	public void setTripleUploadService(TripleUploadService tripleUploadService) {
-		this.tripleUploadService = tripleUploadService;
 	}
 
 	@Override
@@ -108,7 +84,7 @@ public class TripleConversion implements AsynchronousJob {
 				throw new Exception("Datasource should be of type local faldo in order to support upload");
 			}
 			File inputFile = new File(inputData.getFilePath());
-			Iterator<Triple> tripleIterator = getTripleIteratorByExtension(inputFile);
+			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile);
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
 			inputData.setStatus(RawDataFile.STATUS_LOADING);
 			while (!interrupted && tripleIterator.hasNext()) {
@@ -124,21 +100,9 @@ public class TripleConversion implements AsynchronousJob {
 		}
 	}
 	
-	private Iterator<Triple> getTripleIteratorByExtension(File inputFile) throws Exception {
-		String extension = FilenameUtils.getExtension(inputFile.getName());
-		for (String ext: GFF3_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new GFF3TripleIterator(inputFile);
-		}
-		for (String ext: BED_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new BedTripleIterator(inputFile);
-		}
-		throw new Exception("No triple iterator available for extension " + extension);
-	}
-
 	@Override
 	public void kill() {
-		this.interrupted = false;
+		this.interrupted = true;
 	}
-	
-	
+
 }

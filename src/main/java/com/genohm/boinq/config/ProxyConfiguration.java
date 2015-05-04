@@ -14,9 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import com.genohm.boinq.web.servlet.FusekiProxyServlet;
-import com.hp.hpl.jena.assembler.assemblers.FileManagerAssembler;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.util.FileManager;
 
 @Configuration
 @AutoConfigureAfter(CacheConfiguration.class)

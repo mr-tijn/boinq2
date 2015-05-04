@@ -24,10 +24,11 @@ import com.hp.hpl.jena.vocabulary.RDF;
 @Service
 public class LocalGraphService implements EnvironmentAware {
 
-	static final private String PREFIX = "spring.tripleupload.";
-	static final private String ENDPOINT_SPARQL = "endpoint.sparql";
-	static final private String ENDPOINT_META = "endpoint.meta";
-	static final private String ENDPOINT_UPDATE = "endpoint.update";
+	static final private String PREFIX = "spring.triplestore.";
+	
+	static final private String LOCAL_ENDPOINT_SPARQL = "endpoint.sparql";
+	static final private String LOCAL_ENDPOINT_META = "endpoint.meta";
+	static final private String LOCAL_ENDPOINT_UPDATE = "endpoint.update";
 	static final private String LOCAL_DATASOURCE_URI = "localdatasource";
 	static final private String GRAPH_META = "metagraph";
 	static final private String GRAPHBASE = "graphbase";
@@ -49,9 +50,9 @@ public class LocalGraphService implements EnvironmentAware {
 	@PostConstruct
 	public void init() {
 		this.graphBase = propertyResolver.getProperty(GRAPHBASE);
-		this.sparqlEndpoint = propertyResolver.getProperty(ENDPOINT_SPARQL);
-		this.metaEndpoint = propertyResolver.getProperty(ENDPOINT_META);
-		this.updateEndpoint = propertyResolver.getProperty(ENDPOINT_UPDATE);
+		this.sparqlEndpoint = propertyResolver.getProperty(LOCAL_ENDPOINT_SPARQL);
+		this.metaEndpoint = propertyResolver.getProperty(LOCAL_ENDPOINT_META);
+		this.updateEndpoint = propertyResolver.getProperty(LOCAL_ENDPOINT_UPDATE);
 		this.metaGraph = propertyResolver.getProperty(GRAPH_META);
 		this.localDatasourceUri = propertyResolver.getProperty(LOCAL_DATASOURCE_URI);
 	}

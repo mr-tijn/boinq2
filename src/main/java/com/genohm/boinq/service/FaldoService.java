@@ -1,6 +1,5 @@
 package com.genohm.boinq.service;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.faldo.FaldoFeature;
@@ -31,6 +29,8 @@ public class FaldoService {
 	TripleUploadService tripleUploadService;
 	@Inject
 	QueryBuilderService queryBuilderService;
+	@Inject
+	TripleConverter converter;
 	
 	public List<FaldoFeature> getFeatures(Track track, String refseqName, Long start, Long end, Boolean strand) throws Exception {
 		List<FaldoFeature> features = new LinkedList<FaldoFeature>();
@@ -42,9 +42,11 @@ public class FaldoService {
 			localReference = match.get(QueryBuilderService.ORIGINAL_REFERENCE);
 		}
 		if (localReference == null) {
+			log.error("Empty local reference for "+refseqName);
 			throw new Exception("Empty local reference for "+refseqName);
 		}
 		if (resultSet.getRecords().iterator().hasNext()) {
+			log.error("No unique reference found for "+refseqName);
 			throw new Exception("No unique reference found for "+refseqName);
 		}
 		query = queryBuilderService.getFaldoFeatures(localReference, start, end, strand);
@@ -74,7 +76,7 @@ public class FaldoService {
 
 	private void writeFeature(TripleUploader uploader, FaldoFeature feature) {
 		// when writing features ourselves: always use global reference
-		List<Triple> triples = TripleConverter.convert(feature);
+		List<Triple> triples = converter.convert(feature);
 		for (Triple triple: triples) {
 			uploader.put(triple);
 		}

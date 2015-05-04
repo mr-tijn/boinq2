@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.genohm.boinq.domain.Datasource;
-import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
 
 
@@ -130,7 +129,7 @@ public class DatasourceDTO {
 		String tracksString = "";
 		if (tracks != null) {
 			for (TrackDTO track: tracks) {
-				tracksString += tracks;
+				tracksString += track;
 			}
 		}
 		return "DatasourceDTO {id=" + id + ", endpointUrl=" + endpointUrl 

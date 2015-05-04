@@ -1,35 +1,33 @@
 package com.genohm.boinq.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import com.genohm.boinq.domain.Datasource;
-import com.genohm.boinq.domain.Project;
-import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.domain.User;
-import com.genohm.boinq.repository.DatasourceRepository;
-import com.genohm.boinq.repository.ProjectRepository;
-import com.genohm.boinq.repository.TrackRepository;
-import com.genohm.boinq.repository.UserRepository;
-import com.genohm.boinq.web.rest.dto.DatasourceDTO;
-import com.genohm.boinq.web.rest.dto.ProjectDTO;
-import com.genohm.boinq.web.rest.dto.TrackDTO;
-import com.mchange.v2.c3p0.DataSources;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-
-import java.security.Principal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import com.codahale.metrics.annotation.Timed;
+import com.genohm.boinq.domain.Project;
+import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.domain.User;
+import com.genohm.boinq.repository.ProjectRepository;
+import com.genohm.boinq.repository.TrackRepository;
+import com.genohm.boinq.repository.UserRepository;
+import com.genohm.boinq.web.rest.dto.ProjectDTO;
+import com.genohm.boinq.web.rest.dto.TrackDTO;
 
 /**
  * REST controller for managing Project.
@@ -42,8 +40,6 @@ public class ProjectResource {
 
     @Inject
     private ProjectRepository projectRepository;
-    @Inject
-    private DatasourceRepository datasourceRepository;
     @Inject
     private TrackRepository trackRepository;
     @Inject

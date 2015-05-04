@@ -22,6 +22,14 @@
                   tableName="T_DATASOURCE_T_TRACK"/>
 
 	</changeSet>
+	
+	<changeSet id="martijnmanual004" author="martijn">
+   		<update tableName="T_DATASOURCE">
+    	    <column name="IRI" value="${triplestore.localdatasource}">
+        	</column>
+        	<where>IRI='DSNAME_PLACEHOLDER'</where>
+	    </update>
+	</changeSet>
 
 
 </databaseChangeLog>

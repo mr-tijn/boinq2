@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +23,6 @@ import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.faldo.FaldoFeature;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
-import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -54,11 +52,6 @@ public class FaldoServiceTest {
 		track.setDatasource(ds);
 		track.setRawDataFiles(new HashSet<RawDataFile>());
 		track.setGraphName("http://boinq.org/test1");
-		
-		HttpClient client = new HttpClient();
-		TripleUploader uploader = uploadService.getUploader("http://localhost:8899/DYNAMIC/sparul", "http://www.boinq.org/track", QueryBuilderService.commonPrefixes);
-		
-		// read from file and put into graph
 		
 	}
 	

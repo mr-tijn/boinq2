@@ -3,7 +3,6 @@ package com.genohm.boinq.web.rest.dto;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.Project;
 import com.genohm.boinq.domain.Track;
 
