@@ -1,0 +1,61 @@
+#
+# A hello-world config. 
+#
+
+# Assorted prefix declarations. Some of them are for the structuring
+# of the API config, others are for the vocabulary definitions.
+#
+
+@prefix api:                <http://purl.org/linked-data/api/vocab#> .
+@prefix dct:				<http://purl.org/dc/terms/> .
+
+@prefix rdf:                <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:               <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:                <http://www.w3.org/2001/XMLSchema#> .
+
+# The elda namespace/prefix is for Elda extensions to the LDA specification.
+@prefix elda:               <http://www.epimorphics.com/vocabularies/lda#> .
+
+# Prefix for example-local entities.
+@prefix hello:				<http://epimorphics.com/public/vocabulary/games.ttl#>.
+@prefix boinq:				<http://www.boinq.org/iri/elda/> .
+@prefix track:				<http://www.boinq.org/iri/ontologies/track#> .
+
+# ---------------------------------------------------------------------
+# API config
+
+
+boinq:main a api:API
+	; rdfs:label "Linked data API"@en
+	; api:sparqlEndpoint <http://localhost:8888/fuseki/sparql>
+	; api:defaultFormatter boinq:HtmlFormatter
+	; api:formatter
+		[ a elda:FeedFormatter
+		; api:name "atom"
+		; elda:className "com.epimorphics.lda.renderers.FeedRendererFactory"
+		; api:mimeType "application/atom+xml"
+		]
+	; api:endpoint boinq:datasources
+	.
+
+<http://localhost:8888/fuseki/sparql> 
+	elda:supportsNestedSelect true
+	.
+	
+boinq:datasources a api:ListEndpoint 
+	; rdfs:label "Datasources"
+	; api:uriTemplate "/datasources"
+	; elda:graphTemplate "http://www.boinq.org/iri/graph/meta/"
+	; api:selector [ api:filter "type=Datasource"  ]
+	.	
+
+boinq:HtmlFormatter a api:XsltFormatter 
+	; api:name "html" 
+	; api:mimeType "text/html; charset=utf-8" 
+	; api:stylesheet "lda-assets/xslt/result-osm-trimmed.xsl"
+	.
+
+track:Datasource a rdfs:Class
+	; rdfs:label "Datasource"
+	; api:label "Datasource"
+	.
