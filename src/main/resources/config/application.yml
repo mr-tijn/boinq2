@@ -41,6 +41,13 @@ spring:
     triplegen:
         baseIRI: http://www.boinq.org/iri/
         baseIRIlink: http://localhost:8888/iri/
+# baseIRIlink is used by ELDA to translate the links for local development
+
+    propertyplaceholder:
+        templates:
+         - 
+           template: config/config_template.ttl
+           target: src/main/webapp/elda/config.ttl
 
 swagger:
     apiDocsLocation: http://localhost:8888

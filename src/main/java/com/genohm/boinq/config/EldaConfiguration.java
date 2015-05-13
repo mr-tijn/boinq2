@@ -9,6 +9,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
 import org.springframework.beans.BeansException;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.embedded.ServletContextInitializer;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -20,21 +21,18 @@ import com.epimorphics.lda.restlets.RouterRestlet;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 @Configuration
-public class EldaConfiguration implements ApplicationContextAware {
+@AutoConfigureAfter(PropertyPlaceholderReplaceConfiguration.class)
+public class EldaConfiguration implements ApplicationContextAware, ServletContextInitializer {
 
 	public Servlet jerseyServlet() {
 		return new ServletContainer();
 	}
+
+	@Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        servletContext.setInitParameter("com.epimorphics.api.initialSpecFile", "elda/config.ttl");
+    }
 	
-	@Bean
-	public ServletContextInitializer initializer() {
-	    return new ServletContextInitializer() {
-	        @Override
-	        public void onStartup(ServletContext servletContext) throws ServletException {
-	            servletContext.setInitParameter("com.epimorphics.api.initialSpecFile", "elda/config.ttl");
-	        }
-	    };
-	}
 	
 	@Bean
 	public ServletRegistrationBean jerseyServletRegistration() {

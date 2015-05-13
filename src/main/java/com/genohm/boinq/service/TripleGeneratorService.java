@@ -1,9 +1,10 @@
 package com.genohm.boinq.service;
 
+import java.net.URI;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.apache.commons.httpclient.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
@@ -30,7 +31,8 @@ public class TripleGeneratorService {
 	
 	public Node generateURI(String postfix) {
 		try {
-			URI uri = new URI(termBase, postfix);
+			URI base = new URI(termBase);
+			URI uri = base.resolve(postfix);
 			return NodeFactory.createURI(uri.toString());
 		} catch (Exception e) {
 			log.error("Could not generate URI",e);

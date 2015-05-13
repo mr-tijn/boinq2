@@ -26,7 +26,7 @@
 
 boinq:main a api:API
 	; rdfs:label "Linked data API"@en
-	; api:sparqlEndpoint <http://localhost:8888/fuseki/sparql>
+	; api:sparqlEndpoint <${spring.triplestore.endpoint.sparql}>
 	; api:defaultFormatter boinq:HtmlFormatter
 	; api:formatter
 		[ a elda:FeedFormatter
@@ -37,8 +37,8 @@ boinq:main a api:API
 	; api:endpoint boinq:datasources
 	# this is for development only
 	; elda:rewriteResultURIs
-		[ elda:ifStarts "http://www.boinq.org/iri/"
-		; elda:replaceStartBy "http://localhost:8888/iri/" ]
+		[ elda:ifStarts "${spring.triplegen.baseIRI}"
+		; elda:replaceStartBy "${spring.triplegen.baseIRIlink}" ]
 	.
 
 <http://localhost:8888/fuseki/sparql> 
