@@ -25,7 +25,11 @@ spring:
 
     messageSource:
         cacheSeconds: 1
-        
+
+    R:
+        port: 6311
+        host: localhost
+
     fuseki:
         port: 8899
         jettyconfigfile: fuseki/jetty-fuseki.xml
@@ -33,8 +37,9 @@ spring:
     triplestore:
         endpoint: 
             update: http://localhost:8899/DYNAMIC/update
-            sparql: http://localhost:8888/fuseki/sparql
+            sparql: http://localhost:8899/DYNAMIC/sparql
             meta: http://localhost:8899/DYNAMIC/update
+            external: http://localhost:8888/fuseki/sparql
         metagraph: http://www.boinq.org/iri/graph/meta/
         localdatasource: http://www.boinq.org/iri/localdatasource
             
@@ -48,7 +53,7 @@ spring:
          - 
            template: config/config_template.ttl
            target: src/main/webapp/elda/config.ttl
-
+           
 swagger:
     apiDocsLocation: http://localhost:8888
     title: boinq API

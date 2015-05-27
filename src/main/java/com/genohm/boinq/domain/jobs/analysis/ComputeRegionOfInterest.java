@@ -2,6 +2,7 @@ package com.genohm.boinq.domain.jobs.analysis;
 
 import javax.inject.Inject;
 
+import com.genohm.boinq.domain.jobs.AsynchronousJob;
 import com.genohm.boinq.domain.match.Match;
 import com.genohm.boinq.domain.match.MatchFactory;
 import com.genohm.boinq.service.LocalGraphService;
@@ -9,7 +10,7 @@ import com.genohm.boinq.tools.generators.ARQGenerator;
 import com.genohm.boinq.tools.generators.SPARQLGenerator;
 import com.genohm.boinq.web.rest.dto.MatchDTO;
 
-public class ComputeRegionOfInterest implements TrackBuildingAnalysis {
+public class ComputeRegionOfInterest implements AsynchronousJob {
 
 	@Inject
 	private LocalGraphService localGraphService;
@@ -25,17 +26,6 @@ public class ComputeRegionOfInterest implements TrackBuildingAnalysis {
 		this.matchDTO = matchDTO;
 	}
 	
-	
-	@Override
-	public void setLocalGraphService(LocalGraphService localGraphService) {
-		this.localGraphService = localGraphService;
-	}
-
-	@Override
-	public LocalGraphService getLocalGraphService() {
-		return localGraphService;
-	}
-
 	@Override
 	public String getName() {
 		return name;

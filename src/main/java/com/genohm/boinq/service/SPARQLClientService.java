@@ -26,7 +26,14 @@ public class SPARQLClientService {
 	private static final Logger log = Logger.getLogger(SPARQLClientService.class);
 	
 	public SPARQLResultSet query(String serviceURL, String graphURL, Query query) throws Exception {
-		return query(serviceURL, graphURL, query.toString(Syntax.syntaxSPARQL));
+		switch (query.getQueryType()) {
+		case Query.QueryTypeSelect:
+			return querySelect(serviceURL, graphURL, query.toString(Syntax.syntaxSPARQL));
+		case Query.QueryTypeAsk:
+			return queryAsk(serviceURL, graphURL, query.toString(Syntax.syntaxSPARQL));
+		default:
+			throw new Exception("Currently only select and ask are handled");
+		}
 	}
 	
 	public RawSPARQLResultSet rawQuery(String serviceURL, String graphURL, String queryString, Boolean subClassReasoning, Boolean subPropertyReasoning) throws Exception {
@@ -74,7 +81,7 @@ public class SPARQLClientService {
 		return srs;		
 	}
 	
-	public SPARQLResultSet query(String serviceURL, String graphURL, String queryString, Boolean subClassReasoning, Boolean subPropertyReasoning) throws Exception {
+	public SPARQLResultSet querySelect(String serviceURL, String graphURL, String queryString, Boolean subClassReasoning, Boolean subPropertyReasoning) throws Exception {
 		RawSPARQLResultSet rrs = rawQuery(serviceURL, graphURL, queryString, subClassReasoning, subPropertyReasoning);
 		List<String> varList = rrs.getVariableNames();
 		List<Map<String, String>> resultList = new LinkedList<Map<String,String>>();
@@ -102,8 +109,31 @@ public class SPARQLClientService {
 		return rawQuery(serviceURL, graphURL, query, false, false);
 	}
 	
-	public SPARQLResultSet query(String serviceURL, String graphURL, String query) throws Exception {
-		return query(serviceURL, graphURL, query, false, false);
+	public SPARQLResultSet querySelect(String serviceURL, String graphURL, String query) throws Exception {
+		return querySelect(serviceURL, graphURL, query, false, false);
+	}
+	
+	public SPARQLResultSet queryAsk(String serviceURL, String graphURL, String queryString) throws Exception {
+		QueryExecution qe = null;
+		Boolean resultAsk = null;
+		try {
+			qe = new QueryEngineHTTP(serviceURL, queryString);
+			if (graphURL != null) {
+				((QueryEngineHTTP) qe).addDefaultGraph(graphURL);
+			}
+			resultAsk = qe.execAsk();
+		} catch (Exception e) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			e.printStackTrace(new PrintStream(baos));
+			String error = "Could not perform query "+queryString+"\n"+e.getMessage()+"\n"+baos.toString();
+			log.error(error);
+			throw new Exception((Throwable) e); //recast to general type to ensure serialization
+		} finally {
+			if (qe != null) qe.close();
+		}
+		SPARQLResultSet result = new SPARQLResultSet();
+		result.setAskResult(resultAsk);
+		return result;
 	}
 	
 }

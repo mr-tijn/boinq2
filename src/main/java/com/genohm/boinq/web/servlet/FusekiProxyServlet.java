@@ -7,6 +7,10 @@ import javax.servlet.ServletException;
 
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.servlets.ProxyServlet;
+import org.springframework.boot.SpringApplicationRunListener;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 
 public class FusekiProxyServlet extends ProxyServlet {
 	private String sourcePath;
@@ -33,4 +37,13 @@ public class FusekiProxyServlet extends ProxyServlet {
 		return uri.replaceFirst(sourcePath, "");
 	}
 	
+	public class ProxyStartedEvent extends ApplicationEvent {
+		private static final long serialVersionUID = 1L;
+		private String message;
+		public ProxyStartedEvent(Object source) {
+			super(source);
+			message = source.toString();
+		}
+	}
+
 }

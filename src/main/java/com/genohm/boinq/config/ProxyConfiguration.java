@@ -8,6 +8,8 @@ import javax.servlet.Servlet;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,13 +23,14 @@ public class ProxyConfiguration implements EnvironmentAware {
 
 	protected Environment environment;
     protected RelaxedPropertyResolver propertyResolver;
+	private ApplicationEventPublisher publisher;
 
 	@Override
 	public void setEnvironment(Environment environment) {
     	this.environment = environment;
         this.propertyResolver = new RelaxedPropertyResolver(environment, "spring.fuseki.");
 	}
-	@Bean
+	
 	public Servlet proxyServlet() {
 		return new FusekiProxyServlet();
 	}

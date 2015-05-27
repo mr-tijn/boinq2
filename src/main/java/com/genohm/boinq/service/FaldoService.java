@@ -35,7 +35,7 @@ public class FaldoService {
 	public List<FaldoFeature> getFeatures(Track track, String refseqName, Long start, Long end, Boolean strand) throws Exception {
 		List<FaldoFeature> features = new LinkedList<FaldoFeature>();
 		String query = queryBuilderService.findLocalReference(track, NodeFactory.createURI(refseqName));
-		SPARQLResultSet resultSet = sparqlClientService.query(track.getDatasource().getMetaEndpointUrl(), track.getDatasource().getMetaGraphName(), query);
+		SPARQLResultSet resultSet = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(), track.getDatasource().getMetaGraphName(), query);
 		String localReference = refseqName;
 		if (resultSet.getRecords().iterator().hasNext()) {
 			Map<String, String> match = resultSet.getRecords().iterator().next();
@@ -50,7 +50,7 @@ public class FaldoService {
 			throw new Exception("No unique reference found for "+refseqName);
 		}
 		query = queryBuilderService.getFaldoFeatures(localReference, start, end, strand);
-		resultSet = sparqlClientService.query(track.getDatasource().getEndpointUrl(), track.getGraphName(), query);
+		resultSet = sparqlClientService.querySelect(track.getDatasource().getEndpointUrl(), track.getGraphName(), query);
 		for (Map<String,String> result: resultSet.getRecords()) {
 			FaldoFeature feature = new FaldoFeature();
 			feature.id = result.get(QueryBuilderService.FEATURE_ID);

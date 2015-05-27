@@ -4,9 +4,13 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.jena.fuseki.server.SPARQLServer;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.stereotype.Service;
 
+import com.genohm.boinq.config.ProxyConfiguration;
+
 @Service
+@AutoConfigureAfter(ProxyConfiguration.class)
 public class FusekiMgmtService {
 
 	
@@ -18,6 +22,10 @@ public class FusekiMgmtService {
 		startServer();
 	}
 	
+	
+	public Boolean isUp() {
+		return sparqlServer.getServer().isRunning();
+	}
 	
 	public String getStatus() {
 		return sparqlServer.getServer().getState();

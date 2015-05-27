@@ -7,6 +7,8 @@ import java.util.Map;
 public class SPARQLResultSet {
 	protected List<Map<String,String>> records;
 	protected List<String> variableNames;
+	protected Boolean askResult;
+	
 	public List<Map<String, String>> getRecords() {
 		return records;
 	}
@@ -18,6 +20,12 @@ public class SPARQLResultSet {
 	}
 	public void setVariableNames(List<String> variableNames) {
 		this.variableNames = variableNames;
+	}
+	public Boolean getAskResult() {
+		return askResult;
+	}
+	public void setAskResult(Boolean askResult) {
+		this.askResult = askResult;
 	}
 	
 }

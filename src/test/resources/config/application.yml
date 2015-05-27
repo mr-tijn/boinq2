@@ -45,6 +45,10 @@ spring:
         tls: false
         auth: false
 
+    R:
+        port: 6311
+        host: localhost
+
     fuseki:
         port: 8899
         configfile: fuseki/localdata-test.ttl
@@ -55,9 +59,19 @@ spring:
             update: http://localhost:8899/DYNAMIC/update
             sparql: http://localhost:8888/fuseki/sparql
             meta: http://localhost:8899/DYNAMIC/update
-        graphbase: http://www.boinq.org/data/graph/
-        metagraph: http://www.boinq.org/data/meta/
-        localdatasource: http://www.boinq.org/data/localdatasource
+        metagraph: http://www.boinq.org/iri/graph/meta/
+        localdatasource: http://www.boinq.org/iri/localdatasource
+
+    triplegen:
+        baseIRI: http://www.boinq.org/iri/
+        baseIRIlink: http://localhost:8888/iri/
+
+    propertyplaceholder:
+        templates:
+         - 
+           template: config/config_template.ttl
+           target: src/main/webapp/elda/config.ttl
+
 
 metrics:
     jmx.enabled: false

@@ -9,11 +9,19 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
@@ -22,6 +30,7 @@ import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.queries.Prefixes;
+import com.genohm.boinq.web.servlet.FusekiProxyServlet;
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
@@ -29,9 +38,8 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.sparql.syntax.ElementTriplesBlock;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-@Configuration
-@AutoConfigureAfter(FusekiMgmtService.class)
-public class TripleStoreInitializer implements EnvironmentAware {
+@Component
+public class TripleStoreInitializer implements EnvironmentAware, ApplicationListener<ContextRefreshedEvent> {
 
     private final Logger log = LoggerFactory.getLogger(TripleStoreInitializer.class);
 	
@@ -47,8 +55,6 @@ public class TripleStoreInitializer implements EnvironmentAware {
     SPARQLClientService sparqlClient;
     @Inject
     TripleUploadService tripleUploadService;
-    @Inject
-    FusekiMgmtService fusekiMgmtService; // only way to make it start before this class ?
 
 	private String localDatasource;
 
@@ -58,7 +64,6 @@ public class TripleStoreInitializer implements EnvironmentAware {
 
 	private String queryEndpoint;
     
-    @PostConstruct
 	public void checkInit() {
 		Triple triple = new Triple(NodeFactory.createURI(localDatasource), RDF.type.asNode(), TrackVocab.Datasource.asNode());
 		if (!alreadyPresent(triple)) {
@@ -66,7 +71,7 @@ public class TripleStoreInitializer implements EnvironmentAware {
 		}
 		
 	}
-
+    
 	@Override
 	public void setEnvironment(Environment environment) {
 		propertyResolver = new RelaxedPropertyResolver(environment, ENV_SPRING_TRIPLESTORE);
@@ -78,15 +83,13 @@ public class TripleStoreInitializer implements EnvironmentAware {
 	
 	private Boolean alreadyPresent(Triple t) {
 		Query query = new Query();
-		query.setQuerySelectType();
+		query.setQueryAskType();
 		ElementTriplesBlock triples = new ElementTriplesBlock();
 		triples.addTriple(t);
 		query.setQueryPattern(triples);
 		try {
 			SPARQLResultSet resultSet = sparqlClient.query(queryEndpoint, metaGraph, query);
-			if (resultSet != null && resultSet.getRecords() != null && resultSet.getRecords().size() > 0) {
-				return true;
-			}
+			return (resultSet != null && resultSet.getAskResult());
 		} catch (Exception e) {
 			log.error("Could not check for initialization of triplestore");
 		}
@@ -105,5 +108,10 @@ public class TripleStoreInitializer implements EnvironmentAware {
 			uploader.put(triple);
 		}
 	}
-	
+
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		checkInit();
+	}
+
 }
