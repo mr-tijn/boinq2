@@ -1,0 +1,69 @@
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ja:      <http://jena.hpl.hp.com/2005/11/Assembler#> .
+@prefix reasoner: <http://jena.hpl.hp.com/2003/RuleReasoner#> .
+@prefix lm: <http://jena.hpl.hp.com/2004/08/location-mapping#> .
+@prefix owl: 	<http://www.w3.org/2002/07/owl#> .
+@prefix local: <http://www.boinq.org/localdata#> .
+@prefix tdb:     <http://jena.hpl.hp.com/2008/tdb#> .
+@prefix fuseki:  <http://jena.apache.org/fuseki#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+
+tdb:DatasetTDB  rdfs:subClassOf  ja:RDFDataset .
+tdb:GraphTDB    rdfs:subClassOf  ja:Model      .
+
+
+[] a fuseki:Server
+	; ja:context [ 
+		ja:cxtName "arq:queryTimeout" ;  
+		ja:cxtValue "1000000" ]
+	; ja:loadClass "com.hp.hpl.jena.tdb.TDB"
+	; fuseki:services (
+		<#DYNAMIC>
+		<#STATIC> )
+	.
+
+
+<#DYNAMIC> rdf:type fuseki:Service
+        ; fuseki:name "DYNAMIC"
+        ; fuseki:serviceQuery "query"
+        ; fuseki:serviceQuery "sparql"
+        ; fuseki:serviceUpdate "update"
+        ; fuseki:serviceUpdate "sparul"
+        ; fuseki:serviceReadWriteGraphStore "data"
+        ; fuseki:dataset <#dynamicdataset>
+        .
+
+<#dynamicdataset> rdf:type tdb:DatasetTDB
+		; tdb:location "fuseki/testTDB/"
+		; tdb:unionDefaultGraph true
+		.
+		
+<#STATIC> rdf:type fuseki:Service
+		; fuseki:name "STATIC"
+		; fuseki:serviceQuery "sparql"
+		; fuseki:serviceQuery "query"
+		; fuseki:dataset <#staticdataset>
+		.
+
+<#staticdataset> rdf:type ja:RDFDataset
+		; ja:defaultGraph <#track>
+		; ja:namedGraph [
+						ja:graphName	<http://www.boinq.org/track> ;
+						ja:graph		<#track> ]
+		; ja:namedGraph [
+						ja:graphName	<http://purl.obolibrary.org/obo/so.owl> ;
+						ja:graph		<#so> ]
+		.
+
+<#track> rdf:type ja:MemoryModel
+		; rdfs:label "Track ontology"
+		; ja:content [ 
+					   ja:externalContent <file:../ontologies/track.owl> ;
+				   	   ja:externalContent <file:../ontologies/faldo.ttl> ]
+		.
+		
+<#so> rdf:type ja:MemoryModel
+		; rdfs:label "Sequence Ontology"
+		; ja:externalContent <file:../ontologies/so.owl>
+		.

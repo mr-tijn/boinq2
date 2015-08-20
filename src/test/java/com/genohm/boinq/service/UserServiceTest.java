@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
 @DirtiesContext(classMode= DirtiesContext.ClassMode.AFTER_CLASS)
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 public class UserServiceTest {
 
     @Inject

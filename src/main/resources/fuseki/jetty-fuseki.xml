@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+<!-- jetty config file for fuseki
+     settings taken from org.apache.jena.fuseki.server.SPARQLServer.defaultServerConfig(int, boolean)
+     and enhanced with Access-Control-Allow-Origin response header to allow CORS  
+-->
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+	<Set name="connectors">
+		<Array type="org.eclipse.jetty.server.Connector">
+			<Item>
+				<New class="org.eclipse.jetty.server.nio.BlockingChannelConnector">
+					<Set name="host">localhost</Set>
+					<Set name="port">8899</Set>
+					<Set name="maxIdleTime">0</Set>
+					<Set name="requestHeaderSize">5242880</Set>
+					<Set name="requestBufferSize">5242880</Set>
+				</New>
+			</Item>
+		</Array>
+	</Set>
+	<Set name="handler">
+		<New id="AddResponseHeader" class="org.eclipse.jetty.rewrite.handler.RewriteHandler">
+			<Set name="rules">
+				<Array type="org.eclipse.jetty.rewrite.handler.Rule">
+					<Item>
+						<New id="header" class="org.eclipse.jetty.rewrite.handler.HeaderPatternRule">
+							<Set name="pattern">/*</Set>
+							<Set name="name">Access-Control-Allow-Origin</Set>
+							<Set name="value">*</Set>
+						</New>
+					</Item>
+				</Array>
+			</Set>
+		</New>
+	</Set>
+</Configure>

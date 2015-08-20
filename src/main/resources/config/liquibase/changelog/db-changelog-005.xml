@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" logicalFilePath="none" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <changeSet author="jhipster" id="1411723716081-9" logicalFilePath="none">
-        <createTable catalogName="" schemaName="public" tableName="T_PROJECT">
+        <createTable catalogName="" tableName="T_PROJECT">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="T_PROJECTPK"/>
             </column>
@@ -10,7 +10,7 @@
         </createTable>
     </changeSet>
     <changeSet author="jhipster" id="1411723716081-10" logicalFilePath="none">
-        <createTable catalogName="" schemaName="public" tableName="T_PROJECT_T_DATASOURCE">
+        <createTable catalogName="" tableName="T_PROJECT_T_DATASOURCE">
             <column name="T_PROJECT_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -20,21 +20,21 @@
         </createTable>
     </changeSet>
     <changeSet author="jhipster" id="1411723716081-11" logicalFilePath="none">
-        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableCatalogName="" baseTableName="T_PROJECT" baseTableSchemaName="public" constraintName="FK_a0kdmtvfioekufbkj7t3161qe" deferrable="false" initiallyDeferred="false" referencedColumnNames="login" referencedTableCatalogName="" referencedTableName="T_USER" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableCatalogName="" baseTableName="T_PROJECT" constraintName="FK_a0kdmtvfioekufbkj7t3161qe" deferrable="false" initiallyDeferred="false" referencedColumnNames="login" referencedTableCatalogName="" referencedTableName="T_USER" />
     </changeSet>
     <changeSet author="jhipster" id="1411723716081-12" logicalFilePath="none">
-        <addForeignKeyConstraint baseColumnNames="datasources_id" baseTableCatalogName="" baseTableName="T_PROJECT_T_DATASOURCE" baseTableSchemaName="public" constraintName="FK_a7qcbsfm3ikwu446in3g5wj7p" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_DATASOURCE" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="datasources_id" baseTableCatalogName="" baseTableName="T_PROJECT_T_DATASOURCE" constraintName="FK_a7qcbsfm3ikwu446in3g5wj7p" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_DATASOURCE" />
     </changeSet>
     <changeSet author="jhipster" id="1411723716081-13" logicalFilePath="none">
-        <addForeignKeyConstraint baseColumnNames="T_PROJECT_id" baseTableCatalogName="" baseTableName="T_PROJECT_T_DATASOURCE" baseTableSchemaName="public" constraintName="FK_gu5alnb2k00on8mb7q8i6fgyw" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_PROJECT" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="T_PROJECT_id" baseTableCatalogName="" baseTableName="T_PROJECT_T_DATASOURCE" constraintName="FK_gu5alnb2k00on8mb7q8i6fgyw" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_PROJECT" />
     </changeSet>
     <changeSet author="jhipster" id="1411723716081-14" logicalFilePath="none">
-        <dropDefaultValue catalogName="" columnDataType="boolean" columnName="activated" schemaName="public" tableName="T_USER"/>
+        <dropDefaultValue catalogName="" columnDataType="boolean" columnName="activated" tableName="T_USER"/>
     </changeSet>
     <changeSet author="jhipster" id="1411723716081-15" logicalFilePath="none">
-        <dropDefaultValue catalogName="" columnDataType="varchar(255)" columnName="created_by" schemaName="public" tableName="T_USER"/>
+        <dropDefaultValue catalogName="" columnDataType="varchar(255)" columnName="created_by" tableName="T_USER"/>
     </changeSet>
     <changeSet author="jhipster" id="1411723716081-16" logicalFilePath="none">
-        <dropDefaultValue catalogName="" columnDataType="timestamp" columnName="created_date" schemaName="public" tableName="T_USER"/>
+        <dropDefaultValue catalogName="" columnDataType="timestamp" columnName="created_date" tableName="T_USER"/>
     </changeSet>
 </databaseChangeLog>

@@ -19,6 +19,8 @@ import com.genohm.boinq.web.rest.dto.FusekiInfoDTO;
 @RequestMapping("/app")
 public class FusekiManagementResource {
 
+	
+	//TODO: check if we can make this inject dependent from config (fuseki or other)
 	@Inject
 	FusekiMgmtService fusekiManager;
 	

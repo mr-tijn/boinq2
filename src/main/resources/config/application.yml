@@ -42,6 +42,7 @@ spring:
             external: http://localhost:8888/fuseki/sparql
         metagraph: http://www.boinq.org/iri/graph/meta/
         localdatasource: http://www.boinq.org/iri/localdatasource
+        graphbase: http://www.boinq.org/iri/graph/local#
             
     triplegen:
         baseIRI: http://www.boinq.org/iri/

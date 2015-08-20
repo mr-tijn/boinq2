@@ -19,7 +19,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 
 import com.genohm.boinq.config.Constants;
-import com.genohm.boinq.init.TripleStoreInitializer;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = {MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class, MongoRepositoriesAutoConfiguration.class})
@@ -70,6 +69,7 @@ public class Application {
         for (String beanName: beanNames) {
         	log.info(beanName);
         }
+        
     }
 
     /**

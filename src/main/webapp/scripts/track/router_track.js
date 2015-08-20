@@ -15,5 +15,5 @@ boinqApp
                     access: {
                         authorizedRoles: [USER_ROLES.all]
                     }
-                })
+                });
         }]);

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" logicalFilePath="none" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <changeSet author="martijn" id="martijnmanual002" logicalFilePath="none">
-        <addColumn catalogName="" schemaName="public" tableName="T_TRACK">
+        <addColumn catalogName="" tableName="T_TRACK">
             <column name="name" type="varchar(255)"/>
         </addColumn>
-        <addColumn catalogName="" schemaName="public" tableName="T_TRACK">
+        <addColumn catalogName="" tableName="T_TRACK">
             <column name="type" type="varchar(255)"/>
         </addColumn>
     </changeSet>

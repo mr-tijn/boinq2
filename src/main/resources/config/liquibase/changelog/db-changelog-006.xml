@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" logicalFilePath="none" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <changeSet author="jhipster" id="1412172640933-10" logicalFilePath="none">
-        <createTable catalogName="" schemaName="public" tableName="T_DATASOURCE_T_RAWDATAFILE">
-            <column autoIncrement="true" name="T_DATASOURCE_id" type="BIGINT">
+        <createTable catalogName="" tableName="T_DATASOURCE_T_RAWDATAFILE">
+            <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true"/>
             </column>
-            <column autoIncrement="true" name="rawDataFiles_id" type="BIGINT">
-                <constraints primaryKey="true"/>
+            <column name="T_DATASOURCE_id" type="BIGINT">
+            </column>
+            <column name="rawDataFiles_id" type="BIGINT">
             </column>
         </createTable>
     </changeSet>
     <changeSet author="jhipster" id="1412172640933-11" logicalFilePath="none">
-        <createTable catalogName="" schemaName="public" tableName="T_RAWDATAFILE">
+        <createTable catalogName="" tableName="T_RAWDATAFILE">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="T_RAWDATAFILEPK"/>
             </column>
@@ -19,24 +20,24 @@
         </createTable>
     </changeSet>
     <changeSet author="jhipster" id="1412172640933-12" logicalFilePath="none">
-        <addPrimaryKey catalogName="" columnNames="T_PROJECT_id, datasources_id" schemaName="public" tableName="T_PROJECT_T_DATASOURCE"/>
+        <addPrimaryKey catalogName="" columnNames="T_PROJECT_id, datasources_id" tableName="T_PROJECT_T_DATASOURCE"/>
     </changeSet>
     <changeSet author="jhipster" id="1412172640933-13" logicalFilePath="none">
-        <addForeignKeyConstraint baseColumnNames="rawDataFiles_id" baseTableCatalogName="" baseTableName="T_DATASOURCE_T_RAWDATAFILE" baseTableSchemaName="public" constraintName="FK_9peym0y9r6rre5qh7uen832bn" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_RAWDATAFILE" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="rawDataFiles_id" baseTableCatalogName="" baseTableName="T_DATASOURCE_T_RAWDATAFILE" constraintName="FK_9PEYM0Y9R6RRE5QH7UEN832BN" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_RAWDATAFILE" />
     </changeSet>
     <changeSet author="jhipster" id="1412172640933-14" logicalFilePath="none">
-        <addForeignKeyConstraint baseColumnNames="T_DATASOURCE_id" baseTableCatalogName="" baseTableName="T_DATASOURCE_T_RAWDATAFILE" baseTableSchemaName="public" constraintName="FK_l0g2qale1rxe50tucsohlbawu" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_DATASOURCE" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="T_DATASOURCE_id" baseTableCatalogName="" baseTableName="T_DATASOURCE_T_RAWDATAFILE" constraintName="FK_L0G2QALE1RXE50TUCSOHLBAWU" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_DATASOURCE" />
     </changeSet>
     <changeSet author="jhipster" id="1412172640933-15" logicalFilePath="none">
-        <addUniqueConstraint catalogName="" columnNames="rawDataFiles_id" constraintName="UC_T_DATASOURCE_T_RAWDATAFILE_RAWDATAFILES_ID" deferrable="false" disabled="false" initiallyDeferred="false" schemaName="public" tableName="T_DATASOURCE_T_RAWDATAFILE"/>
+        <addUniqueConstraint catalogName="" columnNames="rawDataFiles_id" constraintName="UC_T_DATASOURCE_T_RAWDATAFILE_RAWDATAFILES_ID" deferrable="false" disabled="false" initiallyDeferred="false" tableName="T_DATASOURCE_T_RAWDATAFILE"/>
     </changeSet>
     <changeSet author="jhipster" id="1412172640933-16" logicalFilePath="none">
-        <dropDefaultValue catalogName="" columnDataType="boolean" columnName="activated" schemaName="public" tableName="T_USER"/>
+        <dropDefaultValue catalogName="" columnDataType="boolean" columnName="activated" tableName="T_USER"/>
     </changeSet>
     <changeSet author="jhipster" id="1412172640933-17" logicalFilePath="none">
-        <dropDefaultValue catalogName="" columnDataType="varchar(255)" columnName="created_by" schemaName="public" tableName="T_USER"/>
+        <dropDefaultValue catalogName="" columnDataType="varchar(255)" columnName="created_by" tableName="T_USER"/>
     </changeSet>
     <changeSet author="jhipster" id="1412172640933-18" logicalFilePath="none">
-        <dropDefaultValue catalogName="" columnDataType="timestamp" columnName="created_date" schemaName="public" tableName="T_USER"/>
+        <dropDefaultValue catalogName="" columnDataType="timestamp" columnName="created_date" tableName="T_USER"/>
     </changeSet>
 </databaseChangeLog>

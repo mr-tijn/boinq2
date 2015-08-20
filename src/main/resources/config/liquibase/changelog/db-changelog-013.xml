@@ -9,7 +9,9 @@
         <loadData encoding="UTF-8"
                   file="config/liquibase/datasources.csv"
                   separator="|"
-                  tableName="T_DATASOURCE"/>
+                  tableName="T_DATASOURCE">
+        	<column name="is_public" type="BOOLEAN" />
+        </loadData>
                                     
         <loadData encoding="UTF-8"
                   file="config/liquibase/tracks.csv"
@@ -23,18 +25,4 @@
 
 	</changeSet>
 	
-<!-- 	<changeSet id="martijnmanual004" author="martijn">
-   		<update tableName="T_DATASOURCE">
-    	    <column name="IRI" value="${triplestore.localdatasource}">
-        	</column>
-        	<where>IRI='DSNAME_PLACEHOLDER'</where>
-	    </update>
-   		<update tableName="T_DATASOURCE">
-    	    <column name="ENDPOINT_URL" value="${triplestore.endpoint.external}">
-        	</column>
-        	<where>ENDPOINT_URL='DSENDPOINT_PLACEHOLDER'</where>
-	    </update>
-	</changeSet>
- -->
-
 </databaseChangeLog>

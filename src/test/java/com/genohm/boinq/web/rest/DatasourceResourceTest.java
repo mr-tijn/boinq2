@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.genohm.boinq.Application;
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.repository.DatasourceRepository;
+import com.genohm.boinq.repository.UserRepository;
 
 
 /**
@@ -46,7 +47,7 @@ import com.genohm.boinq.repository.DatasourceRepository;
 @ActiveProfiles("dev")
 public class DatasourceResourceTest {
     
-    private static final Long DEFAULT_ID = new Long(1L);
+    private static final Long DEFAULT_ID = new Long(999L); // take big number because some could be present in initial database
 
     private static final LocalDate DEFAULT_SAMPLE_DATE_ATTR = new LocalDate(0L);
 
@@ -58,6 +59,8 @@ public class DatasourceResourceTest {
 
     @Inject
     private DatasourceRepository datasourceRepository;
+    @Inject
+    private UserRepository userRepository;
 
     private MockMvc restDatasourceMockMvc;
     

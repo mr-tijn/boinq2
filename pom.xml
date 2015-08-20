@@ -6,6 +6,10 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
+    <prerequisites>
+        <maven>3.0.0</maven>
+    </prerequisites>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -111,6 +115,7 @@
         <metrics-spring.version>3.0.0</metrics-spring.version>
         <swagger-springmvc.version>0.8.2</swagger-springmvc.version>
         <usertype.core.version>3.2.0.GA</usertype.core.version>
+		<htsjdk.version>1.133</htsjdk.version>
     </properties>
 
     <repositories>
@@ -185,10 +190,6 @@
             <snapshots><enabled>true</enabled></snapshots>
         </pluginRepository>
     </pluginRepositories>
-
-    <prerequisites>
-        <maven>3.0.0</maven>
-    </prerequisites>
 
     <dependencies>
     	<dependency>
@@ -528,6 +529,11 @@
         	<version>master</version>
         </dependency>
         <dependency>
+        	<groupId>broad</groupId>
+        	<artifactId>htsjdk</artifactId>
+        	<version>${htsjdk.version}</version>
+        </dependency>
+        <dependency>
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
@@ -568,6 +574,10 @@
         	<groupId>org.apache.httpcomponents</groupId>
         	<artifactId>httpcore-nio</artifactId>
         	<version>4.3.2</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-remote-shell</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -682,6 +692,7 @@
 				<configuration>
 					<includes>
 						<include>ontologies/track.owl</include>
+						<include>ontologies/faldo.ttl</include>
 					</includes>
 					<fileOptions>
 						<source>
@@ -691,6 +702,11 @@
 						</source>
 						<source>
 							<input>ontologies/track.owl</input>
+							<ontology>true</ontology>
+							<individuals-section>// INDIVIDUALS</individuals-section>
+						</source>
+						<source>
+							<input>ontologies/faldo.ttl</input>
 							<ontology>true</ontology>
 							<individuals-section>// INDIVIDUALS</individuals-section>
 						</source>

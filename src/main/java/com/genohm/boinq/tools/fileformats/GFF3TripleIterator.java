@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
 
 import edu.unc.genomics.GFFEntry;
@@ -19,12 +22,12 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 	private Iterator<GFFEntry> gffIterator;
 	private List<Triple> currentTriples = new LinkedList<Triple>();
 	private int idCounter = 0;
-
+	private Map<String, Node> referenceMap;
+	private TripleConverter converter;
 	
-	TripleConverter converter;
-	
-	public GFF3TripleIterator(TripleConverter converter, File file) throws FileNotFoundException, IOException {
+	public GFF3TripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap) throws FileNotFoundException, IOException {
 		this.converter = converter;
+		this.referenceMap = referenceMap;
 		GFFFileReader reader = new GFFFileReader(file.toPath());
 		Iterator<GFFEntry> gffIterator = reader.iterator();
 		this.gffIterator = gffIterator;
@@ -47,7 +50,11 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 			if (id == null) {
 				id = "GFFASSEMBLER_GENERATED_ID_" + ++idCounter;
 			}
-			List<Triple> triples = converter.convert(entry, id);
+			Node reference = referenceMap.get(entry.getChr());
+			if (reference == null) {
+				reference = NodeFactory.createLiteral(entry.getChr());
+			}
+			List<Triple> triples = converter.convert(entry, reference, id);
 			currentTriples.addAll(triples);
 		
 		}

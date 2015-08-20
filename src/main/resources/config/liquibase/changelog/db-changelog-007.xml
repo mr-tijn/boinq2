@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" logicalFilePath="none" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <changeSet author="jhipster" id="1412684772830-7" logicalFilePath="none">
-        <addColumn catalogName="" schemaName="public" tableName="T_RAWDATAFILE">
+        <addColumn catalogName="" tableName="T_RAWDATAFILE">
             <column name="datasource_id" type="bigint"/>
         </addColumn>
     </changeSet>
     <changeSet author="jhipster" id="1412684772830-8" logicalFilePath="none">
-        <addColumn catalogName="" schemaName="public" tableName="T_RAWDATAFILE">
+        <addColumn catalogName="" tableName="T_RAWDATAFILE">
             <column name="status" type="integer"/>
         </addColumn>
     </changeSet>
     <changeSet author="jhipster" id="1412684772830-9" logicalFilePath="none">
-        <addForeignKeyConstraint baseColumnNames="datasource_id" baseTableCatalogName="" baseTableName="T_RAWDATAFILE" baseTableSchemaName="public" constraintName="FK_as2k1e9lodk9k0pcpfg5atumn" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_DATASOURCE" referencedTableSchemaName="public"/>
+        <addForeignKeyConstraint baseColumnNames="datasource_id" baseTableCatalogName="" baseTableName="T_RAWDATAFILE" constraintName="FK_as2k1e9lodk9k0pcpfg5atumn" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableCatalogName="" referencedTableName="T_DATASOURCE" />
     </changeSet>
     <changeSet author="jhipster" id="1412684772830-10" logicalFilePath="none">
-        <dropDefaultValue catalogName="" columnDataType="boolean" columnName="activated" schemaName="public" tableName="T_USER"/>
+        <dropDefaultValue catalogName="" columnDataType="boolean" columnName="activated" tableName="T_USER"/>
     </changeSet>
     <changeSet author="jhipster" id="1412684772830-11" logicalFilePath="none">
-        <dropDefaultValue catalogName="" columnDataType="varchar(255)" columnName="created_by" schemaName="public" tableName="T_USER"/>
+        <dropDefaultValue catalogName="" columnDataType="varchar(255)" columnName="created_by" tableName="T_USER"/>
     </changeSet>
     <changeSet author="jhipster" id="1412684772830-12" logicalFilePath="none">
-        <dropDefaultValue catalogName="" columnDataType="timestamp" columnName="created_date" schemaName="public" tableName="T_USER"/>
+        <dropDefaultValue catalogName="" columnDataType="timestamp" columnName="created_date" tableName="T_USER"/>
     </changeSet>
 </databaseChangeLog>

@@ -26,6 +26,7 @@ import com.hp.hpl.jena.sparql.expr.E_GreaterThanOrEqual;
 import com.hp.hpl.jena.sparql.expr.E_LessThanOrEqual;
 import com.hp.hpl.jena.sparql.expr.E_LogicalNot;
 import com.hp.hpl.jena.sparql.expr.E_Regex;
+import com.hp.hpl.jena.sparql.expr.E_Str;
 import com.hp.hpl.jena.sparql.expr.ExprVar;
 import com.hp.hpl.jena.sparql.modify.request.QuadDataAcc;
 import com.hp.hpl.jena.sparql.modify.request.UpdateDataInsert;
@@ -231,6 +232,68 @@ public class QueryBuilderService {
 		return mainQuery.toString(Syntax.syntaxSPARQL_11);
 	}
 	
+	
+	public String findReferenceMap(Track track) {
+		
+		Query mainQuery = new Query();
+		mainQuery.setQuerySelectType();
+		
+		ElementGroup mainSelect = new ElementGroup();
+		
+		Node trackGraph = NodeFactory.createURI(track.getGraphName());
+		Node referenceMapEntry = NodeFactory.createVariable("referenceMapEntry");
+		Node originalReference = NodeFactory.createVariable(ORIGINAL_REFERENCE);
+		Node targetReference = NodeFactory.createVariable(TARGET_REFERENCE);
+		
+		mainQuery.addResultVar(targetReference);
+		mainQuery.addResultVar(originalReference);
+		
+		ElementTriplesBlock triples = new ElementTriplesBlock();
+		triples.addTriple(new Triple(trackGraph, RDF.type.asNode(), TrackVocab.Track.asNode()));
+		triples.addTriple(new Triple(trackGraph, TrackVocab.entry.asNode(), referenceMapEntry));
+		triples.addTriple(new Triple(referenceMapEntry, TrackVocab.originalReference.asNode(), originalReference));
+		triples.addTriple(new Triple(referenceMapEntry, TrackVocab.targetReference.asNode(), targetReference));
+		
+		mainSelect.addElement(triples);
+		mainQuery.setQueryPattern(mainSelect);
+		
+		return mainQuery.toString(Syntax.syntaxSPARQL_11);
+	
+	}
+	
+	
+	public String findGlobalReference(Track track, String originalReferenceStr) {
+
+		Query mainQuery = new Query();
+		mainQuery.setQuerySelectType();
+		
+		ElementGroup mainSelect = new ElementGroup();
+		
+		// get sequence type ?
+		// get reference map
+		
+		Node trackGraph = NodeFactory.createURI(track.getGraphName());
+		Node referenceMapEntry = NodeFactory.createVariable("referenceMapEntry");
+		Node originalReference = NodeFactory.createVariable(ORIGINAL_REFERENCE);
+		Node targetReference = NodeFactory.createVariable(TARGET_REFERENCE);
+		
+		mainQuery.addResultVar(targetReference);
+		
+		ElementTriplesBlock triples = new ElementTriplesBlock();
+		triples.addTriple(new Triple(trackGraph, RDF.type.asNode(), TrackVocab.Track.asNode()));
+		triples.addTriple(new Triple(trackGraph, TrackVocab.entry.asNode(), referenceMapEntry));
+		triples.addTriple(new Triple(referenceMapEntry, TrackVocab.originalReference.asNode(), originalReference));
+		triples.addTriple(new Triple(referenceMapEntry, TrackVocab.targetReference.asNode(), targetReference));
+		
+		ElementFilter filterTargetRef = new ElementFilter(new E_Equals(new E_Str(new ExprVar(originalReference)), ExprUtils.nodeToExpr(NodeFactory.createLiteral(originalReferenceStr))));
+		
+		mainSelect.addElement(triples);
+		mainSelect.addElement(filterTargetRef);
+		mainQuery.setQueryPattern(mainSelect);
+		
+		return mainQuery.toString(Syntax.syntaxSPARQL_11);
+
+	}
 	
 	public String findLocalReference(Track track, Node globalReference) {
 		

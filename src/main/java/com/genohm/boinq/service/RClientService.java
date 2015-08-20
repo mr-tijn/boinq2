@@ -32,31 +32,33 @@ public class RClientService {
 	@Value("${spring.R.host}")
 	private String host = "localhost";
 	
-	private RConnection rConnection;
-	
-	@PostConstruct
-	public void init() throws RserveException {
-		log.info("Starting R connection");
-		this.rConnection = new RConnection(host, port);
+	private RConnection _rConnection;
+		
+	private RConnection rConnection() throws RserveException {
+		if (null == _rConnection || !_rConnection.isConnected()) {
+			log.info("Starting R connection");
+			this._rConnection = new RConnection(host, port);
+		}
+		return _rConnection;
 	}
 	
 	
 	public void sourceScript(String scriptPath) throws RserveException {
 		String command = String.format("source(\"%s\")", scriptPath.toString());
-		rConnection.eval(command);
+		rConnection().eval(command);
 	}
 	
 	
-	public void putFile(File sourceFile, String targetFile) throws IOException {
+	public void putFile(File sourceFile, String targetFile) throws IOException, RserveException {
 		BufferedInputStream in = new BufferedInputStream(new FileInputStream(sourceFile));
-		RFileOutputStream out = rConnection.createFile(targetFile);
+		RFileOutputStream out = rConnection().createFile(targetFile);
 		IOUtils.copy(in,out);
 		in.close();
 		out.close();
 	}
 	
-	public void getFile(File targetFile, String sourceFile) throws IOException {
-		RFileInputStream in = rConnection.openFile(sourceFile);
+	public void getFile(File targetFile, String sourceFile) throws IOException, RserveException {
+		RFileInputStream in = rConnection().openFile(sourceFile);
 		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile));
 		IOUtils.copy(in,out);
 		in.close();
@@ -64,24 +66,25 @@ public class RClientService {
 	}
 	
 	public String evalForString(String script) throws RserveException, REXPMismatchException {
-		REXP res = rConnection.eval(script);
+		REXP res = rConnection().eval(script);
 		return res.asString();
 	}
 
 	public Integer evalForInteger(String script) throws RserveException, REXPMismatchException {
-		REXP res = rConnection.eval(script);
+		REXP res = rConnection().eval(script);
 		return res.asInteger();
 	}
 	
 	public void eval(String script) throws RserveException {
-		rConnection.eval(script);
+		rConnection().eval(script);
 	}
 	
 	@PreDestroy
 	public void close() {
-		rConnection.close();
+		if (_rConnection != null) {
+			_rConnection.close();
+			_rConnection = null;
+		}
 	}
 
-	
-	
 }

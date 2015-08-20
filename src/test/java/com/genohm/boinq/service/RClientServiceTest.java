@@ -25,7 +25,7 @@ import com.genohm.boinq.Application;
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
 @DirtiesContext(classMode= DirtiesContext.ClassMode.AFTER_CLASS)
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 public class RClientServiceTest {
 
 	@Inject
@@ -84,9 +84,9 @@ public class RClientServiceTest {
 		}
 		try {
 			rClient.putFile(scriptFile, "localScript.R");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			fail("could not copy script file");
-		}
+		} 
 		String response = null;
 		try {
 			rClient.sourceScript("localScript.R");
@@ -109,7 +109,7 @@ public class RClientServiceTest {
 		File targetFile = new File("/tmp/result.txt");
 		try {
 			rClient.getFile(targetFile, "output.txt");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			fail("could not copy file");
 		}
 		List<String> lines = null;

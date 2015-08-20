@@ -30,7 +30,7 @@
 						<div class="form-group">
 							<label>Endpoint url</label> <input type="text"
 								class="form-control" name="endpoint_url"
-								ng-model="datasource.endpointUrl" ng-minlength=1 ng-maxlength=50
+								ng-model="datasource.endpointUrl" ng-minlength=1 ng-maxlength=250
 								required ng-disabled="isLocal(datasource)">
 						</div>
 
@@ -38,26 +38,26 @@
 							<label>Endpoint update url</label> <input type="text"
 								class="form-control" name="endpoint_update_url"
 								ng-model="datasource.endpointUpdateUrl" ng-minlength=1
-								ng-maxlength=50 required ng-disabled="isLocal(datasource)">
+								ng-maxlength=250 ng-disabled="isLocal(datasource)">
 						</div>
 
 						<div class="form-group">
 							<label>Meta graph name</label> <input type="text"
 								class="form-control" name="graph-name"
 								ng-model="datasource.metaGraphName" ng-minlength=1
-								ng-maxlength=50 required ng-disabled="isLocal(datasource)">
+								ng-maxlength=250 ng-disabled="isLocal(datasource)">
 						</div>
 
 						<div class="form-group">
 							<label>Name</label> <input type="text" class="form-control"
 								name="name" ng-model="datasource.name" ng-minlength=1
-								ng-maxlength=50 required>
+								ng-maxlength=250 required>
 						</div>
 
 						<div class="form-group">
 							<label>IRI</label> <input type="text" class="form-control"
 								name="name" ng-model="datasource.iri" ng-minlength=1
-								ng-maxlength=50 required>
+								ng-maxlength=250 required>
 						</div>
 
 						<div class="form-group">

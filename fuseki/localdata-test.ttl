@@ -34,12 +34,8 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model      .
         ; fuseki:dataset <#dynamicdataset>
         .
 
-<#dynamicdataset> rdf:type ja:RDFDataset
-		; ja:defaultGraph <#testMetaDataset>
-		.
-		
-<#testMetaDataset> rdf:type ja:MemoryModel
-		; rdfs:label "Memory metadataset for testing"
+<#dynamicdataset> rdf:type tdb:DatasetTDB
+		; tdb:location "fuseki/testTDB/"
 		; tdb:unionDefaultGraph true
 		.
 		

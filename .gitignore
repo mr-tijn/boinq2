@@ -19,5 +19,8 @@ external_dependencies/lib/*
 src/main/webapp/dist
 !fuseki/trackTDB
 fuseki/trackTDB/*
+!fuseki/testTDB
+fuseki/testTDB/*
 !files
 files/*
+reference_tools

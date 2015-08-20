@@ -1,7 +1,9 @@
 package com.genohm.boinq.domain.jobs;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -10,11 +12,16 @@ import org.slf4j.LoggerFactory;
 
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
+import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.service.QueryBuilderService;
+import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.fileformats.TripleIteratorFactory;
 import com.genohm.boinq.tools.queries.Prefixes;
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
 
 public class TripleConversion implements AsynchronousJob {
@@ -24,6 +31,11 @@ public class TripleConversion implements AsynchronousJob {
 	private TripleUploadService tripleUploadService;
 	@Inject
 	private TripleIteratorFactory tripleIteratorFactory;
+	@Inject
+	private QueryBuilderService queryBuilder;
+	@Inject
+	private SPARQLClientService sparqlClient;
+	
 	private int status = JOB_STATUS_UNKNOWN;
 	private String name = "";
 	private String description = "";
@@ -69,6 +81,24 @@ public class TripleConversion implements AsynchronousJob {
 	}
 	
 
+	private Map<String, Node> getReferenceMap(Track track) {
+		String endpoint = track.getDatasource().getMetaEndpointUrl();
+		String query = queryBuilder.findReferenceMap(track);
+		SPARQLResultSet queryResult = null;
+		Map<String, Node> resultMap = new HashMap<String, Node>();
+		try {
+			queryResult = sparqlClient.querySelect(endpoint, track.getGraphName(), query);
+		} catch (Exception e) {
+			log.error("Could not find reference Map");
+			return null;
+		}
+		for (Map<String,String> record: queryResult.getRecords()) {
+			resultMap.put(record.get(QueryBuilderService.ORIGINAL_REFERENCE), NodeFactory.createURI(QueryBuilderService.TARGET_REFERENCE));
+		}
+		return resultMap;
+	}
+	
+	
 	@Override
 	public void execute() {
 		try {
@@ -84,7 +114,9 @@ public class TripleConversion implements AsynchronousJob {
 				throw new Exception("Datasource should be of type local faldo in order to support upload");
 			}
 			File inputFile = new File(inputData.getFilePath());
-			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile);
+			// data needed: featureType for the track; referencemapping for the track
+			Map<String, Node> referenceMap = getReferenceMap(track);
+			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap);
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
 			inputData.setStatus(RawDataFile.STATUS_LOADING);
 			while (!interrupted && tripleIterator.hasNext()) {

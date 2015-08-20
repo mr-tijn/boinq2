@@ -28,7 +28,7 @@ import com.genohm.boinq.generated.vocabularies.TrackVocab;
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
 @DirtiesContext(classMode= DirtiesContext.ClassMode.AFTER_CLASS)
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 public class FaldoServiceTest {
 
 	@Inject
@@ -70,8 +70,8 @@ public class FaldoServiceTest {
 		
 		
 		faldoService.writeFeatures(track, features);
-		List<FaldoFeature> readBack = faldoService.getFeatures(track, TrackVocab.GRCh37chr01.toString(), 0L, 500L, true);
-		assertThat(readBack).hasSize(10);
+		List<FaldoFeature> readBack = faldoService.getFeatures(track, TrackVocab.GRCh37chr01.toString(), 0L, 499L, true);
+		assertThat(readBack).hasSize(5);
 	}
 
 }

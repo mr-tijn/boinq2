@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.Servlet;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,10 +16,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import com.genohm.boinq.init.TripleStoreInitializer;
 import com.genohm.boinq.web.servlet.FusekiProxyServlet;
 
 @Configuration
 @AutoConfigureAfter(CacheConfiguration.class)
+@AutoConfigureBefore(TripleStoreInitializer.class)
 public class ProxyConfiguration implements EnvironmentAware {
 
 	protected Environment environment;
