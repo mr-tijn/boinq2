@@ -51,25 +51,6 @@
         <usertype-core.version>4.0.0.GA</usertype-core.version>
     	<htsjdk.version>1.133</htsjdk.version></properties>
     <dependencies>
-    	<dependency>
-			<groupId>com.epimorphics.lda</groupId>
-			<artifactId>elda-lda</artifactId>
-			<version>1.3.1</version>        	
-			<exclusions>
-        		<exclusion>  <!-- declare the exclusion here -->
-         			<groupId>org.slf4j</groupId>
-         			<artifactId>slf4j-log4j12</artifactId>
-        		</exclusion>
-        		<exclusion>  <!-- declare the exclusion here -->
-         			<groupId>org.apache.jena</groupId>
-         			<artifactId>jena-tdb</artifactId>
-        		</exclusion>
-        		<exclusion>
-        			<groupId>org.apache.jena</groupId>
-        			<artifactId>apache-jena-libs</artifactId>
-        		</exclusion>
-      		</exclusions> 
-		</dependency>
 		<dependency>
 			<groupId>org.rosuda.REngine</groupId>
 			<artifactId>REngine</artifactId>
@@ -334,6 +315,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.slf4j</groupId>
+            		<artifactId>log4j-over-slf4j</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -527,7 +514,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute />
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -545,8 +532,7 @@
 											</execute>
 										</action>
 					           </pluginExecution>
-
-                                <pluginExecution>
+					           <pluginExecution>
                                 	<pluginExecutionFilter>
                                 		<groupId>
                                 			com.github.trecloux
@@ -565,6 +551,7 @@
                                 		<ignore></ignore>
                                 	</action>
                                 </pluginExecution>
+					           
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
@@ -733,7 +720,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-		        	<mainClass>com.genohm.boinq.Application</mainClass>
                     <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
                     <arguments>
                         <argument>--spring.profiles.active=dev</argument>

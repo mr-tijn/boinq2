@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.apache.jena.graph.Triple;
 import org.apache.log4j.Logger;
-import org.crsh.console.jline.internal.Log;
-
 import edu.unc.genomics.BedEntry;
 import edu.unc.genomics.io.BedFileReader;
 
