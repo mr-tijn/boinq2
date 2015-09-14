@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,7 +54,7 @@ public class DatasourceResource {
      */
     @RequestMapping(value = "/rest/datasources",
             method = RequestMethod.POST,
-            produces = "application/json")
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void create(Principal principal, @RequestBody DatasourceDTO datasourceDTO) {
         log.debug("REST request to save Datasource : {}", datasourceDTO);
@@ -64,8 +66,8 @@ public class DatasourceResource {
         	datasource.setName(datasourceDTO.getName());
         	datasource.setType(datasourceDTO.getType());
             datasource.setTracks(new HashSet<Track>());
-            User currentUser = userRepository.findOne(principal.getName());
-            datasource.setOwner(currentUser);
+            Optional<User> currentUser = userRepository.findOneByLogin(principal.getName());
+            datasource.setOwner(currentUser.get());
         } else {
         	datasource.setEndpointUrl(datasourceDTO.getEndpointUrl());
         	datasource.setIsPublic(datasourceDTO.getIsPublic()!=null?datasourceDTO.getIsPublic():false);
@@ -86,7 +88,7 @@ public class DatasourceResource {
      */
     @RequestMapping(value = "/rest/datasources",
             method = RequestMethod.GET,
-            produces = "application/json")
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public List<DatasourceDTO> getAll() {
         log.debug("REST request to get all Datasources");
@@ -102,7 +104,7 @@ public class DatasourceResource {
      */
     @RequestMapping(value = "/rest/datasources/{id}",
             method = RequestMethod.GET,
-            produces = "application/json")
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public ResponseEntity<DatasourceDTO> get(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to get Datasource : {}", id);
@@ -121,7 +123,7 @@ public class DatasourceResource {
      */
     @RequestMapping(value = "/rest/datasources/{id}",
             method = RequestMethod.DELETE,
-            produces = "application/json")
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     @Timed
     public void delete(Principal principal, @PathVariable Long id) {

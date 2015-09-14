@@ -1,9 +1,12 @@
 server:
     port: 8888
 
-spring:
-    profiles: dev
+liquibase:
+    context: dev
 
+spring:
+    profiles:
+        active: dev
     datasource:
         dataSourceClassName: org.h2.jdbcx.JdbcDataSource
         url: jdbc:h2:mem:boinq
@@ -16,7 +19,7 @@ spring:
         configfile: fuseki/localdata-test.ttl
 
     jpa:
-        database-platform: org.hibernate.dialect.H2Dialect
+        database-platform: com.genohm.boinq.domain.util.FixedH2Dialect
         database: H2
         openInView: false
         show_sql: true
@@ -29,37 +32,25 @@ spring:
             hibernate.cache.use_query_cache: false
             hibernate.generate_statistics: true
             hibernate.cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
-
-    mail:
-        baseUrl: http://localhost:8080
-
+    messages:
+        cache-seconds: 1
     thymeleaf:
         mode: XHTML
         cache: false
 
 metrics:
     jmx.enabled: true
+    spark:
+        enabled: false
+        host: localhost
+        port: 9999
     graphite:
         enabled: false
         host: localhost
         port: 2003
+        prefix: boinq
 
 cache:
     timeToLiveSeconds: 3600
     ehcache:
         maxBytesLocalHeap: 16M
-
-# You can add as many as folders to watch
-# You just need to add a dash + the directory to watch
-hotReload:
-    enabled: true
-    package:
-      project: com.genohm.boinq
-      domain: com.genohm.boinq.domain
-      restdto: com.genohm.boinq.web.rest.dto
-    liquibase:
-      defaultCatalogName: 
-      defaultSchema: 
-      excludeTables: 
-    watchdir:
-      - target/classes

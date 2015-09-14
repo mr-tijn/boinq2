@@ -87,7 +87,7 @@ public class ProjectResourceTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         
-        user = userRepository.findOne("admin");
+        user = userRepository.findOneByLogin("admin").get();
 
         ds0 = new Datasource();
         ds1 = new Datasource();

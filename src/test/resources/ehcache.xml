@@ -23,7 +23,7 @@
     <cache name="com.genohm.boinq.domain.User.authorities"
            timeToLiveSeconds="3600">
     </cache>
-   
+
     <cache name="com.genohm.boinq.domain.PersistentToken"
            timeToLiveSeconds="3600">
     </cache>
@@ -32,5 +32,8 @@
            timeToLiveSeconds="3600">
     </cache>
 
+    <cache name="com.genohm.boinq.domain.PersistentAuditEvent"
+           timeToLiveSeconds="3600">
+    </cache>
 </ehcache>
 

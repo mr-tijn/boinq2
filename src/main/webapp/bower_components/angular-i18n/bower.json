@@ -1,9 +1,10 @@
 {
   "name": "angular-i18n",
-  "version": "1.2.5",
+  "version": "1.4.3",
   "ignore": [
     "**/.*",
     "node_modules",
-    "components"
+    "components",
+    "precommit.sh"
   ]
 }

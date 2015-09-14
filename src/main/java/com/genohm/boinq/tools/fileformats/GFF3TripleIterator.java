@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.graph.Triple;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
 
 import edu.unc.genomics.GFFEntry;
 import edu.unc.genomics.io.GFFFileReader;

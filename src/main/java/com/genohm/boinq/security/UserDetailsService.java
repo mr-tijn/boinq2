@@ -1,6 +1,5 @@
 package com.genohm.boinq.security;
 
-import com.genohm.boinq.domain.Authority;
 import com.genohm.boinq.domain.User;
 import com.genohm.boinq.repository.UserRepository;
 import org.slf4j.Logger;
@@ -13,8 +12,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * Authenticate a user from the database.
@@ -32,21 +32,17 @@ public class UserDetailsService implements org.springframework.security.core.use
     public UserDetails loadUserByUsername(final String login) {
         log.debug("Authenticating {}", login);
         String lowercaseLogin = login.toLowerCase();
-
-        User userFromDatabase = userRepository.findOne(lowercaseLogin);
-        if (userFromDatabase == null) {
-            throw new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database");
-        } else if (!userFromDatabase.getActivated()) {
-            throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
-        }
-
-        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for (Authority authority : userFromDatabase.getAuthorities()) {
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getName());
-            grantedAuthorities.add(grantedAuthority);
-        }
-
-        return new org.springframework.security.core.userdetails.User(lowercaseLogin, userFromDatabase.getPassword(),
-                grantedAuthorities);
+        Optional<User> userFromDatabase =  userRepository.findOneByLogin(lowercaseLogin);
+        return userFromDatabase.map(user -> {
+            if (!user.getActivated()) {
+                throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
+            }
+            List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
+                    .map(authority -> new SimpleGrantedAuthority(authority.getName()))
+                    .collect(Collectors.toList());
+            return new org.springframework.security.core.userdetails.User(lowercaseLogin,
+                    user.getPassword(),
+                    grantedAuthorities);
+        }).orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database"));
     }
 }

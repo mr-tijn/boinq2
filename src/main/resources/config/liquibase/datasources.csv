@@ -1,2 +1,2 @@
 ID|ENDPOINT_URL|TYPE|IS_PUBLIC|NAME|OWNER_ID|ENDPOINT_UPDATE_URL|META_GRAPH_NAME|META_ENDPOINT_URL|IRI
-1|DSENDPOINT_PLACEHOLDER|0|1|Default Local Endpoint|admin|http://localhost:8899/DYNAMIC/update|http://www.boinq.org/data/meta/|http://localhost:8899/DYNAMIC/update|DSNAME_PLACEHOLDER
+1|DSENDPOINT_PLACEHOLDER|0|1|Default Local Endpoint|3|http://localhost:8899/DYNAMIC/update|http://www.boinq.org/data/meta/|http://localhost:8899/DYNAMIC/update|DSNAME_PLACEHOLDER

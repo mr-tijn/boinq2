@@ -24,20 +24,14 @@ import com.genohm.boinq.generated.vocabularies.SioVocab;
 import com.genohm.boinq.generated.vocabularies.SoVocab;
 import com.genohm.boinq.service.TripleGeneratorService;
 
-
-
-
-//import com.genohm.boinq.tools.vocabularies.FaldoVocab;
 import static com.genohm.boinq.generated.vocabularies.FaldoVocab.*;
-import static com.hp.hpl.jena.datatypes.xsd.XSDDatatype.*;
+import static org.apache.jena.datatypes.xsd.XSDDatatype.*;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
-
-
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
 
 
@@ -48,12 +42,11 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 
 
-import com.hp.hpl.jena.vocabulary.XSD;
+
 
 import edu.unc.genomics.BedEntry;
 //import edu.unc.genomics.BedEntry;
 import edu.unc.genomics.GFFEntry;
-import edu.unc.genomics.VCFEntry;
 import edu.unc.genomics.ValuedInterval;
 
 @Service
@@ -97,7 +90,7 @@ public class TripleConverter {
 	
 	private void addKeyValueTriples(Node feature, Map<String, Object> keyValues, List<Triple> triples) {
 		for (String key: keyValues.keySet()) {
-			Node keyvalue = NodeFactory.createAnon();
+			Node keyvalue = NodeFactory.createBlankNode();
 			triples.add(new Triple(feature, SioVocab.has_property.asNode(), keyvalue));
 			triples.add(new Triple(keyvalue, SioVocab.has_value.asNode(), NodeFactory.createLiteral(keyValues.get(key).toString())));
 		}
@@ -134,13 +127,13 @@ public class TripleConverter {
 	
 	protected void addAlleleTriples(Node feature, VariantContext variant, List<Triple> triples) {
 		if (variant.getReference() != null && variant.getReference().getBaseString() != null) {
-			Node ref = NodeFactory.createAnon();
+			Node ref = NodeFactory.createBlankNode();
 			triples.add(new Triple(ref, RDF.type.asNode(), GfvoVocab.Reference_Sequence.asNode()));
 			triples.add(new Triple(ref, GfvoVocab.has_value.asNode(), NodeFactory.createLiteral(variant.getReference().getBaseString())));
 		}
 		for (Allele all: variant.getAlternateAlleles()) {
 			if (all.getBaseString() != null) {
-				Node alt = NodeFactory.createAnon();
+				Node alt = NodeFactory.createBlankNode();
 				triples.add(new Triple(alt, RDF.type.asNode(), GfvoVocab.Sequence.asNode()));
 				triples.add(new Triple(alt, GfvoVocab.has_value.asNode(), NodeFactory.createLiteral(all.getBaseString())));
 			}

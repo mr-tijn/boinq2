@@ -1,6 +1,5 @@
 {
   "name": "es5-shim",
-  "version": "4.1.0",
   "main": "es5-shim.js",
   "repository": {
     "type": "git",
@@ -31,11 +30,12 @@
     "bower_components",
     "tests"
   ],
-  "_release": "4.1.0",
+  "version": "4.1.13",
+  "_release": "4.1.13",
   "_resolution": {
     "type": "version",
-    "tag": "v4.1.0",
-    "commit": "1f7e846f5c72480e19ef8f2a56dc04dae8deff29"
+    "tag": "v4.1.13",
+    "commit": "dd810a9e92f3c00b6a421662b78e700bd7a0124f"
   },
   "_source": "git://github.com/es-shims/es5-shim.git",
   "_target": ">=3.4.0",

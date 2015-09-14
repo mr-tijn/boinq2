@@ -11,8 +11,8 @@ import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 
 @Service
 public class TripleGeneratorService {

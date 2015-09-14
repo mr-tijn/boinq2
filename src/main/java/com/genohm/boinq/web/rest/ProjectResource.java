@@ -63,10 +63,10 @@ public class ProjectResource {
         }
         User owner = null;
         if (projectDTO.getOwnerLogin() != null) {
-        	owner = userRepository.findOne(projectDTO.getOwnerLogin());
+        	owner = userRepository.findOneByLogin(projectDTO.getOwnerLogin()).get();
         }
         if (owner == null) {
-        	owner = userRepository.findOne(principal.getName());
+        	owner = userRepository.findOneByLogin(principal.getName()).get();
         }
         Set<Track> tracks = project.getTracks();
         if (tracks == null) {

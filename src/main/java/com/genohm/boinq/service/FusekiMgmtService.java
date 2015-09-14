@@ -1,9 +1,7 @@
 package com.genohm.boinq.service;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.apache.jena.fuseki.server.SPARQLServer;
+//import org.apache.jena.fuseki.server.SPARQLServer;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +12,8 @@ import com.genohm.boinq.config.ProxyConfiguration;
 public class FusekiMgmtService {
 
 	
-	@Inject
-	private SPARQLServer sparqlServer;
+//	@Inject
+//	private SPARQLServer sparqlServer;
 	
 	@PostConstruct
 	public void start() {
@@ -24,30 +22,30 @@ public class FusekiMgmtService {
 	
 	
 	public Boolean isUp() {
-		return sparqlServer.getServer().isRunning();
+		return false; //sparqlServer.getServer().isRunning();
 	}
 	
 	public String getStatus() {
-		return sparqlServer.getServer().getState();
+		return "no"; //sparqlServer.getServer().getState();
 	}
 	
 	public void startServer() {
-		if (sparqlServer!= null) {
-			sparqlServer.start();
-		}
+//		if (sparqlServer!= null) {
+//			sparqlServer.start();
+//		}
 	}
 	
 	public void stopServer() {
-		if (sparqlServer != null) {
-			sparqlServer.stop();
-		}
+//		if (sparqlServer != null) {
+//			sparqlServer.stop();
+//		}
 	}
 	
 	public void restartServer() {
-		if (sparqlServer != null) {
-			sparqlServer.stop();
-			sparqlServer.start();
-		}
+//		if (sparqlServer != null) {
+//			sparqlServer.stop();
+//			sparqlServer.start();
+//		}
 	}
 	
 }

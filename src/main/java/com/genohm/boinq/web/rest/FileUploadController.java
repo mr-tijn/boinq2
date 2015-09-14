@@ -68,7 +68,7 @@ public class FileUploadController {
 		String login = principal.getName();
 		Track track = trackRepository.findOne(id);
 		Datasource datasource = track.getDatasource();
-		User user = userRepository.findOne(login);
+		User user = userRepository.findOneByLogin(login).get();
 		if (datasource == null || datasource.getOwner() != user) {
 			return "File upload is only supported for datasources owned by you, " + login;
 		}
@@ -146,7 +146,7 @@ public class FileUploadController {
 		if (datasource.getType() != Datasource.TYPE_LOCAL_FALDO) {
 			throw new Exception("Only possible for local faldo datasources");
 		}
-		if (datasource.getOwner() != userRepository.findOne(login)) {
+		if (datasource.getOwner() != userRepository.findOneByLogin(login).get()) {
 			throw new Exception("Only possible for your own datasources");
 		}
 	}

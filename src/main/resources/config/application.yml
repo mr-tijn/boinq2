@@ -6,26 +6,24 @@ security.basic.enabled: false
 endpoints.jolokia.enabled: false
 
 # security configuration (this key should be unique for your application, and kept secret)
-jhipster.security.rememberme.key: boinq
+jhipster.security.rememberme.key: 2c8344f8629b57bb9ae59a1d3892693dfce50a36
 
 async:
     corePoolSize: 2
     maxPoolSize: 50
     queueCapacity: 10000
 
+mail:
+    host: localhost
+    port: 25
+    username:
+    password:
+    protocol: smtp
+    tls: false
+    auth: false
+    from: boinq@localhost
+
 spring:
-    mail:
-        host: localhost
-        port: 25
-        user:
-        password:
-        protocol: smtp
-        tls: false
-        auth: false
-
-    messageSource:
-        cacheSeconds: 1
-
     R:
         port: 6311
         host: localhost
@@ -33,12 +31,17 @@ spring:
     fuseki:
         port: 8899
         jettyconfigfile: fuseki/jetty-fuseki.xml
+        workpath: fuseki/run/
 
     triplestore:
         endpoint: 
-            update: http://localhost:8899/DYNAMIC/update
-            sparql: http://localhost:8899/DYNAMIC/sparql
-            meta: http://localhost:8899/DYNAMIC/update
+#            update: http://localhost:8899/DYNAMIC/update
+#            sparql: http://localhost:8899/DYNAMIC/sparql
+#           meta: http://localhost:8899/DYNAMIC/update
+#            external: http://localhost:8888/fuseki/sparql
+            update: http://localhost:8080/fuseki/boinq/update
+            sparql: http://localhost:8080/fuseki/boinq/sparql
+            meta: http://localhost:8080/fuseki/boinq/update
             external: http://localhost:8888/fuseki/sparql
         metagraph: http://www.boinq.org/iri/graph/meta/
         localdatasource: http://www.boinq.org/iri/localdatasource
@@ -54,11 +57,11 @@ spring:
          - 
            template: config/config_template.ttl
            target: src/main/webapp/elda/config.ttl
-           
+
 swagger:
-    apiDocsLocation: http://localhost:8888
     title: boinq API
     description: boinq applications and beyond!
+    version: 0.0.1
     termsOfServiceUrl: http://jhipster.github.io/
     contact:
     license: Apache 2.0

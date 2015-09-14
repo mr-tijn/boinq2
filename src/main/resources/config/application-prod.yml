@@ -1,25 +1,29 @@
 server:
-    port: 8888
+    port: 8080
+
+liquibase:
+    context: prod
 
 spring:
-    profiles: prod
-    
+    profiles:
+        active: prod
     datasource:
         dataSourceClassName: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
-        url: jdbc:mysql://localhost:3306/boinq
-        databaseName:
-        serverName:
-        username: boinq
-        password: B01Nqkq!!
-
-    fuseki:
-        configfile: fuseki/localdata.ttl
+        url: jdbc:mysql://localhost:3306/boinq?useUnicode=true&characterEncoding=utf8
+        databaseName: 
+        serverName: 
+        username: root
+        password: 
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
 
     jpa:
-        database-platform: org.hibernate.dialect.MySQL5Dialect
+        database-platform: org.hibernate.dialect.MySQLInnoDBDialect
         database: MYSQL
         openInView: false
-        show_sql: true
+        show_sql: false
         generate-ddl: false
         hibernate:
             ddl-auto: none
@@ -27,39 +31,30 @@ spring:
         properties:
             hibernate.cache.use_second_level_cache: true
             hibernate.cache.use_query_cache: false
-            hibernate.generate_statistics: true
+            hibernate.generate_statistics: false
             hibernate.cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
-
-    mail:
-        baseUrl: http://localhost:8080
-
+            
     thymeleaf:
         mode: XHTML
-        cache: false
+        cache: true
 
 metrics:
     jmx.enabled: true
+    spark:
+        enabled: false
+        host: localhost
+        port: 9999
     graphite:
         enabled: false
         host: localhost
         port: 2003
+        prefix: boinq
+
+http:
+    cache:
+        timeToLiveInDays: 31
 
 cache:
     timeToLiveSeconds: 3600
     ehcache:
-        maxBytesLocalHeap: 16M
-
-# You can add as many as folders to watch
-# You just need to add a dash + the directory to watch
-hotReload:
-    enabled: true
-    package:
-      project: com.genohm.boinq
-      domain: com.genohm.boinq.domain
-      restdto: com.genohm.boinq.web.rest.dto
-    liquibase:
-      defaultCatalogName: 
-      defaultSchema: 
-      excludeTables: 
-    watchdir:
-      - target/classes
+        maxBytesLocalHeap: 256M

@@ -5,15 +5,15 @@ import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.Track;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.shared.PrefixMapping;
-import com.hp.hpl.jena.sparql.modify.request.QuadDataAcc;
-import com.hp.hpl.jena.sparql.modify.request.UpdateDataInsert;
-import com.hp.hpl.jena.update.UpdateExecutionFactory;
-import com.hp.hpl.jena.update.UpdateProcessor;
-import com.hp.hpl.jena.update.UpdateRequest;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.sparql.modify.request.QuadDataAcc;
+import org.apache.jena.sparql.modify.request.UpdateDataInsert;
+import org.apache.jena.update.UpdateExecutionFactory;
+import org.apache.jena.update.UpdateProcessor;
+import org.apache.jena.update.UpdateRequest;
 
 @Service
 public class TripleUploadService {

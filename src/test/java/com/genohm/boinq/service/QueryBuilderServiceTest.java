@@ -2,6 +2,7 @@ package com.genohm.boinq.service;
 
 import javax.inject.Inject;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,9 +27,8 @@ public class QueryBuilderServiceTest {
 	@Inject
 	TripleStoreInitializer tsInitializer;
 	
-	@BeforeClass
+	@Before
 	public void init() {
-		// for some reason the ContextRefreshedEvent is not raised or caught
 		tsInitializer.checkInit();
 	}
 	

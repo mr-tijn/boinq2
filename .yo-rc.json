@@ -3,16 +3,19 @@
     "baseName": "boinq",
     "packageName": "com.genohm.boinq",
     "packageFolder": "com/genohm/boinq",
-    "authenticationType": "cookie",
+    "authenticationType": "session",
     "hibernateCache": "ehcache",
     "clusteredHttpSession": "no",
     "websocket": "no",
     "databaseType": "sql",
     "devDatabaseType": "h2Memory",
     "prodDatabaseType": "mysql",
-    "useCompass": false,
+    "useCompass": true,
     "buildTool": "maven",
     "frontendBuilder": "grunt",
-    "javaVersion": "7"
+    "javaVersion": "8",
+    "searchEngine": "no",
+    "enableTranslation": true,
+    "rememberMeKey": "2c8344f8629b57bb9ae59a1d3892693dfce50a36"
   }
 }

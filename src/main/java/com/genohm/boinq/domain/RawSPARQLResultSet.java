@@ -3,7 +3,7 @@ package com.genohm.boinq.domain;
 import java.util.List;
 import java.util.Map;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.RDFNode;
 
 public class RawSPARQLResultSet {
 		protected List<Map<String,RDFNode>> records;

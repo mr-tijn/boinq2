@@ -21,16 +21,16 @@ import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.queries.Prefixes;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.sparql.syntax.ElementTriplesBlock;
-import com.hp.hpl.jena.vocabulary.RDF;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.Query;
+import org.apache.jena.sparql.syntax.ElementTriplesBlock;
+import org.apache.jena.vocabulary.RDF;
+
 
 @Component
 public class TripleStoreInitializer implements EnvironmentAware, ApplicationListener<ContextRefreshedEvent> {
-
     private final Logger log = LoggerFactory.getLogger(TripleStoreInitializer.class);
 	
 	public static final String ENV_SPRING_TRIPLESTORE = "spring.triplestore.";

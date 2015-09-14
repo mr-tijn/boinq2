@@ -1,14 +1,13 @@
 package com.genohm.boinq.web.rest;
 
-import com.genohm.boinq.security.AuthoritiesConstants;
 import com.genohm.boinq.service.AuditEventService;
 import com.genohm.boinq.web.propertyeditors.LocaleDateTimeEditor;
 import org.joda.time.LocalDateTime;
 import org.springframework.boot.actuate.audit.AuditEvent;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import java.util.List;
  * REST controller for getting the audit events.
  */
 @RestController
-@RequestMapping("/app")
+@RequestMapping("/api")
 public class AuditResource {
 
     @Inject
@@ -27,18 +26,16 @@ public class AuditResource {
         binder.registerCustomEditor(LocalDateTime.class, new LocaleDateTimeEditor("yyyy-MM-dd", false));
     }
 
-    @RequestMapping(value = "/rest/audits/all",
+    @RequestMapping(value = "/audits/all",
             method = RequestMethod.GET,
-            produces = "application/json")
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AuditEvent> findAll() {
         return auditEventService.findAll();
     }
 
-    @RequestMapping(value = "/rest/audits/byDates",
+    @RequestMapping(value = "/audits/byDates",
             method = RequestMethod.GET,
-            produces = "application/json")
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AuditEvent> findByDates(@RequestParam(value = "fromDate") LocalDateTime fromDate,
                                     @RequestParam(value = "toDate") LocalDateTime toDate) {
         return auditEventService.findByDates(fromDate, toDate);

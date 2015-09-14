@@ -15,8 +15,8 @@ import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.faldo.FaldoFeature;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.fileformats.TripleConverter;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.graph.Triple;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
 
 @Service
 public class FaldoService {

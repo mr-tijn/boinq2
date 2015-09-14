@@ -7,13 +7,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.hp.hpl.jena.graph.Triple;
+import org.apache.jena.graph.Triple;
+import org.apache.log4j.Logger;
+import org.crsh.console.jline.internal.Log;
 
 import edu.unc.genomics.BedEntry;
 import edu.unc.genomics.io.BedFileReader;
 
 public class BedTripleIterator implements Iterator<Triple> {
 
+	public static Logger log = Logger.getLogger(BedTripleIterator.class);
 	
 	public static String featureBaseURI ="http://www.genohm.com/bed/feature#";
 	public static String positionBaseURI ="http://www.genohm.com/bed/position#";
@@ -22,11 +25,12 @@ public class BedTripleIterator implements Iterator<Triple> {
 	private Iterator<BedEntry> bedIterator;
 	private int idCounter = 0;
 	
-	TripleConverter converter;
+	private TripleConverter converter;
+	private BedFileReader reader;
 	
 	public BedTripleIterator(TripleConverter converter, File file) throws FileNotFoundException, IOException{
 		this.converter = converter;
-		BedFileReader reader = new BedFileReader(file.toPath());
+		reader = new BedFileReader(file.toPath());
 		Iterator<BedEntry> bedIterator = reader.iterator();
 		this.bedIterator= bedIterator;
 	}
@@ -64,6 +68,5 @@ public class BedTripleIterator implements Iterator<Triple> {
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
-
 	
 }

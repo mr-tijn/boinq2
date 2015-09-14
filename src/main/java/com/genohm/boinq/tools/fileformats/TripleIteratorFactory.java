@@ -9,8 +9,8 @@ import javax.inject.Inject;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 
 @Service
 public class TripleIteratorFactory {

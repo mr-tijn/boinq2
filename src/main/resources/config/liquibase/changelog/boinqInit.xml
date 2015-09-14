@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet author="martijn (generated)" id="1441697573365-1">
+        <createTable tableName="hibernate_sequences">
+            <column name="sequence_name" type="VARCHAR(255)"/>
+            <column name="sequence_next_hi_value" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-3">
+        <createTable tableName="t_datasource">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="endpoint_url" type="VARCHAR(255)"/>
+            <column name="type" type="INT"/>
+            <column name="is_public" type="BIT(1)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="owner_id" type="BIGINT"/>
+            <column name="endpoint_update_url" type="VARCHAR(255)"/>
+            <column name="meta_graph_name" type="VARCHAR(255)"/>
+            <column name="meta_endpoint_url" type="VARCHAR(255)"/>
+            <column name="iri" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-4">
+        <createTable tableName="t_datasource_t_track">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="T_DATASOURCE_id" type="BIGINT"/>
+            <column name="tracks_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-8">
+        <createTable tableName="t_project">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="owner_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-9">
+        <createTable tableName="t_project_t_track">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="T_PROJECT_id" type="BIGINT"/>
+            <column name="tracks_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-10">
+        <createTable tableName="t_rawdatafile">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="file_path" type="VARCHAR(255)"/>
+            <column name="status" type="INT"/>
+            <column name="track_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-11">
+        <createTable tableName="t_regionofinterest">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="sample_date_attribute" type="date"/>
+            <column name="sample_text_attribute" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-12">
+        <createTable tableName="t_track">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="graph_name" type="VARCHAR(255)"/>
+            <column name="status" type="INT"/>
+            <column name="datasource_id" type="BIGINT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="type" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-13">
+        <createTable tableName="t_track_t_rawdatafile">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="T_TRACK_id" type="BIGINT"/>
+            <column name="rawDataFiles_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-22">
+        <addUniqueConstraint columnNames="tracks_id" constraintName="UC_T_DATASOURCE_T_TRACK_TRACKS_ID" deferrable="false" disabled="false" initiallyDeferred="false" tableName="t_datasource_t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-23">
+        <addUniqueConstraint columnNames="rawDataFiles_id" constraintName="UC_T_TRACK_T_RAWDATAFILE_RAWDATAFILES_ID" deferrable="false" disabled="false" initiallyDeferred="false" tableName="t_track_t_rawdatafile"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-25">
+        <addForeignKeyConstraint baseColumnNames="track_id" baseTableName="t_rawdatafile" constraintName="FK_1sr430mljt676vgn8mc98gvf4" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-26">
+        <addForeignKeyConstraint baseColumnNames="rawDataFiles_id" baseTableName="t_track_t_rawdatafile" constraintName="FK_436vll7708q8p6oqjt16a0ah" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_rawdatafile"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-27">
+        <addForeignKeyConstraint baseColumnNames="datasource_id" baseTableName="t_track" constraintName="FK_79ifc99gxvpn74rs90bl9oroj" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_datasource"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-28">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_project" constraintName="FK_a0kdmtvfioekufbkj7t3161qe" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-29">
+        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableName="t_datasource_t_track" constraintName="FK_cyex7yx8vb80gi2vq2eswyu4q" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-31">
+        <addForeignKeyConstraint baseColumnNames="T_PROJECT_id" baseTableName="t_project_t_track" constraintName="FK_gxlx7clnpyr5voo4qxyyrn3kh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_project"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-32">
+        <addForeignKeyConstraint baseColumnNames="T_TRACK_id" baseTableName="t_track_t_rawdatafile" constraintName="FK_jrfqf4yqyf2c8v7khfbk9ar8a" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-33">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_datasource" constraintName="FK_nacyl39t0jqfg2i80af976s6b" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-34">
+        <addForeignKeyConstraint baseColumnNames="T_DATASOURCE_id" baseTableName="t_datasource_t_track" constraintName="FK_qahly5cqvghitfeqekbgeqk1t" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_datasource"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1441697573365-35">
+        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableName="t_project_t_track" constraintName="FK_sjplolmoi7krxotu85hr3mr24" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+    </changeSet>
+    <changeSet author="martijn" id="martijnmanual001" >
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/datasources.csv"
+                  separator="|"
+                  tableName="T_DATASOURCE">
+        	<column name="is_public" type="BOOLEAN" />
+        </loadData>
+                                    
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/tracks.csv"
+                  separator="|"
+                  tableName="T_TRACK"/>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/datasource_track.csv"
+                  separator="|"
+                  tableName="T_DATASOURCE_T_TRACK"/>
+
+	</changeSet>
+    
+</databaseChangeLog>

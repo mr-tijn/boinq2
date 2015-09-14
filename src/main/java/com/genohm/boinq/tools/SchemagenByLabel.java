@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
 
 public class SchemagenByLabel extends jena.schemagen {
@@ -202,6 +202,10 @@ public class SchemagenByLabel extends jena.schemagen {
 
         // must be legal java
         name = asLegalJavaID( name, false );
+        // quick hack to fix absence of true and false as java keywords
+        if (name.equals("true") || name.equals("false")) {
+        	name = name+"_";
+        }
 
         // must not clash with an existing name
         int attempt = 0;

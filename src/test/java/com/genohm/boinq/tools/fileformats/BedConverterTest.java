@@ -1,7 +1,5 @@
 package com.genohm.boinq.tools.fileformats;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -12,13 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.annotation.WebInitParam;
-
-import org.apache.commons.httpclient.HttpConnection;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.solr.client.solrj.request.CoreAdminRequest.WaitForState;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.IntegrationTest;
@@ -28,11 +20,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import ch.qos.logback.classic.pattern.Util;
-
 import com.genohm.boinq.Application;
 import com.genohm.boinq.domain.RawSPARQLResultSet;
-import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.init.TripleStoreInitializer;
 import com.genohm.boinq.service.FusekiMgmtService;
@@ -41,10 +30,8 @@ import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.queries.Prefixes;
-import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.graph.TripleIterator;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)

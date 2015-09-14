@@ -17,7 +17,7 @@ tdb:GraphTDB    rdfs:subClassOf  ja:Model      .
 	; ja:context [ 
 		ja:cxtName "arq:queryTimeout" ;  
 		ja:cxtValue "1000000" ]
-	; ja:loadClass "com.hp.hpl.jena.tdb.TDB"
+	; ja:loadClass "org.apache.jena.tdb.TDB"
 	; fuseki:services (
 		<#DYNAMIC>
 		<#STATIC> )

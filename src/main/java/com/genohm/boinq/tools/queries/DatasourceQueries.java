@@ -12,21 +12,21 @@ import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.SPARQLClientService;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.graph.Triple;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.sparql.core.TriplePath;
-import com.hp.hpl.jena.sparql.path.P_Alt;
-import com.hp.hpl.jena.sparql.path.P_Link;
-import com.hp.hpl.jena.sparql.path.P_Seq;
-import com.hp.hpl.jena.sparql.path.P_ZeroOrMore1;
-import com.hp.hpl.jena.sparql.path.Path;
-import com.hp.hpl.jena.sparql.syntax.ElementPathBlock;
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.Syntax;
+import org.apache.jena.sparql.core.TriplePath;
+import org.apache.jena.sparql.path.P_Alt;
+import org.apache.jena.sparql.path.P_Link;
+import org.apache.jena.sparql.path.P_Seq;
+import org.apache.jena.sparql.path.P_ZeroOrMore1;
+import org.apache.jena.sparql.path.Path;
+import org.apache.jena.sparql.syntax.ElementPathBlock;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
 public class DatasourceQueries {
 	

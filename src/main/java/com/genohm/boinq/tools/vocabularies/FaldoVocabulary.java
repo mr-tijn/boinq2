@@ -1,7 +1,7 @@
 package com.genohm.boinq.tools.vocabularies;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 
 public class FaldoVocabulary {
 	public static String baseURI = "http://biohackathon.org/resource/faldo#";

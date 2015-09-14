@@ -5,7 +5,7 @@ import org.apache.commons.lang.RandomStringUtils;
 /**
  * Utility class for generating random Strings.
  */
-public class RandomUtil {
+public final class RandomUtil {
 
     private static final int DEF_COUNT = 20;
 
@@ -29,4 +29,13 @@ public class RandomUtil {
     public static String generateActivationKey() {
         return RandomStringUtils.randomNumeric(DEF_COUNT);
     }
+
+    /**
+    * Generates a reset key.
+    *
+    * @return the generated reset key
+    */
+   public static String generateResetKey() {
+       return RandomStringUtils.randomNumeric(DEF_COUNT);
+   }
 }

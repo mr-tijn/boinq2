@@ -1,28 +1,39 @@
 package com.genohm.boinq.config.apidoc;
 
-import com.mangofactory.swagger.configuration.JacksonScalaSupport;
-import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
-import com.mangofactory.swagger.configuration.SpringSwaggerModelConfig;
-import com.mangofactory.swagger.configuration.SwaggerGlobalSettings;
-import com.mangofactory.swagger.core.SwaggerApiResourceListing;
-import com.mangofactory.swagger.scanners.ApiListingReferenceScanner;
-import com.wordnik.swagger.model.ApiInfo;
+import com.genohm.boinq.config.Constants;
+import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.List;
+import static springfox.documentation.builders.PathSelectors.regex;
 
+/**
+ * Springfox Swagger configuration.
+ *
+ * Warning! When having a lot of REST endpoints, Springfox can become a performance issue. In that
+ * case, you can use a specific Spring profile for this class, so that only front-end developers
+ * have access to the Swagger view.
+ */
 @Configuration
-@ComponentScan(basePackages = "com.mangofactory.swagger")
+@EnableSwagger2
+@Profile("!"+Constants.SPRING_PROFILE_PRODUCTION)
 public class SwaggerConfiguration implements EnvironmentAware {
-    public static final List<String> DEFAULT_INCLUDE_PATTERNS = Arrays.asList("/app/rest/.*");
-    public static final String SWAGGER_GROUP = "boinq-api";
+
+    private final Logger log = LoggerFactory.getLogger(SwaggerConfiguration.class);
+
+    public static final String DEFAULT_INCLUDE_PATTERN = "/api/.*";
 
     private RelaxedPropertyResolver propertyResolver;
 
@@ -31,114 +42,44 @@ public class SwaggerConfiguration implements EnvironmentAware {
         this.propertyResolver = new RelaxedPropertyResolver(environment, "swagger.");
     }
 
-    @Inject
-    private SpringSwaggerConfig springSwaggerConfig;
-
-    @Inject
-    private SpringSwaggerModelConfig springSwaggerModelConfig;
-
     /**
-     * Adds the jackson scala module to the MappingJackson2HttpMessageConverter registered with spring
-     * Swagger core models are scala so we need to be able to convert to JSON
-     * Also registers some custom serializers needed to transform swagger models to swagger-ui required json format
+     * Swagger Springfox configuration.
      */
     @Bean
-    public JacksonScalaSupport jacksonScalaSupport() {
-        JacksonScalaSupport jacksonScalaSupport = new JacksonScalaSupport();
-        //Set to false to disable
-        jacksonScalaSupport.setRegisterScalaModule(true);
-        return jacksonScalaSupport;
+    public Docket swaggerSpringfoxDocket() {
+        log.debug("Starting Swagger");
+        StopWatch watch = new StopWatch();
+        watch.start();
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+            .apiInfo(apiInfo())
+            .genericModelSubstitutes(ResponseEntity.class)
+            .forCodeGeneration(true)
+            .genericModelSubstitutes(ResponseEntity.class)
+            .directModelSubstitute(org.joda.time.LocalDate.class, String.class)
+            .directModelSubstitute(org.joda.time.LocalDateTime.class, Date.class)
+            .directModelSubstitute(org.joda.time.DateTime.class, Date.class)
+            .directModelSubstitute(java.time.LocalDate.class, String.class)
+            .directModelSubstitute(java.time.ZonedDateTime.class, Date.class)
+            .directModelSubstitute(java.time.LocalDateTime.class, Date.class)
+            .select()
+            .paths(regex(DEFAULT_INCLUDE_PATTERN))
+            .build();
+        watch.stop();
+        log.debug("Started Swagger in {} ms", watch.getTotalTimeMillis());
+        return docket;
     }
 
     /**
-     * Global swagger settings
-     */
-    @Bean
-    public SwaggerGlobalSettings swaggerGlobalSettings() {
-        SwaggerGlobalSettings swaggerGlobalSettings = new SwaggerGlobalSettings();
-        swaggerGlobalSettings.setGlobalResponseMessages(springSwaggerConfig.defaultResponseMessages());
-        swaggerGlobalSettings.setIgnorableParameterTypes(springSwaggerConfig.defaultIgnorableParameterTypes());
-        swaggerGlobalSettings.setParameterDataTypes(springSwaggerModelConfig.defaultParameterDataTypes());
-        return swaggerGlobalSettings;
-    }
-
-    /**
-     * API Info as it appears on the swagger-ui page
+     * API Info as it appears on the swagger-ui page.
      */
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                propertyResolver.getProperty("title"),
-                propertyResolver.getProperty("description"),
-                propertyResolver.getProperty("termsOfServiceUrl"),
-                propertyResolver.getProperty("contact"),
-                propertyResolver.getProperty("license"),
-                propertyResolver.getProperty("licenseUrl"));
-    }
-
-    /**
-     * Configure a SwaggerApiResourceListing for each swagger instance within your app. e.g. 1. private 2. external apis
-     * Required to be a spring bean as spring will call the postConstruct method to bootstrap swagger scanning.
-     *
-     * @return the SwaggerApiResourceListing
-     */
-    @Bean
-    public SwaggerApiResourceListing swaggerApiResourceListing() {
-        //The group name is important and should match the group set on ApiListingReferenceScanner
-        //Note that swaggerCache() is by DefaultSwaggerController to serve the swagger json
-
-        SwaggerApiResourceListing swaggerApiResourceListing = new SwaggerApiResourceListing(springSwaggerConfig.swaggerCache(), SWAGGER_GROUP);
-
-        //Set the required swagger settings
-        swaggerApiResourceListing.setSwaggerGlobalSettings(swaggerGlobalSettings());
-
-        //Use a custom path provider or springSwaggerConfig.defaultSwaggerPathProvider()
-        swaggerApiResourceListing.setSwaggerPathProvider(apiPathProvider());
-
-        //Supply the API Info as it should appear on swagger-ui web page
-        swaggerApiResourceListing.setApiInfo(apiInfo());
-
-        //Every SwaggerApiResourceListing needs an ApiListingReferenceScanner to scan the spring request mappings
-        swaggerApiResourceListing.setApiListingReferenceScanner(apiListingReferenceScanner());
-        return swaggerApiResourceListing;
-    }
-
-    /**
-     * The ApiListingReferenceScanner does most of the work.
-     * Scans the appropriate spring RequestMappingHandlerMappings
-     * Applies the correct absolute paths to the generated swagger resources
-     */
-    @Bean
-    public ApiListingReferenceScanner apiListingReferenceScanner() {
-        ApiListingReferenceScanner apiListingReferenceScanner = new ApiListingReferenceScanner();
-
-        //Picks up all of the registered spring RequestMappingHandlerMappings for scanning
-
-        apiListingReferenceScanner.setRequestMappingHandlerMapping(springSwaggerConfig.swaggerRequestMappingHandlerMappings());
-
-        //Excludes any controllers with the supplied annotations
-        apiListingReferenceScanner.setExcludeAnnotations(springSwaggerConfig.defaultExcludeAnnotations());
-
-        apiListingReferenceScanner.setResourceGroupingStrategy(springSwaggerConfig.defaultResourceGroupingStrategy());
-
-        //Path provider used to generate the appropriate uri's
-        apiListingReferenceScanner.setSwaggerPathProvider(apiPathProvider());
-
-        //Must match the swagger group set on the SwaggerApiResourceListing
-        apiListingReferenceScanner.setSwaggerGroup(SWAGGER_GROUP);
-
-        //Only include paths that match the supplied regular expressions
-        apiListingReferenceScanner.setIncludePatterns(DEFAULT_INCLUDE_PATTERNS);
-
-        return apiListingReferenceScanner;
-    }
-
-    /**
-     * Example of a custom path provider
-     */
-    @Bean
-    public ApiPathProvider apiPathProvider() {
-        ApiPathProvider apiPathProvider = new ApiPathProvider(propertyResolver.getProperty("apiDocsLocation"));
-        apiPathProvider.setDefaultSwaggerPathProvider(springSwaggerConfig.defaultSwaggerPathProvider());
-        return apiPathProvider;
+            propertyResolver.getProperty("title"),
+            propertyResolver.getProperty("description"),
+            propertyResolver.getProperty("version"),
+            propertyResolver.getProperty("termsOfServiceUrl"),
+            propertyResolver.getProperty("contact"),
+            propertyResolver.getProperty("license"),
+            propertyResolver.getProperty("licenseUrl"));
     }
 }
