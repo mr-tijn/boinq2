@@ -51,7 +51,7 @@ public class VCFTripleIterator implements Iterator<Triple> {
 			if (reference == null){
 				reference = NodeFactory.createLiteral(record.getContig());
 			}
-			currentTriples.addAll(converter.convert(record, reference, record.getID(), record.getStart()));
+			currentTriples.addAll(converter.convert(record, reference, record.getID()));
 		}
 		return currentTriples.remove(0);
 	}
