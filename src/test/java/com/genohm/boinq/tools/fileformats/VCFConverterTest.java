@@ -89,7 +89,7 @@ public class VCFConverterTest {
 	
 	@Test
 	public void testBedConversion() throws Exception {
-		String filePath = getClass().getResource("/inputfiles/small.vcf").getFile();
+		String filePath = getClass().getResource("/inputfiles/test1.vcf").getFile();
 		Map<String, Node> refMap = new HashMap<String, Node>();
 		refMap.put("chr9", TrackVocab.GRCh37chr09.asNode());
 		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap);
