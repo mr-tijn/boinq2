@@ -8,6 +8,7 @@ import htsjdk.tribble.bed.BEDFeature;
 import htsjdk.tribble.bed.FullBEDFeature.Exon;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.Genotype;
+import htsjdk.variant.variantcontext.GenotypeType;
 import htsjdk.variant.variantcontext.GenotypesContext;
 import htsjdk.variant.variantcontext.VariantContext;
 
@@ -134,9 +135,6 @@ public class TripleConverter {
 	
 	private void addKeyValueTriples(Node feature, Map<String, Object> keyValues,List<Triple> triples) {
 		for (String key: keyValues.keySet()) {
-//			Node keyvalue = NodeFactory.createBlankNode();
-//			triples.add(new Triple(feature, SioVocab.has_property.asNode(), keyvalue));
-//			triples.add(new Triple(keyvalue, SioVocab.has_value.asNode(), NodeFactory.createLiteral(keyValues.get(key).toString())));
 			if (attributeTypeNodes.get(key) ==XSDboolean) {
 			triples.add(new Triple(feature, attributeNodes.get(key), NodeFactory.createLiteral(key,XSDstring)));	
 			}
@@ -151,24 +149,28 @@ public class TripleConverter {
 			Node Sample = tripleGenerator.generateURI(SampleID);
 			triples.add(new Triple(feature, GfvoVocab.Sample.asNode(), Sample));		
 			triples.add(new Triple(Sample, GfvoVocab.Sample.asNode(), NodeFactory.createLiteral(gt.getSampleName(),XSDstring)));
-//			triples.add(new Triple(Sample, GfvoVocab.Sample_Count.asNode(), NodeFactory.createLiteral(record.getNSamples().toString(),XSDint)));
-			
-			
 			triples.add(new Triple(Sample, GfvoVocab.Coverage.asNode(), NodeFactory.createLiteral(Integer.toString(gt.getDP()),XSDint)));
-			
 			triples.add(new Triple(Sample, GfvoVocab.Conditional_Genotype_Quality.asNode(), NodeFactory.createLiteral(Integer.toString(gt.getGQ()),XSDint)));
-			
+			triples.add(new Triple(Sample, GfvoVocab.Genotype.asNode(), NodeFactory.createLiteral(gt.getGenotypeString(),XSDstring)));
+			switch (gt.getType()) {
+			case HET:
+				triples.add(new Triple(Sample, GfvoVocab.has_attribute.asNode(), GfvoVocab.Heterozygous.asNode()));
+				break;
+			case HOM_VAR:
+			case HOM_REF:
+				triples.add(new Triple(Sample, GfvoVocab.has_attribute.asNode(), GfvoVocab.Homozygous.asNode()));
+				break;
+			case MIXED:
+			case NO_CALL:
+			case UNAVAILABLE:
+				break;
+			}
 			for (int i = 0; i < gt.getPL().length; ++i){
 			triples.add(new Triple(Sample, GfvoVocab.Phred_Score.asNode(), NodeFactory.createLiteral(String.valueOf(gt.getPL()[i]),XSDint)));
 			}
 			
-		}
-		
-			
-		
-			
-		
-		}
+		}	
+}
 
 
 	
@@ -222,16 +224,17 @@ public class TripleConverter {
 	public List<Triple> convert(VariantContext record, Node reference, String id, int start) {
 		List<Triple> triples = new LinkedList<Triple>();
 		String featureName;
-		if (!id.equals(".")){
-		featureName = FEATUREBASEURI + id;
+		String point = ".";
 		
+		if (!point.equals(id)){
+		featureName = FEATUREBASEURI + id;
 		}
 		else {
 		featureName = FEATUREBASEURI + "st" + start;	
 		}
 		Node feature = tripleGenerator.generateURI(featureName);
-	triples.add(new Triple(feature, GfvoVocab.Identifier.asNode(), NodeFactory.createLiteral(id.toString(),XSDstring)));
-//		triples.add(new Triple(feature, GfvoVocab.Identifier.asNode(), NodeFactory.createURI(String.format("\"%s\"^^<%s>",id,XSDstring.getURI()))));
+		triples.add(new Triple(feature, GfvoVocab.Identifier.asNode(), NodeFactory.createLiteral(id.toString(),XSDstring)));
+
 		Boolean forwardStrand = true; 
 		Long biologicalStartPosBase1 = new Long(record.getStart());
 		Long biologicalEndPosBase1 = new Long(record.getEnd());
@@ -239,8 +242,7 @@ public class TripleConverter {
     	addAlleleTriples(feature, record, triples);
 		addKeyValueTriples(feature, record.getAttributes(), triples);
 		addFormatTriples(feature, featureName, record.getGenotypes(), triples);
-		Double extra=(double)(record.getLog10PError())*-10;
-		triples.add(new Triple(feature, GfvoVocab.Phred_Score.asNode(), NodeFactory.createLiteral(extra.toString(), XSDfloat)));
+		triples.add(new Triple(feature, GfvoVocab.Phred_Score.asNode(), NodeFactory.createLiteral(Double.toString(record.getPhredScaledQual()), XSDfloat)));
 		triples.add(new Triple(feature, GfvoVocab.Sample_Count.asNode(), NodeFactory.createLiteral(Integer.toString(record.getNSamples()),XSDint)));
 		switch (record.getType()) {
 		case INDEL:
@@ -254,7 +256,7 @@ public class TripleConverter {
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.MNP.asNode()));
 			break;
 		case NO_VARIATION:
-			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.similar_to.asNode()));
+			//triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.similar_to.asNode()));
 			break;
 		case SNP:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.SNP.asNode()));
