@@ -256,7 +256,7 @@ public class TripleConverter {
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.MNP.asNode()));
 			break;
 		case NO_VARIATION:
-			//triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.similar_to.asNode()));
+			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.nucleotide_match.asNode()));
 			break;
 		case SNP:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.SNP.asNode()));
