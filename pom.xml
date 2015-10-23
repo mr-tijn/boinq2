@@ -49,27 +49,8 @@
         <spring-security.version>4.0.1.RELEASE</spring-security.version>
         <springfox.version>2.0.3</springfox.version>
         <usertype-core.version>4.0.0.GA</usertype-core.version>
-    	<htsjdk.version>1.133</htsjdk.version></properties>
+    	<htsjdk.version>1.139</htsjdk.version></properties>
     <dependencies>
-    	<dependency>
-			<groupId>com.epimorphics.lda</groupId>
-			<artifactId>elda-lda</artifactId>
-			<version>1.3.1</version>        	
-			<exclusions>
-        		<exclusion>  <!-- declare the exclusion here -->
-         			<groupId>org.slf4j</groupId>
-         			<artifactId>slf4j-log4j12</artifactId>
-        		</exclusion>
-        		<exclusion>  <!-- declare the exclusion here -->
-         			<groupId>org.apache.jena</groupId>
-         			<artifactId>jena-tdb</artifactId>
-        		</exclusion>
-        		<exclusion>
-        			<groupId>org.apache.jena</groupId>
-        			<artifactId>apache-jena-libs</artifactId>
-        		</exclusion>
-      		</exclusions> 
-		</dependency>
 		<dependency>
 			<groupId>org.rosuda.REngine</groupId>
 			<artifactId>REngine</artifactId>
@@ -334,6 +315,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.slf4j</groupId>
+            		<artifactId>log4j-over-slf4j</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -456,6 +443,11 @@
         	<groupId>broad</groupId>
         	<artifactId>htsjdk</artifactId>
         	<version>${htsjdk.version}</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.neo4j</groupId>
+        	<artifactId>neo4j-cypher-compiler-2.1</artifactId>
+        	<version>2.1.5</version>
         </dependency>
     </dependencies>
     
