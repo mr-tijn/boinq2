@@ -49,7 +49,7 @@
         <spring-security.version>4.0.1.RELEASE</spring-security.version>
         <springfox.version>2.0.3</springfox.version>
         <usertype-core.version>4.0.0.GA</usertype-core.version>
-    	<htsjdk.version>1.133</htsjdk.version></properties>
+    	<htsjdk.version>1.139</htsjdk.version></properties>
     <dependencies>
 		<dependency>
 			<groupId>org.rosuda.REngine</groupId>
@@ -555,7 +555,6 @@
                                 		<ignore></ignore>
                                 	</action>
                                 </pluginExecution>
-					           
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
