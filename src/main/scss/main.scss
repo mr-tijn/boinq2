@@ -163,3 +163,28 @@ ul#strength {
     margin: 0;
 }
 /* end of Custom alerts for notification */
+.over {
+	background: yellow;
+}
+.bnq_ds_circle {
+	fill: rgb(137,221,36);
+}
+.bnq_ds_selected {
+	fill: rgb(167,251,86);
+}
+.bnq_ds_ring {
+	fill: rgb(104,104,104);
+}
+.bnq_link {
+	stroke: rgb(104,104,104);
+	stroke-width:2
+}
+.bnq_link.over {
+	stroke: rgb(134,134,134);
+	stroke-width:5
+}
+.bnq_drag_line {
+	stroke: black;
+	stroke-width:2
+	
+}
