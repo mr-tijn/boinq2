@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.faldo.FaldoFeature;
+import com.genohm.boinq.generated.vocabularies.BoinqVocab;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
 import com.genohm.boinq.generated.vocabularies.GfvoVocab;
 import com.genohm.boinq.generated.vocabularies.SioVocab;
@@ -31,6 +32,7 @@ import com.genohm.boinq.service.TripleGeneratorService;
 import static com.genohm.boinq.generated.vocabularies.FaldoVocab.*;
 import static org.apache.jena.datatypes.xsd.XSDDatatype.*;
 
+import org.apache.activemq.store.PList;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.datatypes.xsd.impl.XSDDouble;
@@ -40,6 +42,7 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.xerces.xs.datatypes.XSDateTime;
+import org.jivesoftware.smack.PacketListener;
 import org.neo4j.cypher.internal.compiler.v2_1.perty.docbuilders.toStringDocBuilder;
 
 import edu.unc.genomics.BedEntry;
@@ -94,15 +97,24 @@ public class TripleConverter {
 		attributeNodes.put("AC", GfvoVocab.Allele_Count.asNode());
 		attributeNodes.put("AF", GfvoVocab.Allele_Frequency.asNode());
 		attributeNodes.put("AN", GfvoVocab.Total_Number_of_Alleles.asNode());
+		attributeNodes.put("BaseQRankSum", BoinqVocab.BaseQRankSum.asNode());
 		attributeNodes.put("BQ", GfvoVocab.Base_Quality.asNode());
 		attributeNodes.put("CIGAR", GfvoVocab.Forward_Reference_Sequence_Frameshift.asNode());
+		attributeNodes.put("ClippingRankSum", BoinqVocab.ClippingRankSum.asNode());
 		attributeNodes.put("DB", GfvoVocab.External_Reference.asNode());
 		attributeNodes.put("DP", GfvoVocab.Coverage.asNode());
+		attributeNodes.put("FS", BoinqVocab.Fisher_Strand.asNode());
 		attributeNodes.put("H2", GfvoVocab.External_Reference.asNode());
 		attributeNodes.put("H3", GfvoVocab.External_Reference.asNode());
+		attributeNodes.put("H3", GfvoVocab.External_Reference.asNode());
+		attributeNodes.put("MLEAC", BoinqVocab.MLEAC.asNode());
+		attributeNodes.put("MLEAF", BoinqVocab.MLEAF.asNode());
 		attributeNodes.put("MQ", GfvoVocab.Mapping_Quality.asNode());
 		attributeNodes.put("MQ0", GfvoVocab.Number_of_Reads.asNode());
+		attributeNodes.put("MQRankSum", BoinqVocab.MappingQRankSum.asNode());
 		attributeNodes.put("NS", GfvoVocab.Sample_Count.asNode());
+		attributeNodes.put("QD", BoinqVocab.Quality_By_Depth.asNode());
+		attributeNodes.put("ReadPosRankSum", BoinqVocab.ReadPosRankSum.asNode());
 		attributeNodes.put("SB", GfvoVocab.Note.asNode());
 		attributeNodes.put("SOMATIC", GfvoVocab.Somatic_Cell.asNode());
 		attributeNodes.put("VALIDATED", GfvoVocab.Experimental_Method.asNode());
@@ -114,15 +126,23 @@ public class TripleConverter {
 		attributeTypeNodes.put("AC", XSDint);
 		attributeTypeNodes.put("AF", XSDfloat);
 		attributeTypeNodes.put("AN", XSDint);
+		attributeTypeNodes.put("BaseQRankSum", XSDfloat);
 		attributeTypeNodes.put("BQ", XSDfloat);
 		attributeTypeNodes.put("CIGAR", XSDstring);
+		attributeTypeNodes.put("ClippingRankSum", XSDfloat);
 		attributeTypeNodes.put("DB", XSDboolean);
 		attributeTypeNodes.put("DP", XSDint);
+		attributeTypeNodes.put("FS", XSDfloat);
 		attributeTypeNodes.put("H2", XSDboolean);
 		attributeTypeNodes.put("H3", XSDboolean);
+		attributeTypeNodes.put("MLEAC", XSDfloat);
+		attributeTypeNodes.put("MLEAF", XSDfloat);
 		attributeTypeNodes.put("MQ", XSDfloat);
 		attributeTypeNodes.put("MQ0", XSDfloat);
+		attributeTypeNodes.put("MQRankSum", XSDfloat);
 		attributeTypeNodes.put("NS", XSDfloat);
+		attributeTypeNodes.put("QD", XSDfloat);
+		attributeTypeNodes.put("ReadPosRankSum", XSDfloat);
 		attributeTypeNodes.put("SB", XSDstring);
 		attributeTypeNodes.put("SOMATIC", XSDboolean);
 		attributeTypeNodes.put("VALIDATED", XSDboolean);
@@ -150,8 +170,28 @@ public class TripleConverter {
 			triples.add(new Triple(feature, GfvoVocab.Sample.asNode(), Sample));		
 			triples.add(new Triple(Sample, GfvoVocab.Sample.asNode(), NodeFactory.createLiteral(gt.getSampleName(),XSDstring)));
 			triples.add(new Triple(Sample, GfvoVocab.Coverage.asNode(), NodeFactory.createLiteral(Integer.toString(gt.getDP()),XSDint)));
-			triples.add(new Triple(Sample, GfvoVocab.Conditional_Genotype_Quality.asNode(), NodeFactory.createLiteral(Integer.toString(gt.getGQ()),XSDint)));
+			
 			triples.add(new Triple(Sample, GfvoVocab.Genotype.asNode(), NodeFactory.createLiteral(gt.getGenotypeString(),XSDstring)));
+			
+			/*triples.add(new Triple(Sample, BoinqVocab.Allelic_Balance.asNode(),NodeFactory.createLiteral(gt.getAB().toString(),XSDstring)));
+			if (gt.getGQ()!=null){
+				for (int i = 0; i <gt.getGQ().length; ++i){
+					triples.add(new Triple(Sample, GfvoVocab.Conditional_Genotype_Quality.asNode(), NodeFactory.createLiteral(Integer.toString(gt.getGQ()[i]),XSDfloat)));
+				}
+			}*/
+			
+			if (gt.getAD()!=null){
+				for (int i = 0; i <gt.getAD().length; ++i){
+					triples.add(new Triple(Sample, BoinqVocab.Allelic_Depths.asNode(),NodeFactory.createLiteral(String.valueOf(gt.getAD()[i]),XSDint)));
+				}
+			}
+			
+			if (gt.getPL()!=null){
+				for (int i = 0; i < gt.getPL().length; ++i){
+					triples.add(new Triple(Sample, GfvoVocab.Phred_Score.asNode(), NodeFactory.createLiteral(String.valueOf(gt.getPL()[i]),XSDint)));
+			}
+		
+			
 			switch (gt.getType()) {
 			case HET:
 				triples.add(new Triple(Sample, GfvoVocab.has_attribute.asNode(), GfvoVocab.Heterozygous.asNode()));
@@ -165,9 +205,8 @@ public class TripleConverter {
 			case UNAVAILABLE:
 				break;
 			}
-			for (int i = 0; i < gt.getPL().length; ++i){
-			triples.add(new Triple(Sample, GfvoVocab.Phred_Score.asNode(), NodeFactory.createLiteral(String.valueOf(gt.getPL()[i]),XSDint)));
-			}
+			
+	}
 			
 		}	
 }
@@ -244,6 +283,8 @@ public class TripleConverter {
 		addFormatTriples(feature, featureName, record.getGenotypes(), triples);
 		triples.add(new Triple(feature, GfvoVocab.Phred_Score.asNode(), NodeFactory.createLiteral(Double.toString(record.getPhredScaledQual()), XSDfloat)));
 		triples.add(new Triple(feature, GfvoVocab.Sample_Count.asNode(), NodeFactory.createLiteral(Integer.toString(record.getNSamples()),XSDint)));
+		triples.add(new Triple(feature, GfvoVocab.Chromosome.asNode(), NodeFactory.createLiteral(record.getChr().toString(),XSDstring)));
+		triples.add(new Triple(feature, GfvoVocab.Genome_Analysis.asNode(), NodeFactory.createLiteral(record.getFilters().toString(),XSDstring)));
 		switch (record.getType()) {
 		case INDEL:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.indel.asNode()));

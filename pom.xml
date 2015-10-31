@@ -449,6 +449,15 @@
         	<artifactId>neo4j-cypher-compiler-2.1</artifactId>
         	<version>2.1.5</version>
         </dependency>
+        <dependency>
+        	<groupId>org.apache.activemq</groupId>
+        	<artifactId>activemq-broker</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.igniterealtime.smack</groupId>
+        	<artifactId>smack-core</artifactId>
+        	<version>4.0.0</version>
+        </dependency>
     </dependencies>
     
     
@@ -725,12 +734,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-		        	<mainClass>com.genohm.boinq.Application</mainClass>
+		        	<mainClass>com.genohm.boinq.Convert</mainClass>
                     <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
                     <arguments>
                         <argument>--spring.profiles.active=dev</argument>
                     </arguments>
                 </configuration>
+
             </plugin>
    			<plugin>
 				<groupId>org.apache.jena</groupId>
