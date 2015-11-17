@@ -12,6 +12,7 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             // bower:js
+            'main/webapp/bower_components/es5-shim/es5-shim.js',
             'main/webapp/bower_components/modernizr/modernizr.js',
             'main/webapp/bower_components/jquery/dist/jquery.js',
             'main/webapp/bower_components/bootstrap-sass/assets/javascripts/bootstrap.js',
@@ -32,6 +33,7 @@ module.exports = function (config) {
             'main/webapp/bower_components/angular-cache-buster/angular-cache-buster.js',
             'main/webapp/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
             'main/webapp/bower_components/ng-file-upload/ng-file-upload.js',
+            'main/webapp/bower_components/angular-file-upload/angular-file-upload.js',
             'main/webapp/bower_components/angular-mocks/angular-mocks.js',
             // endbower
             'main/webapp/scripts/app/app.js',

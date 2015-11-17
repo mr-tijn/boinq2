@@ -39,7 +39,7 @@
 						<div class="form-group">
 							<label>Type</label> 
 							<term-tree-picker select-handler="termsPicked" 
-								source-endpoint="http://localhost:8899/STATIC/sparql"
+								source-endpoint="{{staticEndpoint}}"
 								source-graph="http://purl.obolibrary.org/obo/so.owl"
 								search-filter="searchFilter" 
 								multi-valued='true' ng-model="track.type"> 
@@ -77,7 +77,7 @@
 
 					<span class="btn btn-primary btn-sm btn-file"> <span
 						class="glyphicon glyphicon-file"></span> Add files... <input
-						type="file" nv-file-select="" uploader="uploader" multiple>
+						type="file" nv-file-select uploader="uploader" multiple>
 					</span>
 
 					<table class="table">
@@ -181,11 +181,7 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal"
 						ng-click="clear()">
-						<span class="glyphicon glyphicon-ban-circle"></span> Cancel
-					</button>
-					<button type="submit" ng-disabled="form.$invalid"
-						class="btn btn-primary">
-						<span class="glyphicon glyphicon-save"></span> Save
+						<span class="glyphicon glyphicon-ban-circle"></span> Close
 					</button>
 				</div>
 			</div>

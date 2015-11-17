@@ -35,14 +35,15 @@ spring:
 
     triplestore:
         endpoint: 
-#            update: http://localhost:8899/DYNAMIC/update
-#            sparql: http://localhost:8899/DYNAMIC/sparql
-#           meta: http://localhost:8899/DYNAMIC/update
+#            update: http://localhost:8080/fuseki/boinq/update
+#            sparql: http://localhost:8080/fuseki/boinq/sparql
+#            meta: http://localhost:8080/fuseki/boinq/update
 #            external: http://localhost:8888/fuseki/sparql
-            update: http://localhost:8080/fuseki/boinq/update
-            sparql: http://localhost:8080/fuseki/boinq/sparql
-            meta: http://localhost:8080/fuseki/boinq/update
+            update: http://localhost:9999/bigdata/namespace/boinq/update
+            sparql: http://localhost:9999/bigdata/namespace/boinq/sparql
+            meta: http://localhost:9999/bigdata/namespace/boinq/update
             external: http://localhost:8888/fuseki/sparql
+
         metagraph: http://www.boinq.org/iri/graph/meta/
         localdatasource: http://www.boinq.org/iri/localdatasource
         graphbase: http://www.boinq.org/iri/graph/local#
@@ -60,7 +61,7 @@ spring:
 
 swagger:
     title: boinq API
-    description: boinq applications and beyond!
+    description: boinq !
     version: 0.0.1
     termsOfServiceUrl: http://jhipster.github.io/
     contact:
