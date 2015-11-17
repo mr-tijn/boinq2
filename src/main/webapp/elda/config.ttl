@@ -26,7 +26,7 @@
 
 boinq:main a api:API
 	; rdfs:label "Linked data API"@en
-	; api:sparqlEndpoint <http://localhost:9999/bigdata/namespace/test1/sparql>
+	; api:sparqlEndpoint <http://localhost:9999/bigdata/namespace/boinq/sparql>
 	; api:defaultFormatter boinq:HtmlFormatter
 	; api:formatter
 		[ a elda:FeedFormatter

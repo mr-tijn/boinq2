@@ -48,7 +48,9 @@ angular.module('boinqApp').constant('SPARQLConstants',{
 	QUERY_GET_ROOT_TERMS : ["SELECT ?uri ?label WHERE {",
 	                        "  ?uri rdfs:label ?label.",
 	                        "  OPTIONAL{?uri rdfs:subClassOf ?super}",
-	                        "  FILTER(!bound(?super))","}"].join('\n')
+	                        "  FILTER(!bound(?super))","}"].join('\n'),
+	                        
+	STATIC_ENDPOINT : "http://localhost:9999/static"
 });
 
 angular.module('boinqApp').constant('JobConstants',{
