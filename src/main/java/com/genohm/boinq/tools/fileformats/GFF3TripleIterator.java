@@ -21,7 +21,7 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 	public static String attributeBaseURI = "http://www.genohm.com/gff3/attribute#";
 	private Iterator<GFFEntry> gffIterator;
 	private List<Triple> currentTriples = new LinkedList<Triple>();
-	private int idCounter = 0;
+	private int idCounter = 1;
 	private Map<String, Node> referenceMap;
 	private TripleConverter converter;
 	
@@ -46,10 +46,10 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 
 		if (currentTriples.isEmpty()) {
 			GFFEntry entry = gffIterator.next();
-			String id = entry.getId();
-			if (id == null) {
-				id = "GFFASSEMBLER_GENERATED_ID_" + ++idCounter;
-			}
+			//String id = entry.getId();
+			//if (id == null) {
+				String id = "id_" + ++idCounter;
+			//}
 			Node reference = referenceMap.get(entry.getChr());
 			if (reference == null) {
 				reference = NodeFactory.createLiteral(entry.getChr());

@@ -40,6 +40,7 @@ public class HTSJDKBedTripleIterator implements Iterator<Triple> {
 	
 	@Override
 	public boolean hasNext() {
+		if (currentTriples == null) return false;
 		if (currentTriples.isEmpty()){
 			return lineIterator.hasNext();
 		}else{
@@ -51,6 +52,9 @@ public class HTSJDKBedTripleIterator implements Iterator<Triple> {
 	public Triple next() {
 		if (currentTriples.isEmpty()){
 			BEDFeature feature = codec.decode(lineIterator.next());
+			while (feature == null){
+				feature = codec.decode(lineIterator.next());
+			}
 			Node globalReference = null;
 			if (referenceMap != null) {
 				globalReference = referenceMap.get(feature.getContig());
