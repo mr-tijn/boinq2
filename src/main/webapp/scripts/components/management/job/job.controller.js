@@ -1,4 +1,4 @@
-boinqApp.controller("JobController",['$scope','Job','jobstatus'],function($scope,JobService,jobstatus) {
+angular.module('boinqApp').controller("JobController",['$scope','Job','jobstatus'],function($scope,JobService,jobstatus) {
 	console.log("Registering JobController");
 	
     $scope.jobs = resolvedJob;
