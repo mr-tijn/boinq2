@@ -249,24 +249,7 @@ public class TrackResource {
     		return new ResponseEntity<String>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
     	}
     	return new ResponseEntity<String>("conversion started",HttpStatus.OK);
-    }
-  
-    @RequestMapping(value="/rest/tracks/{id}/startconversion", method=RequestMethod.PUT)
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<String> startTripleConversionDirect(@PathVariable Long id, @RequestBody Long data_id) {
-    	try {
-        	Track track = trackRepository.findOne(id);
-        	for (RawDataFile file : track.getRawDataFiles()) {
-        		if (data_id == null || file.getId() == data_id) {
-        			jobService.add(new TripleConversion(file));
-        		}
-       		}
-    	} catch (Exception e) {
-    		return new ResponseEntity<String>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-    	return new ResponseEntity<String>(HttpStatus.OK);
-    }
-  
+    }  
     
     @RequestMapping(value="/rest/datasources/{ds_id}/tracks/{id}/rawdatafiles/{data_id}", method=RequestMethod.DELETE)
     @RolesAllowed(AuthoritiesConstants.ADMIN)
