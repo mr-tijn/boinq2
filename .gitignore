@@ -137,3 +137,4 @@ fuseki
 !files
 files/*
 reference_tools
+ontologies/catalog-v001.xml
