@@ -49,7 +49,7 @@
         <spring-security.version>4.0.1.RELEASE</spring-security.version>
         <springfox.version>2.0.3</springfox.version>
         <usertype-core.version>4.0.0.GA</usertype-core.version>
-    	<htsjdk.version>1.139</htsjdk.version></properties>
+    	<htsjdk.version>1.140</htsjdk.version></properties>
     <dependencies>
 		<dependency>
 			<groupId>org.rosuda.REngine</groupId>
@@ -728,6 +728,7 @@
                         <argument>--spring.profiles.active=dev</argument>
                     </arguments>
                 </configuration>
+
             </plugin>
    			<plugin>
 				<groupId>org.apache.jena</groupId>
@@ -737,6 +738,7 @@
 					<includes>
 						<include>ontologies/track.owl</include>
 						<include>ontologies/faldo.ttl</include>
+						<include>ontologies/boinq.owl</include>
 					</includes>
 					<fileOptions>
 						<source>
@@ -751,6 +753,11 @@
 						</source>
 						<source>
 							<input>ontologies/faldo.ttl</input>
+							<ontology>true</ontology>
+							<individuals-section>// INDIVIDUALS</individuals-section>
+						</source>
+						<source>
+							<input>ontologies/boinq.owl</input>
 							<ontology>true</ontology>
 							<individuals-section>// INDIVIDUALS</individuals-section>
 						</source>

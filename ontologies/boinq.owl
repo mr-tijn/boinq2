@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY boinq "http://www.boinq.org/iri/onthologies/custom#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.boinq.org/iri/onthologies/custom#"
+     xml:base="http://www.boinq.org/iri/onthologies/custom"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:boinq="http://www.boinq.org/iri/onthologies/custom#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.boinq.org/iri/onthologies/custom"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Allele_Balance -->
+
+    <owl:Class rdf:about="&boinq;Allele_Balance">
+        <rdfs:label>Allele Balance</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Score"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_AlleleBalanceBySample.php</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Allelic_Depth -->
+
+    <owl:Class rdf:about="&boinq;Allelic_Depth">
+        <rdfs:label>Allelic Depth</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Quantity"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_DepthPerAlleleBySample.php</rdfs:isDefinedBy>
+        <rdfs:comment xml:lang="en">AD numbers are the total number of reads with each allele</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Allelic_Depth_Alternate -->
+
+    <owl:Class rdf:about="&boinq;Allelic_Depth_Alternate">
+        <rdfs:label>Allelic Depth Alternate</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Allelic_Depth"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_DepthPerAlleleBySample.php</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Allelic_Depth_Reference -->
+
+    <owl:Class rdf:about="&boinq;Allelic_Depth_Reference">
+        <rdfs:label>Allelic Depth Reference</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Allelic_Depth"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_DepthPerAlleleBySample.php</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Base_Quality_Rank_Sum -->
+
+    <owl:Class rdf:about="&boinq;Base_Quality_Rank_Sum">
+        <rdfs:label>Base Quality Rank Sum Test</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Score"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_BaseQualityRankSumTest.php</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Clipping_Rank_Sum -->
+
+    <owl:Class rdf:about="&boinq;Clipping_Rank_Sum">
+        <rdfs:label>Clipping Rank Sum</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Score"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_ClippingRankSumTest.php</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Fisher_Strand -->
+
+    <owl:Class rdf:about="&boinq;Fisher_Strand">
+        <rdfs:label>Fisher Strand</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Score"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_FisherStrand.php</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Mapping_Quality_Rank_Sum -->
+
+    <owl:Class rdf:about="&boinq;Mapping_Quality_Rank_Sum">
+        <rdfs:label>Mapping Quality Rank Sum Test</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Score"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_MappingQualityRankSumTest.php</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Maximum_Likelihood_Expectation_Allele_Count -->
+
+    <owl:Class rdf:about="&boinq;Maximum_Likelihood_Expectation_Allele_Count">
+        <rdfs:label>Maximum likelihood Expectation Allele Count</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Score"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Maximum_Likelihood_Expectation_Allele_Frequency -->
+
+    <owl:Class rdf:about="&boinq;Maximum_Likelihood_Expectation_Allele_Frequency">
+        <rdfs:label>Maximum likelihood Expectation Allele Frequency</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Score"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Object -->
+
+    <owl:Class rdf:about="&boinq;Object">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Quality_By_Depth -->
+
+    <owl:Class rdf:about="&boinq;Quality_By_Depth">
+        <rdfs:label>Quality By Depth</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Score"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_QualByDepth.php</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Quantity -->
+
+    <owl:Class rdf:about="&boinq;Quantity">
+        <rdfs:subClassOf rdf:resource="&boinq;Object"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Read_Position_Rank_Sum -->
+
+    <owl:Class rdf:about="&boinq;Read_Position_Rank_Sum">
+        <rdfs:label>Read Position Rank Sum Test</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&boinq;Score"/>
+        <rdfs:isDefinedBy>https://www.broadinstitute.org/gatk/gatkdocs/org_broadinstitute_gatk_tools_walkers_annotator_ReadPosRankSumTest.php</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/onthologies/custom#Score -->
+
+    <owl:Class rdf:about="&boinq;Score">
+        <rdfs:subClassOf rdf:resource="&boinq;Object"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.5.1) http://owlapi.sourceforge.net -->
+
