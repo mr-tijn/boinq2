@@ -22,19 +22,11 @@ spring:
 
     triplestore:
         endpoint: 
-#            update: http://localhost:8899/DYNAMIC/update
-#            sparql: http://localhost:8899/DYNAMIC/sparql
-#           meta: http://localhost:8899/DYNAMIC/update
-#            external: http://localhost:8888/fuseki/sparql
-          update: http://localhost:9999/bigdata/namespace/test1/sparql  
-          sparql: http://localhost:9999/bigdata/namespace/test1/sparql
-          meta: http://localhost:9999/bigdata/namespace/sparql
-#          external: http://localhost:9999/bigdata/sparql
+          update: http://localhost:9999/bigdata/namespace/test/sparql  
+          sparql: http://localhost:9999/bigdata/namespace/test/sparql
+          meta: http://localhost:9999/bigdata/namespace/test/sparql
+          external: http://localhost:9999/bigdata/namespace/test/sparql
         
- #          update: http://localhost:8080/fuseki/boinq/update
- #          sparql: http://localhost:8080/fuseki/boinq/sparql
- #          meta: http://localhost:8080/fuseki/boinq/update
- #          external: http://localhost:8888/fuseki/sparql
            
         metagraph: http://www.boinq.org/iri/graph/meta/
         localdatasource: http://www.boinq.org/iri/localdatasource
