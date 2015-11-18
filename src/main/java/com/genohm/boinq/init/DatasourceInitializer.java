@@ -32,6 +32,14 @@ public class DatasourceInitializer implements EnvironmentAware, ApplicationListe
 			exampleDS.setIri(propertyResolver.getProperty("triplestore.localdatasource"));
 			changed = true;
 		}
+		if ("DSENDPOINT_UPDATE_PLACEHOLDER".equals(exampleDS.getEndpointUpdateUrl())) {
+			exampleDS.setEndpointUpdateUrl(propertyResolver.getProperty("triplestore.endpoint.meta"));
+			changed = true;
+		}
+		if ("DSENDPOINT_META_PLACEHOLDER".equals(exampleDS.getMetaEndpointUrl())) {
+			exampleDS.setMetaEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.update"));
+			changed = true;
+		}
 		if (changed) {
 			datasourceRepository.save(exampleDS);
 		}
