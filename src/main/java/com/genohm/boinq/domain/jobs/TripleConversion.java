@@ -14,6 +14,7 @@ import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.repository.RawDataFileRepository;
 import com.genohm.boinq.service.QueryBuilderService;
 import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
@@ -35,6 +36,8 @@ public class TripleConversion implements AsynchronousJob {
 	private QueryBuilderService queryBuilder;
 	@Inject
 	private SPARQLClientService sparqlClient;
+	@Inject
+	private RawDataFileRepository rawDataFileRepository;
 	
 	private int status = JOB_STATUS_UNKNOWN;
 	private String name = "";
@@ -114,6 +117,9 @@ public class TripleConversion implements AsynchronousJob {
 				throw new Exception("Datasource should be of type local faldo in order to support upload");
 			}
 			File inputFile = new File(inputData.getFilePath());
+			if (inputData.getStatus() == RawDataFile.STATUS_COMPLETE) {
+				throw new Exception("Data is already uploaded");
+			}
 			// data needed: featureType for the track; referencemapping for the track
 			Map<String, Node> referenceMap = getReferenceMap(track);
 			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap);
@@ -124,6 +130,7 @@ public class TripleConversion implements AsynchronousJob {
 			}
 			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
+			rawDataFileRepository.save(inputData);
 		} catch (Exception e) {
 			setStatus(JOB_STATUS_ERROR);
 			inputData.setStatus(RawDataFile.STATUS_ERROR);

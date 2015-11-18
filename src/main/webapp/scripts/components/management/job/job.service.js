@@ -1,4 +1,4 @@
-boinqApp.factory('Job', ['$resource',
+angular.module('boinqApp').factory('Job', ['$resource',
     function ($resource) {
     	console.info('Registering resource Job');
         return $resource('app/rest/jobs/:id', {}, {
