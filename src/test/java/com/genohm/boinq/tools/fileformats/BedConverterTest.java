@@ -89,7 +89,7 @@ public class BedConverterTest {
 	
 	@Test
 	public void testBedConversion() throws Exception {
-		String filePath = getClass().getResource("/inputfiles/ucsc_human_GRCh38_repeatmasker_chr9.bed").getFile();
+		String filePath = getClass().getResource("/inputfiles/testBED.bed").getFile();
 		Map<String, Node> refMap = new HashMap<String, Node>();
 		refMap.put("chr9", TrackVocab.GRCh37chr09.asNode());
 		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap);

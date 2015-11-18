@@ -39,8 +39,7 @@ import org.apache.jena.graph.Triple;
 @IntegrationTest
 @DirtiesContext(classMode= DirtiesContext.ClassMode.AFTER_CLASS)
 @ActiveProfiles("test")
-public class VCFConverterTest {
-
+public class GFFConverterTest {
 	@Inject
 	TripleIteratorFactory tripleIteratorFactory;
 	
@@ -89,10 +88,9 @@ public class VCFConverterTest {
 	
 	@Test
 	public void testBedConversion() throws Exception {
-		String filePath = getClass().getResource("/inputfiles/testVCF.vcf").getFile();
+		String filePath = getClass().getResource("/inputfiles/testGFF.gff3").getFile();
 		Map<String, Node> refMap = new HashMap<String, Node>();
-		refMap.put("chrom1", TrackVocab.GRCh37chr01.asNode());
-		refMap.put("chrom2", TrackVocab.GRCh37chr02.asNode());
+		refMap.put("chr9", TrackVocab.GRCh37chr09.asNode());
 		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap);
 		String graphName = localGraphService.createLocalGraph("testGraph");
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
