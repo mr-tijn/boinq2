@@ -1,0 +1,10 @@
+<div class="input-group">
+	<span class="input-group-addon">Join type</span> 
+	<select class="form-control" ng-model="join.type">
+		<option ng-repeat="nodeType in ['LocationOverlap']">{{nodeType}}</option>
+	</select>
+</div>
+<div class="input-group">
+	<span class="input-group-addon">Match strand</span> <input type="checkbox"
+		class="form-control" ng-model="join.matchStrand">
+</div>

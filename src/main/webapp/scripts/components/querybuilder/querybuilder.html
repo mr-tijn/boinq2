@@ -1,19 +1,21 @@
 <div class="row-fluid" mouse-capture>
 	<div class="col-md-3 column">
-		<div class="btn btn-primary" ng-repeat="ds in datasources" draggable dragdata="ds.name">{{ds.name}}</div>
+		<div class="btn btn-primary" ng-repeat="fs in featureSelects" draggable dragdata="fs.name">{{fs.name}}</div>
 	</div>
  	<div class="col-md-9 column">
  		<div class="row well">
  			<svg width="100%"  height="275" droppable drop="dropped"  ng-mousemove="mouseMove($event)">
- 				<line ng-repeat="ln in links" ng-attr-x1="{{ln.src.x}}" ng-attr-y1="{{ln.src.y}}" ng-attr-x2="{{ln.dst.x}}" ng-attr-y2="{{ln.dst.y}}" class="bnq_link" ng-class="overLink(ln)" ng-class="selectedLink(ln)" ng-mouseDown="lineMouseDown($event,ln)"/>
+ 				<line ng-repeat="fj in activeFJ" ng-attr-x1="{{fj.sourceSelect.displayX}}" ng-attr-y1="{{fj.sourceSelect.displayY}}" ng-attr-x2="{{fj.targetSelect.displayX}}" ng-attr-y2="{{fj.targetSelect.displayY}}" class="bnq_link" ng-class="overLink(fj)" ng-class="selectedLink(fj)" ng-mouseDown="lineMouseDown($event,fj)"/>
 				<line ng-model="selectLine" ng-attr-x1="{{selectLine.x1}}" ng-attr-y1="{{selectLine.y1}}" ng-attr-x2="{{selectLine.x2}}" ng-attr-y2="{{selectLine.y2}}" class="bnq_drag_line" />
- 				<circle ng-mousedown="ringMouseDown($event, ds)" ng-repeat="ds in activeDS" ng-attr-cx="{{ds.x}}" ng-attr-cy="{{ds.y}}" r="20" class="bnq_ds_ring"></circle>
- 				<circle ng-mousedown="nodeMouseDown($event, ds)" ng-repeat="ds in activeDS" ng-attr-cx="{{ds.x}}" ng-attr-cy="{{ds.y}}" r="10" ng-class="selectedDS == ds ? 'bnq_ds_selected' : 'bnq_ds_circle'"></circle>
+ 				<circle ng-mousedown="ringMouseDown($event, fs)" ng-repeat="fs in activeFS" ng-attr-cx="{{fs.displayX}}" ng-attr-cy="{{fs.displayY}}" r="20" class="bnq_ds_ring"></circle>
+ 				<circle ng-mousedown="nodeMouseDown($event, fs)" ng-repeat="fs in activeFS" ng-attr-cx="{{fs.displayX}}" ng-attr-cy="{{fs.displayY}}" r="10" ng-class="selectedFS == fs ? 'bnq_ds_selected' : 'bnq_ds_circle'"></circle>
  			</svg>
  		</div>
  		<div class="row">
- 			<div id="detail" ng-model="selectedDS" ng-show="selectedDS != null">{{selectedDS | json}}</div>
-			<div id="detail" ng-model="selectedLine" ng-show="selectedLine != null">{{selectedLine | json}}</div>
+ 			<div id="detail" ng-model="selectedFS" ng-show="selectedFS != null">{{selectedFS | json}}</div>
+			<div id="detail" ng-model="selectedFJ" ng-show="selectedFJ != null">{{selectedFJ | json}}</div>
+			<joindetail join="selectedFJ"></joindetail>
+			<featureselectdetail featureselect="selectedFS"></featureselectdetail>
  		</div>
 	</div> 
  	
