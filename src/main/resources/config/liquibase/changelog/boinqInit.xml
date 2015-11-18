@@ -145,5 +145,49 @@
                   tableName="T_DATASOURCE_T_TRACK"/>
 
 	</changeSet>
-    
+	<changeSet author="martijn" id="create featurequery tables">
+	   <createTable tableName="T_FEATUREJOIN">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="source_select_id" type="BIGINT"/>
+            <column name="target_select_id" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="feature_query_id" type="BIGINT"/>
+        </createTable>
+	 	<createTable tableName="T_FEATURESELECT">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="track_id" type="BIGINT"/>
+            <column name="retrieve_feature_data" type="BOOLEAN" />
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="feature_query_id" type="BIGINT"/>
+        </createTable>
+        <createTable tableName="T_FEATURESELECTCRITERION">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <!-- fields for locationcriterion -->
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="start" type="BIGINT"/>
+            <column name="end" type="BIGINT"/>
+            <column name="contig" type="VARCHAR(255)"/>
+            <column name="strand" type="BOOLEAN" />
+            <column name="feature_select_id" type="BIGINT"/>
+        </createTable>
+		<createTable tableName="T_FEATUREQUERY">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+			<column name="owner_id" type="BIGINT"/>
+		</createTable>
+        <addForeignKeyConstraint baseColumnNames="feature_query_id" baseTableName="T_FEATUREJOIN" constraintName="FK_joinToQuery" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATUREQUERY"/>
+        <addForeignKeyConstraint baseColumnNames="source_select_id" baseTableName="T_FEATUREJOIN" constraintName="FK_joinToSourceSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATURESELECT"/>
+        <addForeignKeyConstraint baseColumnNames="target_select_id" baseTableName="T_FEATUREJOIN" constraintName="FK_joinToTargetSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATURESELECT"/>
+        <addForeignKeyConstraint baseColumnNames="feature_query_id" baseTableName="T_FEATURESELECT" constraintName="FK_selectToQuery" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATUREQUERY"/>
+        <addForeignKeyConstraint baseColumnNames="track_id" baseTableName="T_FEATURESELECT" constraintName="FK_selectToTrack" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+        <addForeignKeyConstraint baseColumnNames="feature_select_id" baseTableName="T_FEATURESELECTCRITERION" constraintName="FK_criterionToSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATURESELECT"/>
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="T_FEATUREQUERY" constraintName="FK_queryToUser" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+    </changeSet>
 </databaseChangeLog>

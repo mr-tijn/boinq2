@@ -1,23 +1,26 @@
-angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging',function($scope,dragging) {
+angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQueryService',function($scope,dragging,FeatureQueryService) {
 
 	console.log("Registering controller QueryBuilderController");
 	
-	$scope.datasources = [{name: "datasource1"},{name: "datasource2"}];
-	$scope.activeDS = [];
-	$scope.links = [];
-	$scope.selectedDS = undefined;
-	$scope.overDS = null;
-	$scope.overLn = null;
+	$scope.featureSelects = [{name: "select1"},{name: "select2"}];
+	$scope.activeFS = [];
+	$scope.selectedFS = undefined;
+	$scope.overFS = null;
+
+	$scope.activeFJ = [];
+	$scope.selectedFJ = undefined;
+	$scope.overFJ = null;
 	
-	link = function(srcDS,dstDS) {
+	link = function(srcFS,dstFS) {
 		return {
-			src: srcDS,
-			dst: dstDS
+			sourceSelect: srcFS,
+			targetSelect: dstFS,
+			type: 'LocationOverlap'
 		} 
 	}
 	
 	$scope.dropped = function(event,element,data) {
-		activeDS(event.offsetX, event.offsetY, data);
+		activeFS(event.offsetX, event.offsetY, data);
 	}
 	
 	var hitTest = function(clientX, clientY) {
@@ -39,20 +42,20 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 
 	$scope.mouseMove = function (evt) {
 		var element = hitTest(evt.clientX, evt.clientY);
-		$scope.overDS = findModel(element,'ds');
-		$scope.overLn = findModel(element,'ln');
+		$scope.overFS = findModel(element,'fs');
+		$scope.overFJ = findModel(element,'fj');
 	};
 	
 	$scope.overLink = function(ln) {
-		if ($scope.overLn == ln) {
+		if ($scope.overFJ == ln) {
 			return "over";
 		} else {
 			return "";
 		}
 	}
 	
-	$scope.selectedLink = function(ln) {
-		if ($scope.selectedLine == ln) {
+	$scope.selectedFJ = function(ln) {
+		if ($scope.selectedFJ == ln) {
 			return "selected";
 		} else {
 			return "";
@@ -62,13 +65,13 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 	$scope.lineMouseDown = function(event,ln) {
 		dragging.startDrag(event, {
 			clicked: function () {
-				$scope.selectedLine = ln;
-				$scope.selectedDS = null;
+				$scope.selectedFJ = ln;
+				$scope.selectedFS = null;
 			}
 		});
 	}
 	
-	$scope.nodeMouseDown = function(event, ds) {
+	$scope.nodeMouseDown = function(event, fs) {
 		 dragging.startDrag(event, {
 		        dragStarted: function (x, y) {
 		        	lastMouseCoords = {x:x, y:y};
@@ -79,16 +82,16 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		            var deltaX = curCoords.x - lastMouseCoords.x;
 		            var deltaY = curCoords.y - lastMouseCoords.y;
 
-		            ds.xc = ds.xc + deltaX;
-		            ds.yc = ds.yc + deltaY;
-		            ds.x = ds.xc + "px";
-		            ds.y = ds.yc + "px";
+		            fs.xc = fs.xc + deltaX;
+		            fs.yc = fs.yc + deltaY;
+		            fs.displayX = fs.xc + "px";
+		            fs.displayY = fs.yc + "px";
 
 		            lastMouseCoords = curCoords;
 		        },
 		        clicked: function () {
-		        	$scope.selectedDS = ds;
-		        	$scope.selectedLine = null;
+		        	$scope.selectedFS = fs;
+		        	$scope.selectedFJ = null;
 		        },
 		        dragEnded: function() {
 		        	
@@ -96,11 +99,11 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		    });
 	}
 	
-	$scope.ringMouseDown = 	function(event, ds) {
+	$scope.ringMouseDown = 	function(event, fs) {
 		 dragging.startDrag(event, {
 		        dragStarted: function (x, y) {
 		        	lastMouseCoords = {x:x, y:y};
-		        	$scope.selectLine = {x1:ds.xc, y1:ds.yc, x2:ds.xc, y2:ds.yc};
+		        	$scope.selectLine = {x1:fs.xc, y1:fs.yc, x2:fs.xc, y2:fs.yc};
 		        },
 		        dragging: function (x, y) {
 		            curCoords = {x:x, y:y};
@@ -115,9 +118,12 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		        },
 		        dragEnded: function() {
 		        	$scope.selectLine = undefined;
-		        	if ($scope.overDS != null && $scope.overDS != ds) {
-		        		$scope.links.push(link(ds,$scope.overDS));
-		        		console.log("linking " + ds + " to " + $scope.overDS);
+		        	if ($scope.overFS != null && $scope.overFS != fs) {
+		        		var fj = link(fs,$scope.overFS);
+		        		$scope.activeFJ.push(fj);
+		        		$scope.selectedFJ = fj;
+		        		$scope.selectedFS = undefined;
+		        		console.log("linking " + fs + " to " + $scope.overFS);
 		        	}
 		        }
 		    });
@@ -125,11 +131,27 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		
 	}
 	
-	activeDS = function(x, y, dsName) {
+	activeFS = function(x, y, fsName) {
 	    var xpos = x + "px";
 	    var ypos = y + "px";
 	    
-		$scope.activeDS.push({name: dsName, x:xpos, y:ypos, xc:x, yc:y});
+	    var FS = {name: fsName, displayX:xpos, displayY:ypos, xc:x, yc:y, criteria: []};
+	    
+	    console.log(FS);
+	    
+		$scope.activeFS.push(FS);
+	}
+	
+	save = function() {
+		
+		var featureQuery = {
+				joins : $scope.featureJoins,
+				selects : $scope.featureSelects,
+				ownerId : $user
+		};
+		
+		FeatureQueryService.post(featureQuery)
+		
 	}
 	
 }]);
