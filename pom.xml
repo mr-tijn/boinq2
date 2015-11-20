@@ -49,7 +49,7 @@
         <spring-security.version>4.0.1.RELEASE</spring-security.version>
         <springfox.version>2.0.3</springfox.version>
         <usertype-core.version>4.0.0.GA</usertype-core.version>
-    	<htsjdk.version>1.141</htsjdk.version></properties>
+    	<htsjdk.version>1.140</htsjdk.version></properties>
     <dependencies>
 		<dependency>
 			<groupId>org.rosuda.REngine</groupId>
@@ -442,7 +442,7 @@
         <dependency>
         	<groupId>broad</groupId>
         	<artifactId>htsjdk</artifactId>
-        	<version>${htsjdk.version}</version>
+        	<version>1.140</version>
         </dependency>
         <dependency>
         	<groupId>org.neo4j</groupId>
