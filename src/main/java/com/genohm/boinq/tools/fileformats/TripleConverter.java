@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.lang.Object;
 
 import javax.inject.Inject;
 
@@ -83,6 +84,7 @@ public class TripleConverter {
 	private static String chrValue;
 	private Map<String, Node> attributeNodes;
 	private Map<String, XSDDatatype> attributeTypeNodes;
+	private Map<String, Node> featureTypeNodes;
 	
 	@Inject
 	TripleGeneratorService tripleGenerator;
@@ -116,7 +118,6 @@ public class TripleConverter {
 		attributeNodes.put("VALIDATED", GfvoVocab.Experimental_Method.asNode());
 		attributeNodes.put("1000G", GfvoVocab.External_Reference.asNode());
 		
-		
 		attributeTypeNodes = new HashMap<>();
 		attributeTypeNodes.put("AA", XSDstring);
 		attributeTypeNodes.put("AC", XSDint);
@@ -144,7 +145,23 @@ public class TripleConverter {
 		attributeTypeNodes.put("VALIDATED", XSDboolean);
 		attributeTypeNodes.put("1000G", XSDboolean);
 		
-		
+		featureTypeNodes = new HashMap<>();
+		featureTypeNodes.put("CDS", SoVocab.CDS.asNode());
+		featureTypeNodes.put("gene", SoVocab.gene.asNode());
+		featureTypeNodes.put("mRNA", SoVocab.mRNA.asNode());
+		featureTypeNodes.put("operon", SoVocab.operon.asNode());
+		featureTypeNodes.put("exon", SoVocab.exon.asNode());
+		featureTypeNodes.put("TF_binding_site", SoVocab.TF_binding_site.asNode());
+		featureTypeNodes.put("intron", SoVocab.intron.asNode());
+		featureTypeNodes.put("EST_match", SoVocab.EST_match.asNode());
+		featureTypeNodes.put("translated_nucleotide_match", SoVocab.translated_nucleotide_match.asNode());
+		featureTypeNodes.put("Three_prime_UTR", SoVocab.three_prime_UTR.asNode());
+		featureTypeNodes.put("Five_prime_UTR", SoVocab.five_prime_UTR.asNode());
+		featureTypeNodes.put("cDNA_match", SoVocab.cDNA_match.asNode());
+		featureTypeNodes.put("match_part", SoVocab.match_part.asNode());
+		featureTypeNodes.put("polypeptide", SoVocab.polypeptide.asNode());
+		featureTypeNodes.put("intein", SoVocab.intein.asNode());
+		featureTypeNodes.put("primary_transcript", SoVocab.primary_transcript.asNode());
 		
 
 	}
@@ -401,23 +418,20 @@ public class TripleConverter {
 		if(entry.getFrame() != null && !entry.getFrame().isEmpty() && !entry.getFrame().equalsIgnoreCase(".")){
 			result.add(new Triple(feature, SoVocab.reading_frame.asNode(),NodeFactory.createLiteral(String.valueOf(entry.getFrame()), XSDint)));
 		}
+		
 		if(entry.getFeature()!=null && !entry.getFeature().isEmpty() && !entry.getFeature().equalsIgnoreCase(".")){
-		switch(entry.getFeature()){
-		case "mRNA":
-			result.add(new Triple(feature, RDF.type.asNode(), SoVocab.mRNA.asNode()));
-			break;
-		case "operon":
-			result.add(new Triple(feature, RDF.type.asNode(), SoVocab.operon.asNode()));
-			break;
-		case "exon":
-			result.add(new Triple(feature, RDF.type.asNode(), SoVocab.exon.asNode()));
-			break;
-		case "gene":
-			result.add(new Triple(feature, RDF.type.asNode(), SoVocab.gene.asNode()));
-		default:
-		result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
-		break;
-		}
+			//String type= "SoVocab."+entry.getFeature()+".asNode()";
+			//Object x =Class.forName(type).newInstance();
+			//result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
+						 
+			
+			if (featureTypeNodes.containsKey(entry.getFeature())){
+			result.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getFeature())));
+			}
+			else{
+			result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
+			}
+		
 
 
 		// notes 
@@ -444,7 +458,6 @@ public class TripleConverter {
 
 	
 	public List<Triple> convert(BEDFeature entry, String id, Node reference) {
-		// HET IS HIER
 		List<Triple> result = new LinkedList<Triple>();
 		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
 		Float score = entry.getScore();
@@ -457,7 +470,12 @@ public class TripleConverter {
 		if (entry.getDescription() != null && entry.getDescription().length() > 0) {
 			result.add(new Triple(feature, RDFS.comment.asNode(), NodeFactory.createLiteral(entry.getDescription(), XSDstring)));
 		}
-		result.add(new Triple(feature, SoVocab.chromosome.asNode(), NodeFactory.createLiteral(entry.getChr(),XSDstring)));
+		if (entry.getChr().substring(0,2).equalsIgnoreCase("chr")){
+		result.add(new Triple(feature, SoVocab.chromosome.asNode(), NodeFactory.createLiteral(entry.getChr().substring(3),XSDstring)));
+		}
+		else {
+		result.add(new Triple(feature, SoVocab.chromosome.asNode(), NodeFactory.createLiteral(entry.getChr(),XSDstring)));		
+		}
 		addFaldoTriples(feature, reference, Long.valueOf(entry.getStart()), Long.valueOf(entry.getEnd()), entry.getStrand() == Strand.POSITIVE, result);
 		
 		int idx = 1;
