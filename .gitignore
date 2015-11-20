@@ -60,7 +60,8 @@ local.properties
 # Maven
 ######################
 /log/**
-/target/**
+/target/*
+!/target/generated-sources
 
 ######################
 # Gradle
