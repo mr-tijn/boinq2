@@ -32,7 +32,6 @@ import com.genohm.boinq.service.TripleGeneratorService;
 import static com.genohm.boinq.generated.vocabularies.FaldoVocab.*;
 import static org.apache.jena.datatypes.xsd.XSDDatatype.*;
 
-import org.apache.activemq.store.PList;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.datatypes.xsd.impl.XSDDouble;
@@ -41,9 +40,6 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.apache.xerces.xs.datatypes.XSDateTime;
-import org.jivesoftware.smack.PacketListener;
-import org.neo4j.cypher.internal.compiler.v2_1.perty.docbuilders.toStringDocBuilder;
 
 import edu.unc.genomics.BedEntry;
 //import edu.unc.genomics.BedEntry;
