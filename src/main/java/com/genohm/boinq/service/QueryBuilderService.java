@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.match.Match;
 import com.genohm.boinq.domain.match.MatchFactory;
+import com.genohm.boinq.generated.vocabularies.FaldoVocab;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.tools.generators.ARQGenerator;
 import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
@@ -23,11 +24,15 @@ import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.expr.E_Bound;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
+import org.apache.jena.sparql.expr.E_IRI;
 import org.apache.jena.sparql.expr.E_LessThanOrEqual;
 import org.apache.jena.sparql.expr.E_LogicalNot;
+import org.apache.jena.sparql.expr.E_OneOf;
 import org.apache.jena.sparql.expr.E_Regex;
 import org.apache.jena.sparql.expr.E_Str;
+import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.nodevalue.NodeValueNode;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.sparql.path.P_Link;
@@ -222,8 +227,12 @@ public class QueryBuilderService {
 		if (begin != null) {
 			mainSelect.addElementFilter(new ElementFilter(new E_GreaterThanOrEqual(new ExprVar(featureEndPos), ExprUtils.parse(begin.toString()))));
 		}
-		
-		
+		ExprList targetExpressions = new ExprList();
+		targetExpressions.add(new E_IRI(new NodeValueNode(FaldoVocab.ForwardStrandPosition.asNode())));
+		targetExpressions.add(new E_IRI(new NodeValueNode(FaldoVocab.ReverseStrandPosition.asNode())));
+		E_OneOf orientations = new E_OneOf(new E_IRI(new ExprVar(featurePositionType)), targetExpressions);
+
+		mainSelect.addElementFilter(new ElementFilter(orientations));
 		
 		mainQuery.setQueryPattern(mainSelect);
 		mainQuery.addOrderBy(featureBeginPos, 1); //asc
