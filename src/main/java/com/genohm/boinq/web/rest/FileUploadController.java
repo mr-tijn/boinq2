@@ -63,45 +63,6 @@ public class FileUploadController {
 		return "POST to this url for uploading data";
 	}
 
-//	@RequestMapping(value="/rest/tracks/{id}/upload", method=RequestMethod.POST)
-//	@RolesAllowed(AuthoritiesConstants.ADMIN)
-//	@Transactional
-//	public @ResponseBody String handleFileUpload(Principal principal, @PathVariable Long id, @RequestParam("name") String name,  @RequestParam("file") MultipartFile file){
-//		String login = principal.getName();
-//		Track track = trackRepository.findOne(id);
-//		Datasource datasource = track.getDatasource();
-//		User user = userRepository.findOneByLogin(login).get();
-//		if (datasource == null || datasource.getOwner() != user) {
-//			return "File upload is only supported for datasources owned by you, " + login;
-//		}
-//		if (Datasource.TYPE_LOCAL_FALDO != datasource.getType()) {
-//			return "File upload is only supported for local datasources";
-//		}
-//		if (!file.isEmpty()) {
-//			try {
-//				String fileName = file.getOriginalFilename();
-//				checkExtension(FilenameUtils.getExtension(fileName));
-//				track.setStatus(Track.STATUS_RAW_DATA);
-//				Set<RawDataFile> rawDataFiles = track.getRawDataFiles();
-//				if (rawDataFiles == null) {
-//					rawDataFiles = new HashSet<RawDataFile>();
-//					track.setRawDataFiles(rawDataFiles);
-//				}
-//				RawDataFile newDataFile = fileManagerService.putFile(file);
-//				newDataFile.setTrack(track);
-//				newDataFile = rawDataFileRepository.saveAndFlush(newDataFile);
-//				rawDataFiles.add(newDataFile);
-//				trackRepository.save(track);
-//				trackRepository.flush();
-//				return "You successfully uploaded " + name + " into " + newDataFile.getFilePath();
-//			} catch (Exception e) {
-//				return "You failed to upload " + name + " => " + e.getMessage();
-//			}
-//		} else {
-//			return "You failed to upload " + name + " because the file was empty.";
-//		}
-//	}
-
 	@RequestMapping(value="/rest/datasources/{ds_id}/tracks/{id}/upload", method=RequestMethod.POST)
 	@Transactional
 	public @ResponseBody ResponseEntity<String> handleFileUpload(Principal principal, @PathVariable Long ds_id, @PathVariable Long id, @RequestParam("name") String name,  @RequestParam("file") MultipartFile file) {
