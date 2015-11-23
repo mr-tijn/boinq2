@@ -45,7 +45,7 @@ public class TripleConversion implements AsynchronousJob {
 	
 	private RawDataFile inputData;
 	
-	public static final String SUPPORTED_EXTENSIONS[] = {"GFF", "GFF3", "BED"};
+	public static final String SUPPORTED_EXTENSIONS[] = {"GFF", "GFF3", "BED", "VCF"};
 	
 	private static Logger log = LoggerFactory.getLogger(TripleConversion.class);
 	
@@ -134,6 +134,7 @@ public class TripleConversion implements AsynchronousJob {
 		} catch (Exception e) {
 			setStatus(JOB_STATUS_ERROR);
 			inputData.setStatus(RawDataFile.STATUS_ERROR);
+			rawDataFileRepository.save(inputData);
 			this.description = e.getMessage();
 			log.error(description);
 		}
