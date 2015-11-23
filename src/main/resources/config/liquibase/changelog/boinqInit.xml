@@ -8,7 +8,7 @@
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-3">
         <createTable tableName="t_datasource">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT" startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="endpoint_url" type="VARCHAR(255)"/>
@@ -24,7 +24,7 @@
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-4">
         <createTable tableName="t_datasource_t_track">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="T_DATASOURCE_id" type="BIGINT"/>
@@ -33,7 +33,7 @@
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-8">
         <createTable tableName="t_project">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="title" type="VARCHAR(255)"/>
@@ -42,7 +42,7 @@
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-9">
         <createTable tableName="t_project_t_track">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT" startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="T_PROJECT_id" type="BIGINT"/>
@@ -51,7 +51,7 @@
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-10">
         <createTable tableName="t_rawdatafile">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="file_path" type="VARCHAR(255)"/>
@@ -61,7 +61,7 @@
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-11">
         <createTable tableName="t_regionofinterest">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="sample_date_attribute" type="date"/>
@@ -70,7 +70,7 @@
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-12">
         <createTable tableName="t_track">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="graph_name" type="VARCHAR(255)"/>
@@ -82,7 +82,7 @@
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-13">
         <createTable tableName="t_track_t_rawdatafile">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="T_TRACK_id" type="BIGINT"/>
@@ -147,7 +147,7 @@
 	</changeSet>
 	<changeSet author="martijn" id="create featurequery tables">
 	   <createTable tableName="T_FEATUREJOIN">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="source_select_id" type="BIGINT"/>
@@ -156,7 +156,7 @@
             <column name="feature_query_id" type="BIGINT"/>
         </createTable>
 	 	<createTable tableName="T_FEATURESELECT">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <column name="track_id" type="BIGINT"/>
@@ -165,7 +165,7 @@
             <column name="feature_query_id" type="BIGINT"/>
         </createTable>
         <createTable tableName="T_FEATURESELECTCRITERION">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
             <!-- fields for locationcriterion -->
@@ -177,7 +177,7 @@
             <column name="feature_select_id" type="BIGINT"/>
         </createTable>
 		<createTable tableName="T_FEATUREQUERY">
-            <column autoIncrement="true" name="id" type="BIGINT">
+            <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
 			<column name="owner_id" type="BIGINT"/>
