@@ -129,11 +129,6 @@ public class Track implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        return (int) (id ^ (id >>> 32));
-    }
-
-    @Override
     public String toString() {
     	String rawDataFilesString = "";
     	for (RawDataFile rawDataFile : rawDataFiles) {
