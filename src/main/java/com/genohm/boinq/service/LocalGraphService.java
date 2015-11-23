@@ -16,6 +16,7 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
+import org.apache.jena.sparql.modify.request.UpdateDrop;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateProcessor;
 import org.apache.jena.update.UpdateRequest;
@@ -67,6 +68,12 @@ public class LocalGraphService implements EnvironmentAware {
 		UpdateRequest req = new UpdateRequest(insertStatement);
 		req.setPrefixMapping(Prefixes.getCommonPrefixes());
 		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, this.updateEndpoint);
+		processor.execute();
+	}
+	
+	public void deleteGraph(String graphName) {
+		UpdateDrop req = new UpdateDrop(NodeFactory.createURI(graphName));
+		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, updateEndpoint);
 		processor.execute();
 	}
 	
