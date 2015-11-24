@@ -126,8 +126,9 @@ public class TripleConversion implements AsynchronousJob {
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
 			inputData.setStatus(RawDataFile.STATUS_LOADING);
 			while (!interrupted && tripleIterator.hasNext()) {
-				uploader.put(tripleIterator.next());
+				uploader.triple(tripleIterator.next());
 			}
+			uploader.finish();
 			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
 			rawDataFileRepository.save(inputData);
