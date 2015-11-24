@@ -96,8 +96,9 @@ public class BedConverterTest {
 		String graphName = localGraphService.createLocalGraph("testGraph");
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {
-			uploader.put(iterator.next());
+			uploader.triple(iterator.next());
 		}
+		uploader.finish();
 		String query1 = "PREFIX track: <http://www.boinq.org/track#> " +
 						"SELECT COUNT(?feature) WHERE {?feature a track:BedFeature}";
 		RawSPARQLResultSet result1 = sparqlClient.rawQuery(localGraphService.getSparqlEndpoint(), graphName, query1);

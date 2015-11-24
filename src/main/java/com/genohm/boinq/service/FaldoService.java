@@ -68,6 +68,7 @@ public class FaldoService {
 		for (FaldoFeature feature: features) {
 			writeFeature(uploader, feature);
 		}
+		uploader.finish();
 	}
 	
 	public void writeFeatures(Track track, List<FaldoFeature> features) throws Exception {
@@ -78,7 +79,7 @@ public class FaldoService {
 		// when writing features ourselves: always use global reference
 		List<Triple> triples = converter.convert(feature);
 		for (Triple triple: triples) {
-			uploader.put(triple);
+			uploader.triple(triple);
 		}
 	}
 	

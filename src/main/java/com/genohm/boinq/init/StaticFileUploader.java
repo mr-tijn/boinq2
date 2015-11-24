@@ -11,14 +11,10 @@ import javax.inject.Inject;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.system.StreamRDFBase;
-import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateCreate;
-import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.sparql.syntax.ElementNamedGraph;
 import org.apache.jena.sparql.syntax.ElementTriplesBlock;
 import org.apache.jena.update.UpdateExecutionFactory;
@@ -31,6 +27,8 @@ import org.springframework.stereotype.Component;
 
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.service.SPARQLClientService;
+import com.genohm.boinq.service.TripleUploadService;
+import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 
 
 @Component
@@ -44,6 +42,8 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 	
 	@Inject
 	private SPARQLClientService sparqlClientService;
+	@Inject
+	private TripleUploadService tripleUploadService;
 	
 	@Value(value="${spring.triplestore.endpoint.static}")
 	private String staticEndpoint;
@@ -89,7 +89,9 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 		UpdateExecutionFactory.createRemote(create, staticEndpoint).execute();
 		
 		InputStream so = this.getClass().getClassLoader().getResourceAsStream("ontologies/so.owl");
-		RDFDataMgr.parse(new RDFUploader(NodeFactory.createURI(SO_URI), staticEndpoint), so, Lang.RDFXML);
+		TripleUploader uploader = tripleUploadService.getUploader(staticEndpoint, SO_URI);
+		RDFDataMgr.parse(uploader, so, Lang.RDFXML);
+//		RDFDataMgr.parse(new RDFUploader(NodeFactory.createURI(SO_URI), staticEndpoint), so, Lang.RDFXML);
 		try {
 			so.close();
 		} catch (IOException io) {
@@ -98,42 +100,42 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 	}
 	
 	
-	public static class RDFUploader extends StreamRDFBase {
-		
-		private static int BATCHSIZE = 1000;
-		private Node graph;
-		private String endpoint;
-		private int count = 0;
-		private QuadDataAcc quadData = new QuadDataAcc();
-		
-		public RDFUploader(Node graph, String endpoint) {
-			this.graph = graph;
-			this.endpoint = endpoint;
-			quadData.setGraph(graph);
-		}
-		
-		@Override
-		public void triple(Triple triple) {
-			if (count == BATCHSIZE) { 
-				UpdateDataInsert insert = new UpdateDataInsert(quadData);
-				log.info("UPLOADING " + count + " TRIPLES");
-				UpdateExecutionFactory.createRemote(insert, endpoint).execute();
-				quadData = new QuadDataAcc();
-				quadData.setGraph(graph);
-				count = 0;
-			}
-			quadData.addTriple(triple);
-			count++;
-		}
-		
-		@Override
-		public void finish() {
-			if (count > 0) {
-				UpdateDataInsert insert = new UpdateDataInsert(quadData);
-				log.info("UPLOADING " + count + " TRIPLES");
-				UpdateExecutionFactory.createRemote(insert, endpoint).execute();
-			}
-		}
-		
-	}
+//	public static class RDFUploader extends StreamRDFBase {
+//		
+//		private static int BATCHSIZE = 1000;
+//		private Node graph;
+//		private String endpoint;
+//		private int count = 0;
+//		private QuadDataAcc quadData = new QuadDataAcc();
+//		
+//		public RDFUploader(Node graph, String endpoint) {
+//			this.graph = graph;
+//			this.endpoint = endpoint;
+//			quadData.setGraph(graph);
+//		}
+//		
+//		@Override
+//		public void triple(Triple triple) {
+//			if (count == BATCHSIZE) { 
+//				UpdateDataInsert insert = new UpdateDataInsert(quadData);
+//				log.info("UPLOADING " + count + " TRIPLES");
+//				UpdateExecutionFactory.createRemote(insert, endpoint).execute();
+//				quadData = new QuadDataAcc();
+//				quadData.setGraph(graph);
+//				count = 0;
+//			}
+//			quadData.addTriple(triple);
+//			count++;
+//		}
+//		
+//		@Override
+//		public void finish() {
+//			if (count > 0) {
+//				UpdateDataInsert insert = new UpdateDataInsert(quadData);
+//				log.info("UPLOADING " + count + " TRIPLES");
+//				UpdateExecutionFactory.createRemote(insert, endpoint).execute();
+//			}
+//		}
+//		
+//	}
 }

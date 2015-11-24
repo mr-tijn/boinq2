@@ -86,8 +86,9 @@ public class ComputeRegionOfInterest implements TrackBuildingAnalysis {
 					List<Triple> resultTriples = tripleConverter.convert(feature);
 					for (Triple triple: resultTriples) {
 						if (killed()) return;
-						tripleUploader.put(triple);
+						tripleUploader.triple(triple);
 					}
+					tripleUploader.finish();
 				}
 			}
 		} catch (Exception e) {
