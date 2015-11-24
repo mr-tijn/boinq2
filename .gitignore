@@ -130,6 +130,8 @@ Desktop.ini
 ######################
 .Rhistory
 readme_martijn
+/src/test/resources/application.yml
+/src/main/resources/application*.yml
 external_dependencies/*
 !external_dependencies/download_and_build.sh
 !external_dependencies/lib
@@ -139,3 +141,4 @@ fuseki
 files/*
 reference_tools
 ontologies/catalog-v001.xml
+/target/

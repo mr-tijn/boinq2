@@ -11,7 +11,9 @@ import javax.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -37,22 +39,33 @@ public class FaldoServiceTest {
 	@Inject
 	TripleUploadService uploadService;
 	
+	@Inject
+	LocalGraphService localGraphService;
+	
+	@Inject
+	Environment env;
+	
 	Track track;
 	Datasource ds;
 	
 	@Before
 	public void init() {
+		
+		
+        RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "spring.");
+
 		ds = new Datasource();
-		ds.setEndpointUrl("http://localhost:8899/DYNAMIC/sparql");
-		ds.setEndpointUpdateUrl("http://localhost:8899/DYNAMIC/sparul");
+		ds.setEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.external"));
+		ds.setEndpointUpdateUrl(propertyResolver.getProperty("triplestore.endpoint.update"));
 		ds.setMetaGraphName("http://www.boinq.org/META/");
-		ds.setMetaEndpointUrl("http://localhost:8899/DYNAMIC/sparql");
+		ds.setMetaEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.meta"));
 		
 		track = new Track();
 		track.setDatasource(ds);
 		track.setRawDataFiles(new HashSet<RawDataFile>());
 		track.setGraphName("http://boinq.org/test1");
 		
+		localGraphService.deleteGraph("http://boinq.org/test1");
 	}
 	
 	@Test

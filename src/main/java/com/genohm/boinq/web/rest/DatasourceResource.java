@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
@@ -56,7 +57,7 @@ public class DatasourceResource {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public void create(Principal principal, @RequestBody DatasourceDTO datasourceDTO) {
+    public @ResponseBody ResponseEntity<DatasourceDTO> create(Principal principal, @RequestBody DatasourceDTO datasourceDTO) {
         log.debug("REST request to save Datasource : {}", datasourceDTO);
         Datasource datasource = datasourceRepository.findOne(datasourceDTO.getId());
         if (datasource == null) {
@@ -80,7 +81,7 @@ public class DatasourceResource {
         	datasource.setMetaEndpointUrl(localGraphService.getMetaEndpoint());
         	datasource.setMetaGraphName(localGraphService.getMetaGraph());
         }
-    	datasourceRepository.save(datasource);
+    	return new ResponseEntity<DatasourceDTO> (new DatasourceDTO(datasourceRepository.save(datasource)),HttpStatus.OK);
     }
 
     /**
