@@ -2,6 +2,7 @@ package com.genohm.boinq.tools.fileformats;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -22,16 +23,16 @@ public class TripleIteratorFactory {
 	@Inject
 	TripleConverter tripleConverter;
 	
-	public Iterator<Triple> getIterator(File inputFile, Map<String, Node> referenceMap) throws Exception {
+	public Iterator<Triple> getIterator(File inputFile, Map<String, Node> referenceMap, List<String> typeList) throws Exception {
 		String extension = FilenameUtils.getExtension(inputFile.getName());
 		for (String ext: GFF3_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new GFF3TripleIterator(tripleConverter, inputFile, referenceMap);
+			if (ext.equals(extension.toUpperCase())) return new GFF3TripleIterator(tripleConverter, inputFile, referenceMap, typeList);
 		}
 		for (String ext: BED_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new HTSJDKBedTripleIterator(tripleConverter, inputFile, referenceMap);
+			if (ext.equals(extension.toUpperCase())) return new HTSJDKBedTripleIterator(tripleConverter, inputFile, referenceMap, typeList);
 		}
 		for (String ext: VCF_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new VCFTripleIterator(tripleConverter, inputFile, referenceMap);
+			if (ext.equals(extension.toUpperCase())) return new VCFTripleIterator(tripleConverter, inputFile, referenceMap, typeList);
 		}
 		throw new Exception("No triple iterator available for extension " + extension);
 	}

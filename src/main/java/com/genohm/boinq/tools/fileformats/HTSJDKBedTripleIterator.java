@@ -25,12 +25,14 @@ public class HTSJDKBedTripleIterator implements Iterator<Triple> {
 	private BEDCodec codec = new BEDCodec();
 	private Map<String, Node> referenceMap;
 	private TripleConverter converter;
+	private List<String> typeList;
 	
-	public HTSJDKBedTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap) throws FileNotFoundException, IOException{
+	public HTSJDKBedTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, List<String> typeList) throws FileNotFoundException, IOException{
 		this.converter = converter;
 		this.referenceMap = referenceMap;
 		lineIterator = new AsciiLineReaderIterator(new AsciiLineReader(new FileInputStream(file)));
 		codec.readActualHeader(lineIterator);
+		this.typeList = typeList;
 	}
 	
 	
@@ -63,7 +65,7 @@ public class HTSJDKBedTripleIterator implements Iterator<Triple> {
 			if (id == null) {
 				id = "GENERATED_ID_" + ++idCounter ;
 			}
-			currentTriples.addAll(converter.convert(feature, id, globalReference));
+			currentTriples.addAll(converter.convert(feature, id, globalReference, typeList));
 		}
 		return currentTriples.remove(0);
 	}

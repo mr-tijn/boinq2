@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -89,10 +91,11 @@ public class BedConverterTest {
 	
 	@Test
 	public void testBedConversion() throws Exception {
+		List<String> typeList = new ArrayList<String>();
 		String filePath = getClass().getResource("/inputfiles/testBED.bed").getFile();
 		Map<String, Node> refMap = new HashMap<String, Node>();
 		refMap.put("chr9", TrackVocab.GRCh37chr09.asNode());
-		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap);
+		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap,typeList);
 		String graphName = localGraphService.createLocalGraph("testGraph");
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {

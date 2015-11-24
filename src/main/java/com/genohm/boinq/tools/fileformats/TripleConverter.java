@@ -12,11 +12,11 @@ import htsjdk.variant.variantcontext.GenotypeType;
 import htsjdk.variant.variantcontext.GenotypesContext;
 import htsjdk.variant.variantcontext.VariantContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.lang.Object;
 
 import javax.inject.Inject;
 
@@ -90,6 +90,8 @@ public class TripleConverter {
 	TripleGeneratorService tripleGenerator;
 	
 	public TripleConverter() {
+		List<String> typeList = new ArrayList<String>();
+		
 		attributeNodes = new HashMap<>();
 		attributeNodes.put("AA", GfvoVocab.Ancestral_Sequence.asNode());
 		attributeNodes.put("AC", GfvoVocab.Allele_Count.asNode());
@@ -162,6 +164,8 @@ public class TripleConverter {
 		featureTypeNodes.put("polypeptide", SoVocab.polypeptide.asNode());
 		featureTypeNodes.put("intein", SoVocab.intein.asNode());
 		featureTypeNodes.put("primary_transcript", SoVocab.primary_transcript.asNode());
+		
+	
 		
 
 	}
@@ -269,7 +273,7 @@ public class TripleConverter {
 		}
 	}
 	
-	public List<Triple> convert(VariantContext record, Node reference, String id, int start) {
+	public List<Triple> convert(VariantContext record, Node reference, String id, int start,List<String> typeList) {
 		List<Triple> triples = new LinkedList<Triple>();
 		String featureName;
 		String point = ".";
@@ -322,7 +326,7 @@ public class TripleConverter {
 	}
 
 	
-	public List<Triple> convert(SAMRecord record, Node reference, String id) {
+	public List<Triple> convert(SAMRecord record, Node reference, String id, List<String> typeList) {
 		//TODO: this is a draft
 		List<Triple> result = new LinkedList<Triple>();
 		String featureName = FEATUREBASEURI + id;
@@ -408,7 +412,7 @@ public class TripleConverter {
 	//			
 	//		}
 
-	public List<Triple> convert(GFFEntry entry, Node reference, String id) {
+	public List<Triple> convert(GFFEntry entry, Node reference, String id, List<String> typeList) {
 		List<Triple> result = convert((ValuedInterval) entry, id);
 		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
 
@@ -423,10 +427,9 @@ public class TripleConverter {
 			//String type= "SoVocab."+entry.getFeature()+".asNode()";
 			//Object x =Class.forName(type).newInstance();
 			//result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
-						 
-			
 			if (featureTypeNodes.containsKey(entry.getFeature())){
 			result.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getFeature())));
+			typeList.add(entry.getFeature());
 			}
 			else{
 			result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
@@ -457,7 +460,7 @@ public class TripleConverter {
 	}
 
 	
-	public List<Triple> convert(BEDFeature entry, String id, Node reference) {
+	public List<Triple> convert(BEDFeature entry, String id, Node reference, List<String> typeList) {
 		List<Triple> result = new LinkedList<Triple>();
 		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
 		Float score = entry.getScore();
