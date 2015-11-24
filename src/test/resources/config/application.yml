@@ -26,6 +26,7 @@ spring:
           sparql: http://localhost:9999/bigdata/namespace/test/sparql
           meta: http://localhost:9999/bigdata/namespace/test/sparql
           external: http://localhost:9999/bigdata/namespace/test/sparql
+          static: http://localhost:9999/bigdata/namespace/boinq_static/sparql
         
            
         metagraph: http://www.boinq.org/iri/graph/meta/
