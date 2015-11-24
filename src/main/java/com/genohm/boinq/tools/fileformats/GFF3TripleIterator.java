@@ -12,6 +12,8 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 
+import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
+
 import edu.unc.genomics.GFFEntry;
 import edu.unc.genomics.io.GFFFileReader;
 
@@ -24,15 +26,15 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 	private int idCounter = 1;
 	private Map<String, Node> referenceMap;
 	private TripleConverter converter;
-	private List<String> typeList;
+	private Metadata meta;
 	
-	public GFF3TripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, List<String> typeList) throws FileNotFoundException, IOException {
+	public GFF3TripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException {
 		this.converter = converter;
 		this.referenceMap = referenceMap;
 		GFFFileReader reader = new GFFFileReader(file.toPath());
 		Iterator<GFFEntry> gffIterator = reader.iterator();
 		this.gffIterator = gffIterator;
-		this.typeList = typeList;
+		this.meta = meta;
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 			if (reference == null) {
 				reference = NodeFactory.createLiteral(entry.getChr());
 			}
-			List<Triple> triples = converter.convert(entry, reference, id, typeList);
+			List<Triple> triples = converter.convert(entry, reference, id, meta);
 			currentTriples.addAll(triples);
 		
 		}

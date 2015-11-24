@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.faldo.FaldoFeature;
+import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
 import com.genohm.boinq.generated.vocabularies.BoinqVocab;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
 import com.genohm.boinq.generated.vocabularies.GfvoVocab;
@@ -273,7 +274,7 @@ public class TripleConverter {
 		}
 	}
 	
-	public List<Triple> convert(VariantContext record, Node reference, String id, int start,List<String> typeList) {
+	public List<Triple> convert(VariantContext record, Node reference, String id, int start, Metadata meta) {
 		List<Triple> triples = new LinkedList<Triple>();
 		String featureName;
 		String point = ".";
@@ -326,7 +327,7 @@ public class TripleConverter {
 	}
 
 	
-	public List<Triple> convert(SAMRecord record, Node reference, String id, List<String> typeList) {
+	public List<Triple> convert(SAMRecord record, Node reference, String id) {
 		//TODO: this is a draft
 		List<Triple> result = new LinkedList<Triple>();
 		String featureName = FEATUREBASEURI + id;
@@ -412,7 +413,7 @@ public class TripleConverter {
 	//			
 	//		}
 
-	public List<Triple> convert(GFFEntry entry, Node reference, String id, List<String> typeList) {
+	public List<Triple> convert(GFFEntry entry, Node reference, String id, Metadata meta) {
 		List<Triple> result = convert((ValuedInterval) entry, id);
 		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
 
@@ -429,7 +430,7 @@ public class TripleConverter {
 			//result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
 			if (featureTypeNodes.containsKey(entry.getFeature())){
 			result.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getFeature())));
-			typeList.add(entry.getFeature());
+			//Metadata.typeList.add(entry.getFeature());
 			}
 			else{
 			result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
@@ -460,7 +461,7 @@ public class TripleConverter {
 	}
 
 	
-	public List<Triple> convert(BEDFeature entry, String id, Node reference, List<String> typeList) {
+	public List<Triple> convert(BEDFeature entry, String id, Node reference, Metadata meta) {
 		List<Triple> result = new LinkedList<Triple>();
 		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
 		Float score = entry.getScore();

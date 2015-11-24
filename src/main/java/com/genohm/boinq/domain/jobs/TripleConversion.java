@@ -3,6 +3,7 @@ package com.genohm.boinq.domain.jobs;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -121,8 +122,9 @@ public class TripleConversion implements AsynchronousJob {
 				throw new Exception("Data is already uploaded");
 			}
 			// data needed: featureType for the track; referencemapping for the track
+			Metadata meta = new Metadata();
 			Map<String, Node> referenceMap = getReferenceMap(track);
-			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap);
+			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap, meta);
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
 			inputData.setStatus(RawDataFile.STATUS_LOADING);
 			while (!interrupted && tripleIterator.hasNext()) {
@@ -145,5 +147,9 @@ public class TripleConversion implements AsynchronousJob {
 	public void kill() {
 		this.interrupted = true;
 	}
-
+	
+	public class Metadata{
+	
+		public List<String> typeList;
+	}
 }

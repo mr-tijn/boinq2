@@ -10,6 +10,8 @@ import javax.inject.Inject;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 
+import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
+
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 
@@ -23,16 +25,16 @@ public class TripleIteratorFactory {
 	@Inject
 	TripleConverter tripleConverter;
 	
-	public Iterator<Triple> getIterator(File inputFile, Map<String, Node> referenceMap, List<String> typeList) throws Exception {
+	public Iterator<Triple> getIterator(File inputFile, Map<String, Node> referenceMap, Metadata meta) throws Exception {
 		String extension = FilenameUtils.getExtension(inputFile.getName());
 		for (String ext: GFF3_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new GFF3TripleIterator(tripleConverter, inputFile, referenceMap, typeList);
+			if (ext.equals(extension.toUpperCase())) return new GFF3TripleIterator(tripleConverter, inputFile, referenceMap, meta);
 		}
 		for (String ext: BED_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new HTSJDKBedTripleIterator(tripleConverter, inputFile, referenceMap, typeList);
+			if (ext.equals(extension.toUpperCase())) return new HTSJDKBedTripleIterator(tripleConverter, inputFile, referenceMap, meta);
 		}
 		for (String ext: VCF_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new VCFTripleIterator(tripleConverter, inputFile, referenceMap, typeList);
+			if (ext.equals(extension.toUpperCase())) return new VCFTripleIterator(tripleConverter, inputFile, referenceMap, meta);
 		}
 		throw new Exception("No triple iterator available for extension " + extension);
 	}
