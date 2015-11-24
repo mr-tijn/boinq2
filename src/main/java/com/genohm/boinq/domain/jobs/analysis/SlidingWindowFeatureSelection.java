@@ -135,7 +135,8 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis {
 	private void writeMetaInfo() {
 		TripleUploader metaUploader = tripleUploadService.getUploader(metaEndpoint, metaGraph, null); 
 		Node theGraph = NodeFactory.createURI(targetGraph);
-		metaUploader.put(new Triple(theGraph, RDF.type.asNode(), TrackVocab.FaldoTrack.asNode()));
+		metaUploader.triple(new Triple(theGraph, RDF.type.asNode(), TrackVocab.FaldoTrack.asNode()));
+		metaUploader.finish();
 	}
 	
 	@Override

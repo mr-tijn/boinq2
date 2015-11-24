@@ -95,8 +95,9 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 		triples.add(new Triple(datasource, TrackVocab.references.asNode(), TrackVocab.GRCh37.asNode()));
 		triples.add(new Triple(datasource, TrackVocab.endpointUrl.asNode(), NodeFactory.createLiteral(queryEndpoint)));
 		for (Triple triple: triples) {
-			uploader.put(triple);
+			uploader.triple(triple);
 		}
+		uploader.finish();
 	}
 
 	@Override
