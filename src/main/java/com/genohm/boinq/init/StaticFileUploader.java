@@ -91,7 +91,6 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 		InputStream so = this.getClass().getClassLoader().getResourceAsStream("ontologies/so.owl");
 		TripleUploader uploader = tripleUploadService.getUploader(staticEndpoint, SO_URI);
 		RDFDataMgr.parse(uploader, so, Lang.RDFXML);
-//		RDFDataMgr.parse(new RDFUploader(NodeFactory.createURI(SO_URI), staticEndpoint), so, Lang.RDFXML);
 		try {
 			so.close();
 		} catch (IOException io) {
@@ -100,42 +99,4 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 	}
 	
 	
-//	public static class RDFUploader extends StreamRDFBase {
-//		
-//		private static int BATCHSIZE = 1000;
-//		private Node graph;
-//		private String endpoint;
-//		private int count = 0;
-//		private QuadDataAcc quadData = new QuadDataAcc();
-//		
-//		public RDFUploader(Node graph, String endpoint) {
-//			this.graph = graph;
-//			this.endpoint = endpoint;
-//			quadData.setGraph(graph);
-//		}
-//		
-//		@Override
-//		public void triple(Triple triple) {
-//			if (count == BATCHSIZE) { 
-//				UpdateDataInsert insert = new UpdateDataInsert(quadData);
-//				log.info("UPLOADING " + count + " TRIPLES");
-//				UpdateExecutionFactory.createRemote(insert, endpoint).execute();
-//				quadData = new QuadDataAcc();
-//				quadData.setGraph(graph);
-//				count = 0;
-//			}
-//			quadData.addTriple(triple);
-//			count++;
-//		}
-//		
-//		@Override
-//		public void finish() {
-//			if (count > 0) {
-//				UpdateDataInsert insert = new UpdateDataInsert(quadData);
-//				log.info("UPLOADING " + count + " TRIPLES");
-//				UpdateExecutionFactory.createRemote(insert, endpoint).execute();
-//			}
-//		}
-//		
-//	}
 }
