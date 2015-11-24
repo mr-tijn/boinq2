@@ -54,7 +54,10 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 			//if (id == null) {
 				String id = "id_" + ++idCounter;
 			//}
-			Node reference = referenceMap.get(entry.getChr());
+			Node reference = null;
+			if (referenceMap != null) {
+				 reference = referenceMap.get(entry.getChr());
+			}
 			if (reference == null) {
 				reference = NodeFactory.createLiteral(entry.getChr());
 			}

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -149,7 +150,6 @@ public class TripleConversion implements AsynchronousJob {
 	}
 	
 	public class Metadata{
-	
-		public List<String> typeList;
+		public Set<String> typeList;
 	}
 }

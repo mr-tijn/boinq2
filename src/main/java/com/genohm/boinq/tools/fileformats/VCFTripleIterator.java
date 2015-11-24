@@ -51,7 +51,10 @@ public class VCFTripleIterator implements Iterator<Triple> {
 	public Triple next() {
 		if (currentTriples.isEmpty()){
 			VariantContext record = codec.decode(lineIterator.next());
-			Node reference = referenceMap.get(record.getContig());
+			Node reference = null;
+			if (referenceMap != null) {
+			reference = referenceMap.get(record.getContig());
+			}
 			if (reference == null){
 				reference = NodeFactory.createLiteral(record.getContig());
 			}
