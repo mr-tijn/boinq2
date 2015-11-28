@@ -28,13 +28,16 @@ public class TripleIteratorFactory {
 	public Iterator<Triple> getIterator(File inputFile, Map<String, Node> referenceMap, Metadata meta) throws Exception {
 		String extension = FilenameUtils.getExtension(inputFile.getName());
 		for (String ext: GFF3_EXTENSIONS) {
+			meta.fileType = "GFF3";
 			if (ext.equals(extension.toUpperCase())) return new GFF3TripleIterator(tripleConverter, inputFile, referenceMap, meta);
 		}
 		for (String ext: BED_EXTENSIONS) {
 			if (ext.equals(extension.toUpperCase())) return new HTSJDKBedTripleIterator(tripleConverter, inputFile, referenceMap, meta);
+			meta.fileType = "BED";
 		}
 		for (String ext: VCF_EXTENSIONS) {
 			if (ext.equals(extension.toUpperCase())) return new VCFTripleIterator(tripleConverter, inputFile, referenceMap, meta);
+			meta.fileType = "VCF";
 		}
 		throw new Exception("No triple iterator available for extension " + extension);
 	}

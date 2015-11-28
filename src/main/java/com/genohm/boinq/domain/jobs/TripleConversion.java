@@ -1,8 +1,10 @@
 package com.genohm.boinq.domain.jobs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,15 +19,20 @@ import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.repository.RawDataFileRepository;
+import com.genohm.boinq.service.LocalGraphService;
+import com.genohm.boinq.service.MetadataGraphService;
 import com.genohm.boinq.service.QueryBuilderService;
 import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.fileformats.TripleIteratorFactory;
+import com.genohm.boinq.tools.fileformats.TripleConverter;
 import com.genohm.boinq.tools.queries.Prefixes;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Node_URI;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.modify.request.QuadDataAcc;
 
 public class TripleConversion implements AsynchronousJob {
 
@@ -35,11 +42,14 @@ public class TripleConversion implements AsynchronousJob {
 	@Inject
 	private TripleIteratorFactory tripleIteratorFactory;
 	@Inject
+	private TripleConverter tripleconverter;
+	@Inject
 	private QueryBuilderService queryBuilder;
 	@Inject
 	private SPARQLClientService sparqlClient;
 	@Inject
 	private RawDataFileRepository rawDataFileRepository;
+	
 	
 	private int status = JOB_STATUS_UNKNOWN;
 	private String name = "";
@@ -79,7 +89,6 @@ public class TripleConversion implements AsynchronousJob {
 	public String getName() {
 		return name;
 	}
-
 	@Override
 	public void setName(String name) {
 		this.name = name;
@@ -124,6 +133,9 @@ public class TripleConversion implements AsynchronousJob {
 			}
 			// data needed: featureType for the track; referencemapping for the track
 			Metadata meta = new Metadata();
+			String metagraph = track.getDatasource().getMetaGraphName();
+			meta.fileName = inputFile.getPath();
+			String endpoint = track.getDatasource().getEndpointUpdateUrl();
 			Map<String, Node> referenceMap = getReferenceMap(track);
 			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap, meta);
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
@@ -132,6 +144,14 @@ public class TripleConversion implements AsynchronousJob {
 				uploader.triple(tripleIterator.next());
 			}
 			uploader.finish();
+			List<Triple> metadata =tripleconverter.CreateMetadata(meta,track.getGraphName());
+			TripleUploader metauploader = tripleUploadService.getUploader(endpoint, metagraph, Prefixes.getCommonPrefixes());
+			while (!interrupted && !metadata.isEmpty()) {
+				metauploader.triple(metadata.get(0));
+				metadata.remove(0);
+			}
+			metauploader.finish();
+			//MetadataGraphService.TrackUpdater(endpoint, metagraph, metadata);
 			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
 			rawDataFileRepository.save(inputData);
@@ -150,6 +170,9 @@ public class TripleConversion implements AsynchronousJob {
 	}
 	
 	public class Metadata{
-		public Set<String> typeList;
+		public List<Node> typeList = new ArrayList<Node>();	
+		public String fileType = new String();
+		public String fileName = new String();
 	}
+	
 }

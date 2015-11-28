@@ -14,9 +14,11 @@ import htsjdk.variant.variantcontext.VariantContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -29,6 +31,7 @@ import com.genohm.boinq.generated.vocabularies.FaldoVocab;
 import com.genohm.boinq.generated.vocabularies.GfvoVocab;
 import com.genohm.boinq.generated.vocabularies.SioVocab;
 import com.genohm.boinq.generated.vocabularies.SoVocab;
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.TripleGeneratorService;
 
 import static com.genohm.boinq.generated.vocabularies.FaldoVocab.*;
@@ -302,19 +305,25 @@ public class TripleConverter {
 		switch (record.getType()) {
 		case INDEL:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.indel.asNode()));
+			meta.typeList.add(SoVocab.indel.asNode());
 			break;
 		case MIXED:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.insertion.asNode()));
+			meta.typeList.add(SoVocab.insertion.asNode());
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.deletion.asNode()));
+			meta.typeList.add(SoVocab.deletion.asNode());
 			break;
 		case MNP:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.MNP.asNode()));
+			meta.typeList.add(SoVocab.MNP.asNode());
 			break;
 		case NO_VARIATION:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.nucleotide_match.asNode()));
+			meta.typeList.add(SoVocab.nucleotide_match.asNode());
 			break;
 		case SNP:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.SNP.asNode()));
+			meta.typeList.add(SoVocab.SNP.asNode());
 			break;
 		case SYMBOLIC:
 			break;
@@ -430,7 +439,7 @@ public class TripleConverter {
 			//result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
 			if (featureTypeNodes.containsKey(entry.getFeature())){
 			result.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getFeature())));
-			//Metadata.typeList.add(entry.getFeature());
+			meta.typeList.add(featureTypeNodes.get(entry.getFeature()));
 			}
 			else{
 			result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
@@ -592,9 +601,19 @@ public class TripleConverter {
 	}
 	
 	
+	public List<Triple> CreateMetadata(Metadata metadata, String Graphname){
+		Node Graph = NodeFactory.createURI(Graphname);
+		List<Triple> triples = new LinkedList<Triple>();
+		Set<Node> uniqueTypes = new HashSet<Node>(metadata.typeList);
+		for (Node x : uniqueTypes){
+			triples.add(new Triple(Graph, TrackVocab.FeatureType.asNode(), x));
+			}
+		triples.add(new Triple(Graph, TrackVocab.entry.asNode(), NodeFactory.createLiteral(metadata.fileType, XSDstring)));
+		triples.add(new Triple(Graph, GfvoVocab.File.asNode(), NodeFactory.createLiteral(metadata.fileName, XSDstring)));
+		return triples;
+		}
+	
 }
-
-
 /*
  * public class BEDToTripleConverter {
 	private final boolean rdftype;
