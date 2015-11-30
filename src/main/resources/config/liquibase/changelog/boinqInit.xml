@@ -130,19 +130,19 @@
         <loadData encoding="UTF-8"
                   file="config/liquibase/datasources.csv"
                   separator="|"
-                  tableName="T_DATASOURCE">
+                  tableName="t_datasource">
         	<column name="is_public" type="BOOLEAN" />
         </loadData>
                                     
         <loadData encoding="UTF-8"
                   file="config/liquibase/tracks.csv"
                   separator="|"
-                  tableName="T_TRACK"/>
+                  tableName="t_track"/>
 
         <loadData encoding="UTF-8"
                   file="config/liquibase/datasource_track.csv"
                   separator="|"
-                  tableName="T_DATASOURCE_T_TRACK"/>
+                  tableName="t_datasource_t_track"/>
 
 	</changeSet>
 	<changeSet author="martijn" id="create featurequery tables">
