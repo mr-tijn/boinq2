@@ -45,8 +45,10 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 	@Inject
 	private TripleUploadService tripleUploadService;
 	
-	@Value(value="${spring.triplestore.endpoint.static}")
-	private String staticEndpoint;
+	@Value(value="${spring.triplestore.endpoint.static.query}")
+	private String staticQueryEndpoint;
+	@Value(value="${spring.triplestore.endpoint.static.update}")
+	private String staticUpdateEndpoint;
 	
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent arg0) {
@@ -67,7 +69,7 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 		List<String> graphs = new LinkedList<>(); 
 		
 		try {
-			SPARQLResultSet rs = sparqlClientService.query(this.staticEndpoint, null, query);
+			SPARQLResultSet rs = sparqlClientService.query(this.staticQueryEndpoint, null, query);
 			if (rs.getVariableNames().contains(GRAPH_VARIABLE_NAME)) {
 				for (Map<String, String> res: rs.getRecords()) {
 					graphs.add(res.get(GRAPH_VARIABLE_NAME));
@@ -86,10 +88,10 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 		}
 		log.info("Uploading so.owl into static endpoint");
 		UpdateCreate create = new UpdateCreate(NodeFactory.createURI(SO_URI));
-		UpdateExecutionFactory.createRemote(create, staticEndpoint).execute();
+		UpdateExecutionFactory.createRemote(create, staticUpdateEndpoint).execute();
 		
 		InputStream so = this.getClass().getClassLoader().getResourceAsStream("ontologies/so.owl");
-		TripleUploader uploader = tripleUploadService.getUploader(staticEndpoint, SO_URI);
+		TripleUploader uploader = tripleUploadService.getUploader(staticUpdateEndpoint, SO_URI);
 		RDFDataMgr.parse(uploader, so, Lang.RDFXML);
 		try {
 			so.close();

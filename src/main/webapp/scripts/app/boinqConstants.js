@@ -50,7 +50,7 @@ angular.module('boinqApp').constant('SPARQLConstants',{
 	                        "  OPTIONAL{?uri rdfs:subClassOf ?super}",
 	                        "  FILTER(!bound(?super))","}"].join('\n'),
 	                        
-	STATIC_ENDPOINT : "http://localhost:9999/static"
+	STATIC_ENDPOINT : "http://localhost:8080/bigdata/#namespaces/boinq_static/sparql"
 });
 
 angular.module('boinqApp').constant('JobConstants',{
