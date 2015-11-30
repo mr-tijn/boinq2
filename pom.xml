@@ -21,6 +21,7 @@
     </prerequisites>
 
     <properties>
+    	<start-class>com.genohm.boinq.Application</start-class>
         <HikariCP.version>2.3.7</HikariCP.version>
         <assertj-core.version>3.1.0</assertj-core.version>
         <awaitility.version>1.4.0</awaitility.version>
@@ -444,10 +445,6 @@
         	<artifactId>htsjdk</artifactId>
         	<version>${htsjdk.version}</version>
         </dependency>
-        <dependency>
-        	<groupId>org.springframework.boot</groupId>
-        	<artifactId>spring-boot-starter-hornetq</artifactId>
-        </dependency>
     </dependencies>
     
     
@@ -867,6 +864,7 @@
                                     <goal>build</goal>
                                 </goals>
                                 <configuration>
+                                    <skipTests>true</skipTests>
                                     <buildTool>grunt</buildTool>
                                     <buildArgs>build --force --no-color</buildArgs>
                                 </configuration>
@@ -897,6 +895,7 @@
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
+                            <executable>true</executable>
                             <arguments>
                                 <argument>--spring.profiles.active=prod</argument>
                             </arguments>
