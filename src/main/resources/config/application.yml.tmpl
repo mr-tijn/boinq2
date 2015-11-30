@@ -40,10 +40,12 @@ spring:
 #            meta: http://localhost:8080/fuseki/boinq/update
 #            external: http://localhost:8888/fuseki/sparql
             update: http://localhost:9999/bigdata/namespace/boinq/update
-            static: http://localhost:9999/bigdata/namespace/boinq_static/update
             sparql: http://localhost:9999/bigdata/namespace/boinq/sparql
             meta: http://localhost:9999/bigdata/namespace/boinq/update
             external: http://localhost:8888/fuseki/sparql
+            static:
+                update: http://localhost:8080/bigdata/namespace/boinq_static/update
+                query: http://localhost:8080/bigdata/namespace/boinq_static/sparql
 
         metagraph: http://www.boinq.org/iri/graph/meta/
         localdatasource: http://www.boinq.org/iri/localdatasource
