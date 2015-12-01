@@ -79,7 +79,7 @@ public class TrackResource {
         	datasourceRepository.flush();
         	trackRepository.flush();
         	if (datasource.getType() == Datasource.TYPE_LOCAL_FALDO) {
-        		String graphName  = localGraphService.createLocalGraph(datasource.getIri());
+        		String graphName  = localGraphService.createLocalGraph(datasource.getId().toString());
         		savedTrack.setGraphName(graphName);
         		trackRepository.save(savedTrack);
         	}

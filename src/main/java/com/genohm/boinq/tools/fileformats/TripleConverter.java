@@ -601,14 +601,14 @@ public class TripleConverter {
 	}
 	
 	
-	public List<Triple> CreateMetadata(Metadata metadata, String Graphname){
+	public List<Triple> createMetadata(Metadata metadata, String Graphname){
 		Node Graph = NodeFactory.createURI(Graphname);
 		List<Triple> triples = new LinkedList<Triple>();
 		Set<Node> uniqueTypes = new HashSet<Node>(metadata.typeList);
 		for (Node x : uniqueTypes){
 			triples.add(new Triple(Graph, TrackVocab.FeatureType.asNode(), x));
 			}
-		triples.add(new Triple(Graph, TrackVocab.entry.asNode(), NodeFactory.createLiteral(metadata.fileType, XSDstring)));
+		triples.add(new Triple(Graph, TrackVocab.extension.asNode(), NodeFactory.createLiteral(metadata.fileType, XSDstring)));
 		triples.add(new Triple(Graph, GfvoVocab.File.asNode(), NodeFactory.createLiteral(metadata.fileName, XSDstring)));
 		return triples;
 		}

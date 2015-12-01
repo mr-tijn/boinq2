@@ -49,7 +49,8 @@ public class TripleConversion implements AsynchronousJob {
 	private SPARQLClientService sparqlClient;
 	@Inject
 	private RawDataFileRepository rawDataFileRepository;
-	
+	@Inject
+	MetadataGraphService metadataGraphService;
 	
 	private int status = JOB_STATUS_UNKNOWN;
 	private String name = "";
@@ -144,14 +145,8 @@ public class TripleConversion implements AsynchronousJob {
 				uploader.triple(tripleIterator.next());
 			}
 			uploader.finish();
-			List<Triple> metadata =tripleconverter.CreateMetadata(meta,track.getGraphName());
-			TripleUploader metauploader = tripleUploadService.getUploader(endpoint, metagraph, Prefixes.getCommonPrefixes());
-			while (!interrupted && !metadata.isEmpty()) {
-				metauploader.triple(metadata.get(0));
-				metadata.remove(0);
-			}
-			metauploader.finish();
-			//MetadataGraphService.TrackUpdater(endpoint, metagraph, metadata);
+			List<Triple> metadata =tripleconverter.createMetadata(meta,track.getGraphName());
+			metadataGraphService.updateFileConversion(endpoint, metagraph, metadata);
 			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
 			rawDataFileRepository.save(inputData);

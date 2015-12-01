@@ -32,12 +32,12 @@ public class TripleIteratorFactory {
 			if (ext.equals(extension.toUpperCase())) return new GFF3TripleIterator(tripleConverter, inputFile, referenceMap, meta);
 		}
 		for (String ext: BED_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new HTSJDKBedTripleIterator(tripleConverter, inputFile, referenceMap, meta);
 			meta.fileType = "BED";
+			if (ext.equals(extension.toUpperCase())) return new HTSJDKBedTripleIterator(tripleConverter, inputFile, referenceMap, meta);
 		}
 		for (String ext: VCF_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new VCFTripleIterator(tripleConverter, inputFile, referenceMap, meta);
 			meta.fileType = "VCF";
+			if (ext.equals(extension.toUpperCase())) return new VCFTripleIterator(tripleConverter, inputFile, referenceMap, meta);
 		}
 		throw new Exception("No triple iterator available for extension " + extension);
 	}
