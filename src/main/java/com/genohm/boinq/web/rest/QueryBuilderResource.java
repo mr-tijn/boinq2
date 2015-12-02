@@ -35,7 +35,7 @@ public class QueryBuilderResource {
     public @ResponseBody ResponseEntity<QueryDTO> getRootNodesQuery() {
     	try {
     		QueryDTO result = new QueryDTO(queryBuilderService.getRootNodes(),"SPARQL1.1");
-    		return new ResponseEntity<>(result, HttpStatus.OK);
+    		return new ResponseEntity<QueryDTO>(result, HttpStatus.OK);
     	} catch (Exception e) {
     		log.error("Could not get rootNodes Query",e);
     		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -45,26 +45,26 @@ public class QueryBuilderResource {
     @RequestMapping(value = "/rest/querybuilder/childNodesQuery",
     		method = RequestMethod.GET,
     		produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getChildNodesQuery(@RequestParam String parentUri) {
+    public @ResponseBody ResponseEntity<QueryDTO> getChildNodesQuery(@RequestParam String parentUri) {
     	try {
-    		String result = queryBuilderService.getChildNodes(parentUri);
-    		return new ResponseEntity<String>(result, HttpStatus.OK);
+    		QueryDTO result = new QueryDTO(queryBuilderService.getChildNodes(parentUri), "SPARQL1.1");
+    		return new ResponseEntity<QueryDTO>(result, HttpStatus.OK);
     	} catch (Exception e) {
     		log.error("Could not get rootNodes Query",e);
-    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    		return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
     	}
     }
     
     @RequestMapping(value = "/rest/querybuilder/filteredTreeQuery",
     		method = RequestMethod.GET,
     		produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getFilteredTreeQuery(@RequestParam String filter) {
+    public @ResponseBody ResponseEntity<QueryDTO> getFilteredTreeQuery(@RequestParam String filter) {
     	try {
-    		String result = queryBuilderService.getFilteredTree(filter);
-    		return new ResponseEntity<String>(result, HttpStatus.OK);
+    		QueryDTO result = new QueryDTO(queryBuilderService.getFilteredTree(filter),"SPARQL1.1");
+    		return new ResponseEntity<QueryDTO>(result, HttpStatus.OK);
     	} catch (Exception e) {
     		log.error("Could not get filteredTree Query",e);
-    		return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    		return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
     	}
     }
 

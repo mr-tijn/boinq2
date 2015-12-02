@@ -13,6 +13,7 @@ import com.genohm.boinq.tools.generators.ARQGenerator;
 import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
 import com.genohm.boinq.tools.vocabularies.FaldoVocabulary;
 import com.genohm.boinq.web.rest.dto.MatchDTO;
+
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
@@ -26,6 +27,7 @@ import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
 import org.apache.jena.sparql.expr.E_IRI;
 import org.apache.jena.sparql.expr.E_LessThanOrEqual;
+import org.apache.jena.sparql.expr.E_LogicalAnd;
 import org.apache.jena.sparql.expr.E_LogicalNot;
 import org.apache.jena.sparql.expr.E_OneOf;
 import org.apache.jena.sparql.expr.E_Regex;
@@ -36,16 +38,20 @@ import org.apache.jena.sparql.expr.nodevalue.NodeValueNode;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.sparql.path.P_Link;
-import org.apache.jena.sparql.path.P_ZeroOrMoreN;
+import org.apache.jena.sparql.path.P_ZeroOrMore1;
+import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.sparql.syntax.ElementOptional;
 import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementTriplesBlock;
+import org.apache.jena.sparql.syntax.ElementUnion;
 import org.apache.jena.sparql.util.ExprUtils;
 import org.apache.jena.sparql.util.NodeFactoryExtra;
+import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.SKOS;
 
 @Service
 public class QueryBuilderService {
@@ -85,26 +91,80 @@ public class QueryBuilderService {
 		commonPrefixMap.add("faldo", FaldoVocabulary.baseURI);
 	}
 	
+	private Node uri = NodeFactory.createVariable("uri");
+	private Node label = NodeFactory.createVariable("label");
+	private Node preflabelvar = NodeFactory.createVariable("preflabel");
+	private Node superClass = NodeFactory.createVariable("super");
+	private Node thingChild = NodeFactory.createVariable("thingChild");
+
+
+	private Element labelPattern(Node uri, Node label) {
+		ElementGroup matchLabelIfNotPrefLabel = new ElementGroup();
+		
+		ElementTriplesBlock labelPattern_label = new ElementTriplesBlock();
+		labelPattern_label.addTriple(new Triple(uri, RDFS.label.asNode(), label));
+		ElementTriplesBlock labelPattern_prefLabel = new ElementTriplesBlock();
+		labelPattern_prefLabel.addTriple(new Triple(uri, SKOS.prefLabel.asNode(), preflabelvar));
+		ElementOptional optionalPrefLabel = new ElementOptional(labelPattern_prefLabel);
+		ElementFilter prefLabelNotBound = new ElementFilter(new E_LogicalNot(new E_Bound(new ExprVar(preflabelvar))));
+		matchLabelIfNotPrefLabel.addElement(labelPattern_label);
+		matchLabelIfNotPrefLabel.addElement(optionalPrefLabel);
+		matchLabelIfNotPrefLabel.addElement(prefLabelNotBound);
+		
+		ElementTriplesBlock matchPrefLabel = new ElementTriplesBlock();
+		matchPrefLabel.addTriple(new Triple(uri, SKOS.prefLabel.asNode(), label));
+
+		ElementUnion labelPattern = new ElementUnion();
+		labelPattern.addElement(matchPrefLabel);
+		labelPattern.addElement(matchLabelIfNotPrefLabel);
+		
+		return labelPattern;
+	}
+
 	public String getRootNodes() {
 		Query query = new Query();
 		query.setQuerySelectType();
 		query.setPrefixMapping(commonPrefixes);
-		Node uri = NodeFactory.createVariable("uri");
-		Node label = NodeFactory.createVariable("label");
-		Node superr = NodeFactory.createVariable("super");
 		query.addResultVar(uri);
 		query.addResultVar(label);
+		
 		ElementTriplesBlock triples = new ElementTriplesBlock();
-		triples.addTriple(new Triple(uri, RDFS.label.asNode(), label));
-		ElementTriplesBlock optionalTriplesBlock = new ElementTriplesBlock();
-		optionalTriplesBlock.addTriple(new Triple(uri, RDFS.subClassOf.asNode(), superr));
-		ElementOptional optionalTriples = new ElementOptional(optionalTriplesBlock);
-		ElementFilter noSuper = new ElementFilter(new E_LogicalNot(new E_Bound(new ExprVar(superr))));
-		ElementGroup group = new ElementGroup();
-		group.addElement(triples);
-		group.addElement(optionalTriples);
-		group.addElement(noSuper);
-		query.setQueryPattern(group);
+		triples.addTriple(new Triple(uri, RDF.type.asNode() , OWL.Class.asNode()));
+		
+		ElementTriplesBlock optionalSuperClassTriples = new ElementTriplesBlock();
+		optionalSuperClassTriples.addTriple(new Triple(uri, RDFS.subClassOf.asNode(), superClass));
+		ElementOptional optionalSuperClass = new ElementOptional(optionalSuperClassTriples);
+		
+		ElementTriplesBlock optionalChildOfThingTriples = new ElementTriplesBlock();
+		optionalChildOfThingTriples.addTriple(new Triple(thingChild, RDF.type.asNode(), OWL.Class.asNode()));
+		optionalChildOfThingTriples.addTriple(new Triple(thingChild, RDFS.subClassOf.asNode(), OWL.Thing.asNode()));
+		ElementOptional optionalChildOfThing = new ElementOptional(optionalChildOfThingTriples);
+		
+		ElementFilter notBound = new ElementFilter(new E_LogicalAnd(new E_LogicalNot(new E_Bound(new ExprVar(superClass))),new E_LogicalNot(new E_Bound(new ExprVar(thingChild)))));
+		
+		ElementGroup orphans = new ElementGroup();
+		orphans.addElement(triples);
+		orphans.addElement(labelPattern(uri,label));
+		orphans.addElement(optionalSuperClass);
+		orphans.addElement(optionalChildOfThing);
+		orphans.addElement(notBound);
+		
+		ElementGroup childrenOfThing = new ElementGroup();
+		
+		ElementTriplesBlock childrenOfThingTriples = new ElementTriplesBlock();
+		childrenOfThingTriples.addTriple(new Triple(uri, RDF.type.asNode() , OWL.Class.asNode()));
+		childrenOfThingTriples.addTriple(new Triple(uri, RDFS.subClassOf.asNode(), OWL.Thing.asNode()));
+		
+		childrenOfThing.addElement(childrenOfThingTriples);
+		childrenOfThing.addElement(labelPattern(uri,label));
+		
+		ElementUnion union = new ElementUnion();
+		union.addElement(orphans);
+		union.addElement(childrenOfThing);
+		
+		query.setQueryPattern(union);
+		query.addOrderBy(label, 0);
+		
 		return query.toString(Syntax.syntaxSPARQL_11);
 	}
 	
@@ -112,16 +172,14 @@ public class QueryBuilderService {
 		Query query = new Query();
 		query.setQuerySelectType();
 		query.setPrefixMapping(commonPrefixes);
-		Node uri = NodeFactory.createVariable("uri");
-		Node label = NodeFactory.createVariable("label");
 		query.addResultVar(uri);
 		query.addResultVar(label);
-		ElementTriplesBlock triples = new ElementTriplesBlock();
-		triples.addTriple(new Triple(uri, RDFS.label.asNode(), label));
-		triples.addTriple(new Triple(uri, RDFS.subClassOf.asNode(), NodeFactory.createURI(parentUri)));
-		ElementGroup group = new ElementGroup();
-		group.addElement(triples);
-		query.setQueryPattern(group);
+		ElementTriplesBlock childOf = new ElementTriplesBlock();
+		childOf.addTriple(new Triple(uri, RDFS.subClassOf.asNode(), NodeFactory.createURI(parentUri)));
+		ElementGroup pattern = new ElementGroup();
+		pattern.addElement(labelPattern(uri,label));
+		pattern.addElement(childOf);
+		query.setQueryPattern(pattern);
 		return query.toString(Syntax.syntaxSPARQL_11);
 	}
 	
@@ -138,12 +196,14 @@ public class QueryBuilderService {
 		optionalTriples.addTriple(new Triple(uri, RDFS.subClassOf.asNode(), parenturi));
 		ElementOptional optional = new ElementOptional(optionalTriples);
 		ElementPathBlock pathTriples = new ElementPathBlock();
-		pathTriples.addTriplePath(new TriplePath(matchingTerm, new P_ZeroOrMoreN(new P_Link(RDFS.subClassOf.asNode())), uri));
+		pathTriples.addTriplePath(new TriplePath(matchingTerm, new P_ZeroOrMore1(new P_Link(RDFS.subClassOf.asNode())), uri));
 		pathTriples.addTriple(new Triple(matchingTerm, RDFS.label.asNode(), matchingLabel));
 		pathTriples.addTriple(new Triple(uri, RDFS.label.asNode(), label));
 		ElementFilter filter= new ElementFilter(new E_Regex(new ExprVar(matchingLabel),match,"i"));
 		ElementGroup group = new ElementGroup();
 		group.addElement(pathTriples);
+//		group.addElement(labelPattern(uri,label));
+//		group.addElement(labelPattern(matchingTerm, matchingLabel));
 		group.addElement(optional);
 		group.addElement(filter);
 		query.addResultVar(parenturi);
