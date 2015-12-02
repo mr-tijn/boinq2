@@ -7,7 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.RawSPARQLResultSet;
@@ -23,7 +24,7 @@ import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 @Service
 public class SPARQLClientService {
 
-	private static final Logger log = Logger.getLogger(SPARQLClientService.class);
+	private static final Logger log = LoggerFactory.getLogger(SPARQLClientService.class);
 	
 	public SPARQLResultSet query(String serviceURL, String graphURL, Query query) throws Exception {
 		switch (query.getQueryType()) {
