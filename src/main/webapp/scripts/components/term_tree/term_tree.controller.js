@@ -32,16 +32,18 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	};
 	
 	$scope.getRootTerms = function() {
-		console.log('Getting query from query builder');
 		if ($scope.rootNodesQuery != null) {
-			callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
+			console.log('Getting query from query builder');
+			callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, $scope.rootNodesQuery).then(
 					function(successResponse) {
 						$scope.rootTerms = successResponse.data.results.bindings;
 					},
 					processError);			
 		} else {
-			QueryBuilderService.rootNodesQuery().then(function(query) {
+			QueryBuilderService.rootNodesQuery().then(function(response) {
 				console.log('Fetching root terms');
+				var query = response.query;
+				$scope.rootNodesQuery = query;
 				callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
 						function(successResponse) {
 							$scope.rootTerms = successResponse.data.results.bindings;
@@ -49,6 +51,24 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 						processError);
 			});
 		}
+	};
+	
+	$scope.getChildTerms = function(parentTerm) {
+		console.log('Getting query from query builder');
+		QueryBuilderService.childNodesQuery(parentTerm.uri.value).then(function(response) {
+			console.log('Fetching child terms for ' + parentTerm.label.value);
+			var query = response.query;
+			callEndpoint($scope.sourceEndpoint,$scope.sourceGraph,query).then(
+					function(successResponse) {
+						parentTerm.subTerms = successResponse.data.results.bindings;
+					},
+					function(errorResponse) {
+						$scope.sparqlError = true;
+						$scope.sparqlErrorText = errorResponse.data;
+						console.log(errorResponse);
+					});
+		});
+
 	};
 	
 	$scope.getSelectedTerms = function(terms) {
@@ -70,7 +90,8 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	
 	$scope.getFilteredTree = function() {
 		var filter = $scope.searchFilter;
-		QueryBuilderService.filteredTreeQuery(filter).then(function(query) {
+		QueryBuilderService.filteredTreeQuery(filter).then(function(response) {
+			var query = response.query;
 			console.log("Fetching matching tree");
 			callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
 					function (successResponse) {
@@ -84,7 +105,7 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 		// find rootTerms
 		$scope.rootTerms = [];
 		for (var idx in terms) {
-			if (terms[idx].parenturi == null) {
+			if (terms[idx].parenturi == null || "http://www.w3.org/2002/07/owl#Thing" == terms[idx].parenturi.value ) {
 				$scope.rootTerms.push($scope.fillChildren(terms[idx], terms));
 			}
 		}
@@ -102,22 +123,6 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 		return parent;
 	};
 	
-	$scope.getChildTerms = function(parentTerm) {
-		console.log('Getting query from query builder');
-		QueryBuilderService.childNodesQuery(parentTerm.uri.value).then(function(query) {
-			console.log('Fetching child terms for ' + parentTerm.label.value);
-			callEndpoint($scope.sourceEndpoint,$scope.sourceGraph,query).then(
-					function(successResponse) {
-						parentTerm.subTerms = successResponse.data.results.bindings;
-					},
-					function(errorResponse) {
-						$scope.sparqlError = true;
-						$scope.sparqlErrorText = errorResponse.data;
-						console.log(errorResponse);
-					});
-		});
-
-	};
 	
     $scope.pickTerm = function() {
     	console.info("getting root terms now");
