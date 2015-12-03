@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -32,7 +31,6 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Node_URI;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.sparql.modify.request.QuadDataAcc;
 
 public class TripleConversion implements AsynchronousJob {
 
@@ -134,9 +132,6 @@ public class TripleConversion implements AsynchronousJob {
 			}
 			// data needed: featureType for the track; referencemapping for the track
 			Metadata meta = new Metadata();
-			String metagraph = track.getDatasource().getMetaGraphName();
-			meta.fileName = inputFile.getPath();
-			String endpoint = track.getDatasource().getEndpointUpdateUrl();
 			Map<String, Node> referenceMap = getReferenceMap(track);
 			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap, meta);
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
@@ -145,6 +140,9 @@ public class TripleConversion implements AsynchronousJob {
 				uploader.triple(tripleIterator.next());
 			}
 			uploader.finish();
+			String metagraph = track.getDatasource().getMetaGraphName();
+			meta.fileName = inputFile.getPath();
+			String endpoint = track.getDatasource().getEndpointUpdateUrl();
 			List<Triple> metadata =tripleconverter.createMetadata(meta,track.getGraphName());
 			metadataGraphService.updateFileConversion(endpoint, metagraph, metadata);
 			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
