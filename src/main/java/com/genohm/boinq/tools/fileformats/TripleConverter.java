@@ -12,22 +12,30 @@ import htsjdk.variant.variantcontext.GenotypeType;
 import htsjdk.variant.variantcontext.GenotypesContext;
 import htsjdk.variant.variantcontext.VariantContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+<<<<<<< HEAD
 import java.lang.Object;
+=======
+import java.util.Set;
+>>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.faldo.FaldoFeature;
+import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
 import com.genohm.boinq.generated.vocabularies.BoinqVocab;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
 import com.genohm.boinq.generated.vocabularies.GfvoVocab;
 import com.genohm.boinq.generated.vocabularies.SioVocab;
 import com.genohm.boinq.generated.vocabularies.SoVocab;
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.TripleGeneratorService;
 
 import static com.genohm.boinq.generated.vocabularies.FaldoVocab.*;
@@ -90,6 +98,8 @@ public class TripleConverter {
 	TripleGeneratorService tripleGenerator;
 	
 	public TripleConverter() {
+		List<String> typeList = new ArrayList<String>();
+		
 		attributeNodes = new HashMap<>();
 		attributeNodes.put("AA", GfvoVocab.Ancestral_Sequence.asNode());
 		attributeNodes.put("AC", GfvoVocab.Allele_Count.asNode());
@@ -162,6 +172,11 @@ public class TripleConverter {
 		featureTypeNodes.put("polypeptide", SoVocab.polypeptide.asNode());
 		featureTypeNodes.put("intein", SoVocab.intein.asNode());
 		featureTypeNodes.put("primary_transcript", SoVocab.primary_transcript.asNode());
+<<<<<<< HEAD
+=======
+		
+	
+>>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
 		
 
 	}
@@ -254,22 +269,17 @@ public class TripleConverter {
 	protected void addAlleleTriples(Node feature, VariantContext variant, List<Triple> triples) {
 	
 		if (variant.getReference() != null && variant.getReference().getBaseString() != null) {
-		//	Node ref = NodeFactory.createBlankNode();
-		/*	triples.add(new Triple(ref, RDF.type.asNode(), GfvoVocab.Reference_Sequence.asNode()));
-			triples.add(new Triple(ref, GfvoVocab.has_value.asNode(), NodeFactory.createLiteral(variant.getReference().getBaseString()))); */
 			triples.add(new Triple(feature, GfvoVocab.Reference_Sequence.asNode(), NodeFactory.createLiteral(variant.getReference().getBaseString())));
 			//TODO: hoe in biointerchange ?
 		}
 		for (Allele all: variant.getAlternateAlleles()) {
 			if (all.getBaseString() != null) {
-				/*Node alt = NodeFactory.createBlankNode();
-				triples.add(new Triple(alt, RDF.type.asNode(), GfvoVocab.Sequence.asNode())); */
 				triples.add(new Triple(feature, GfvoVocab.Sequence.asNode(), NodeFactory.createLiteral(all.getBaseString())));
 			}
 		}
 	}
 	
-	public List<Triple> convert(VariantContext record, Node reference, String id, int start) {
+	public List<Triple> convert(VariantContext record, Node reference, String id, int start, Metadata meta) {
 		List<Triple> triples = new LinkedList<Triple>();
 		String featureName;
 		String point = ".";
@@ -297,19 +307,25 @@ public class TripleConverter {
 		switch (record.getType()) {
 		case INDEL:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.indel.asNode()));
+			meta.typeList.add(SoVocab.indel.asNode());
 			break;
 		case MIXED:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.insertion.asNode()));
+			meta.typeList.add(SoVocab.insertion.asNode());
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.deletion.asNode()));
+			meta.typeList.add(SoVocab.deletion.asNode());
 			break;
 		case MNP:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.MNP.asNode()));
+			meta.typeList.add(SoVocab.MNP.asNode());
 			break;
 		case NO_VARIATION:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.nucleotide_match.asNode()));
+			meta.typeList.add(SoVocab.nucleotide_match.asNode());
 			break;
 		case SNP:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.SNP.asNode()));
+			meta.typeList.add(SoVocab.SNP.asNode());
 			break;
 		case SYMBOLIC:
 			break;
@@ -408,7 +424,7 @@ public class TripleConverter {
 	//			
 	//		}
 
-	public List<Triple> convert(GFFEntry entry, Node reference, String id) {
+	public List<Triple> convert(GFFEntry entry, Node reference, String id, Metadata meta) {
 		List<Triple> result = convert((ValuedInterval) entry, id);
 		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
 
@@ -420,6 +436,7 @@ public class TripleConverter {
 		}
 		
 		if(entry.getFeature()!=null && !entry.getFeature().isEmpty() && !entry.getFeature().equalsIgnoreCase(".")){
+<<<<<<< HEAD
 			//String type= "SoVocab."+entry.getFeature()+".asNode()";
 			//Object x =Class.forName(type).newInstance();
 			//result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
@@ -430,6 +447,15 @@ public class TripleConverter {
 			}
 			else{
 			result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
+=======
+			if (featureTypeNodes.containsKey(entry.getFeature())){
+			result.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getFeature())));
+			meta.typeList.add(featureTypeNodes.get(entry.getFeature()));
+			}
+			else{
+			result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
+			meta.typeList.add(NodeFactory.createLiteral(entry.getFeature(),XSDstring));
+>>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
 			}
 		
 
@@ -457,7 +483,11 @@ public class TripleConverter {
 	}
 
 	
+<<<<<<< HEAD
 	public List<Triple> convert(BEDFeature entry, String id, Node reference) {
+=======
+	public List<Triple> convert(BEDFeature entry, String id, Node reference, Metadata meta) {
+>>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
 		List<Triple> result = new LinkedList<Triple>();
 		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
 		Float score = entry.getScore();
@@ -588,155 +618,16 @@ public class TripleConverter {
 	}
 	
 	
+	public List<Triple> createMetadata(Metadata metadata, String Graphname){
+		Node Graph = NodeFactory.createURI(Graphname);
+		List<Triple> triples = new LinkedList<Triple>();
+		Set<Node> uniqueTypes = new HashSet<Node>(metadata.typeList);
+		for (Node x : uniqueTypes){
+			triples.add(new Triple(Graph, TrackVocab.FeatureType.asNode(), x));
+			}
+		triples.add(new Triple(Graph, TrackVocab.extension.asNode(), NodeFactory.createLiteral(metadata.fileType, XSDstring)));
+		triples.add(new Triple(Graph, GfvoVocab.File.asNode(), NodeFactory.createLiteral(metadata.fileName, XSDstring)));
+		return triples;
+		}
+	
 }
-
-
-/*
- * public class BEDToTripleConverter {
-	private final boolean rdftype;
-	private final boolean faldobegin;
-	private final boolean faldoend;
-
-	public BEDToTripleConverter(ValueFactory vf, URI... preds) {
-		super();
-		this.vf = vf;
-		List<URI> predList = Arrays.asList(preds);
-		boolean tempType = predList.contains(RDF.TYPE);
-		boolean tempfaldobegin = predList.contains(FALDO.BEGIN_PREDICATE);
-		boolean tempfaldoend = predList.contains(FALDO.END_PREDICATE);
-
-		if (predList.isEmpty() || predList.contains(null)) {
-			tempType = true;
-			tempfaldobegin = true;
-			tempfaldoend = true;
-		}
-		rdftype = tempType;
-		faldobegin = tempfaldobegin;
-		faldoend = tempfaldoend;
-		// type = predList.contains(RDF.TYPE) || predList.isEmpty() ||
-		// predList.contains(null);
-	}
-
-	private final ValueFactory vf;
-
-	public List<Statement> convertLineToTriples(String filePath,
-			Feature feature, long lineNo) {
-		List<Statement> stats = new ArrayList<Statement>(28);
-		String recordPath = filePath + '/' + lineNo;
-		URI recordId = vf.createURI(recordPath);
-		URI alignStartId = vf.createURI(recordPath + "#start");
-		URI alignEndId = vf.createURI(recordPath + "#end");
-
-		add(stats, recordId, BED.CHROMOSOME, feature.getChr());
-
-		if (rdftype) {
-			rdfTypesForFeature(stats, recordId, alignStartId, alignEndId);
-		}
-		if (faldobegin) {
-			add(stats, recordId, FALDO.BEGIN_PREDICATE, alignStartId);
-		}
-		add(stats, alignStartId, FALDO.POSTION_PREDICATE, feature.getStart());
-		add(stats, alignStartId, FALDO.REFERENCE_PREDICATE, feature.getChr());
-
-		if (faldoend) {
-			add(stats, recordId, FALDO.END_PREDICATE, alignEndId);
-		}
-		add(stats, alignEndId, FALDO.POSTION_PREDICATE, feature.getEnd());
-		add(stats, alignEndId, FALDO.REFERENCE_PREDICATE, feature.getChr());
-		if (feature instanceof BEDFeature) {
-			stats.addAll(convertLineToTriples(filePath, (BEDFeature) feature,
-					lineNo));
-		}
-		return stats;
-	}
-
-	protected void rdfTypesForFeature(List<Statement> stats, URI recordId,
-			URI alignStartId, URI alignEndId) {
-		add(stats, recordId, RDF.TYPE, BED.FEATURE_CLASS);
-		add(stats, recordId, RDF.TYPE, FALDO.REGION_CLASS);
-		add(stats, alignStartId, RDF.TYPE, FALDO.EXACT_POSITION_CLASS);
-		add(stats, alignEndId, RDF.TYPE, FALDO.EXACT_POSITION_CLASS);
-	}
-
-	private List<Statement> convertLineToTriples(String filePath,
-			BEDFeature feature, long lineNo) {
-		List<Statement> stats = new ArrayList<Statement>(28);
-		String recordPath = filePath + '/' + lineNo;
-		URI recordId = vf.createURI(recordPath);
-		if (feature.getName() != null) // name
-			add(stats, recordId, RDFS.LABEL, feature.getName());
-		if (feature.getScore() != Float.NaN) // score
-			add(stats, recordId, BED.SCORE, feature.getScore());
-		if (rdftype)
-			addStrandedNessInformation(stats, feature, recordId);
-		// we skip position 6,7 and 8 as these are colouring instructions
-
-		for (Exon exon : feature.getExons()) {
-			convertExon(feature, stats, recordPath, recordId, exon);
-		}
-		return stats;
-	}
-
-	protected void convertExon(BEDFeature feature, List<Statement> stats,
-			String recordPath, URI recordId, Exon exon) {
-		String exonPath = recordPath + "/exon/" + exon.getNumber();
-		URI exonId = vf.createURI(exonPath);
-		URI beginId = vf.createURI(exonPath + "/begin");
-		URI endId = vf.createURI(exonPath + "/end");
-		add(stats, recordId, BED.EXON, endId);
-		if (rdftype) {
-			add(stats, exonId, RDF.TYPE, FALDO.REGION_CLASS);
-			add(stats, endId, RDF.TYPE, FALDO.EXACT_POSITION_CLASS);
-		}
-		if (faldobegin) {
-			add(stats, exonId, FALDO.BEGIN_PREDICATE, beginId);
-		}
-		add(stats, beginId, RDF.TYPE, FALDO.EXACT_POSITION_CLASS);
-		add(stats, beginId, FALDO.POSTION_PREDICATE, exon.getCdStart());
-		add(stats, beginId, FALDO.REFERENCE_PREDICATE, feature.getChr());
-		if (faldoend) {
-			add(stats, exonId, FALDO.END_PREDICATE, endId);
-		}
-		add(stats, endId, FALDO.POSTION_PREDICATE, exon.getCdEnd());
-		add(stats, endId, FALDO.REFERENCE_PREDICATE, feature.getChr());
-	}
-
-	protected void addStrandedNessInformation(List<Statement> statements,
-			BEDFeature feature, URI alignEndId) {
-
-		if (Strand.POSITIVE == feature.getStrand()) {
-			add(statements, alignEndId, RDF.TYPE,
-					FALDO.FORWARD_STRAND_POSITION_CLASS);
-		} else if (Strand.NEGATIVE == feature.getStrand()) {
-			add(statements, alignEndId, RDF.TYPE,
-					FALDO.REVERSE_STRANDED_POSITION_CLASS);
-		} else {
-			add(statements, alignEndId, RDF.TYPE, FALDO.STRANDED_POSITION_CLASS);
-		}
-
-	}
-
-	private void add(List<Statement> statements, URI subject, URI predicate,
-			String string) {
-		add(statements, subject, predicate, vf.createLiteral(string));
-
-	}
-
-	private void add(List<Statement> statements, URI subject, URI predicate,
-			int string) {
-		add(statements, subject, predicate, vf.createLiteral(string));
-
-	}
-
-	private void add(List<Statement> statements, URI subject, URI predicate,
-			float string) {
-		add(statements, subject, predicate, vf.createLiteral(string));
-
-	}
-
-	private void add(List<Statement> statements, Resource subject,
-			URI predicate, Value object) {
-		statements.add(vf.createStatement(subject, predicate, object));
-	}
-}
-*/

@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
 
 import javax.inject.Inject;
 import org.junit.Before;
@@ -88,16 +90,21 @@ public class GFFConverterTest {
 	
 	@Test
 	public void testBedConversion() throws Exception {
+		Metadata meta = new Metadata();
 		String filePath = getClass().getResource("/inputfiles/testGFF.gff3").getFile();
 		Map<String, Node> refMap = new HashMap<String, Node>();
 		refMap.put("chr9", TrackVocab.GRCh37chr09.asNode());
-		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap);
+		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap, meta);
 		String graphName = localGraphService.createLocalGraph("testGraph");
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {
 			uploader.triple(iterator.next());
 		}
+<<<<<<< HEAD
 		uploader.finish();
+=======
+		
+>>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
 		String query1 = "PREFIX track: <http://www.boinq.org/track#> " +
 						"SELECT COUNT(?feature) WHERE {?feature a track:BedFeature}";
 		RawSPARQLResultSet result1 = sparqlClient.rawQuery(localGraphService.getSparqlEndpoint(), graphName, query1);
