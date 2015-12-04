@@ -9,7 +9,7 @@
          aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form name="form" role="form" novalidate
+                <form name="trackForm" role="form" novalidate
                       class="ng-scope ng-invalid ng-invalid-required ng-dirty ng-valid-minlength"
                       ng-submit="create()">
 
@@ -27,14 +27,14 @@
 
   						<div class="form-group">
 							<label>Graph name</label> <input type="text" class="form-control"
-								name="graph-name" ng-model="track.graphName" ng-minlength=1
-								ng-maxlength=50 ng-disabled="isLocal(datasource)">
+								name="graphName" ng-model="track.graphName" ng-minlength=1
+								ng-maxlength=200 ng-disabled="isLocal(datasource)">
 						</div>
 
   						<div class="form-group">
 							<label>Name</label> <input type="text" class="form-control"
-								name="name" ng-model="track.name" ng-minlength=1
-								ng-maxlength=500 required >
+								name="trackName" ng-model="track.name" ng-minlength=1
+								ng-maxlength=200>
 						</div>
 						<div class="form-group">
 							<label>Type</label> 
@@ -42,19 +42,27 @@
 								source-endpoint="{{staticEndpoint}}"
 								source-graph="http://purl.obolibrary.org/obo/so-xp.obo"
 								search-filter="searchFilter" 
-								multi-valued='true' ng-model="track.type"> 
+								multi-valued='true' form-field-name="type" ng-model="track.type"> 
 							</term-tree-picker>
 						</div>
-						<input type="hidden" ng-model="track.status">
+						<input type="hidden" ng-model="track.status" name="status">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
                             <span class="glyphicon glyphicon-ban-circle"></span> Cancel
                         </button>
-                        <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">
+                        <button type="submit" ng-disabled="trackForm.$invalid" class="btn btn-primary">
                             <span class="glyphicon glyphicon-save"></span> Save
                         </button>
+                        <div>trackForm.$invalid: {{trackForm.$invalid}}</div>
+                        <div>trackForm: {{trackForm}}</div>
+                        <div>trackForm.id.$invalid: {{trackForm.id.$invalid}}</div>
+                        <div>trackForm.graphName.$invalid: {{trackForm.graphName.$invalid}}</div>
+                        <div>trackForm.trackName.$invalid: {{trackForm.trackName.$invalid}}</div>
+                        <div>trackForm.type.$invalid: {{trackForm.type.$invalid}}</div>
+                        <div>trackForm.status.$invalid: {{trackForm.status.$invalid}}</div>
                     </div>
+                    
                 </form>
             </div>
         </div>

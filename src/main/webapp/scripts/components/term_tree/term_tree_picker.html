@@ -1,7 +1,7 @@
 <div ng-controller='TermTreeController' >
 
 	<div class="input-group">
-		<input type="text" class="form-control" name="name"
+		<input type="text" class="form-control" name="{{formFieldName}}"
 			ng-model="ngModel" ng-minlength=1 ng-maxlength=500>
 		<span class="input-group-btn">
 			<button class="btn btn-default" type="button" ng-click="pickTerm()">
@@ -26,8 +26,8 @@
 						<div class="input-group">
 						
 						 	<input id="searchLabelTextBox" type="text"
-								class="form-control" name="name" ng-model="searchFilter" ng-keypress="searchFilterKeyPress($event)"
-								ng-minlength=1 ng-maxlength=50 required>
+								class="form-control" name="labelSearch" ng-model="searchFilter" ng-keypress="searchFilterKeyPress($event)"
+								ng-minlength=1 ng-maxlength=50 >
 							<div class="input-group-btn">
 								<button class="btn btn-primary" ng-click="getFilteredTree()"><span class="glyphicon glyphicon-search"></span></button>	
 							</div>

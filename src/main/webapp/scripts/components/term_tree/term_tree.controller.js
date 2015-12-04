@@ -90,15 +90,19 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	
 	$scope.getFilteredTree = function() {
 		var filter = $scope.searchFilter;
-		QueryBuilderService.filteredTreeQuery(filter).then(function(response) {
-			var query = response.query;
-			console.log("Fetching matching tree");
-			callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
-					function (successResponse) {
-						$scope.terms = successResponse.data.results.bindings;
-						$scope.rootTerms = $scope.makeTree($scope.terms);
-					});
-		});
+		if (filter != null && filter.length > 0) {
+			QueryBuilderService.filteredTreeQuery(filter).then(function(response) {
+				var query = response.query;
+				console.log("Fetching matching tree");
+				callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
+						function (successResponse) {
+							$scope.terms = successResponse.data.results.bindings;
+							$scope.rootTerms = $scope.makeTree($scope.terms);
+						});
+			});
+		} else {
+			$scope.getRootTerms();
+		}
 	};
 	
 	$scope.makeTree = function(terms) {
