@@ -67,6 +67,7 @@ angular.module('boinqApp').directive('termTreePicker', function() {
 			searchFilter : "=",
 			multiValued : "=",
 			ngModel: "=",
+			formFieldName: "@",
 			update: "=getFilteredTree"
 		}
 	};
