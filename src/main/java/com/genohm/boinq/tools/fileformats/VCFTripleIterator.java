@@ -18,6 +18,8 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 
+import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
+
 public class VCFTripleIterator implements Iterator<Triple> {
 	
 	private TripleConverter converter;
@@ -25,12 +27,14 @@ public class VCFTripleIterator implements Iterator<Triple> {
 	private List<Triple> currentTriples = new LinkedList<Triple>();
 	private VCFCodec codec = new VCFCodec();
 	private Map<String, Node> referenceMap;
+	private Metadata meta;
 
-	public VCFTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap) throws FileNotFoundException, IOException {
+	public VCFTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException {
 		this.converter = converter;
 		this.referenceMap = referenceMap;
 		lineIterator = new AsciiLineReaderIterator(new AsciiLineReader(new FileInputStream(file)));
 		codec.readActualHeader(lineIterator);
+		this.meta = meta;
 	}
 
 	@Override
@@ -47,11 +51,14 @@ public class VCFTripleIterator implements Iterator<Triple> {
 	public Triple next() {
 		if (currentTriples.isEmpty()){
 			VariantContext record = codec.decode(lineIterator.next());
-			Node reference = referenceMap.get(record.getContig());
+			Node reference = null;
+			if (referenceMap != null) {
+			reference = referenceMap.get(record.getContig());
+			}
 			if (reference == null){
 				reference = NodeFactory.createLiteral(record.getContig());
 			}
-			currentTriples.addAll(converter.convert(record, reference, record.getID(), record.getStart()));
+			currentTriples.addAll(converter.convert(record, reference, record.getID(), record.getStart(), meta));
 		}
 		return currentTriples.remove(0);
 	}
