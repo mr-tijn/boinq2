@@ -71,18 +71,7 @@ MetadataGraphService metadataGraphService;
 		processor.execute();
 	}
 	
-	public void deleteGraph(String graphName) {
-		UpdateDrop req = new UpdateDrop(NodeFactory.createURI(graphName));
-		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, updateEndpoint);
-		processor.execute();
-	}
-	
-	public void deleteGraph(String graphName) {
-		UpdateDrop req = new UpdateDrop(NodeFactory.createURI(graphName));
-		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, updateEndpoint);
-		processor.execute();
-	}
-	
+
 	public String createLocalGraph(String id) {
 		if (id == null || id.length() == 0) {
 			return createLocalGraph();

@@ -18,14 +18,8 @@ import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.repository.RawDataFileRepository;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
 import com.genohm.boinq.service.LocalGraphService;
 import com.genohm.boinq.service.MetadataGraphService;
->>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
->>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492
 import com.genohm.boinq.service.QueryBuilderService;
 import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
@@ -53,14 +47,8 @@ public class TripleConversion implements AsynchronousJob {
 	private SPARQLClientService sparqlClient;
 	@Inject
 	private RawDataFileRepository rawDataFileRepository;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
 	@Inject
 	MetadataGraphService metadataGraphService;
->>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
->>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492
 	
 	private int status = JOB_STATUS_UNKNOWN;
 	private String name = "";
@@ -152,17 +140,11 @@ public class TripleConversion implements AsynchronousJob {
 				uploader.triple(tripleIterator.next());
 			}
 			uploader.finish();
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
 			String metagraph = track.getDatasource().getMetaGraphName();
 			meta.fileName = inputFile.getPath();
 			String endpoint = track.getDatasource().getEndpointUpdateUrl();
 			List<Triple> metadata =tripleconverter.createMetadata(meta,track.getGraphName());
 			metadataGraphService.updateFileConversion(endpoint, metagraph, metadata);
->>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
->>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492
 			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
 			rawDataFileRepository.save(inputData);

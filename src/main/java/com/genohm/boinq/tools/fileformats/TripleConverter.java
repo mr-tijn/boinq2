@@ -18,15 +18,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-<<<<<<< HEAD
 import java.lang.Object;
-=======
-<<<<<<< HEAD
-import java.lang.Object;
-=======
 import java.util.Set;
->>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
->>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492
 
 import javax.inject.Inject;
 
@@ -176,16 +169,7 @@ public class TripleConverter {
 		featureTypeNodes.put("polypeptide", SoVocab.polypeptide.asNode());
 		featureTypeNodes.put("intein", SoVocab.intein.asNode());
 		featureTypeNodes.put("primary_transcript", SoVocab.primary_transcript.asNode());
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
 		
-	
->>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
->>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492
-		
-
 	}
 	
 	private void addKeyValueTriples(Node feature, Map<String, Object> keyValues,List<Triple> triples) {
@@ -420,16 +404,6 @@ public class TripleConverter {
 		return result;
 	}
 
-	// BedGraph kan volledig geconverteerd worden via vInt
-
-	//		public static List<Triple> convert(BedGraphEntry entry){
-	//			
-	//			List<Triple> result = convert((ValuedInterval) entry);
-	//			Node feature = NodeFactory.createURI(FEATUREBASEURI + entry.getId());
-	//			
-	//			return result;
-	//			
-	//		}
 
 	public List<Triple> convert(GFFEntry entry, Node reference, String id, Metadata meta) {
 		List<Triple> result = convert((ValuedInterval) entry, id);
@@ -442,24 +416,7 @@ public class TripleConverter {
 			result.add(new Triple(feature, SoVocab.reading_frame.asNode(),NodeFactory.createLiteral(String.valueOf(entry.getFrame()), XSDint)));
 		}
 		
-		if(entry.getFeature()!=null && !entry.getFeature().isEmpty() && !entry.getFeature().equalsIgnoreCase(".")){
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492
-			//String type= "SoVocab."+entry.getFeature()+".asNode()";
-			//Object x =Class.forName(type).newInstance();
-			//result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
-						 
-			
-			if (featureTypeNodes.containsKey(entry.getFeature())){
-			result.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getFeature())));
-			}
-			else{
-			result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
-<<<<<<< HEAD
-=======
-=======
+		if(entry.getFeature()!=null && !entry.getFeature().isEmpty() && !entry.getFeature().equalsIgnoreCase(".")){			 
 			if (featureTypeNodes.containsKey(entry.getFeature())){
 			result.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getFeature())));
 			meta.typeList.add(featureTypeNodes.get(entry.getFeature()));
@@ -467,8 +424,6 @@ public class TripleConverter {
 			else{
 			result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
 			meta.typeList.add(NodeFactory.createLiteral(entry.getFeature(),XSDstring));
->>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
->>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492
 			}
 		
 
@@ -496,14 +451,8 @@ public class TripleConverter {
 	}
 
 	
-<<<<<<< HEAD
-	public List<Triple> convert(BEDFeature entry, String id, Node reference) {
-<<<<<<< HEAD
-=======
-=======
+
 	public List<Triple> convert(BEDFeature entry, String id, Node reference, Metadata meta) {
->>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
->>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492
 		List<Triple> result = new LinkedList<Triple>();
 		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
 		Float score = entry.getScore();
@@ -641,7 +590,7 @@ public class TripleConverter {
 		for (Node x : uniqueTypes){
 			triples.add(new Triple(Graph, TrackVocab.FeatureType.asNode(), x));
 			}
-		triples.add(new Triple(Graph, TrackVocab.extension.asNode(), NodeFactory.createLiteral(metadata.fileType, XSDstring)));
+		triples.add(new Triple(Graph, TrackVocab.fileExtension.asNode(), NodeFactory.createLiteral(metadata.fileType, XSDstring)));
 		triples.add(new Triple(Graph, GfvoVocab.File.asNode(), NodeFactory.createLiteral(metadata.fileName, XSDstring)));
 		return triples;
 		}
