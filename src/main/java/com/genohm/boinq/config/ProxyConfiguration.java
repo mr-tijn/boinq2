@@ -40,11 +40,6 @@ public class ProxyConfiguration implements EnvironmentAware {
         return registration;
 	}
 
-	
-	private class StaticProxyServlet extends ProxyServlet.Transparent {
-		private static final long serialVersionUID = 1L;
-	}
-
 	@Bean
 	public ServletRegistrationBean eldaProxy() {
 		ServletRegistrationBean registration = new ServletRegistrationBean(new EldaProxyServlet(), "/iri/*");
@@ -56,13 +51,13 @@ public class ProxyConfiguration implements EnvironmentAware {
 	}
 
 	private class EldaProxyServlet extends ProxyServlet.Transparent {
+		
+		/**		
+		 * 		
+		 */
 		private static final long serialVersionUID = 1L;
 		// two ProxyServlets of same type won't work together
 	}
-
-
-
-	
 
 	
 }
