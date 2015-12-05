@@ -46,7 +46,6 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
 import edu.unc.genomics.BedEntry;
-//import edu.unc.genomics.BedEntry;
 import edu.unc.genomics.GFFEntry;
 import edu.unc.genomics.ValuedInterval;
 
