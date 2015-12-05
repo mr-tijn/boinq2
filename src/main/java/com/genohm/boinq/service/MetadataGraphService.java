@@ -14,7 +14,6 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Service;
 
-
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.repository.RawDataFileRepository;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;

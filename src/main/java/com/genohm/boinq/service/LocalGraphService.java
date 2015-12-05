@@ -9,7 +9,6 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.tools.queries.Prefixes;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -21,6 +20,8 @@ import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateProcessor;
 import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.vocabulary.RDF;
+
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.MetadataGraphService;
 
 
@@ -71,7 +72,6 @@ MetadataGraphService metadataGraphService;
 		processor.execute();
 	}
 	
-
 	public String createLocalGraph(String id) {
 		if (id == null || id.length() == 0) {
 			return createLocalGraph();

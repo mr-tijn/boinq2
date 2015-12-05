@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.lang.Object;
 import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
@@ -34,7 +33,6 @@ import com.genohm.boinq.generated.vocabularies.SioVocab;
 import com.genohm.boinq.generated.vocabularies.SoVocab;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.TripleGeneratorService;
-
 import static com.genohm.boinq.generated.vocabularies.FaldoVocab.*;
 import static org.apache.jena.datatypes.xsd.XSDDatatype.*;
 
@@ -170,6 +168,7 @@ public class TripleConverter {
 		featureTypeNodes.put("intein", SoVocab.intein.asNode());
 		featureTypeNodes.put("primary_transcript", SoVocab.primary_transcript.asNode());
 		
+
 	}
 	
 	private void addKeyValueTriples(Node feature, Map<String, Object> keyValues,List<Triple> triples) {
@@ -417,6 +416,7 @@ public class TripleConverter {
 		}
 		
 		if(entry.getFeature()!=null && !entry.getFeature().isEmpty() && !entry.getFeature().equalsIgnoreCase(".")){			 
+
 			if (featureTypeNodes.containsKey(entry.getFeature())){
 			result.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getFeature())));
 			meta.typeList.add(featureTypeNodes.get(entry.getFeature()));
