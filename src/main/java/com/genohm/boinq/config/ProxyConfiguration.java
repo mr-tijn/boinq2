@@ -51,9 +51,9 @@ public class ProxyConfiguration implements EnvironmentAware {
 	}
 
 	private class EldaProxyServlet extends ProxyServlet.Transparent {
-		
-		/**		
-		 * 		
+
+		/**
+		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 		// two ProxyServlets of same type won't work together
