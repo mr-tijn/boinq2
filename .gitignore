@@ -141,4 +141,10 @@ fuseki
 files/*
 reference_tools
 ontologies/catalog-v001.xml
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
 /target/
+>>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
+>>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492

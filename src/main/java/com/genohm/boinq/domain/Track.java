@@ -45,6 +45,10 @@ public class Track implements Serializable {
     @Column(name = "type", nullable = true)
     private String type;
     
+    @Size(min = 1, max = 200)
+    @Column(name = "species", nullable = true)
+    private String species;
+    
     @OneToMany(fetch=FetchType.EAGER, orphanRemoval=true,targetEntity=RawDataFile.class)
     private Set<RawDataFile> rawDataFiles;
     
@@ -85,6 +89,16 @@ public class Track implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public String getSpecies() {
+		return species;
+	}
+	
+	public void setSpecies(String species) {
+		this.species = species;
+	}
+	
+
 
 	public Set<RawDataFile> getRawDataFiles() {
 		return rawDataFiles;
@@ -142,6 +156,7 @@ public class Track implements Serializable {
                 ", graphName='" + graphName + "'" +
                 ", name='" + name + "'" +
                 ", type='" + type + "'" +
+                ", species='" + species + "'" +
                 ", rawDataFiles = [" + rawDataFilesString + "]" +
                 '}';
     }

@@ -1,7 +1,7 @@
 package com.genohm.boinq.service;
 
 import java.util.UUID;
-
+import javax.inject.Inject;
 import javax.annotation.PostConstruct;
 
 import org.springframework.boot.bind.RelaxedPropertyResolver;
@@ -21,9 +21,15 @@ import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateProcessor;
 import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.vocabulary.RDF;
+import com.genohm.boinq.service.MetadataGraphService;
+
 
 @Service
 public class LocalGraphService implements EnvironmentAware {
+	
+@Inject
+MetadataGraphService metadataGraphService;
+
 
 	static final private String PREFIX = "spring.triplestore.";
 	
@@ -58,18 +64,6 @@ public class LocalGraphService implements EnvironmentAware {
 		this.localDatasourceUri = propertyResolver.getProperty(LOCAL_DATASOURCE_URI);
 	}
 	
-	private void updateMetaGraph(String graphName) {
-		QuadDataAcc newData = new QuadDataAcc();
-		newData.setGraph(NodeFactory.createURI(this.metaGraph));
-		Node graphIRI = NodeFactory.createURI(graphName);
-		newData.addTriple(new Triple(graphIRI, RDF.type.asNode(), TrackVocab.Track.asNode()));
-		newData.addTriple(new Triple(NodeFactory.createURI(this.localDatasourceUri), TrackVocab.provides.asNode(), graphIRI));
-		UpdateDataInsert insertStatement = new UpdateDataInsert(newData);
-		UpdateRequest req = new UpdateRequest(insertStatement);
-		req.setPrefixMapping(Prefixes.getCommonPrefixes());
-		UpdateProcessor processor = UpdateExecutionFactory.createRemote(req, this.updateEndpoint);
-		processor.execute();
-	}
 	
 	public void deleteGraph(String graphName) {
 		UpdateDrop req = new UpdateDrop(NodeFactory.createURI(graphName));
@@ -77,12 +71,13 @@ public class LocalGraphService implements EnvironmentAware {
 		processor.execute();
 	}
 	
+
 	public String createLocalGraph(String id) {
 		if (id == null || id.length() == 0) {
 			return createLocalGraph();
 		}
 		String graphName = graphNameFromId(id);
-		updateMetaGraph(graphName);
+		metadataGraphService.updateTrackCreation(graphName, this.metaGraph, this.localDatasourceUri , this.updateEndpoint);
 		return graphName;
 	}
 	
