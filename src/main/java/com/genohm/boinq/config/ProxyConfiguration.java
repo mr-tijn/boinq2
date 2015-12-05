@@ -32,10 +32,10 @@ public class ProxyConfiguration implements EnvironmentAware {
 	
 	@Bean
 	public ServletRegistrationBean fusekiProxy() {
-		ServletRegistrationBean registration = new ServletRegistrationBean(new ProxyServlet.Transparent(), "/bigdata/*");
+		ServletRegistrationBean registration = new ServletRegistrationBean(new ProxyServlet.Transparent(), "/fuseki/*");
         Map<String,String> params = new HashMap<String,String>();
-        params.put("proxyTo", "http://localhost:9999/bigdata");
-        params.put("prefix", "/bigdata");
+        params.put("proxyTo", "http://localhost:8080/fuseki");
+        params.put("prefix", "/fuseki");
         registration.setInitParameters(params);
         return registration;
 	}
@@ -43,21 +43,6 @@ public class ProxyConfiguration implements EnvironmentAware {
 	
 	private class StaticProxyServlet extends ProxyServlet.Transparent {
 		private static final long serialVersionUID = 1L;
-	}
-
-	@Bean
-	public ServletRegistrationBean staticProxy() {
-		ServletRegistrationBean registration = new ServletRegistrationBean(new StaticProxyServlet(), "/static/*");
-        Map<String,String> params = new HashMap<String,String>();
-        params.put("proxyTo", "http://localhost:9999/bigdata/namespace/boinq_static");
-        params.put("prefix", "/static");
-        registration.setInitParameters(params);
-        return registration;
-	}
-
-	private class EldaProxyServlet extends ProxyServlet.Transparent {
-		private static final long serialVersionUID = 1L;
-		// two ProxyServlets of same type won't work together
 	}
 
 	@Bean
@@ -69,6 +54,13 @@ public class ProxyConfiguration implements EnvironmentAware {
         registration.setInitParameters(params);
         return registration;
 	}
+
+	private class EldaProxyServlet extends ProxyServlet.Transparent {
+		private static final long serialVersionUID = 1L;
+		// two ProxyServlets of same type won't work together
+	}
+
+
 
 	
 
