@@ -1,8 +1,19 @@
-angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQueryService',function($scope,dragging,FeatureQueryService) {
+angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQueryService','resolvedDatasource',function($scope,dragging,FeatureQueryService,resolvedDatasource) {
 
 	console.log("Registering controller QueryBuilderController");
 	
-	$scope.featureSelects = [{name: "select1"},{name: "select2"}];
+	$scope.datasources = resolvedDatasource;
+	$scope.tracks = {};
+	
+	for (var i = 0; i < resolvedDatasource.length; i++) {
+		var tracks = resolvedDatasource[i].tracks;
+		for (var i = 0; i < tracks.length; i++) {
+			var track = tracks[i];
+			$scope.tracks[track.id] = track;
+			console.log("trackid "+track.id);
+		}
+	}
+	
 	$scope.activeFS = [];
 	$scope.selectedFS = undefined;
 	$scope.overFS = null;
@@ -19,8 +30,13 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		} 
 	}
 	
-	$scope.dropped = function(event,element,data) {
-		activeFS(event.offsetX, event.offsetY, data);
+	$scope.dropped = function(event,element,trackId) {
+		console.log("looking up track "+trackId);
+		var track = $scope.tracks[trackId];
+		console.log("trackid "+track.id);
+
+		console.log(track);
+		activeFS(event.offsetX, event.offsetY, track.id, track.name);
 	}
 	
 	var hitTest = function(clientX, clientY) {
@@ -84,8 +100,8 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 
 		            fs.xc = fs.xc + deltaX;
 		            fs.yc = fs.yc + deltaY;
-		            fs.displayX = fs.xc + "px";
-		            fs.displayY = fs.yc + "px";
+		            fs.viewX = fs.xc + "px";
+		            fs.viewY = fs.yc + "px";
 
 		            lastMouseCoords = curCoords;
 		        },
@@ -131,18 +147,16 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		
 	}
 	
-	activeFS = function(x, y, fsName) {
+	activeFS = function(x, y, trackId, trackName) {
 	    var xpos = x + "px";
 	    var ypos = y + "px";
 	    
-	    var FS = {name: fsName, displayX:xpos, displayY:ypos, xc:x, yc:y, criteria: []};
-	    
-	    console.log(FS);
+	    var FS = {viewX:xpos, viewY:ypos, xc:x, yc:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined"};
 	    
 		$scope.activeFS.push(FS);
 	}
 	
-	save = function() {
+	$scope.save = function() {
 		
 		var featureQuery = {
 				joins : $scope.featureJoins,

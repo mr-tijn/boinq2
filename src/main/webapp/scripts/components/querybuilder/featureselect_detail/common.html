@@ -1,7 +1,11 @@
+<div ng-show="featureselect != null">
+<div>Track: {{featureselect.trackName}}</div>
 <div class="row">
 	<div class="btn btn-primary" ng-repeat="crit in featureselect.criteria" ng-click="selectCriterion(crit)">{{crit.type}}</div>
 	<div class="btn btn-primary" ng-click="addCriterion()">+</div>
 </div>
+<div ng-include="detailUrl"></div>
 <div class="row">
 	<criteriondetail criterion="activeCriterion"></criteriondetail>
+</div>
 </div>

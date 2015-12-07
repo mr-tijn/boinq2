@@ -13,6 +13,11 @@ angular.module('boinqApp')
                     templateUrl: 'scripts/components/querybuilder/querybuilder.html',
                     controller: 'QueryBuilderController'
                 }
+            },
+            resolve: {
+            	resolvedDatasource: ['Datasource', function (Datasource) {
+                    return Datasource.query();
+                }]
             }
         });
 });
