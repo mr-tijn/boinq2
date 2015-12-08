@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jetty.proxy.ProxyServlet;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
@@ -22,7 +23,10 @@ public class ProxyConfiguration implements EnvironmentAware {
 
 	protected Environment environment;
     protected RelaxedPropertyResolver propertyResolver;
-
+    
+    @Value(value="${spring.triplestore.endpoint.static.query}")
+    protected String staticEndpoint;
+    
 	@Override
 	public void setEnvironment(Environment environment) {
     	this.environment = environment;
@@ -32,6 +36,7 @@ public class ProxyConfiguration implements EnvironmentAware {
 	
 	@Bean
 	public ServletRegistrationBean fusekiProxy() {
+		//TODO: remove hardcoded paths
 		ServletRegistrationBean registration = new ServletRegistrationBean(new ProxyServlet.Transparent(), "/bigdata/*");
         Map<String,String> params = new HashMap<String,String>();
         params.put("proxyTo", "http://localhost:9999/bigdata");
@@ -49,7 +54,8 @@ public class ProxyConfiguration implements EnvironmentAware {
 	public ServletRegistrationBean staticProxy() {
 		ServletRegistrationBean registration = new ServletRegistrationBean(new StaticProxyServlet(), "/static/*");
         Map<String,String> params = new HashMap<String,String>();
-        params.put("proxyTo", "http://localhost:9999/bigdata/namespace/boinq_static");
+        String staticPrefix = staticEndpoint.substring(0,staticEndpoint.lastIndexOf('/'));
+        params.put("proxyTo", staticPrefix);
         params.put("prefix", "/static");
         registration.setInitParameters(params);
         return registration;
@@ -62,6 +68,7 @@ public class ProxyConfiguration implements EnvironmentAware {
 
 	@Bean
 	public ServletRegistrationBean eldaProxy() {
+		//TODO: remove hardcoded paths
 		ServletRegistrationBean registration = new ServletRegistrationBean(new EldaProxyServlet(), "/iri/*");
         Map<String,String> params = new HashMap<String,String>();
         params.put("proxyTo", "http://localhost:8080/elda-common");
