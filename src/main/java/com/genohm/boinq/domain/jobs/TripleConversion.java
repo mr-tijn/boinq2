@@ -49,10 +49,7 @@ public class TripleConversion implements AsynchronousJob {
 	private RawDataFileRepository rawDataFileRepository;
 	@Inject
 	MetadataGraphService metadataGraphService;
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 	
 	private int status = JOB_STATUS_UNKNOWN;
 	private String name = "";
