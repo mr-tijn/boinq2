@@ -14,6 +14,11 @@ public class LocationOverlap extends FeatureJoin {
 	public LocationOverlap() {}
 	
 	@Override
+	public Boolean check(QueryGenerator qg, GenomicRegion r) {
+		return (qg.check(this, r));
+	}
+	
+	@Override
 	public void accept(QueryGenerator qg, GenomicRegion r) {
 		qg.visit(this, r);
 	}

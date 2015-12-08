@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.genohm.boinq.domain.GenomicRegion;
 import com.genohm.boinq.domain.Track;
@@ -48,6 +49,10 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
     
     @Column(name="idx")
     private int idx;
+    
+    //TODO: handle feature indirection: store with datasource ?
+    @Transient
+    private Boolean locationIndirection = true;
     
 	public FeatureSelect() {}
 	
@@ -87,6 +92,10 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 		this.viewY = viewY;
 	}
 
+	public int getViewY() {
+		return viewY;
+	}
+
 	public int getIdx() {
 		return idx;
 	}
@@ -95,6 +104,14 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 		this.idx = idx;
 	}
 	
+	public Boolean getLocationIndirection() {
+		return locationIndirection;
+	}
+
+	public void setLocationIndirection(Boolean locationIndirection) {
+		this.locationIndirection = locationIndirection;
+	}
+
 	public Boolean retrieveFeatureData() {
 		return retrieveFeatureData;
 	}
@@ -104,12 +121,12 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 	}
 	
 
-	public int getViewY() {
-		return viewY;
-	}
-
 	public void addCriteria(FeatureSelectCriterion criterion) {
 		criteria.add(criterion);
+	}
+	
+	public Boolean check(QueryGenerator qg, GenomicRegion region) {
+		return qg.check(this, region);
 	}
 	
 	public void accept(QueryGenerator qg, GenomicRegion region) {
@@ -120,6 +137,7 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 		FeatureSelectDTO result = new FeatureSelectDTO();
 		result.type = FeatureSelectDTO.FALDO_SELECT_TYPE;
 		result.trackId = this.id;
+		result.idx = this.idx;
 		result.retrieve = this.retrieveFeatureData;
 		result.criteria = new HashSet<>();
 		for (FeatureSelectCriterion crit: this.criteria) {

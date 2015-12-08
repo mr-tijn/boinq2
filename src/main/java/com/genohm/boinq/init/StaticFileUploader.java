@@ -2,7 +2,6 @@ package com.genohm.boinq.init;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

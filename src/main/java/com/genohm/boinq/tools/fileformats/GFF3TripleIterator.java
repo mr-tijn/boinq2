@@ -1,6 +1,7 @@
 package com.genohm.boinq.tools.fileformats;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
@@ -11,62 +12,79 @@ import java.util.Map;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
-
 import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
 
-import edu.unc.genomics.GFFEntry;
-import edu.unc.genomics.io.GFFFileReader;
+import htsjdk.tribble.readers.AsciiLineReader;
+import htsjdk.tribble.readers.AsciiLineReaderIterator;
+
+import de.charite.compbio.jannovar.impl.parse.gff.Feature;
+import de.charite.compbio.jannovar.impl.parse.gff.FeatureFormatException;
+import de.charite.compbio.jannovar.impl.parse.gff.GFFParser;
+import de.charite.compbio.jannovar.impl.parse.gff.GFFVersion;
 
 public class GFF3TripleIterator implements Iterator<Triple> {
-	public static String featureBaseURI = "http://www.genohm.com/gff3/feature#";
-	public static String positionBaseURI = "http://www.genohm.com/gff3/position#";
-	public static String attributeBaseURI = "http://www.genohm.com/gff3/attribute#";
-	private Iterator<GFFEntry> gffIterator;
+
 	private List<Triple> currentTriples = new LinkedList<Triple>();
 	private int idCounter = 1;
 	private Map<String, Node> referenceMap;
 	private TripleConverter converter;
 	private Metadata meta;
-	
-	public GFF3TripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException {
+	private GFFParser Gffparse;
+	private AsciiLineReaderIterator lineIterator;
+	private GFFVersion version;
+
+	public GFF3TripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta)
+			throws FileNotFoundException, IOException {
+		this.version = new GFFVersion(3);
 		this.converter = converter;
 		this.referenceMap = referenceMap;
-		GFFFileReader reader = new GFFFileReader(file.toPath());
-		Iterator<GFFEntry> gffIterator = reader.iterator();
-		this.gffIterator = gffIterator;
+		lineIterator = new AsciiLineReaderIterator(new AsciiLineReader(new FileInputStream(file)));
+		this.Gffparse = new GFFParser(file.getPath(), version, false);
 		this.meta = meta;
 	}
 
 	@Override
 	public boolean hasNext() {
 		if (currentTriples.isEmpty()) {
-			return gffIterator.hasNext();
+			return lineIterator.hasNext();
 		} else {
 			return true;
 		}
 	}
+
 	@Override
 	public Triple next() {
-
 		if (currentTriples.isEmpty()) {
-			GFFEntry entry = gffIterator.next();
-			//String id = entry.getId();
-			//if (id == null) {
-				String id = "id_" + ++idCounter;
-			//}
+
+			String nextLine = lineIterator.next();
+			while (nextLine.startsWith("##")) {
+				this.meta.gffHeader.add(nextLine.substring(2));
+				nextLine = lineIterator.next();
+			}
+			Feature entry = null;
+			try {
+				entry = Gffparse.parseFeature(nextLine);
+			} catch (FeatureFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+
+			String id = "id_" + ++idCounter;
 			Node reference = null;
 			if (referenceMap != null) {
-				 reference = referenceMap.get(entry.getChr());
+				reference = referenceMap.get(entry.getSequenceID());
 			}
 			if (reference == null) {
-				reference = NodeFactory.createLiteral(entry.getChr());
+				reference = NodeFactory.createLiteral(entry.getSequenceID());
 			}
 			List<Triple> triples = converter.convert(entry, reference, id, meta);
 			currentTriples.addAll(triples);
-		
 		}
 		return currentTriples.remove(0);
+
 	}
+
 	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();

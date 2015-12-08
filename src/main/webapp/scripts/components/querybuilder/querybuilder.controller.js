@@ -1,4 +1,4 @@
-angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQueryService','resolvedDatasource','resolvedFeatureQuery','resolvedAccount','QueryBuilderService','callEndpoint',function($scope,dragging,FeatureQueryService,resolvedDatasource,resolvedFeatureQuery,resolvedAccount,QueryBuilderService,callEndpoint) {
+angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQuery','resolvedDatasource','resolvedFeatureQuery','resolvedAccount','QueryBuilderService','callEndpoint','$state',function($scope,dragging,FeatureQuery,resolvedDatasource,resolvedFeatureQuery,resolvedAccount,QueryBuilderService,callEndpoint,$state) {
 
 	console.log("Registering controller QueryBuilderController");
 	
@@ -8,8 +8,9 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 	$scope.featureQuery = {selects: [], joins: []};
 	$scope.cansave = true;
 	
+	console.log(resolvedDatasource);
+	
 	var processResolvedFeatureQuery = function(resolvedFeatureQuery) {
-		console.log(resolvedFeatureQuery);
 		if (resolvedFeatureQuery != null) {
 			var selectIdx = {};
 			$scope.cansave = false;
@@ -36,6 +37,7 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 			$scope.featureQuery = {
 			 	selects: resolvedFeatureQuery.selects,
 				joins: joins,
+				name: resolvedFeatureQuery.name,
 				ownerId: resolvedFeatureQuery.ownerId
 			};
 		}
@@ -45,8 +47,8 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 	
 	for (var i = 0; i < resolvedDatasource.length; i++) {
 		var tracks = resolvedDatasource[i].tracks;
-		for (var i = 0; i < tracks.length; i++) {
-			var track = tracks[i];
+		for (var j = 0; j < tracks.length; j++) {
+			var track = tracks[j];
 			$scope.tracks[track.id] = track;
 			$scope.datasourceref[track.id] = resolvedDatasource[i];
 		}
@@ -98,14 +100,6 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 	$scope.overLink = function(ln) {
 		if ($scope.overFJ == ln) {
 			return "over";
-		} else {
-			return "";
-		}
-	}
-	
-	$scope.selectedFJ = function(ln) {
-		if ($scope.selectedFJ == ln) {
-			return "selected";
 		} else {
 			return "";
 		}
@@ -191,27 +185,42 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 				var track = $scope.tracks[trackId];
 				var datasource = $scope.datasourceref[trackId];
 				
-				// TODO: fetch supported filters for track
 				// now: assume all tracks support type filter and location filter
 				
 				// fetch feature types for type filter
 				var queryTypes = [];
 
-				QueryBuilderService.featureTypeQuery(trackId).then(function(queryString) {
-					callEndpoint(datasource.metaEndpointUrl,datasource.metaGraphName,queryString).then(function(successResponse){
-						var records = successResponse.data.results.bindings;
-						for (var i=0; i<records.length; i++) {
-							var record = records[i];
-							queryTypes.push({uri: record.featureType.value, label: record.label.value});
-						}
-					}, function(error) {
-						console.error(error);
-					});
-				});
+//				QueryBuilderService.featureTypeQuery(trackId).then(function(queryString) {
+//					callEndpoint(datasource.metaEndpointUrl,datasource.metaGraphName,queryString).then(function(successResponse){
+//						var records = successResponse.data.results.bindings;
+//						for (var i=0; i<records.length; i++) {
+//							var record = records[i];
+//							queryTypes.push({uri: record.featureType.value, label: record.label.value});
+//						}
+//					}, function(error) {
+//						console.error(error);
+//					});
+//				});
+
+				typeNames = Object.keys(track.supportedFeatureTypes);
+				for (var i=0; i<typeNames.length; i++) {
+					typeName = typeNames[i];
+					queryTypes.push({uri:track.supportedFeatureTypes[typeName], label:typeName});
+				}
 				
-				var FS = {idx:idx, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes, retrieve : false};
+				var operators = [];
+				
+				operatorNames = Object.keys(track.supportedOperators);
+				for (var i=0; i<operatorNames.length; i++) {
+					operatorName = operatorNames[i];
+					operators.push({label:operatorName, operator:track.supportedOperators[operatorName]});
+				}
+				
+				var FS = {idx:idx, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes, operators : operators, retrieve : false};
 				idx++;
 				$scope.featureQuery.selects.push(FS);
+				$scope.selectedFS = FS;
+				$scope.selectedFJ = undefined;
 			}
 	}();
 	
@@ -261,7 +270,9 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		console.log(featureQuery);
 		
 	
-		FeatureQueryService.create(featureQuery)
+		FeatureQuery.create(featureQuery).$promise.then(function() {
+			$state.go("featurequery");
+		});
 		
 	}
 	

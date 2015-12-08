@@ -1,5 +1,7 @@
 package com.genohm.boinq.web.rest.dto;
 
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
+
 public class CriteriaDTO {
 	public static final String LOCATION_CRITERIA = "Location";
 	public static final String FEATURETYPE_CRITERIA = "FeatureType";

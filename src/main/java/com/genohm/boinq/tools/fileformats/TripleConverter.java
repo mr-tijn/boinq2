@@ -1,6 +1,5 @@
 package com.genohm.boinq.tools.fileformats;
 
-
 import htsjdk.samtools.AlignmentBlock;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.tribble.annotation.Strand;
@@ -8,13 +7,15 @@ import htsjdk.tribble.bed.BEDFeature;
 import htsjdk.tribble.bed.FullBEDFeature.Exon;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.Genotype;
-import htsjdk.variant.variantcontext.GenotypeType;
-import htsjdk.variant.variantcontext.GenotypesContext;
 import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.vcf.VCFFilterHeaderLine;
+import htsjdk.variant.vcf.VCFFormatHeaderLine;
+import htsjdk.variant.vcf.VCFHeaderLine;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,71 +30,47 @@ import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
 import com.genohm.boinq.generated.vocabularies.BoinqVocab;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
 import com.genohm.boinq.generated.vocabularies.GfvoVocab;
-import com.genohm.boinq.generated.vocabularies.SioVocab;
 import com.genohm.boinq.generated.vocabularies.SoVocab;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.TripleGeneratorService;
+
+import de.charite.compbio.jannovar.impl.parse.gff.Feature;
+
 import static com.genohm.boinq.generated.vocabularies.FaldoVocab.*;
 import static org.apache.jena.datatypes.xsd.XSDDatatype.*;
 
-import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.datatypes.xsd.impl.XSDDouble;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
-import edu.unc.genomics.BedEntry;
-import edu.unc.genomics.GFFEntry;
-import edu.unc.genomics.ValuedInterval;
-
 @Service
 public class TripleConverter {
-	// genohm.com / bed-gff-bedgraph??? / feature ------> datasource 
+	// genohm.com / bed-gff-bedgraph??? / feature ------> datasource
 
-	// all variable names that are not included in the valuedInterval variables keep their original variable names
-	// the variable names that are included in the valuedInterval are given a more generic name
+	// all variable names that are not included in the valuedInterval variables
+	// keep their original variable names
+	// the variable names that are included in the valuedInterval are given a
+	// more generic name
 
-	// vInt static finals
-	public static final String FEATUREBASEURI ="/feature#";
+	public static final String FEATUREBASEURI = "/feature#";
 	public static final String FEATUREBEGINURI = "/feature_begin#";
 	public static final String FEATUREENDURI = "/feature_end#";
 	public static final String FEATUREPOSURI = "/position#";
-	public static final String CHRBASEURI = "http://www.genohm.com/chr";
-	public static final String VALUEURI = "http://www.genohm.com/value";
 
-	
-	// todo: manage these terms through ontology
-	// gff static finals
-	public static final String SOURCEURI = "http://www.genohm.com/datasource/source";
-	public static final String ATTRIBUTEURI ="http://www.genohm.com/datasource/attribute";
-	public static final String FRAMEURI = "http://www.genohm.com/datasource/frame";
-	public static final String TYPEURI = "http://www.genohm.com/datasource/type";
-
-	// bed static finals
-	public static final String NAMEURI = "http://www.genohm.com/datasource/name";
-	public static final String THICKSTARTURI = "http://www.genohm.com/datasource/thickstart";
-	public static final String THICKENDURI = "http://www.genohm.com/datasource/thickend";
-	public static final String ITEMRBGURI = "http://www.genohm.com/datasource/itemrbg";
-	public static final String BLOCKBASEURI = "http://www.genohm.com/datasource/block#";
-	public static final String BLOCKURI = "http://www.genohm.com/datasource/block";
-	public static final String BLOCKCOUNTURI = "http://www.genohm.com/datasource/blockcount";
-	public static final String BLOCKSIZEURI = "http://www.genohm.com/datasource/blocksize";
-	public static final String BLOCKSTARTURI = "http://www.genohm.com/datasource/blockstart";
-	private static int blockCounter = 0;
-	private static String chrValue;
 	private Map<String, Node> attributeNodes;
 	private Map<String, XSDDatatype> attributeTypeNodes;
 	private Map<String, Node> featureTypeNodes;
-	
+
+	// todo: manage these terms through ontology
+	// gff static finals
+
 	@Inject
 	TripleGeneratorService tripleGenerator;
-	
+
 	public TripleConverter() {
-		List<String> typeList = new ArrayList<String>();
-		
 		attributeNodes = new HashMap<>();
 		attributeNodes.put("AA", GfvoVocab.Ancestral_Sequence.asNode());
 		attributeNodes.put("AC", GfvoVocab.Allele_Count.asNode());
@@ -121,7 +98,7 @@ public class TripleConverter {
 		attributeNodes.put("SOMATIC", GfvoVocab.Somatic_Cell.asNode());
 		attributeNodes.put("VALIDATED", GfvoVocab.Experimental_Method.asNode());
 		attributeNodes.put("1000G", GfvoVocab.External_Reference.asNode());
-		
+
 		attributeTypeNodes = new HashMap<>();
 		attributeTypeNodes.put("AA", XSDstring);
 		attributeTypeNodes.put("AC", XSDint);
@@ -148,85 +125,91 @@ public class TripleConverter {
 		attributeTypeNodes.put("SOMATIC", XSDboolean);
 		attributeTypeNodes.put("VALIDATED", XSDboolean);
 		attributeTypeNodes.put("1000G", XSDboolean);
-		
-		featureTypeNodes = new HashMap<>();
+
+		featureTypeNodes = new HashMap<String, Node>();
 		featureTypeNodes.put("CDS", SoVocab.CDS.asNode());
-		featureTypeNodes.put("gene", SoVocab.gene.asNode());
-		featureTypeNodes.put("mRNA", SoVocab.mRNA.asNode());
-		featureTypeNodes.put("operon", SoVocab.operon.asNode());
-		featureTypeNodes.put("exon", SoVocab.exon.asNode());
+		featureTypeNodes.put("GENE", SoVocab.gene.asNode());
+		featureTypeNodes.put("MRNA", SoVocab.mRNA.asNode());
+		featureTypeNodes.put("OPERON", SoVocab.operon.asNode());
+		featureTypeNodes.put("EXON", SoVocab.exon.asNode());
 		featureTypeNodes.put("TF_binding_site", SoVocab.TF_binding_site.asNode());
-		featureTypeNodes.put("intron", SoVocab.intron.asNode());
+		featureTypeNodes.put("INTRON", SoVocab.intron.asNode());
 		featureTypeNodes.put("EST_match", SoVocab.EST_match.asNode());
 		featureTypeNodes.put("translated_nucleotide_match", SoVocab.translated_nucleotide_match.asNode());
 		featureTypeNodes.put("Three_prime_UTR", SoVocab.three_prime_UTR.asNode());
 		featureTypeNodes.put("Five_prime_UTR", SoVocab.five_prime_UTR.asNode());
 		featureTypeNodes.put("cDNA_match", SoVocab.cDNA_match.asNode());
-		featureTypeNodes.put("match_part", SoVocab.match_part.asNode());
-		featureTypeNodes.put("polypeptide", SoVocab.polypeptide.asNode());
-		featureTypeNodes.put("intein", SoVocab.intein.asNode());
-		featureTypeNodes.put("primary_transcript", SoVocab.primary_transcript.asNode());
-		
+		featureTypeNodes.put("MATCH_PART", SoVocab.match_part.asNode());
+		featureTypeNodes.put("POLYPEPTIDE", SoVocab.polypeptide.asNode());
+		featureTypeNodes.put("INTEIN", SoVocab.intein.asNode());
+		featureTypeNodes.put("PRIMARY_TRANSCRIPT", SoVocab.primary_transcript.asNode());
 
 	}
-	
-	private void addKeyValueTriples(Node feature, Map<String, Object> keyValues,List<Triple> triples) {
-		for (String key: keyValues.keySet()) {
-			if (attributeTypeNodes.get(key) ==XSDboolean) {
-			triples.add(new Triple(feature, attributeNodes.get(key), NodeFactory.createLiteral(key,XSDstring)));	
-			}
-			else if (attributeNodes.get(key)!=null){
-			triples.add(new Triple(feature, attributeNodes.get(key), NodeFactory.createLiteral(keyValues.get(key).toString(),attributeTypeNodes.get(key))));
+
+	private void addKeyValueTriples(Node feature, Map<String, Object> keyValues, List<Triple> triples) {
+		for (String key : keyValues.keySet()) {
+			if (attributeTypeNodes.get(key) == XSDboolean) {
+				triples.add(new Triple(feature, attributeNodes.get(key), NodeFactory.createLiteral(key, XSDstring)));
+			} else if (attributeNodes.get(key) != null) {
+				triples.add(new Triple(feature, attributeNodes.get(key),
+						NodeFactory.createLiteral(keyValues.get(key).toString(), attributeTypeNodes.get(key))));
 			}
 		}
 	}
-	private void addFormatTriples(Node feature, String featureName , Iterable<Genotype> iterable,List<Triple> triples){
-		for (Genotype gt: iterable) {
+
+	private void addFormatTriples(Node feature, String featureName, Iterable<Genotype> iterable, List<Triple> triples) {
+		for (Genotype gt : iterable) {
 			String SampleID = featureName + "_" + gt.getSampleName();
 			Node Sample = tripleGenerator.generateURI(SampleID);
-			triples.add(new Triple(feature, GfvoVocab.Sample.asNode(), Sample));		
-			triples.add(new Triple(Sample, GfvoVocab.Identifier.asNode(), NodeFactory.createLiteral(gt.getSampleName(),XSDstring)));
-			triples.add(new Triple(Sample, GfvoVocab.Coverage.asNode(), NodeFactory.createLiteral(Integer.toString(gt.getDP()),XSDint)));
-			
-//			triples.add(new Triple(Sample, GfvoVocab.Genotype.asNode(), NodeFactory.createLiteral(gt.getGenotypeString(),XSDstring)));
-//			
-//			triples.add(new Triple(Sample, BoinqVocab.Allelic_Balance.asNode(),NodeFactory.createLiteral(gt.getAB().toString(),XSDstring)));
-	
-			triples.add(new Triple(Sample, GfvoVocab.Conditional_Genotype_Quality.asNode(), NodeFactory.createLiteral(Integer.toString(gt.getGQ()),XSDfloat)));
-		
-			if (gt.getAD()!=null){
-					triples.add(new Triple(Sample, BoinqVocab.Allelic_Depth_Reference.asNode(),NodeFactory.createLiteral(String.valueOf(gt.getAD()[0]),XSDint)));
-					triples.add(new Triple(Sample, BoinqVocab.Allelic_Depth_Alternate.asNode(),NodeFactory.createLiteral(String.valueOf(gt.getAD()[1]),XSDint)));
+			triples.add(new Triple(feature, GfvoVocab.Sample.asNode(), Sample));
+			triples.add(new Triple(Sample, GfvoVocab.Identifier.asNode(),
+					NodeFactory.createLiteral(gt.getSampleName(), XSDstring)));
+			triples.add(new Triple(Sample, GfvoVocab.Coverage.asNode(),
+					NodeFactory.createLiteral(Integer.toString(gt.getDP()), XSDint)));
+
+			// triples.add(new Triple(Sample, GfvoVocab.Genotype.asNode(),
+			// NodeFactory.createLiteral(gt.getGenotypeString(),XSDstring)));
+
+			// triples.add(new Triple(Sample,
+			// BoinqVocab.Allelic_Balance.asNode(),NodeFactory.createLiteral(gt.getAB().toString(),XSDstring)));
+
+			triples.add(new Triple(Sample, GfvoVocab.Conditional_Genotype_Quality.asNode(),
+					NodeFactory.createLiteral(Integer.toString(gt.getGQ()), XSDfloat)));
+
+			if (gt.getAD() != null) {
+				triples.add(new Triple(Sample, BoinqVocab.Allelic_Depth_Reference.asNode(),
+						NodeFactory.createLiteral(String.valueOf(gt.getAD()[0]), XSDint)));
+				triples.add(new Triple(Sample, BoinqVocab.Allelic_Depth_Alternate.asNode(),
+						NodeFactory.createLiteral(String.valueOf(gt.getAD()[1]), XSDint)));
 			}
-			
-			if (gt.getPL()!=null){
-				for (int i = 0; i < gt.getPL().length; ++i){
-					triples.add(new Triple(Sample, GfvoVocab.Phred_Score.asNode(), NodeFactory.createLiteral(String.valueOf(gt.getPL()[i]),XSDint)));
+
+			if (gt.getPL() != null) {
+				for (int i = 0; i < gt.getPL().length; ++i) {
+					triples.add(new Triple(Sample, GfvoVocab.Phred_Score.asNode(),
+							NodeFactory.createLiteral(String.valueOf(gt.getPL()[i]), XSDint)));
+				}
+
+				switch (gt.getType()) {
+				case HET:
+					triples.add(new Triple(Sample, GfvoVocab.has_attribute.asNode(), GfvoVocab.Heterozygous.asNode()));
+					break;
+				case HOM_VAR:
+				case HOM_REF:
+					triples.add(new Triple(Sample, GfvoVocab.has_attribute.asNode(), GfvoVocab.Homozygous.asNode()));
+					break;
+				case MIXED:
+				case NO_CALL:
+				case UNAVAILABLE:
+					break;
+				}
+
 			}
-		
-			
-			switch (gt.getType()) {
-			case HET:
-				triples.add(new Triple(Sample, GfvoVocab.has_attribute.asNode(), GfvoVocab.Heterozygous.asNode()));
-				break;
-			case HOM_VAR:
-			case HOM_REF:
-				triples.add(new Triple(Sample, GfvoVocab.has_attribute.asNode(), GfvoVocab.Homozygous.asNode()));
-				break;
-			case MIXED:
-			case NO_CALL:
-			case UNAVAILABLE:
-				break;
-			}
-			
+
+		}
 	}
-			
-		}	
-}
 
-
-	
-	private void addFaldoTriples(Node feature, Node reference, Long biologicalStartPosBase1, Long biologicalEndPosBase1, Boolean forwardStrand, List<Triple> triples) {
+	private void addFaldoTriples(Node feature, Node reference, Long biologicalStartPosBase1, Long biologicalEndPosBase1,
+			Boolean forwardStrand, List<Triple> triples) {
 		triples.add(new Triple(feature, RDF.type.asNode(), FaldoVocab.Region.asNode()));
 		Node featureBegin = tripleGenerator.generateURI(FEATUREBEGINURI + feature.getLocalName());
 		Node featureEnd = tripleGenerator.generateURI(FEATUREENDURI + feature.getLocalName());
@@ -234,66 +217,80 @@ public class TripleConverter {
 		triples.add(new Triple(feature, end.asNode(), featureEnd));
 		triples.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocab.ExactPosition.asNode()));
 		triples.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocab.ExactPosition.asNode()));
-		
+
 		if (reference != null) {
 			triples.add(new Triple(featureBegin, FaldoVocab.reference.asNode(), reference));
 			triples.add(new Triple(featureEnd, FaldoVocab.reference.asNode(), reference));
 		}
-		triples.add(new Triple(featureBegin, FaldoVocab.position.asNode(), NodeFactory.createLiteral(biologicalStartPosBase1.toString(),XSDint)));
-		triples.add(new Triple(featureEnd, FaldoVocab.position.asNode(), NodeFactory.createLiteral(biologicalEndPosBase1.toString(),XSDint)));
+		triples.add(new Triple(featureBegin, FaldoVocab.position.asNode(),
+				NodeFactory.createLiteral(biologicalStartPosBase1.toString(), XSDint)));
+		triples.add(new Triple(featureEnd, FaldoVocab.position.asNode(),
+				NodeFactory.createLiteral(biologicalEndPosBase1.toString(), XSDint)));
 		if (forwardStrand != null) {
-			triples.add(new Triple(featureBegin, RDF.type.asNode(), (forwardStrand?FaldoVocab.ForwardStrandPosition.asNode():FaldoVocab.ReverseStrandPosition.asNode())));
-			triples.add(new Triple(featureEnd, RDF.type.asNode(), (forwardStrand?FaldoVocab.ForwardStrandPosition.asNode():FaldoVocab.ReverseStrandPosition.asNode())));
+			triples.add(new Triple(featureBegin, RDF.type.asNode(), (forwardStrand
+					? FaldoVocab.ForwardStrandPosition.asNode() : FaldoVocab.ReverseStrandPosition.asNode())));
+			triples.add(new Triple(featureEnd, RDF.type.asNode(), (forwardStrand
+					? FaldoVocab.ForwardStrandPosition.asNode() : FaldoVocab.ReverseStrandPosition.asNode())));
 		}
-		// for searching: location may have a reference; feature may have a location that has a position; feature may be a region that has a position
-		
+		// for searching: location may have a reference; feature may have a
+		// location that has a position; feature may be a region that has a
+		// position
+
 	}
-	
-	protected void addTypes(Node feature, List<Node> types, List<Triple> triples) {
-		for (Node type: types) {
-			triples.add(new Triple(feature, RDF.type.asNode(), type));
-		}	
-	}
-	
+
+	/*
+	 * protected void addTypes(Node feature, List<Node> types, List<Triple>
+	 * triples) { for (Node type : types) { triples.add(new Triple(feature,
+	 * RDF.type.asNode(), type)); } }
+	 */
+
 	protected void addAlleleTriples(Node feature, VariantContext variant, List<Triple> triples) {
-	
+
 		if (variant.getReference() != null && variant.getReference().getBaseString() != null) {
-			triples.add(new Triple(feature, GfvoVocab.Reference_Sequence.asNode(), NodeFactory.createLiteral(variant.getReference().getBaseString())));
-			//TODO: hoe in biointerchange ?
+			triples.add(new Triple(feature, GfvoVocab.Reference_Sequence.asNode(),
+					NodeFactory.createLiteral(variant.getReference().getBaseString())));
+			// TODO: hoe in biointerchange ?
 		}
-		for (Allele all: variant.getAlternateAlleles()) {
+		for (Allele all : variant.getAlternateAlleles()) {
 			if (all.getBaseString() != null) {
-				triples.add(new Triple(feature, GfvoVocab.Sequence.asNode(), NodeFactory.createLiteral(all.getBaseString())));
+				triples.add(new Triple(feature, GfvoVocab.Sequence.asNode(),
+						NodeFactory.createLiteral(all.getBaseString())));
 			}
 		}
 	}
-	
-	public List<Triple> convert(VariantContext record, Node reference, String id, int start, Metadata meta) {
+
+	@SuppressWarnings("deprecation")
+	public List<Triple> convert(VariantContext entry, Node reference, String id, int start, Metadata meta) {
 		List<Triple> triples = new LinkedList<Triple>();
 		String featureName;
 		String point = ".";
-		
-		if (!point.equals(id)){
-		featureName = FEATUREBASEURI + id;
-		}
-		else {
-		featureName = FEATUREBASEURI + "st" + start;	
+
+		if (!point.equals(id)) {
+			featureName = FEATUREBASEURI + id;
+		} else {
+			featureName = FEATUREBASEURI + "st" + start;
 		}
 		Node feature = tripleGenerator.generateURI(featureName);
-		triples.add(new Triple(feature, GfvoVocab.Identifier.asNode(), NodeFactory.createLiteral(id.toString(),XSDstring)));
+		triples.add(new Triple(feature, GfvoVocab.Identifier.asNode(),
+				NodeFactory.createLiteral(id.toString(), XSDstring)));
 
-		Boolean forwardStrand = true; 
-		Long biologicalStartPosBase1 = new Long(record.getStart());
-		Long biologicalEndPosBase1 = new Long(record.getEnd());
+		Boolean forwardStrand = true;
+		Long biologicalStartPosBase1 = new Long(entry.getStart());
+		Long biologicalEndPosBase1 = new Long(entry.getEnd());
 		addFaldoTriples(feature, reference, biologicalStartPosBase1, biologicalEndPosBase1, forwardStrand, triples);
-    	addAlleleTriples(feature, record, triples);
-		addKeyValueTriples(feature, record.getAttributes(), triples);
-		addFormatTriples(feature, featureName, record.getGenotypes(), triples);
-		triples.add(new Triple(feature, GfvoVocab.Phred_Score.asNode(), NodeFactory.createLiteral(Double.toString(record.getPhredScaledQual()), XSDfloat)));
-		triples.add(new Triple(feature, GfvoVocab.Sample_Count.asNode(), NodeFactory.createLiteral(Integer.toString(record.getNSamples()),XSDint)));
-		triples.add(new Triple(feature, GfvoVocab.Chromosome.asNode(), NodeFactory.createLiteral(record.getChr().toString(),XSDstring)));
-		triples.add(new Triple(feature, GfvoVocab.Genome_Analysis.asNode(), NodeFactory.createLiteral(record.getFilters().toString(),XSDstring)));
-		switch (record.getType()) {
+		addAlleleTriples(feature, entry, triples);
+		addKeyValueTriples(feature, entry.getAttributes(), triples);
+		addFormatTriples(feature, featureName, entry.getGenotypes(), triples);
+		triples.add(new Triple(feature, GfvoVocab.Phred_Score.asNode(),
+				NodeFactory.createLiteral(Double.toString(entry.getPhredScaledQual()), XSDfloat)));
+		triples.add(new Triple(feature, GfvoVocab.Sample_Count.asNode(),
+				NodeFactory.createLiteral(Integer.toString(entry.getNSamples()), XSDint)));
+		triples.add(new Triple(feature, GfvoVocab.Chromosome.asNode(),
+				NodeFactory.createLiteral(entry.getChr().toString(), XSDstring)));
+		triples.add(new Triple(feature, GfvoVocab.Genome_Analysis.asNode(),
+				NodeFactory.createLiteral(entry.getFilters().toString(), XSDstring)));
+
+		switch (entry.getType()) {
 		case INDEL:
 			triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.indel.asNode()));
 			meta.typeList.add(SoVocab.indel.asNode());
@@ -319,27 +316,160 @@ public class TripleConverter {
 		case SYMBOLIC:
 			break;
 		default:
-			//TODO: check if child of sequence_alteration from SO
+			// TODO: check if child of sequence_alteration from SO
 			break;
 		}
-		
+
 		return triples;
 	}
 
+	public List<Triple> convert(Feature entry, Node reference, String id, Metadata meta) {
+		List<Triple> triples = new LinkedList<Triple>();
+		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
+		Long biologicalStartPosBase1 = new Long(entry.getStart());
+		Long biologicalEndPosBase1 = new Long(entry.getEnd());
+		addFaldoTriples(feature, reference, biologicalStartPosBase1, biologicalEndPosBase1, entry.getStrand(), triples);
+
+		triples.add(new Triple(feature, SoVocab.label.asNode(),
+				NodeFactory.createLiteral(String.valueOf(entry.getSequenceID()), XSDstring)));
+
+		if (entry.getPhase() != -1) {
+			triples.add(new Triple(feature, SoVocab.reading_frame.asNode(),
+					NodeFactory.createLiteral(String.valueOf(entry.getPhase()), XSDint)));
+		}
+		if (entry.getSource() != null) {
+			triples.add(new Triple(feature, GfvoVocab.has_source.asNode(),
+					NodeFactory.createLiteral(String.valueOf(entry.getSource()), XSDstring)));
+		}
+
+		if (entry.getScore() != 0.0) {
+			String scoreString = String.valueOf(entry.getScore());
+			triples.add(new Triple(feature, GfvoVocab.Score.asNode(),
+					NodeFactory.createLiteral(String.valueOf(scoreString), XSDdouble)));
+		}
+
+		if (entry.getType() != null) {
+			if (featureTypeNodes.containsKey(entry.getType().toString())) {
+				triples.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getType().toString())));
+				meta.typeList.add(featureTypeNodes.get(entry.getType().toString()));
+			} else {
+				triples.add(new Triple(feature, RDF.type.asNode(),
+						NodeFactory.createLiteral(String.valueOf(entry.getType()), XSDstring)));
+				meta.typeList.add(NodeFactory.createLiteral(entry.getType().toString(), XSDstring));
+			}
+		}
+		Iterator it = entry.getAttributes().entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry) it.next();
+			triples.add(new Triple(feature, RDFS.comment.asNode(),
+					NodeFactory.createLiteral(pair.getKey() + "=" + pair.getValue().toString())));
+			it.remove();
+		}
+
+		return triples;
+	}
+
+	public List<Triple> convert(BEDFeature entry, String id, Node reference, Metadata meta) {
+		List<Triple> triples = new LinkedList<Triple>();
+		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
+		addFaldoTriples(feature, reference, Long.valueOf(entry.getStart()), Long.valueOf(entry.getEnd()),
+				entry.getStrand() == Strand.POSITIVE, triples);
+		Float score = entry.getScore();
+		if (score != null && score != 0) {
+			triples.add(new Triple(feature, SoVocab.score.asNode(),
+					NodeFactory.createLiteral(score.toString(), XSDdouble)));
+		}
+		if (entry.getName() != null && entry.getName().length() > 0) {
+			triples.add(
+					new Triple(feature, RDFS.label.asNode(), NodeFactory.createLiteral(entry.getName(), XSDstring)));
+		}
+		if (entry.getDescription() != null && entry.getDescription().length() > 0) {
+			triples.add(new Triple(feature, RDFS.comment.asNode(),
+					NodeFactory.createLiteral(entry.getDescription(), XSDstring)));
+		}
+		if (entry.getChr().substring(0, 2).equalsIgnoreCase("chr")) {
+			triples.add(new Triple(feature, SoVocab.chromosome.asNode(),
+					NodeFactory.createLiteral(entry.getChr().substring(3), XSDstring)));
+		} else {
+			triples.add(new Triple(feature, SoVocab.chromosome.asNode(),
+					NodeFactory.createLiteral(entry.getChr(), XSDstring)));
+		}
+
+		int idx = 1;
+		for (Exon exon : entry.getExons()) {
+			String subFeatureName = FEATUREBASEURI + id + "_Exon_" + idx++;
+			Node subFeature = tripleGenerator.generateURI(subFeatureName);
+			triples.add(new Triple(subFeature, SoVocab.has_integral_part.asNode(), feature));
+			triples.add(new Triple(feature, SoVocab.has_part.asNode(), subFeature));
+			triples.add(new Triple(subFeature, RDF.type.asNode(), SoVocab.exon_region.asNode()));
+			addFaldoTriples(subFeature, reference, Long.valueOf(exon.getCdStart()), Long.valueOf(exon.getCdEnd()), null,
+					triples);
+		}
+		return triples;
+	}
+
+	public List<Triple> createMetadata(Metadata metadata, String Graphname) {
+		List<Triple> triples = new LinkedList<Triple>();
+		Node Graph = NodeFactory.createURI(Graphname);
+		String file = metadata.file.replace("\\", "/");
+		Node fileNode = tripleGenerator.generateURI(file);
+		triples.add(new Triple(Graph, GfvoVocab.File.asNode(), fileNode));
+		
+		triples.add(new Triple(fileNode, TrackVocab.tripleCount.asNode(),NodeFactory.createLiteral(Integer.toString(metadata.tripleCount), XSDint)));
+		triples.add(new Triple(fileNode, TrackVocab.fileExtension.asNode(),NodeFactory.createLiteral(metadata.fileType, XSDstring)));
+		triples.add(new Triple(fileNode, TrackVocab.fileName.asNode(),NodeFactory.createLiteral(metadata.fileName, XSDstring)));
 	
+		Set<Node> uniqueTypes = new HashSet<Node>(metadata.typeList);
+		for (Node x : uniqueTypes) {
+			triples.add(new Triple(Graph, TrackVocab.FeatureType.asNode(), x));
+			triples.add(new Triple(fileNode, TrackVocab.FeatureType.asNode(),x));
+		}
+		if (metadata.fileType=="GFF3" && metadata.gffHeader!=null){
+			Iterator<String> gffit = metadata.gffHeader.iterator();
+			while (gffit.hasNext()) {
+				triples.add(new Triple(fileNode, TrackVocab.gffHeader.asNode(),NodeFactory.createLiteral(gffit.next(),XSDstring)));
+			}
+		}
+		if (metadata.fileType=="BED" && metadata.bedHeader!=null){
+			Iterator<String> bedit = metadata.bedHeader.iterator();
+			while (bedit.hasNext()) {
+				triples.add(new Triple(fileNode, TrackVocab.bedHeader.asNode(),NodeFactory.createLiteral(bedit.next(),XSDstring)));
+			}
+		}
+		if (metadata.fileType=="VCF" && metadata.vcfHeader!=null) {
+			Iterator<VCFFilterHeaderLine> filterIt = metadata.vcfHeader.getFilterLines().iterator();
+			while (filterIt.hasNext()) {
+				triples.add(new Triple(fileNode, TrackVocab.vcfHeaderFilter.asNode(), NodeFactory.createLiteral(filterIt.next().toString(), XSDstring)));
+			}
+			Iterator<VCFFormatHeaderLine> formatIt = metadata.vcfHeader.getFormatHeaderLines().iterator();
+			while (formatIt.hasNext()) {
+				triples.add(new Triple(fileNode, TrackVocab.vcfHeaderFormat.asNode(), NodeFactory.createLiteral(formatIt.next().toString(), XSDstring)));
+			}
+			Iterator<VCFInfoHeaderLine> infoIt = metadata.vcfHeader.getInfoHeaderLines().iterator();
+			while (infoIt.hasNext()) {
+				triples.add(new Triple(fileNode, TrackVocab.vcfHeaderInfo.asNode(), NodeFactory.createLiteral(infoIt.next().toString(), XSDstring)));
+			}
+			Iterator<VCFHeaderLine> metadataIt = metadata.vcfHeader.getOtherHeaderLines().iterator();
+			while (metadataIt.hasNext()) {
+				triples.add(new Triple(fileNode, TrackVocab.vcfHeaderMetadata.asNode(),NodeFactory.createLiteral(metadataIt.next().toString(), XSDstring)));
+			}
+		}
+		return triples;
+	}
+
 	public List<Triple> convert(SAMRecord record, Node reference, String id) {
-		//TODO: this is a draft
+		// TODO: this is a draft
 		List<Triple> result = new LinkedList<Triple>();
 		String featureName = FEATUREBASEURI + id;
 		Node feature = tripleGenerator.generateURI(featureName);
 		Boolean forwardStrand = !record.getReadNegativeStrandFlag();
-		Long biologicalStartPosBase1 = (forwardStrand?new Long(record.getStart()):new Long(record.getEnd()));
-		Long biologicalEndPosBase1 = (forwardStrand?new Long(record.getEnd()):new Long(record.getStart()));
+		Long biologicalStartPosBase1 = (forwardStrand ? new Long(record.getStart()) : new Long(record.getEnd()));
+		Long biologicalEndPosBase1 = (forwardStrand ? new Long(record.getEnd()) : new Long(record.getStart()));
 		addFaldoTriples(feature, reference, biologicalStartPosBase1, biologicalEndPosBase1, forwardStrand, result);
-		
-		// SAM is base 1 
+
+		// SAM is base 1
 		// TODO: type: samrecord ?
-		//result.add(new Triple(feature, RDF.type.asNode(), ))
+		// result.add(new Triple(feature, RDF.type.asNode(), ))
 
 		int childno = 0;
 		for (AlignmentBlock block : record.getAlignmentBlocks()) {
@@ -347,210 +477,18 @@ public class TripleConverter {
 			Node subFeature = tripleGenerator.generateURI(FEATUREBASEURI + subFeatureId);
 			result.add(new Triple(subFeature, SoVocab.part_of.asNode(), feature));
 			Long start = new Long(block.getReferenceStart());
-			Long end =  new Long(block.getReferenceStart()+block.getLength()-1);
-			addFaldoTriples(subFeature, reference, (forwardStrand?start:end), (forwardStrand?end:start), forwardStrand, result);
-		}
-		
-		
-		return result;
-	}
-	
-	
-	public List<Triple> convert(ValuedInterval vInt, String id) {
-
-		List<Triple> result = new LinkedList<Triple>();
-		// feature is the subject of all following triples except the FALDO exact position triples
-		String featureName = FEATUREBASEURI + id;
-		Node feature = tripleGenerator.generateURI(featureName);
-
-		// TODO: check chr input for "chr#", or just "#" (if chr.startwith("chr")){ 	}
-		//Node chrURI = NodeFactory.createURI(CHRBASEURI);
-
-		//if(vInt.getChr().startsWith("chr")){
-		//	chrValue = vInt.getChr().substring(3);
-		//}else{
-		//	chrValue = vInt.getChr();
-		//}
-		//Node chr = NodeFactory.createLiteral(String.valueOf(chrValue), XSDstring);
-		
-		result.add(new Triple(feature, SoVocab.label.asNode(), NodeFactory.createLiteral(String.valueOf(vInt.getChr()), XSDstring)));
-
-		Node featureBegin = tripleGenerator.generateURI(FEATUREBEGINURI + id);
-		Node featureEnd = tripleGenerator.generateURI(FEATUREENDURI + id);
-		result.add(new Triple(feature, FaldoVocab.begin.asNode(), featureBegin));
-		result.add(new Triple(feature, FaldoVocab.end.asNode(), featureEnd));
-		result.add(new Triple(featureBegin, FaldoVocab.position.asNode(),NodeFactory.createLiteral(String.valueOf(Math.min(vInt.getStart(),vInt.getStop())),XSDint)));
-		result.add(new Triple(featureEnd, FaldoVocab.position.asNode(),NodeFactory.createLiteral(String.valueOf(Math.max(vInt.getStart(),vInt.getStop())),XSDint)));
-		result.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocab.ExactPosition.asNode()));
-		result.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocab.ExactPosition.asNode()));
-		
-		if (vInt.getStart() <= vInt.getStop()) {
-			result.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocab.ForwardStrandPosition.asNode()));			
-			result.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocab.ForwardStrandPosition.asNode()));			
-		} else {
-			result.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocab.ReverseStrandPosition.asNode()));
-			result.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocab.ReverseStrandPosition.asNode()));
-
-		}
-
-		if (vInt.getValue()!=null){
-			Node valueURI = NodeFactory.createURI(VALUEURI);
-			Node value = NodeFactory.createLiteral(String.valueOf(vInt.getValue()));
-			result.add(new Triple(feature, valueURI, value));
+			Long end = new Long(block.getReferenceStart() + block.getLength() - 1);
+			addFaldoTriples(subFeature, reference, (forwardStrand ? start : end), (forwardStrand ? end : start),
+					forwardStrand, result);
 		}
 
 		return result;
 	}
 
-
-	public List<Triple> convert(GFFEntry entry, Node reference, String id, Metadata meta) {
-		List<Triple> result = convert((ValuedInterval) entry, id);
-		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
-
-		if(entry.getSource() != null && !entry.getSource().isEmpty() && !entry.getSource().equalsIgnoreCase(".")){
-			result.add(new Triple(feature, GfvoVocab.has_source.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getSource()), XSDstring)));
-		}
-		if(entry.getFrame() != null && !entry.getFrame().isEmpty() && !entry.getFrame().equalsIgnoreCase(".")){
-			result.add(new Triple(feature, SoVocab.reading_frame.asNode(),NodeFactory.createLiteral(String.valueOf(entry.getFrame()), XSDint)));
-		}
-		
-		if(entry.getFeature()!=null && !entry.getFeature().isEmpty() && !entry.getFeature().equalsIgnoreCase(".")){			 
-
-			if (featureTypeNodes.containsKey(entry.getFeature())){
-			result.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getFeature())));
-			meta.typeList.add(featureTypeNodes.get(entry.getFeature()));
-			}
-			else{
-			result.add(new Triple(feature, RDF.type.asNode(), NodeFactory.createLiteral(String.valueOf(entry.getFeature()),XSDstring)));
-			meta.typeList.add(NodeFactory.createLiteral(entry.getFeature(),XSDstring));
-			}
-		
-
-
-		// notes 
-//		if (entry.getNotes() != null) {
-//			List<String> noteValues;
-//			String[] notes = entry.getNotes();
-//			for (String noteKVpair : notes) {
-//				noteValues = new ArrayList<String>();
-//				String[] noteKeySplitValue = noteKVpair.split("=");
-//				String noteKeys = (noteKeySplitValue[0]);
-//				String[] noteValue = noteKeySplitValue[1].split(",");
-//				Node attributeURIkey = NodeFactory.createURI(ATTRIBUTEURI+noteKeys);
-//				for (String oneValue : noteValue) {
-//					Node attributeValue = NodeFactory.createLiteral(oneValue);
-//					noteValues.add(oneValue);
-//					result.add(new Triple(feature, attributeURIkey, attributeValue));
-//				}
-//			}
-//		}
-
-		}
-		return result;
-	}
-
-	
-
-	public List<Triple> convert(BEDFeature entry, String id, Node reference, Metadata meta) {
-		List<Triple> result = new LinkedList<Triple>();
-		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + id);
-		Float score = entry.getScore();
-		if (score != null && score != 0) {
-			result.add(new Triple(feature, SoVocab.score.asNode(), NodeFactory.createLiteral(score.toString(), XSDdouble)));
-		}
-		if (entry.getName() != null && entry.getName().length() > 0) {
-			result.add(new Triple(feature, RDFS.label.asNode(), NodeFactory.createLiteral(entry.getName(), XSDstring)));
-		}
-		if (entry.getDescription() != null && entry.getDescription().length() > 0) {
-			result.add(new Triple(feature, RDFS.comment.asNode(), NodeFactory.createLiteral(entry.getDescription(), XSDstring)));
-		}
-		if (entry.getChr().substring(0,2).equalsIgnoreCase("chr")){
-		result.add(new Triple(feature, SoVocab.chromosome.asNode(), NodeFactory.createLiteral(entry.getChr().substring(3),XSDstring)));
-		}
-		else {
-		result.add(new Triple(feature, SoVocab.chromosome.asNode(), NodeFactory.createLiteral(entry.getChr(),XSDstring)));		
-		}
-		addFaldoTriples(feature, reference, Long.valueOf(entry.getStart()), Long.valueOf(entry.getEnd()), entry.getStrand() == Strand.POSITIVE, result);
-		
-		int idx = 1;
-		for (Exon exon :entry.getExons()) {
-			String subFeatureName = FEATUREBASEURI + id +"_Exon_"+ idx++;
-			Node subFeature = tripleGenerator.generateURI(subFeatureName);
-			result.add(new Triple(subFeature, SoVocab.has_integral_part.asNode(), feature)); 
-			result.add(new Triple(feature, SoVocab.has_part.asNode(),subFeature));
-			result.add(new Triple(subFeature, RDF.type.asNode(), SoVocab.exon_region.asNode()));
-			addFaldoTriples(subFeature, reference, Long.valueOf(exon.getCdStart()), Long.valueOf(exon.getCdEnd()), null, result);
-		}
-		return result;
-	}
-	
-	public List<Triple> convert(BedEntry entry, String id) {
-		List<Triple> result = convert((ValuedInterval) entry, id);
-		Node feature = tripleGenerator.generateURI(FEATUREBASEURI + entry.getId());
-		
-		
-		String scoreString = String.valueOf(entry.getValue());
-		if(scoreString != null && !scoreString.isEmpty()){
-			Node featureScoreURI = NodeFactory.createURI(feature + "Value");
-			result.add(new Triple(feature, featureScoreURI, NodeFactory.createLiteral(String.valueOf(entry.getValue()), XSDdouble)));
-		}
-
-		if(entry.getId()!=null && !entry.getId().isEmpty()){
-			Node nameURI = NodeFactory.createURI(NAMEURI);
-			Node name = NodeFactory.createLiteral(String.valueOf(entry.getId()), XSDstring);
-			result.add(new Triple(feature, nameURI, name));
-		}
-		if(String.valueOf(entry.getThickStart())!= null && !String.valueOf(entry.getThickStart()).isEmpty()){
-			Node thickStartURI = NodeFactory.createURI(THICKSTARTURI);
-			Node thickStart = NodeFactory.createLiteral(String.valueOf((entry.getThickStart())), XSDint);
-			result.add(new Triple(feature, thickStartURI, thickStart));
-		}
-		if(String.valueOf(entry.getThickEnd())!=null && !String.valueOf(entry.getThickEnd()).isEmpty()){
-			Node thickEndURI = NodeFactory.createURI(THICKENDURI);
-			Node thickEnd = NodeFactory.createLiteral(String.valueOf(entry.getThickEnd()), XSDint);
-			result.add(new Triple(feature, thickEndURI, thickEnd));
-		}
-
-		// BlokCount, BlockSizes, BlockStarts
-		Node featureBlock = NodeFactory.createLiteral(BLOCKBASEURI + id);
-		Node blockURI = NodeFactory.createLiteral(BLOCKURI);
-		result.add(new Triple(feature, blockURI, featureBlock));
-
-		if (String.valueOf(entry.getBlockCount()) != null
-				&& !String.valueOf(entry.getBlockCount()).isEmpty()) {
-			Node blockCountURI = NodeFactory.createURI(BLOCKCOUNTURI);
-			Node blockCount = NodeFactory.createLiteral(String.valueOf(entry
-					.getBlockCount()), XSDint);
-			result.add(new Triple(featureBlock, blockCountURI, blockCount));
-		}
-		if (entry.getBlockSizes() != null
-				&& !(entry.getBlockSizes().length == 0)
-				&& entry.getBlockStarts() != null
-				&& !(entry.getBlockStarts().length == 0)) {
-			Node blockStartURI = NodeFactory.createURI(BLOCKSTARTURI);
-			Node blockSizeURI = NodeFactory.createURI(BLOCKSIZEURI);
-			for (blockCounter = 1; blockCounter < entry.getBlockCount(); blockCounter++) {
-				int[] blockSizes = entry.getBlockSizes();
-				Node blockSize = NodeFactory.createLiteral(
-						String.valueOf(blockSizes[blockCounter]),
-						XSDint);
-				result.add(new Triple(featureBlock, blockSizeURI, blockSize));
-
-				int[] blockStarts = entry.getBlockStarts();
-				Node blockStart = NodeFactory.createLiteral(
-						String.valueOf(blockStarts[blockCounter]),
-						XSDint);
-				result.add(new Triple(featureBlock, blockStartURI, blockStart));
-			}
-
-		}
-
-		return result;
-	}	
-	
 	public List<Triple> convert(FaldoFeature faldoFeature) {
 		List<Triple> result = new LinkedList<Triple>();
-		// feature is the subject of all following triples except the FALDO exact position triples
+		// feature is the subject of all following triples except the FALDO
+		// exact position triples
 		String featureName = FEATUREBASEURI + faldoFeature.id;
 		Node feature = NodeFactory.createURI(featureName);
 
@@ -563,15 +501,16 @@ public class TripleConverter {
 		result.add(new Triple(feature, FaldoVocab.end.asNode(), featureEnd));
 		result.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocab.ExactPosition.asNode()));
 		result.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocab.ExactPosition.asNode()));
-		result.add(new Triple(featureBegin, FaldoVocab.position.asNode(),NodeFactory.createLiteral(faldoFeature.start.toString(),XSDint)));
+		result.add(new Triple(featureBegin, FaldoVocab.position.asNode(),
+				NodeFactory.createLiteral(faldoFeature.start.toString(), XSDint)));
 		result.add(new Triple(featureBegin, FaldoVocab.reference.asNode(), ref));
-		result.add(new Triple(featureEnd, FaldoVocab.position.asNode(),NodeFactory.createLiteral(faldoFeature.end.toString(),XSDint)));
+		result.add(new Triple(featureEnd, FaldoVocab.position.asNode(),
+				NodeFactory.createLiteral(faldoFeature.end.toString(), XSDint)));
 		result.add(new Triple(featureEnd, FaldoVocab.reference.asNode(), ref));
 
-
 		if (faldoFeature.strand) {
-			result.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocab.ForwardStrandPosition.asNode()));			
-			result.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocab.ForwardStrandPosition.asNode()));			
+			result.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocab.ForwardStrandPosition.asNode()));
+			result.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocab.ForwardStrandPosition.asNode()));
 		} else {
 			result.add(new Triple(featureBegin, RDF.type.asNode(), FaldoVocab.ReverseStrandPosition.asNode()));
 			result.add(new Triple(featureEnd, RDF.type.asNode(), FaldoVocab.ReverseStrandPosition.asNode()));
@@ -580,18 +519,88 @@ public class TripleConverter {
 		return result;
 
 	}
-	
-	
-	public List<Triple> createMetadata(Metadata metadata, String Graphname){
-		Node Graph = NodeFactory.createURI(Graphname);
-		List<Triple> triples = new LinkedList<Triple>();
-		Set<Node> uniqueTypes = new HashSet<Node>(metadata.typeList);
-		for (Node x : uniqueTypes){
-			triples.add(new Triple(Graph, TrackVocab.FeatureType.asNode(), x));
-			}
-//		triples.add(new Triple(Graph, TrackVocab.fileExtension.asNode(), NodeFactory.createLiteral(metadata.fileType, XSDstring)));
-		triples.add(new Triple(Graph, GfvoVocab.File.asNode(), NodeFactory.createLiteral(metadata.fileName, XSDstring)));
-		return triples;
-		}
-	
 }
+
+/*
+ * public List<Triple> convert(Feature vInt, String id) {
+ * 
+ * List<Triple> result = new LinkedList<Triple>();
+ * 
+ * 
+ * Node featureBegin = tripleGenerator.generateURI(FEATUREBEGINURI + id); Node
+ * featureEnd = tripleGenerator.generateURI(FEATUREENDURI + id); result.add(new
+ * Triple(feature, FaldoVocab.begin.asNode(), featureBegin)); result.add(new
+ * Triple(feature, FaldoVocab.end.asNode(), featureEnd)); result.add(new
+ * Triple(featureBegin, FaldoVocab.position.asNode(),
+ * NodeFactory.createLiteral(String.valueOf(Math.min(vInt.getStart(),
+ * vInt.getEnd())), XSDint))); result.add(new Triple(featureEnd,
+ * FaldoVocab.position.asNode(),
+ * NodeFactory.createLiteral(String.valueOf(Math.max(vInt.getStart(),
+ * vInt.getEnd())), XSDint))); result.add(new Triple(featureBegin,
+ * RDF.type.asNode(), FaldoVocab.ExactPosition.asNode())); result.add(new
+ * Triple(featureEnd, RDF.type.asNode(), FaldoVocab.ExactPosition.asNode()));
+ * 
+ * Boolean forwardStrand=vInt.getStrand(); if (forwardStrand != null) {
+ * result.add(new Triple(featureBegin, RDF.type.asNode(), (forwardStrand ?
+ * FaldoVocab.ForwardStrandPosition.asNode() :
+ * FaldoVocab.ReverseStrandPosition.asNode()))); result.add(new
+ * Triple(featureEnd, RDF.type.asNode(), (forwardStrand ?
+ * FaldoVocab.ForwardStrandPosition.asNode() :
+ * FaldoVocab.ReverseStrandPosition.asNode()))); }
+ * 
+ * return result; }
+ */
+
+/*
+ * public List<Triple> convert(BedEntry entry, String id) { List<Triple> result
+ * = convert((ValuedInterval) entry, id); Node feature =
+ * tripleGenerator.generateURI(FEATUREBASEURI + entry.getId());
+ * 
+ * String scoreString = String.valueOf(entry.getValue()); if (scoreString !=
+ * null && !scoreString.isEmpty()) { Node featureScoreURI =
+ * NodeFactory.createURI(feature + "Value"); result.add(new Triple(feature,
+ * featureScoreURI, NodeFactory.createLiteral(String.valueOf(entry.getValue()),
+ * XSDdouble))); }
+ * 
+ * if (entry.getId() != null && !entry.getId().isEmpty()) { Node nameURI =
+ * NodeFactory.createURI(NAMEURI); Node name =
+ * NodeFactory.createLiteral(String.valueOf(entry.getId()), XSDstring);
+ * result.add(new Triple(feature, nameURI, name)); } if
+ * (String.valueOf(entry.getThickStart()) != null &&
+ * !String.valueOf(entry.getThickStart()).isEmpty()) { Node thickStartURI =
+ * NodeFactory.createURI(THICKSTARTURI); Node thickStart =
+ * NodeFactory.createLiteral(String.valueOf((entry.getThickStart())), XSDint);
+ * result.add(new Triple(feature, thickStartURI, thickStart)); } if
+ * (String.valueOf(entry.getThickEnd()) != null &&
+ * !String.valueOf(entry.getThickEnd()).isEmpty()) { Node thickEndURI =
+ * NodeFactory.createURI(THICKENDURI); Node thickEnd =
+ * NodeFactory.createLiteral(String.valueOf(entry.getThickEnd()), XSDint);
+ * result.add(new Triple(feature, thickEndURI, thickEnd)); }
+ * 
+ * // BlokCount, BlockSizes, BlockStarts Node featureBlock =
+ * NodeFactory.createLiteral(BLOCKBASEURI + id); Node blockURI =
+ * NodeFactory.createLiteral(BLOCKURI); result.add(new Triple(feature, blockURI,
+ * featureBlock));
+ * 
+ * if (String.valueOf(entry.getBlockCount()) != null &&
+ * !String.valueOf(entry.getBlockCount()).isEmpty()) { Node blockCountURI =
+ * NodeFactory.createURI(BLOCKCOUNTURI); Node blockCount =
+ * NodeFactory.createLiteral(String.valueOf(entry.getBlockCount()), XSDint);
+ * result.add(new Triple(featureBlock, blockCountURI, blockCount)); } if
+ * (entry.getBlockSizes() != null && !(entry.getBlockSizes().length == 0) &&
+ * entry.getBlockStarts() != null && !(entry.getBlockStarts().length == 0)) {
+ * Node blockStartURI = NodeFactory.createURI(BLOCKSTARTURI); Node blockSizeURI
+ * = NodeFactory.createURI(BLOCKSIZEURI); for (blockCounter = 1; blockCounter <
+ * entry.getBlockCount(); blockCounter++) { int[] blockSizes =
+ * entry.getBlockSizes(); Node blockSize =
+ * NodeFactory.createLiteral(String.valueOf(blockSizes[blockCounter]), XSDint);
+ * result.add(new Triple(featureBlock, blockSizeURI, blockSize));
+ * 
+ * int[] blockStarts = entry.getBlockStarts(); Node blockStart =
+ * NodeFactory.createLiteral(String.valueOf(blockStarts[blockCounter]), XSDint);
+ * result.add(new Triple(featureBlock, blockStartURI, blockStart)); }
+ * 
+ * }
+ * 
+ * return result; }
+ */

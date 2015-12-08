@@ -6,6 +6,7 @@ angular.module('boinqApp').controller('TrackController', ['$scope', 'Track', 'Da
 		console.log("Loading TrackController");
 				
         $scope.create = function () {
+        	console.log($scope.track);
             Track.save({ds_id: $scope.datasource.id}, $scope.track,
                 function () {
                     $scope.datasource.tracks = Track.query({ds_id: $scope.datasource.id});
@@ -66,6 +67,8 @@ angular.module('boinqApp').controller('TrackController', ['$scope', 'Track', 'Da
         	TrackConversion.start({ds_id:$scope.datasource.id, track_id:ds_id}, rawdatafile_id);
         };
         
+        
+        
         $scope.termsPicked = function(terms) {
         	var uris = "";
         	for (var idx in terms) {
@@ -76,6 +79,13 @@ angular.module('boinqApp').controller('TrackController', ['$scope', 'Track', 'Da
         	$scope.track.type = uris;
         	console.info(uris);
         };
+        
+        		$scope.fileOptions = [
+                       {id: 'VCF', name: 'VCF'},
+                       {id: 'GFF', name: 'GFF/GFF3'},
+                       {id: 'BED', name: 'BED'}
+                     ];
+ 
 
         // FILE UPLOADER
         

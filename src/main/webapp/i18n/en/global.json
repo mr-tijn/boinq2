@@ -35,6 +35,10 @@
                 "jobs": "Running jobs",
                 "sparqlbrowser": "SPARQL Browser"
             },
+            "routine": {
+            	"title": "Routine",
+                "featurequery" : "Feature Queries"
+            },
             "language": "Language"
         },
         "form": {

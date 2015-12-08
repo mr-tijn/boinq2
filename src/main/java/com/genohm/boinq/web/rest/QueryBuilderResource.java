@@ -1,17 +1,13 @@
 package com.genohm.boinq.web.rest;
 
 
-import java.util.Optional;
-
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,10 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.repository.TrackRepository;
 import com.genohm.boinq.service.QueryBuilderService;
-import com.genohm.boinq.web.rest.dto.MatchDTO;
 import com.genohm.boinq.web.rest.dto.QueryDTO;
-
-import antlr.collections.List;
 
 
 @RestController
@@ -105,20 +98,5 @@ public class QueryBuilderResource {
     	//return new ResponseEntity<>(result,HttpStatus.OK);
     	
     }
-
-    @RequestMapping(value = "/rest/querybuilder/from_match",
-    		method = RequestMethod.POST,
-    		consumes = MediaType.APPLICATION_JSON_VALUE,
-    		produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity<QueryDTO> getQueryFromMatch(@RequestBody MatchDTO matchDTO) {
-    	try {
-    		QueryDTO result = new QueryDTO(queryBuilderService.getQueryFromMatch(matchDTO),"SPARQL11");
-    		return new ResponseEntity<>(result, HttpStatus.OK);
-    	} catch (Exception e) {
-    		log.error("Could not create insert statement",e);
-    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
-	}
-
 
 }

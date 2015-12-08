@@ -84,7 +84,8 @@ angular.module('boinqApp').directive('criteriondetail', function() {
 		restrict: 'E',
 		scope: {
 			criterion: '=',
-			supportedFeatureTypes: '='
+			supportedFeatureTypes: '=',
+			supportedOperators: '='
 		},
 		link: function(scope, element, attrs) {
 			scope.computeUrl = function(criterion) {

@@ -35,6 +35,11 @@
                 "jobs": "En cours",
                 "sparqlbrowser": "Navigateur SPARQL"
             },
+            "routine": {
+            	"title": "Routine",
+                "featurequery" : "Requetes"
+            },
+            
             "language": "Langue"
         },
         "form": {

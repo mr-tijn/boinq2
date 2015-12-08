@@ -16,11 +16,11 @@ angular.module('boinqApp')
             },
             resolve: {
             	resolvedDatasource: ['Datasource', function (Datasource) {
-                    return Datasource.query();
+                    return Datasource.query().$promise;
                 }],
-                resolvedFeatureQuery: ['FeatureQueryService', '$stateParams', function(FeatureQueryService,$stateParams) {
+                resolvedFeatureQuery: ['FeatureQuery', '$stateParams', function(FeatureQuery,$stateParams) {
                 	if ($stateParams.fqId != null) {
-                		return FeatureQueryService.get($stateParams.fqId);
+                		return FeatureQuery.get({id: $stateParams.fqId}).$promise;
                 	} else {
                 		return null;
                 	}

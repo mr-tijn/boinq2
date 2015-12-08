@@ -33,7 +33,7 @@ public class TripleIteratorFactory {
 		}
 		for (String ext: BED_EXTENSIONS) {
 			meta.fileType = "BED";
-			if (ext.equals(extension.toUpperCase())) return new HTSJDKBedTripleIterator(tripleConverter, inputFile, referenceMap, meta);
+			if (ext.equals(extension.toUpperCase())) return new BedTripleIterator(tripleConverter, inputFile, referenceMap, meta);
 		}
 		for (String ext: VCF_EXTENSIONS) {
 			meta.fileType = "VCF";

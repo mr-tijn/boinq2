@@ -1,7 +1,13 @@
 package com.genohm.boinq.web.rest.dto;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.apache.jena.graph.Node;
 
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
@@ -17,6 +23,9 @@ public class TrackDTO {
     private String species;
     private long datasourceId;
 	private Set<RawDataFileDTO> rawDataFiles;
+	private Map<String, Map<String, String>> supportedOperators;
+	private Map<String, String> supportedFeatureTypes;
+	private Map<String, String> referenceMap;
 
 	public long getId() {
 		return id;
@@ -89,6 +98,32 @@ public class TrackDTO {
 		this.rawDataFiles = rawDataFiles;
 	}
 
+	
+	
+	public Map<String, Map<String, String>> getSupportedOperators() {
+		return supportedOperators;
+	}
+
+	public void setSupportedOperators(Map<String, Map<String, String>> supportedOperators) {
+		this.supportedOperators = supportedOperators;
+	}
+
+	public Map<String, String> getSupportedFeatureTypes() {
+		return supportedFeatureTypes;
+	}
+
+	public void setSupportedFeatureTypes(Map<String, String> supportedFeatureTypes) {
+		this.supportedFeatureTypes = supportedFeatureTypes;
+	}
+
+	public Map<String, String> getReferenceMap() {
+		return referenceMap;
+	}
+
+	public void setReferenceMap(Map<String, String> referenceMap) {
+		this.referenceMap = referenceMap;
+	}
+
 	public TrackDTO() {}
 	
 	public TrackDTO(Track track) {
@@ -102,6 +137,28 @@ public class TrackDTO {
 		this.rawDataFiles = new HashSet<RawDataFileDTO>();
 		for (RawDataFile dataFile: track.getRawDataFiles()) {
 			rawDataFiles.add(new RawDataFileDTO(dataFile));
+		}
+		if (track.getSupportedOperators() != null) {
+			this.supportedOperators = new HashMap<>();
+			for (String operator: track.getSupportedOperators().keySet()) {
+				Map<String, String> parameters = new HashMap<>();
+				for (String parameter: track.getSupportedOperators().get(operator).keySet()) {
+					parameters.put(parameter, track.getSupportedOperators().get(operator).get(parameter));
+				}
+				supportedOperators.put(operator, parameters);
+			}
+		}
+		if (track.getSupportedFeatureTypes() != null) {
+			this.supportedFeatureTypes = new HashMap<>();
+			for (String typeName: track.getSupportedFeatureTypes().keySet()) {
+				this.supportedFeatureTypes.put(typeName, track.getSupportedFeatureTypes().get(typeName));
+			}
+		}
+		if (track.getReferenceMap() != null) {
+			this.referenceMap = new HashMap<>();
+			for (Node ref: track.getReferenceMap().keySet()) {
+				this.referenceMap.put(ref.getURI(), track.getReferenceMap().get(ref).getURI());
+			}
 		}
 	}
 }
