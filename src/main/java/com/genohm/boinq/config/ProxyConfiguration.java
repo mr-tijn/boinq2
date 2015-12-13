@@ -24,6 +24,8 @@ public class ProxyConfiguration implements EnvironmentAware {
 	protected Environment environment;
     protected RelaxedPropertyResolver propertyResolver;
     
+    @Value(value="${spring.triplestore.endpoint.sparql}")
+    protected String localSparql;
     @Value(value="${spring.triplestore.endpoint.static.query}")
     protected String staticEndpoint;
     
@@ -35,12 +37,11 @@ public class ProxyConfiguration implements EnvironmentAware {
 	
 	
 	@Bean
-	public ServletRegistrationBean fusekiProxy() {
-		//TODO: remove hardcoded paths
-		ServletRegistrationBean registration = new ServletRegistrationBean(new ProxyServlet.Transparent(), "/bigdata/*");
+	public ServletRegistrationBean localProxy() {
+		ServletRegistrationBean registration = new ServletRegistrationBean(new ProxyServlet.Transparent(), "/local/*");
         Map<String,String> params = new HashMap<String,String>();
-        params.put("proxyTo", "http://localhost:9999/bigdata");
-        params.put("prefix", "/bigdata");
+        params.put("proxyTo", localSparql.substring(0,localSparql.lastIndexOf('/')));
+        params.put("prefix", "/local");
         registration.setInitParameters(params);
         return registration;
 	}

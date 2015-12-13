@@ -25,7 +25,7 @@ public class DatasourceInitializer implements EnvironmentAware, ApplicationListe
 		Datasource exampleDS = datasourceRepository.findOne(1L);
 		Boolean changed = false;
 		if ("DSENDPOINT_PLACEHOLDER".equals(exampleDS.getEndpointUrl())) {
-			exampleDS.setEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.external"));
+			exampleDS.setEndpointUrl("/local/sparql");
 			changed = true;
 		}
 		if ("DSNAME_PLACEHOLDER".equals(exampleDS.getIri())) {
@@ -33,11 +33,11 @@ public class DatasourceInitializer implements EnvironmentAware, ApplicationListe
 			changed = true;
 		}
 		if ("DSENDPOINT_UPDATE_PLACEHOLDER".equals(exampleDS.getEndpointUpdateUrl())) {
-			exampleDS.setEndpointUpdateUrl(propertyResolver.getProperty("triplestore.endpoint.meta"));
+			exampleDS.setEndpointUpdateUrl("/local/update");
 			changed = true;
 		}
 		if ("DSENDPOINT_META_PLACEHOLDER".equals(exampleDS.getMetaEndpointUrl())) {
-			exampleDS.setMetaEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.update"));
+			exampleDS.setMetaEndpointUrl("/local/sparql");
 			changed = true;
 		}
 		if (changed) {

@@ -21,12 +21,18 @@ import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.queries.Prefixes;
+import com.mysql.fabric.xmlrpc.base.Array;
+
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.sparql.syntax.ElementTriplesBlock;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.SKOS;
+import org.apache.jena.vocabulary.XSD;
 
 
 @Component
@@ -53,13 +59,21 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	private String metaGraph;
 
 	private String queryEndpoint;
+	
+	private Boolean dev;
     
 	public void checkInit() {
 		Triple triple = new Triple(NodeFactory.createURI(localDatasource), RDF.type.asNode(), TrackVocab.Datasource.asNode());
 		if (!alreadyPresent(triple)) {
 			init();
 		}
-		
+	}
+	
+	public void checkExtraTriples() {
+		Triple triple = new Triple(NodeFactory.createURI(localDatasource), TrackVocab.provides.asNode(), NodeFactory.createURI("http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844"));
+		if (!alreadyPresent(triple)) {
+			addExtraTriples();
+		}
 	}
     
 	@Override
@@ -69,6 +83,13 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 		updateEndpoint = propertyResolver.getProperty(PROPERTY_ENDPOINT_UPDATE);
 		metaGraph = propertyResolver.getProperty(PROPERTY_METAGRAPH);
 		queryEndpoint = propertyResolver.getProperty(PROPERTY_ENDPOINT_SPARQL);
+		dev = false;
+		for (String profile: environment.getActiveProfiles()) {
+			if ("dev".equals(profile)) {
+				dev = true;
+				break;
+			}
+		}
 	}
 	
 	private Boolean alreadyPresent(Triple t) {
@@ -89,20 +110,31 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	private void init() {
 		Node datasource =  NodeFactory.createURI(localDatasource);
 		TripleUploader uploader = tripleUploadService.getUploader(updateEndpoint, metaGraph, Prefixes.getCommonPrefixes());
-		List<Triple> triples = new LinkedList<Triple>();
-		triples.add(new Triple(datasource, RDF.type.asNode(), TrackVocab.Datasource.asNode()));
-		triples.add(new Triple(datasource, RDF.type.asNode(), TrackVocab.SPARQLDatasource.asNode()));
-		triples.add(new Triple(datasource, TrackVocab.references.asNode(), TrackVocab.GRCh37.asNode()));
-		triples.add(new Triple(datasource, TrackVocab.endpointUrl.asNode(), NodeFactory.createLiteral(queryEndpoint)));
-		for (Triple triple: triples) {
-			uploader.triple(triple);
-		}
+		uploader.triple(new Triple(datasource, RDF.type.asNode(), TrackVocab.Datasource.asNode()));
+		uploader.triple(new Triple(datasource, RDF.type.asNode(), TrackVocab.SPARQLDatasource.asNode()));
+		uploader.triple(new Triple(datasource, TrackVocab.references.asNode(), TrackVocab.GRCh37.asNode()));
+		uploader.triple(new Triple(datasource, TrackVocab.endpointUrl.asNode(), NodeFactory.createLiteral(queryEndpoint)));
+		uploader.finish();
+	}
+	
+	private void addExtraTriples() {
+		Node datasource =  NodeFactory.createURI(localDatasource);
+		Node track = NodeFactory.createURI("http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844");
+		Node exampleType1 = NodeFactory.createURI("http://www.boinq.org/iri/exampleType1");
+		Node exampleType2 = NodeFactory.createURI("http://www.boinq.org/iri/exampleType2");
+		TripleUploader uploader = tripleUploadService.getUploader(updateEndpoint, metaGraph, Prefixes.getCommonPrefixes());
+		uploader.triple(new Triple(datasource, TrackVocab.provides.asNode(), track));
+		uploader.triple(new Triple(track, TrackVocab.holds.asNode(), exampleType1));
+		uploader.triple(new Triple(exampleType1, SKOS.prefLabel.asNode(), NodeFactory.createLiteral("Example Type 1",XSDDatatype.XSDstring)));
+		uploader.triple(new Triple(exampleType2, SKOS.prefLabel.asNode(), NodeFactory.createLiteral("Example Type 2",XSDDatatype.XSDstring)));
+		uploader.triple(new Triple(track, TrackVocab.holds.asNode(), exampleType2));
 		uploader.finish();
 	}
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		checkInit();
+		if (dev) checkExtraTriples();
 	}
 
 }
