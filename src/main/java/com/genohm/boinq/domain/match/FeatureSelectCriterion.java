@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import com.genohm.boinq.domain.GenomicRegion;
@@ -18,5 +19,7 @@ public abstract class FeatureSelectCriterion implements QueryGeneratorAcceptor {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
+    public FeatureSelectCriterion() {}
+    
 	public void accept(QueryGenerator qg, GenomicRegion region) {}
 }

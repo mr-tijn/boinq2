@@ -7,8 +7,10 @@ public class FeatureSelectDTO {
 	public static final String FALDO_SELECT_TYPE = "FaldoSelect";
 	
 	public String type = FALDO_SELECT_TYPE;
+	public int idx; //local identifier
+	public int trackId;
 	public Boolean retrieve;
 	public Set<CriteriaDTO> criteria;
-	public int displayX;
-	public int displayY;
+	public int viewX;
+	public int viewY;
 }

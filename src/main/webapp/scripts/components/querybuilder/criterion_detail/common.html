@@ -2,7 +2,7 @@
 <div class="input-group">
 	<span class="input-group-addon">Criterion type</span> <select
 		class="form-control" ng-model="criterion.type" ng-change="computeUrl(criterion)">
-		<option ng-repeat="nodeType in ['Location']">{{nodeType}}</option>
+		<option ng-repeat="nodeType in ['Location','FeatureType']">{{nodeType}}</option>
 	</select>
 </div>
 <div ng-include="detailUrl"></div>

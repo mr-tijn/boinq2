@@ -96,34 +96,34 @@
         <addUniqueConstraint columnNames="rawDataFiles_id" constraintName="UC_T_TRACK_T_RAWDATAFILE_RAWDATAFILES_ID" deferrable="false" disabled="false" initiallyDeferred="false" tableName="t_track_t_rawdatafile"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-25">
-        <addForeignKeyConstraint baseColumnNames="track_id" baseTableName="t_rawdatafile" constraintName="FK_1sr430mljt676vgn8mc98gvf4" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+        <addForeignKeyConstraint baseColumnNames="track_id" baseTableName="t_rawdatafile" constraintName="fk_1sr430mljt676vgn8mc98gvf4" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-26">
-        <addForeignKeyConstraint baseColumnNames="rawDataFiles_id" baseTableName="t_track_t_rawdatafile" constraintName="FK_436vll7708q8p6oqjt16a0ah" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_rawdatafile"/>
+        <addForeignKeyConstraint baseColumnNames="rawDataFiles_id" baseTableName="t_track_t_rawdatafile" constraintName="fk_436vll7708q8p6oqjt16a0ah" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_rawdatafile"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-27">
-        <addForeignKeyConstraint baseColumnNames="datasource_id" baseTableName="t_track" constraintName="FK_79ifc99gxvpn74rs90bl9oroj" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_datasource"/>
+        <addForeignKeyConstraint baseColumnNames="datasource_id" baseTableName="t_track" constraintName="fk_79ifc99gxvpn74rs90bl9oroj" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_datasource"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-28">
-        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_project" constraintName="FK_a0kdmtvfioekufbkj7t3161qe" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_project" constraintName="fk_a0kdmtvfioekufbkj7t3161qe" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="JHI_USER"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-29">
-        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableName="t_datasource_t_track" constraintName="FK_cyex7yx8vb80gi2vq2eswyu4q" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableName="t_datasource_t_track" constraintName="fk_cyex7yx8vb80gi2vq2eswyu4q" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-31">
-        <addForeignKeyConstraint baseColumnNames="T_PROJECT_id" baseTableName="t_project_t_track" constraintName="FK_gxlx7clnpyr5voo4qxyyrn3kh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_project"/>
+        <addForeignKeyConstraint baseColumnNames="T_PROJECT_id" baseTableName="t_project_t_track" constraintName="fk_gxlx7clnpyr5voo4qxyyrn3kh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_project"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-32">
-        <addForeignKeyConstraint baseColumnNames="T_TRACK_id" baseTableName="t_track_t_rawdatafile" constraintName="FK_jrfqf4yqyf2c8v7khfbk9ar8a" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+        <addForeignKeyConstraint baseColumnNames="T_TRACK_id" baseTableName="t_track_t_rawdatafile" constraintName="fk_jrfqf4yqyf2c8v7khfbk9ar8a" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-33">
-        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_datasource" constraintName="FK_nacyl39t0jqfg2i80af976s6b" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_datasource" constraintName="fk_nacyl39t0jqfg2i80af976s6b" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="JHI_USER"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-34">
-        <addForeignKeyConstraint baseColumnNames="T_DATASOURCE_id" baseTableName="t_datasource_t_track" constraintName="FK_qahly5cqvghitfeqekbgeqk1t" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_datasource"/>
+        <addForeignKeyConstraint baseColumnNames="T_DATASOURCE_id" baseTableName="t_datasource_t_track" constraintName="fk_qahly5cqvghitfeqekbgeqk1t" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_datasource"/>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-35">
-        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableName="t_project_t_track" constraintName="FK_sjplolmoi7krxotu85hr3mr24" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableName="t_project_t_track" constraintName="fk_sjplolmoi7krxotu85hr3mr24" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
     </changeSet>
     <changeSet author="martijn" id="martijnmanual001" >
 
@@ -146,7 +146,7 @@
 
 	</changeSet>
 	<changeSet author="martijn" id="create featurequery tables">
-	   <createTable tableName="T_FEATUREJOIN">
+	   <createTable tableName="t_featurejoin">
             <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
@@ -155,7 +155,7 @@
             <column name="type" type="VARCHAR(255)"/>
             <column name="feature_query_id" type="BIGINT"/>
         </createTable>
-	 	<createTable tableName="T_FEATURESELECT">
+	 	<createTable tableName="t_featureselect">
             <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
@@ -163,8 +163,10 @@
             <column name="retrieve_feature_data" type="BOOLEAN" />
             <column name="type" type="VARCHAR(255)"/>
             <column name="feature_query_id" type="BIGINT"/>
+            <column name="view_x" type="INT"/>
+            <column name="view_y" type="INT"/>
         </createTable>
-        <createTable tableName="T_FEATURESELECTCRITERION">
+        <createTable tableName="t_featureselectcriterion">
             <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
@@ -176,18 +178,18 @@
             <column name="strand" type="BOOLEAN" />
             <column name="feature_select_id" type="BIGINT"/>
         </createTable>
-		<createTable tableName="T_FEATUREQUERY">
+		<createTable tableName="t_featurequery">
             <column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
                 <constraints primaryKey="true"/>
             </column>
 			<column name="owner_id" type="BIGINT"/>
 		</createTable>
-        <addForeignKeyConstraint baseColumnNames="feature_query_id" baseTableName="T_FEATUREJOIN" constraintName="FK_joinToQuery" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATUREQUERY"/>
-        <addForeignKeyConstraint baseColumnNames="source_select_id" baseTableName="T_FEATUREJOIN" constraintName="FK_joinToSourceSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATURESELECT"/>
-        <addForeignKeyConstraint baseColumnNames="target_select_id" baseTableName="T_FEATUREJOIN" constraintName="FK_joinToTargetSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATURESELECT"/>
-        <addForeignKeyConstraint baseColumnNames="feature_query_id" baseTableName="T_FEATURESELECT" constraintName="FK_selectToQuery" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATUREQUERY"/>
-        <addForeignKeyConstraint baseColumnNames="track_id" baseTableName="T_FEATURESELECT" constraintName="FK_selectToTrack" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
-        <addForeignKeyConstraint baseColumnNames="feature_select_id" baseTableName="T_FEATURESELECTCRITERION" constraintName="FK_criterionToSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATURESELECT"/>
-        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="T_FEATUREQUERY" constraintName="FK_queryToUser" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+        <addForeignKeyConstraint baseColumnNames="feature_query_id" baseTableName="t_featurejoin" constraintName="fk_joinToQuery" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featurequery"/>
+        <addForeignKeyConstraint baseColumnNames="source_select_id" baseTableName="t_featurejoin" constraintName="fk_joinToSourceSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featureselect"/>
+        <addForeignKeyConstraint baseColumnNames="target_select_id" baseTableName="t_featurejoin" constraintName="fk_joinToTargetSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featureselect"/>
+        <addForeignKeyConstraint baseColumnNames="feature_query_id" baseTableName="t_featureselect" constraintName="fk_selectToQuery" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featurequery"/>
+        <addForeignKeyConstraint baseColumnNames="track_id" baseTableName="t_featureselect" constraintName="fk_selectToTrack" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+        <addForeignKeyConstraint baseColumnNames="feature_select_id" baseTableName="t_featureselectcriterion" constraintName="fk_criterionToSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featureselect"/>
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_featurequery" constraintName="fk_queryToUser" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="JHI_USER"/>
     </changeSet>
 </databaseChangeLog>

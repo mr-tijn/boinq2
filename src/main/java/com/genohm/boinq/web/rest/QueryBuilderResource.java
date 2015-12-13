@@ -1,7 +1,10 @@
 package com.genohm.boinq.web.rest;
 
 
+import java.util.Optional;
+
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.repository.TrackRepository;
 import com.genohm.boinq.service.QueryBuilderService;
 import com.genohm.boinq.web.rest.dto.MatchDTO;
 import com.genohm.boinq.web.rest.dto.QueryDTO;
+
+import antlr.collections.List;
 
 
 @RestController
@@ -28,6 +35,8 @@ public class QueryBuilderResource {
 
 	@Inject
 	private QueryBuilderService queryBuilderService;
+	@Inject
+	private TrackRepository trackRepository;
 	
     @RequestMapping(value = "/rest/querybuilder/rootNodesQuery",
             		method = RequestMethod.GET,
@@ -71,7 +80,7 @@ public class QueryBuilderResource {
     @RequestMapping(value = "/rest/querybuilder/insertQuery",
     		method = RequestMethod.GET,
     		produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getInsertQuery(@RequestParam String graphUri, @RequestParam String subject, @RequestParam String predicate, @RequestParam String object) {
+    public @ResponseBody ResponseEntity<String> getInsertQuery(@RequestParam String graphUri, @RequestParam String subject, @RequestParam String predicate, @RequestParam String object) {
     	try {
     		String result = queryBuilderService.insertStatement(graphUri, subject, predicate, object);
     		return new ResponseEntity<String>(result, HttpStatus.OK);
@@ -80,6 +89,22 @@ public class QueryBuilderResource {
     		return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     	}
 	}
+    
+    @RequestMapping(value="/rest/querybuilder/featureTypesQuery",
+    		method = RequestMethod.GET,
+    		produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getFeatureTypesQuery(@RequestParam Long trackId) {
+    	return trackRepository.findOneById(trackId)
+    			.filter((Track t) -> null != t.getGraphName())
+    			.map((Track t) -> queryBuilderService.findFeatureTypes(t.getGraphName()))
+    			.map((String s) -> new ResponseEntity<String>(s,HttpStatus.OK))
+    			.orElse(new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR));
+    	//if (track == null) return new ResponseEntity<>("Invalid track Id",HttpStatus.INTERNAL_SERVER_ERROR);
+    	//if (track.getGraphName() == null || track.getGraphName().length() ==0) return new ResponseEntity<String>("Track doesn't have a graph name",HttpStatus.INTERNAL_SERVER_ERROR);
+    	//String result = queryBuilderService.findFeatureTypes(track.getGraphName());
+    	//return new ResponseEntity<>(result,HttpStatus.OK);
+    	
+    }
 
     @RequestMapping(value = "/rest/querybuilder/from_match",
     		method = RequestMethod.POST,

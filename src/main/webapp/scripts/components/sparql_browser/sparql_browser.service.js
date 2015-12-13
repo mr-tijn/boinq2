@@ -2,7 +2,7 @@ angular.module('boinqApp').factory('callEndpoint', ['$http',function($http) {
 	console.info('Registering factory callEndPoint');
 	var callEndpoint = function(endpointUrl, graphUri, sparqlQuery) {
 
-		console.log(['Calling endpoint', endpointUrl, 'Graph', graphUri, 'Query', sparqlQuery].join('\n'));
+		console.log(['Calling endpoint : ', endpointUrl, 'Graph : ', graphUri, 'Query : ', sparqlQuery].join('\n'));
 		var params = {
 				query: 	sparqlQuery,
 		};
@@ -89,6 +89,12 @@ angular.module('boinqApp').factory('QueryBuilderService', ['$http', function ($h
 		},
 		insertQuery: function(graphUri, subject, predicate, object)  {
 			var promise = $http.get('app/rest/querybuilder/insertQuery', {params: {graphUri: graphUri, subject:subject, predicate: predicate, object: object}}).then(function (response) {
+				return response.data;
+			});
+			return promise;
+		},
+		featureTypeQuery: function(trackId)  {
+			var promise = $http.get('app/rest/querybuilder/featureTypesQuery', {params: {trackId: trackId}}).then(function (response) {
 				return response.data;
 			});
 			return promise;

@@ -65,6 +65,8 @@ public class QueryBuilderService {
 	public static final String FEATURE_END_POS = "featureEndPos";
 	public static final String FEATURE_BEGIN_POS = "featureBeginPos";
 	public static final String FEATURE_ID = "featureId";
+	private static final String VARIABLE_FEATURE_TYPE = "featureType";
+	private static final String VARIABLE_LABEL = "label";
 	public static PrefixMapping commonPrefixes = new PrefixMappingImpl();
 	public static PrefixMapping faldoPrefixes = new PrefixMappingImpl();
 	{
@@ -363,6 +365,28 @@ public class QueryBuilderService {
 		return mainQuery.toString(Syntax.syntaxSPARQL_11);
 
 	}
+	
+	
+	public String findFeatureTypes(String trackGraphName) {
+		Query mainQuery = new Query();
+		mainQuery.setQuerySelectType();
+		
+		Node featureType = NodeFactory.createVariable(VARIABLE_FEATURE_TYPE);
+		Node label = NodeFactory.createVariable(VARIABLE_LABEL);
+		
+		ElementGroup main = new ElementGroup();
+		ElementTriplesBlock triples = new ElementTriplesBlock();
+		triples.addTriple(new Triple(NodeFactory.createURI(trackGraphName),TrackVocab.holds.asNode(), featureType));
+		main.addElement(triples);
+		main.addElement(labelPattern(featureType, label));
+		
+		mainQuery.addResultVar(featureType);
+		mainQuery.addResultVar(label);
+		mainQuery.setQueryPattern(main);
+		
+		return mainQuery.toString(Syntax.syntaxSPARQL_11);
+	}
+	
 	
 	public String findLocalReference(Track track, Node globalReference) {
 		

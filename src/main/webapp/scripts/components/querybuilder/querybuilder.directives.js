@@ -83,12 +83,12 @@ angular.module('boinqApp').directive('criteriondetail', function() {
 	return {
 		restrict: 'E',
 		scope: {
-			criterion: '='
+			criterion: '=',
+			supportedFeatureTypes: '='
 		},
 		link: function(scope, element, attrs) {
+			console.log(scope);
 			scope.computeUrl = function(criterion) {
-				console.log("criterion changed");
-				console.log(criterion);
 				if (criterion == null) scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/undefined.html';
 				else scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/' + criterion.type + '.html';
 			};

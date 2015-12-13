@@ -1,16 +1,17 @@
-angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQueryService','resolvedDatasource',function($scope,dragging,FeatureQueryService,resolvedDatasource) {
+angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQueryService','resolvedDatasource','QueryBuilderService','callEndpoint',function($scope,dragging,FeatureQueryService,resolvedDatasource,QueryBuilderService,callEndpoint) {
 
 	console.log("Registering controller QueryBuilderController");
 	
 	$scope.datasources = resolvedDatasource;
 	$scope.tracks = {};
+	$scope.datasourceref = {};
 	
 	for (var i = 0; i < resolvedDatasource.length; i++) {
 		var tracks = resolvedDatasource[i].tracks;
 		for (var i = 0; i < tracks.length; i++) {
 			var track = tracks[i];
 			$scope.tracks[track.id] = track;
-			console.log("trackid "+track.id);
+			$scope.datasourceref[track.id] = resolvedDatasource[i];
 		}
 	}
 	
@@ -31,11 +32,8 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 	}
 	
 	$scope.dropped = function(event,element,trackId) {
-		console.log("looking up track "+trackId);
 		var track = $scope.tracks[trackId];
-		console.log("trackid "+track.id);
 
-		console.log(track);
 		activeFS(event.offsetX, event.offsetY, track.id, track.name);
 	}
 	
@@ -98,10 +96,10 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		            var deltaX = curCoords.x - lastMouseCoords.x;
 		            var deltaY = curCoords.y - lastMouseCoords.y;
 
-		            fs.xc = fs.xc + deltaX;
-		            fs.yc = fs.yc + deltaY;
-		            fs.viewX = fs.xc + "px";
-		            fs.viewY = fs.yc + "px";
+		            fs.viewX = fs.viewX + deltaX;
+		            fs.viewY = fs.viewY + deltaY;
+		            fs.xpos = fs.viewX + "px";
+		            fs.ypos = fs.viewY + "px";
 
 		            lastMouseCoords = curCoords;
 		        },
@@ -119,7 +117,7 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		 dragging.startDrag(event, {
 		        dragStarted: function (x, y) {
 		        	lastMouseCoords = {x:x, y:y};
-		        	$scope.selectLine = {x1:fs.xc, y1:fs.yc, x2:fs.xc, y2:fs.yc};
+		        	$scope.selectLine = {x1:fs.viewX, y1:fs.viewY, x2:fs.viewX, y2:fs.viewY};
 		        },
 		        dragging: function (x, y) {
 		            curCoords = {x:x, y:y};
@@ -139,7 +137,6 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		        		$scope.activeFJ.push(fj);
 		        		$scope.selectedFJ = fj;
 		        		$scope.selectedFS = undefined;
-		        		console.log("linking " + fs + " to " + $scope.overFS);
 		        	}
 		        }
 		    });
@@ -147,24 +144,53 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		
 	}
 	
-	activeFS = function(x, y, trackId, trackName) {
-	    var xpos = x + "px";
-	    var ypos = y + "px";
-	    
-	    var FS = {viewX:xpos, viewY:ypos, xc:x, yc:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined"};
-	    
-		$scope.activeFS.push(FS);
-	}
+	activeFS = function() {
+			
+			var idx = 0;
+			
+			return function(x, y, trackId, trackName) {
+
+				var xpos = x + "px";
+				var ypos = y + "px";
+				
+				var track = $scope.tracks[trackId];
+				var datasource = $scope.datasourceref[trackId];
+				
+				// TODO: fetch supported filters for track
+				// now: assume all tracks support type filter and location filter
+				
+				// fetch feature types for type filter
+				var queryTypes = [];
+
+				QueryBuilderService.featureTypeQuery(trackId).then(function(queryString) {
+					callEndpoint(datasource.metaEndpointUrl,datasource.metaGraphName,queryString).then(function(successResponse){
+						var records = successResponse.data.results.bindings;
+						for (var i=0; i<records.length; i++) {
+							var record = records[i];
+							queryTypes.push({uri: record.featureType.value, label: record.label.value});
+						}
+					}, function(error) {
+						console.error(error);
+					});
+				});
+				
+				var FS = {idx:idx++, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes};
+				$scope.activeFS.push(FS);
+			}
+	}();
 	
 	$scope.save = function() {
 		
 		var featureQuery = {
-				joins : $scope.featureJoins,
-				selects : $scope.featureSelects,
-				ownerId : $user
+				joins : $scope.activeFJ,
+				selects : $scope.activeFS,
+				ownerId : $scope.$user
 		};
 		
-		FeatureQueryService.post(featureQuery)
+		console.log("Saving featurequery: ");
+		console.log(featureQuery);
+		
+		FeatureQueryService.create(featureQuery)
 		
 	}
 	

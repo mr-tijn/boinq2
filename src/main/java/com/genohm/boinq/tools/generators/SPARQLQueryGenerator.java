@@ -38,6 +38,7 @@ import com.genohm.boinq.domain.match.FeatureJoin;
 import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.domain.match.FeatureSelect;
 import com.genohm.boinq.domain.match.FeatureSelectCriterion;
+import com.genohm.boinq.domain.match.FeatureTypeCriterion;
 import com.genohm.boinq.domain.match.LocationCriterion;
 import com.genohm.boinq.domain.match.LocationOverlap;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
@@ -192,6 +193,12 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	@Override
 	public void visit(FeatureQuery fq, GenomicRegion r) {
 		computeQuery(fq, r);
+	}
+
+	@Override
+	public void visit(FeatureTypeCriterion fc, GenomicRegion r) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

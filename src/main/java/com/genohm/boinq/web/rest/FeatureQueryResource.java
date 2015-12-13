@@ -23,14 +23,16 @@ public class FeatureQueryResource {
 
 	@Inject
 	private FeatureQueryRepository featureQueryResource;
+	@Inject
+	private FeatureQueryFactory featureQueryFactory;
 	
     @RequestMapping(value = "/rest/featurequery",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     public void create(Principal principal, @RequestBody FeatureQueryDTO featureQueryDTO) throws Exception {
-    	FeatureQuery fq = FeatureQueryFactory.createFeatureQuery(featureQueryDTO);
-    	
+    	FeatureQuery fq = featureQueryFactory.createFeatureQuery(featureQueryDTO);
+    	featureQueryResource.save(fq);
     }
     
 

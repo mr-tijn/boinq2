@@ -3,6 +3,7 @@ package com.genohm.boinq.domain.match;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,11 +25,11 @@ public class FeatureQuery implements QueryGeneratorAcceptor {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
-	@OneToMany
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	@JoinColumn(name="feature_query_id")
-	Set<FeatureJoin> joins = new HashSet<>();
+	private Set<FeatureJoin> joins = new HashSet<>();
 
-	@OneToMany
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	@JoinColumn(name="feature_query_id")
 	Set<FeatureSelect> selects = new HashSet<>();
 	
