@@ -589,7 +589,7 @@ public class TripleConverter {
 		for (Node x : uniqueTypes){
 			triples.add(new Triple(Graph, TrackVocab.FeatureType.asNode(), x));
 			}
-		triples.add(new Triple(Graph, TrackVocab.fileExtension.asNode(), NodeFactory.createLiteral(metadata.fileType, XSDstring)));
+//		triples.add(new Triple(Graph, TrackVocab.fileExtension.asNode(), NodeFactory.createLiteral(metadata.fileType, XSDstring)));
 		triples.add(new Triple(Graph, GfvoVocab.File.asNode(), NodeFactory.createLiteral(metadata.fileName, XSDstring)));
 		return triples;
 		}

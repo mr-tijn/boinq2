@@ -24,6 +24,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.genohm.boinq.Application;
 import com.genohm.boinq.domain.RawSPARQLResultSet;
+import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.init.TripleStoreInitializer;
 import com.genohm.boinq.service.FusekiMgmtService;
@@ -90,25 +91,16 @@ public class GFFConverterTest {
 	
 	@Test
 	public void testBedConversion() throws Exception {
-		Metadata meta = new Metadata();
 		String filePath = getClass().getResource("/inputfiles/testGFF.gff3").getFile();
 		Map<String, Node> refMap = new HashMap<String, Node>();
 		refMap.put("chr9", TrackVocab.GRCh37chr09.asNode());
-		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap, meta);
+		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap, null);
 		String graphName = localGraphService.createLocalGraph("testGraph");
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {
 			uploader.triple(iterator.next());
 		}
-<<<<<<< HEAD
 		uploader.finish();
-=======
-<<<<<<< HEAD
-		uploader.finish();
-=======
-		
->>>>>>> 2e1a22792fd80463a9df9671db6cac990412d049
->>>>>>> 9ff64da8099f9809b9d4a9da3b35989401fff492
 		String query1 = "PREFIX track: <http://www.boinq.org/track#> " +
 						"SELECT COUNT(?feature) WHERE {?feature a track:BedFeature}";
 		RawSPARQLResultSet result1 = sparqlClient.rawQuery(localGraphService.getSparqlEndpoint(), graphName, query1);
