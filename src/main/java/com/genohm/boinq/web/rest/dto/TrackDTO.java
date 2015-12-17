@@ -11,8 +11,10 @@ public class TrackDTO {
 	private long id;
 	private int status;
     private String graphName;
+    private String fileType;
     private String name;
     private String type;
+    private String species;
     private long datasourceId;
 	private Set<RawDataFileDTO> rawDataFiles;
 
@@ -39,6 +41,13 @@ public class TrackDTO {
 	public void setGraphName(String graphName) {
 		this.graphName = graphName;
 	}
+	
+	public String getFileType() {
+		return fileType;
+	}
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
 
 	public String getName() {
 		return name;
@@ -54,6 +63,14 @@ public class TrackDTO {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public String getSpecies() {
+		return species;
+	}
+	
+	public void setSpecies(String species){
+		this.species = species;
 	}
 
 	public long getDatasourceId() {
@@ -79,7 +96,9 @@ public class TrackDTO {
 		this.status = track.getStatus();
 		this.name = track.getName();
 		this.graphName = track.getGraphName();
+		this.fileType = track.getFileType();
 		this.type = track.getType();
+		this.species = track.getSpecies();
 		this.rawDataFiles = new HashSet<RawDataFileDTO>();
 		for (RawDataFile dataFile: track.getRawDataFiles()) {
 			rawDataFiles.add(new RawDataFileDTO(dataFile));

@@ -78,7 +78,6 @@ public class ProxyConfiguration implements EnvironmentAware {
         return registration;
 	}
 
-	
 
-	
+
 }

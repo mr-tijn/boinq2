@@ -29,6 +29,8 @@ public class Track implements Serializable {
 	public static final int STATUS_EMPTY = 0;
 	public static final int STATUS_RAW_DATA = 1;
 	
+	
+	
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
@@ -36,6 +38,10 @@ public class Track implements Serializable {
     @Size(min = 1, max = 200)
     @Column(name = "graph_name", nullable = true)
     private String graphName;
+    
+    @Size(min =1, max = 200)
+    @Column(name = "file_type", nullable = true)
+    private String fileType;
 
     @Size(min = 1, max = 200)
     @Column(name = "name", nullable = true)
@@ -44,6 +50,11 @@ public class Track implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "type", nullable = true)
     private String type;
+    
+    @Size(min = 1, max = 200)
+    @Column(name = "species", nullable = true)
+    private String species;
+    
     
     @OneToMany(fetch=FetchType.EAGER, orphanRemoval=true,targetEntity=RawDataFile.class)
     private Set<RawDataFile> rawDataFiles;
@@ -70,6 +81,13 @@ public class Track implements Serializable {
 		this.graphName = graphName;
 	}
 
+	public String getFileType() {
+		return fileType;
+	}
+	public void setFileType (String fileType) {
+		this.fileType = fileType;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -85,6 +103,16 @@ public class Track implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public String getSpecies() {
+		return species;
+	}
+	
+	public void setSpecies(String species) {
+		this.species = species;
+	}
+	
+
 
 	public Set<RawDataFile> getRawDataFiles() {
 		return rawDataFiles;
@@ -140,8 +168,10 @@ public class Track implements Serializable {
         return "Track{" +
                 "id=" + id +
                 ", graphName='" + graphName + "'" +
+                ", fileType='" + fileType + "'" +
                 ", name='" + name + "'" +
                 ", type='" + type + "'" +
+                ", species='" + species + "'" +
                 ", rawDataFiles = [" + rawDataFilesString + "]" +
                 '}';
     }
