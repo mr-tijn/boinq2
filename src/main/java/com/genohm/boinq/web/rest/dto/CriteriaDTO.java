@@ -16,4 +16,6 @@ public class CriteriaDTO {
 	public String featureTypeUri;
 	public String featureTypeLabel;
 	
+	public CriteriaDTO() {}
+	
 }

@@ -8,7 +8,10 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.springframework.stereotype.Service;
 
+import com.genohm.boinq.domain.User;
+import com.genohm.boinq.repository.FeatureQueryRepository;
 import com.genohm.boinq.repository.TrackRepository;
+import com.genohm.boinq.repository.UserRepository;
 import com.genohm.boinq.web.rest.dto.CriteriaDTO;
 import com.genohm.boinq.web.rest.dto.FeatureJoinDTO;
 import com.genohm.boinq.web.rest.dto.FeatureQueryDTO;
@@ -19,16 +22,25 @@ public class FeatureQueryFactory {
 	
 	@Inject
 	TrackRepository trackRepository;
+	@Inject
+	UserRepository userRepository;
+	@Inject
+	FeatureQueryRepository featureQueryRepository;
 	
 	public FeatureSelectCriterion createCriterion(CriteriaDTO dto) throws Exception {
 		switch (dto.type) {
 		case CriteriaDTO.LOCATION_CRITERIA: 
-			LocationCriterion result = new LocationCriterion();
-			result.setStart(dto.start);
-			result.setEnd(dto.end);
-			result.setContig(dto.contig);
-			result.setStrand(dto.strand);
-			return result;
+			LocationCriterion locationCrit = new LocationCriterion();
+			locationCrit.setStart(dto.start);
+			locationCrit.setEnd(dto.end);
+			locationCrit.setContig(dto.contig);
+			locationCrit.setStrand(dto.strand);
+			return locationCrit;
+		case CriteriaDTO.FEATURETYPE_CRITERIA:
+			FeatureTypeCriterion featureTypeCrit = new FeatureTypeCriterion();
+			featureTypeCrit.setFeatureTypeLabel(dto.featureTypeLabel);
+			featureTypeCrit.setFeatureTypeUri(dto.featureTypeUri);
+			return featureTypeCrit;
 		default: throw new Exception("Unhandled type "+dto.type);
 		}
 	}
@@ -38,9 +50,10 @@ public class FeatureQueryFactory {
 		for (CriteriaDTO criterion: dto.criteria) {
 			featureSelect.addCriteria(createCriterion(criterion));
 		}
-		featureSelect.setTrack(trackRepository.findOne(Integer.toUnsignedLong(dto.trackId)));
+		featureSelect.setTrack(trackRepository.findOne(dto.trackId));
 		featureSelect.setViewX(dto.viewX);
 		featureSelect.setViewY(dto.viewY);
+		featureSelect.setIdx(dto.idx);
 		featureSelect.setRetrieveFeatureData(dto.retrieve);
 		return featureSelect;
 	}
@@ -64,10 +77,13 @@ public class FeatureQueryFactory {
 		}
 		for (FeatureJoinDTO joinDTO: fq.joins) {
 			FeatureJoin join = createJoin(joinDTO);
-			join.setSource(deserialized.get(joinDTO.sourceSelect.idx));
-			join.setTarget(deserialized.get(joinDTO.targetSelect.idx));
+			join.setSource(deserialized.get(joinDTO.sourceSelectIdx));
+			join.setTarget(deserialized.get(joinDTO.targetSelectIdx));
 			featureQuery.addJoin(join);
 		}
+		User owner = userRepository.findOneByLogin(fq.ownerId).get();
+		featureQuery.setOwner(owner);
+		featureQuery.setName(fq.name);
 		return featureQuery;
 	}
 }

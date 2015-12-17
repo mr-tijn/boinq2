@@ -3,7 +3,7 @@ angular.module('boinqApp')
     $stateProvider
         .state('querybuilder', {
             parent: 'management',
-            url: '/querybuilder',
+            url: '/querybuilder?{fqId:[0-9]}',
             data: {
                 roles: [],
                 pageTitle: 'querybuilder.title'
@@ -17,7 +17,17 @@ angular.module('boinqApp')
             resolve: {
             	resolvedDatasource: ['Datasource', function (Datasource) {
                     return Datasource.query();
-                }]
+                }],
+                resolvedFeatureQuery: ['FeatureQueryService', '$stateParams', function(FeatureQueryService,$stateParams) {
+                	if ($stateParams.fqId != null) {
+                		return FeatureQueryService.get($stateParams.fqId);
+                	} else {
+                		return null;
+                	}
+                }],
+                resolvedAccount: ['Principal', function(Principal) {
+                	return Principal.identity();
+                }]	
             }
         });
 });

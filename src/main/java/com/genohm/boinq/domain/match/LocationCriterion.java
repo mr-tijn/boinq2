@@ -3,9 +3,6 @@ package com.genohm.boinq.domain.match;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 import com.genohm.boinq.domain.GenomicRegion;
 import com.genohm.boinq.tools.generators.QueryGenerator;
@@ -65,4 +62,15 @@ public class LocationCriterion extends FeatureSelectCriterion {
 	public void accept(QueryGenerator qg, GenomicRegion r) {
 		qg.visit(this, r);
 	}
+	
+	@Override
+	public CriteriaDTO createDTO() {
+		CriteriaDTO result = new CriteriaDTO();
+		result.contig = this.contig;
+		result.start = this.start;
+		result.strand = this.strand;
+		result.type = CriteriaDTO.LOCATION_CRITERIA;
+		return result;
+	}
+	
 }

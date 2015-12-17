@@ -1,10 +1,47 @@
-angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQueryService','resolvedDatasource','QueryBuilderService','callEndpoint',function($scope,dragging,FeatureQueryService,resolvedDatasource,QueryBuilderService,callEndpoint) {
+angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQueryService','resolvedDatasource','resolvedFeatureQuery','resolvedAccount','QueryBuilderService','callEndpoint',function($scope,dragging,FeatureQueryService,resolvedDatasource,resolvedFeatureQuery,resolvedAccount,QueryBuilderService,callEndpoint) {
 
 	console.log("Registering controller QueryBuilderController");
 	
 	$scope.datasources = resolvedDatasource;
 	$scope.tracks = {};
 	$scope.datasourceref = {};
+	$scope.featureQuery = {selects: [], joins: []};
+	$scope.cansave = true;
+	
+	var processResolvedFeatureQuery = function(resolvedFeatureQuery) {
+		console.log(resolvedFeatureQuery);
+		if (resolvedFeatureQuery != null) {
+			var selectIdx = {};
+			$scope.cansave = false;
+			for (var i=0; i< resolvedFeatureQuery.selects.length; i++) {
+				var select =  resolvedFeatureQuery.selects[i];
+				for (var j=0; j<select.criteria; j++) {
+					var crit = select.criteria[j];
+					if (crit.featureTypeUri) {
+						crit.featureType = {uri:crit.featureTypeUri, label:crit.featureTypeLabel};
+					}
+				}
+				select.xpos = select.viewX+"px";
+				select.ypos = select.viewY+"px";
+				selectIdx[select.idx] = select;
+			}
+			var joins = [];
+			var indexedJoins = resolvedFeatureQuery.joins;
+			for (var i=0; i<indexedJoins.length; i++) {
+				var indexedJoin = indexedJoins[i];
+				joins.push({
+					sourceSelect:selectIdx[indexedJoin.sourceSelectIdx],
+					targetSelect:selectIdx[indexedJoin.targetSelectIdx]});
+			}
+			$scope.featureQuery = {
+			 	selects: resolvedFeatureQuery.selects,
+				joins: joins,
+				ownerId: resolvedFeatureQuery.ownerId
+			};
+		}
+	};
+	
+	processResolvedFeatureQuery(resolvedFeatureQuery);
 	
 	for (var i = 0; i < resolvedDatasource.length; i++) {
 		var tracks = resolvedDatasource[i].tracks;
@@ -15,11 +52,9 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		}
 	}
 	
-	$scope.activeFS = [];
 	$scope.selectedFS = undefined;
 	$scope.overFS = null;
 
-	$scope.activeFJ = [];
 	$scope.selectedFJ = undefined;
 	$scope.overFJ = null;
 	
@@ -134,7 +169,7 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		        	$scope.selectLine = undefined;
 		        	if ($scope.overFS != null && $scope.overFS != fs) {
 		        		var fj = link(fs,$scope.overFS);
-		        		$scope.activeFJ.push(fj);
+		        		$scope.featureQuery.joins.push(fj);
 		        		$scope.selectedFJ = fj;
 		        		$scope.selectedFS = undefined;
 		        	}
@@ -174,22 +209,58 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 					});
 				});
 				
-				var FS = {idx:idx++, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes};
-				$scope.activeFS.push(FS);
+				var FS = {idx:idx, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes, retrieve : false};
+				idx++;
+				$scope.featureQuery.selects.push(FS);
 			}
 	}();
 	
 	$scope.save = function() {
 		
+		console.log($scope.featureQuery);
+		// rebuild the object to get rid of unnecessary stuff in the JSON
 		var featureQuery = {
-				joins : $scope.activeFJ,
-				selects : $scope.activeFS,
-				ownerId : $scope.$user
+				joins : [],
+				selects : [],
+				name: $scope.featureQuery.name,
+				ownerId : resolvedAccount.login
 		};
+		for (var i=0; i<$scope.featureQuery.joins.length; i++) {
+			var join = $scope.featureQuery.joins[i];
+			featureQuery.joins.push({
+				type:join.type,
+				sourceSelectIdx:join.sourceSelect.idx, 
+				targetSelectIdx:join.targetSelect.idx});
+		}
+		for (var i=0; i<$scope.featureQuery.selects.length; i++) {
+			var select = $scope.featureQuery.selects[i];
+			var criteria = [];
+			for (var j=0; j< select.criteria.length; j++) {
+				var criterion = select.criteria[j];
+				criteria.push({
+					type: criterion.type,
+					contig: criterion.contig,
+					start: criterion.start,
+					end: criterion.end,
+					strand: criterion.strand,
+					featureTypeUri: (criterion.featureType?criterion.featureType.uri:null),
+					featureTypeLabel: (criterion.featureType?criterion.featureType.label:null)
+				});
+			}
+			featureQuery.selects.push ({
+				idx: select.idx,
+				viewX: select.viewX,
+				viewY: select.viewY,
+				criteria: criteria,
+				trackId: select.trackId,
+				retrieve: select.retrieve
+			});
+		}
 		
 		console.log("Saving featurequery: ");
 		console.log(featureQuery);
 		
+	
 		FeatureQueryService.create(featureQuery)
 		
 	}

@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 import com.genohm.boinq.domain.GenomicRegion;
 import com.genohm.boinq.tools.generators.QueryGenerator;
+import com.genohm.boinq.web.rest.dto.CriteriaDTO;
 
 @Entity
 @Table(name="T_FEATURESELECTCRITERION")
@@ -22,4 +23,6 @@ public abstract class FeatureSelectCriterion implements QueryGeneratorAcceptor {
     public FeatureSelectCriterion() {}
     
 	public void accept(QueryGenerator qg, GenomicRegion region) {}
+	
+	public CriteriaDTO createDTO() {return null;}
 }

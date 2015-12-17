@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import com.genohm.boinq.domain.GenomicRegion;
 import com.genohm.boinq.tools.generators.QueryGenerator;
+import com.genohm.boinq.web.rest.dto.FeatureJoinDTO;
 
 @Entity
 @Table(name="T_FEATUREJOIN")
@@ -35,8 +36,21 @@ public abstract class FeatureJoin implements QueryGeneratorAcceptor {
 	public void setSource(FeatureSelect sourceSelect) {
 		this.sourceSelect = sourceSelect;
 	}
+	public FeatureSelect getSource() {
+		return sourceSelect;
+	}
 	public void setTarget(FeatureSelect targetSelect) {
 		this.targetSelect = targetSelect;
 	}
+	public FeatureSelect getTarget() {
+		return targetSelect;
+	}
 	public void accept(QueryGenerator qg, GenomicRegion region) {}
+	
+	public FeatureJoinDTO createDTO() {
+		FeatureJoinDTO result = new FeatureJoinDTO();
+		result.sourceSelectIdx = this.sourceSelect.getIdx();
+		result.targetSelectIdx = this.targetSelect.getIdx();
+		return result;
+	}
 }

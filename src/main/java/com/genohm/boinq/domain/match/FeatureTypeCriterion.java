@@ -37,4 +37,13 @@ public class FeatureTypeCriterion extends FeatureSelectCriterion {
 	public void accept(QueryGenerator qg, GenomicRegion r) {
 		qg.visit(this, r);
 	}
+	
+	@Override
+	public CriteriaDTO createDTO() {
+		CriteriaDTO result = new CriteriaDTO();
+		result.featureTypeUri = this.featureTypeUri;
+		result.featureTypeLabel = this.featureTypeLabel;
+		result.type = CriteriaDTO.FEATURETYPE_CRITERIA;
+		return result;
+	}
 }

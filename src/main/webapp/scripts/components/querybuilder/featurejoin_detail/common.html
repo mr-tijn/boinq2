@@ -1,1 +1,9 @@
-<div ng-show="join != null" ng-include="detailUrl"></div>
+<div ng-show="join">
+<div class="input-group">
+	<span class="input-group-addon">Join type</span> 
+	<select class="form-control" ng-model="join.type">
+		<option ng-repeat="nodeType in ['LocationOverlap']">{{nodeType}}</option>
+	</select>
+</div>
+<div ng-include="detailUrl"></div>
+</div>

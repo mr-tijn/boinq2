@@ -2,9 +2,6 @@ package com.genohm.boinq.domain.match;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 import com.genohm.boinq.domain.GenomicRegion;
 import com.genohm.boinq.tools.generators.QueryGenerator;
@@ -19,6 +16,12 @@ public class LocationOverlap extends FeatureJoin {
 	@Override
 	public void accept(QueryGenerator qg, GenomicRegion r) {
 		qg.visit(this, r);
+	}
+	
+	public FeatureJoinDTO createDTO() {
+		FeatureJoinDTO result = super.createDTO();
+		result.type = FeatureJoinDTO.JOIN_TYPE_OVERLAP;
+		return result;
 	}
 	
 }

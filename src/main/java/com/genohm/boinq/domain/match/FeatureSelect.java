@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 import com.genohm.boinq.domain.GenomicRegion;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.tools.generators.QueryGenerator;
+import com.genohm.boinq.web.rest.dto.FeatureSelectDTO;
 
 @Entity
 @Table(name="T_FEATURESELECT")
@@ -33,7 +35,7 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
     @Column(name="retrieve_feature_data")
 	private Boolean retrieveFeatureData;
     
-    @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER)
     @JoinColumn(name="feature_select_id")
 	private Set<FeatureSelectCriterion> criteria = new HashSet<>();
 	
@@ -43,6 +45,9 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 
     @Column(name="view_y")
     private int viewY;
+    
+    @Column(name="idx")
+    private int idx;
     
 	public FeatureSelect() {}
 	
@@ -62,6 +67,10 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 		this.retrieveFeatureData = retrieveFeatureData;
 	}
 
+	public Track getTrack() {
+		return track;
+	}
+
 	public void setTrack(Track track) {
 		this.track = track;
 	}
@@ -70,13 +79,22 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 		this.viewX = viewX;
 	}
 
+	public int getViewX() {
+		return viewX;
+	}
+
 	public void setViewY(int viewY) {
 		this.viewY = viewY;
 	}
 
-	public Track getTrack() {
-		return track;
+	public int getIdx() {
+		return idx;
 	}
+	
+	public void setIdx(int idx) {
+		this.idx = idx;
+	}
+	
 	public Boolean retrieveFeatureData() {
 		return retrieveFeatureData;
 	}
@@ -85,9 +103,6 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 		return criteria;
 	}
 	
-	public int getViewX() {
-		return viewX;
-	}
 
 	public int getViewY() {
 		return viewY;
@@ -99,5 +114,19 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 	
 	public void accept(QueryGenerator qg, GenomicRegion region) {
 		qg.visit(this, region);
+	}
+	
+	public FeatureSelectDTO createDTO() {
+		FeatureSelectDTO result = new FeatureSelectDTO();
+		result.type = FeatureSelectDTO.FALDO_SELECT_TYPE;
+		result.trackId = this.id;
+		result.retrieve = this.retrieveFeatureData;
+		result.criteria = new HashSet<>();
+		for (FeatureSelectCriterion crit: this.criteria) {
+			result.criteria.add(crit.createDTO());
+		}
+		result.viewX = this.viewX;
+		result.viewY = this.viewY;
+		return result;
 	}
 }
