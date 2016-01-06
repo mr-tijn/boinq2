@@ -8,8 +8,8 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 	$scope.featureQuery = {selects: [], joins: []};
 	$scope.cansave = true;
 	
+	
 	var processResolvedFeatureQuery = function(resolvedFeatureQuery) {
-		console.log(resolvedFeatureQuery);
 		if (resolvedFeatureQuery != null) {
 			var selectIdx = {};
 			$scope.cansave = false;
@@ -98,14 +98,6 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 	$scope.overLink = function(ln) {
 		if ($scope.overFJ == ln) {
 			return "over";
-		} else {
-			return "";
-		}
-	}
-	
-	$scope.selectedFJ = function(ln) {
-		if ($scope.selectedFJ == ln) {
-			return "selected";
 		} else {
 			return "";
 		}

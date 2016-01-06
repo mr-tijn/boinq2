@@ -16,7 +16,7 @@ angular.module('boinqApp')
             },
             resolve: {
             	resolvedDatasource: ['Datasource', function (Datasource) {
-                    return Datasource.query();
+                    return Datasource.query().$promise;
                 }],
                 resolvedFeatureQuery: ['FeatureQueryService', '$stateParams', function(FeatureQueryService,$stateParams) {
                 	if ($stateParams.fqId != null) {
