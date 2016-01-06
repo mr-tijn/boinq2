@@ -33,7 +33,9 @@
                 "datasources": "Datasources",
                 "projects": "Projets",
                 "jobs": "En cours",
-                "sparqlbrowser": "Navigateur SPARQL"
+                "sparqlbrowser": "Navigateur SPARQL",
+				"querybuilder" : "Requetes"
+                
             },
             "language": "Langue"
         },

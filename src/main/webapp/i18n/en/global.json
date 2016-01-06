@@ -33,7 +33,8 @@
                 "datasources": "Datasources",
                 "projects": "Projects",
                 "jobs": "Running jobs",
-                "sparqlbrowser": "SPARQL Browser"
+                "sparqlbrowser": "SPARQL Browser",
+                "querybuilder" : "Query Builder"
             },
             "language": "Language"
         },
