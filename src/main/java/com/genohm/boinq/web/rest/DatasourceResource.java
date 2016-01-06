@@ -66,6 +66,7 @@ public class DatasourceResource {
         	datasource.setIsPublic(datasourceDTO.getIsPublic()!=null?datasourceDTO.getIsPublic():false);
         	datasource.setName(datasourceDTO.getName());
         	datasource.setType(datasourceDTO.getType());
+        	datasource.setIri(datasourceDTO.getIri());
             datasource.setTracks(new HashSet<Track>());
             Optional<User> currentUser = userRepository.findOneByLogin(principal.getName());
             datasource.setOwner(currentUser.get());
@@ -74,6 +75,7 @@ public class DatasourceResource {
         	datasource.setIsPublic(datasourceDTO.getIsPublic()!=null?datasourceDTO.getIsPublic():false);
         	datasource.setName(datasourceDTO.getName());
         	datasource.setType(datasourceDTO.getType());
+        	datasource.setIri(datasourceDTO.getIri());
         }
         if (Datasource.TYPE_LOCAL_FALDO == datasource.getType()) {
         	datasource.setEndpointUrl(localGraphService.getSparqlEndpoint());
