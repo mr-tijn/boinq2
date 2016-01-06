@@ -120,6 +120,7 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 		FeatureSelectDTO result = new FeatureSelectDTO();
 		result.type = FeatureSelectDTO.FALDO_SELECT_TYPE;
 		result.trackId = this.id;
+		result.idx = this.idx;
 		result.retrieve = this.retrieveFeatureData;
 		result.criteria = new HashSet<>();
 		for (FeatureSelectCriterion crit: this.criteria) {
