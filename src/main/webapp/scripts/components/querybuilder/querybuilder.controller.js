@@ -204,6 +204,8 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 				var FS = {idx:idx, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes, retrieve : false};
 				idx++;
 				$scope.featureQuery.selects.push(FS);
+				$scope.selectedFS = FS;
+				$scope.selectedFJ = undefined;
 			}
 	}();
 	
