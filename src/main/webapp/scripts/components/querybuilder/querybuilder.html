@@ -1,36 +1,63 @@
-<div mouse-capture class="row">
-	<div class="col-md-12 column">
-		<div class="row">
-			
+<div>
+
+	<h2>Query</h2>
+
+	<a ui-sref="featurequery">
+		<button class="btn btn-primary btn-sm" ng-click="clear()">
+			<span class="glyphicon glyphicon-fast-backward"></span> FeatureQuery Overview
+		</button>
+	</a>
+	
+	<div mouse-capture class="row">
+		<div class="col-md-12 column">
+			<div class="row"></div>
 		</div>
-	</div>
-	<div class="col-md-3 column">
-		<div class="row">Drag track to the canvas</div>
-		<div class="row" ng-repeat="ds in datasources">
-			<div>Datasource {{ds.name}} :</div>
-			<div class="btn btn-primary" ng-repeat="track in ds.tracks" draggable dragdata="track.id">{{track.name}}</div>
+		<div class="col-md-3 column">
+			<div class="row">Drag track to the canvas</div>
+			<div class="row" ng-repeat="ds in datasources">
+				<div>Datasource {{ds.name}} :</div>
+				<div class="btn btn-primary" ng-repeat="track in ds.tracks"
+					draggable dragdata="track.id">{{track.name}}</div>
+			</div>
 		</div>
-	</div>
- 	<div class="col-md-9 column">
-		<div class="row">Drag green center to move, drag grey ring to connect, click to select</div> 	
- 		<div class="row well">
- 			<svg width="100%"  height="275" droppable drop="dropped"  ng-mousemove="mouseMove($event)">
- 				<line ng-repeat="fj in featureQuery.joins" ng-attr-x1="{{fj.sourceSelect.xpos}}" ng-attr-y1="{{fj.sourceSelect.ypos}}" ng-attr-x2="{{fj.targetSelect.xpos}}" ng-attr-y2="{{fj.targetSelect.ypos}}" class="bnq_link" ng-class="overLink(fj)" ng-class="selectedLink(fj)" ng-mouseDown="lineMouseDown($event,fj)"/>
-				<line ng-model="selectLine" ng-attr-x1="{{selectLine.x1}}" ng-attr-y1="{{selectLine.y1}}" ng-attr-x2="{{selectLine.x2}}" ng-attr-y2="{{selectLine.y2}}" class="bnq_drag_line" />
- 				<circle ng-mousedown="ringMouseDown($event, fs)" ng-repeat="fs in featureQuery.selects" ng-attr-cx="{{fs.xpos}}" ng-attr-cy="{{fs.ypos}}" r="20" class="bnq_ds_ring"></circle>
- 				<circle ng-mousedown="nodeMouseDown($event, fs)" ng-repeat="fs in featureQuery.selects" ng-attr-cx="{{fs.xpos}}" ng-attr-cy="{{fs.ypos}}" r="10" ng-class="selectedFS == fs ? 'bnq_ds_selected' : 'bnq_ds_circle'"></circle>
+		<div class="col-md-9 column">
+			<div class="row">Drag green center to move, drag grey ring to
+				connect, click to select</div>
+			<div class="row well">
+				<svg width="100%" height="275" droppable drop="dropped"
+					ng-mousemove="mouseMove($event)">
+ 				<line ng-repeat="fj in featureQuery.joins"
+						ng-attr-x1="{{fj.sourceSelect.xpos}}"
+						ng-attr-y1="{{fj.sourceSelect.ypos}}"
+						ng-attr-x2="{{fj.targetSelect.xpos}}"
+						ng-attr-y2="{{fj.targetSelect.ypos}}" class="bnq_link"
+						ng-class="overLink(fj)" ng-class="selectedLink(fj)"
+						ng-mouseDown="lineMouseDown($event,fj)" />
+				<line ng-model="selectLine" ng-attr-x1="{{selectLine.x1}}"
+						ng-attr-y1="{{selectLine.y1}}" ng-attr-x2="{{selectLine.x2}}"
+						ng-attr-y2="{{selectLine.y2}}" class="bnq_drag_line" />
+ 				<circle ng-mousedown="ringMouseDown($event, fs)"
+						ng-repeat="fs in featureQuery.selects" ng-attr-cx="{{fs.xpos}}"
+						ng-attr-cy="{{fs.ypos}}" r="20" class="bnq_ds_ring"></circle>
+ 				<circle ng-mousedown="nodeMouseDown($event, fs)"
+						ng-repeat="fs in featureQuery.selects" ng-attr-cx="{{fs.xpos}}"
+						ng-attr-cy="{{fs.ypos}}" r="10"
+						ng-class="selectedFS == fs ? 'bnq_ds_selected' : 'bnq_ds_circle'"></circle>
  			</svg>
- 		</div>
- 		<div class="row well">
-			<joindetail join="selectedFJ"></joindetail>
-			<featureselectdetail featureselect="selectedFS"></featureselectdetail>
- 		</div>
- 		<div class="row">
-           <button type="button" class="btn btn-default" ng-show="cansave" ng-click="save()">
-	           <span class="glyphicon glyphicon-save"></span> Save
-			</button>
- 		</div>
-	</div> 
- 	
- 
- </div>
+			</div>
+			<div class="row well">
+				<joindetail join="selectedFJ"></joindetail>
+				<featureselectdetail featureselect="selectedFS"></featureselectdetail>
+			</div>
+			<div class="row">
+				<button type="button" class="btn btn-default" ng-show="cansave"
+					ng-click="save()">
+					<span class="glyphicon glyphicon-save"></span> Save
+				</button>
+			</div>
+		</div>
+
+
+	</div>
+
+</div>

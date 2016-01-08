@@ -1,4 +1,4 @@
-angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQueryService','resolvedDatasource','resolvedFeatureQuery','resolvedAccount','QueryBuilderService','callEndpoint',function($scope,dragging,FeatureQueryService,resolvedDatasource,resolvedFeatureQuery,resolvedAccount,QueryBuilderService,callEndpoint) {
+angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQuery','resolvedDatasource','resolvedFeatureQuery','resolvedAccount','QueryBuilderService','callEndpoint',function($scope,dragging,FeatureQuery,resolvedDatasource,resolvedFeatureQuery,resolvedAccount,QueryBuilderService,callEndpoint) {
 
 	console.log("Registering controller QueryBuilderController");
 	
@@ -255,7 +255,7 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 		console.log(featureQuery);
 		
 	
-		FeatureQueryService.create(featureQuery)
+		FeatureQuery.create(featureQuery)
 		
 	}
 	

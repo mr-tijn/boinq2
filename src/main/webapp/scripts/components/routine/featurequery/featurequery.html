@@ -1,0 +1,44 @@
+<div>
+
+	<h2>FeatureQueries</h2>
+
+	<a ui-sref="querybuilder">
+		<button class="btn btn-primary btn-sm" >
+			<span class="glyphicon glyphicon-flash"></span> Create a new
+			FeatureQuery
+		</button>
+	</a>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="fq in featurequeries">
+					<td>{{fq.id}}</td>
+					<td>{{fq.name}}</td>
+					<td>
+						<button type="submit" ng-click="remove(fq.id)"
+							class="btn btn-danger btn-sm">
+							<span class="glyphicon glyphicon-remove-circle"></span> Delete
+						</button> 
+						<a ui-sref="querybuilder({fqId:fq.id})">
+							<button class="btn btn-primary btn-sm">
+								<span class="glyphicon glyphicon-eye-open"></span> View
+							</button>
+						</a>
+						<button ng-click="start(fq.id)" class="btn btn-primary btn-sm">
+							<span class="glyphicon glyphicon-play"></span> Start
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+</div>

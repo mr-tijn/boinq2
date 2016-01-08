@@ -33,10 +33,13 @@
                 "datasources": "Datasources",
                 "projects": "Projets",
                 "jobs": "En cours",
-                "sparqlbrowser": "Navigateur SPARQL",
-				"querybuilder" : "Requetes"
-                
+                "sparqlbrowser": "Navigateur SPARQL"
             },
+            "routine": {
+            	"title": "Routine",
+                "featurequery" : "Requetes"
+            },
+            
             "language": "Langue"
         },
         "form": {
