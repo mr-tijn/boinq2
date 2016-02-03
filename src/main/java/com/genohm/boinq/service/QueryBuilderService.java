@@ -5,14 +5,9 @@ import org.apache.jena.riot.system.PrefixMapStd;
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.domain.match.Match;
-import com.genohm.boinq.domain.match.MatchFactory;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
-import com.genohm.boinq.tools.generators.ARQGenerator;
 import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
-import com.genohm.boinq.tools.vocabularies.FaldoVocabulary;
-import com.genohm.boinq.web.rest.dto.MatchDTO;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -39,6 +34,7 @@ import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.sparql.path.P_Link;
 import org.apache.jena.sparql.path.P_ZeroOrMore1;
+import org.apache.jena.sparql.path.PathFactory;
 import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementGroup;
@@ -52,11 +48,12 @@ import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
-
+import static org.apache.jena.sparql.path.PathFactory.*;
 @Service
 public class QueryBuilderService {
 
 	
+	public static final String OPERATOR_NAME = "operatorName";
 	public static final String ORIGINAL_REFERENCE_LABEL = "originalReferenceLabel";
 	public static final String TARGET_REFERENCE = "targetReference";
 	public static final String ORIGINAL_REFERENCE = "originalReference";
@@ -65,8 +62,17 @@ public class QueryBuilderService {
 	public static final String FEATURE_END_POS = "featureEndPos";
 	public static final String FEATURE_BEGIN_POS = "featureBeginPos";
 	public static final String FEATURE_ID = "featureId";
-	private static final String VARIABLE_FEATURE_TYPE = "featureType";
-	private static final String VARIABLE_LABEL = "label";
+	public static final String VARIABLE_FEATURE_TYPE = "featureType";
+	public static final String VARIABLE_FEATURE_TYPE_LABEL = "featureTypeLabel";
+	public static final String OPERATOR = "operator";
+	public static final String ENDPOINT_URI = "endpointUri";
+	public static final String ROOT_TERM = "rootTerm";
+	public static final String GRAPH_URI = "graphUri";
+	public static final String REFERENCE_ASSEMBLY = "referenceAssembly";
+	public static final String LOCALIZED_SEARCH = "localizedSearch";
+	public static final String OPERATOR_TYPE = "operatorType";
+	
+	
 	public static PrefixMapping commonPrefixes = new PrefixMappingImpl();
 	public static PrefixMapping faldoPrefixes = new PrefixMappingImpl();
 	{
@@ -78,7 +84,7 @@ public class QueryBuilderService {
 		commonPrefixes.setNsPrefix("skos", CommonVocabulary.skosBaseURI);
 		
 		faldoPrefixes.setNsPrefixes(commonPrefixes);
-		faldoPrefixes.setNsPrefix("faldo", FaldoVocabulary.baseURI);
+		faldoPrefixes.setNsPrefix("faldo", FaldoVocab.NS);
 	}
 
 	public static PrefixMap commonPrefixMap = new PrefixMapStd();
@@ -90,7 +96,7 @@ public class QueryBuilderService {
 		commonPrefixMap.add("xsd", CommonVocabulary.xmlSchemaURI);
 		commonPrefixMap.add("owl", CommonVocabulary.owlBaseURI);
 		commonPrefixMap.putAll(commonPrefixMap);
-		commonPrefixMap.add("faldo", FaldoVocabulary.baseURI);
+		commonPrefixMap.add("faldo", FaldoVocab.NS);
 	}
 	
 	private Node uri = NodeFactory.createVariable("uri");
@@ -225,12 +231,6 @@ public class QueryBuilderService {
 		return insertStatement.toString(commonPrefixes);
 	}
 
-	public String getQueryFromMatch(MatchDTO matchDTO) throws Exception {
-		ARQGenerator generator = new ARQGenerator();
-		Match rootMatch = MatchFactory.fromDTO(matchDTO);
-		return generator.generateQuery(rootMatch);
-	}
-	
 	public String getFaldoFeatures(String localReference, Long begin, Long end, Boolean strand) {
 		
 		// finds by assembly name, begin, end, strand
@@ -254,7 +254,7 @@ public class QueryBuilderService {
 		} else {
 			mainQuery.addResultVar(featureReference);
 		}
-		mainQuery.addResultVar(FEATURE_STRAND, new E_Equals(new ExprVar(featurePositionType), ExprUtils.nodeToExpr(FaldoVocabulary.ForwardStrandPosition)));
+		mainQuery.addResultVar(FEATURE_STRAND, new E_Equals(new ExprVar(featurePositionType), ExprUtils.nodeToExpr(FaldoVocab.ForwardStrandPosition.asNode())));
 		
 		ElementGroup mainSelect = new ElementGroup();
 
@@ -262,24 +262,24 @@ public class QueryBuilderService {
 		triples.addTriple(new Triple(feature, RDFS.label.asNode(), featureId));
 		Node featureBegin = NodeFactory.createVariable("featureBegin");
 		Node featureEnd = NodeFactory.createVariable("featureEnd");
-		triples.addTriple(new Triple(feature, FaldoVocabulary.begin, featureBegin));
-		triples.addTriple(new Triple(feature, FaldoVocabulary.end, featureEnd));
-		triples.addTriple(new Triple(featureBegin, FaldoVocabulary.position, featureBeginPos));
+		triples.addTriple(new Triple(feature, FaldoVocab.begin.asNode(), featureBegin));
+		triples.addTriple(new Triple(feature, FaldoVocab.end.asNode(), featureEnd));
+		triples.addTriple(new Triple(featureBegin, FaldoVocab.position.asNode(), featureBeginPos));
 		if (localReference != null) {
 //			mainSelect.addElementFilter(new ElementFilter(new E_Equals(new ExprVar(featureReference), ExprUtils.nodeToExpr(NodeFactory.createURI(localReference))))); 
-			triples.addTriple(new Triple(featureBegin, FaldoVocabulary.reference, NodeFactory.createURI(localReference)));
+			triples.addTriple(new Triple(featureBegin, FaldoVocab.reference.asNode(), NodeFactory.createURI(localReference)));
 		} else {
-			triples.addTriple(new Triple(featureBegin, FaldoVocabulary.reference, featureReference));
+			triples.addTriple(new Triple(featureBegin, FaldoVocab.reference.asNode(), featureReference));
 		}
 		triples.addTriple(new Triple(featureBegin, RDF.type.asNode(), featurePositionType));
 		if (strand != null) {
 			if (strand) {
-				triples.addTriple(new Triple(featureBegin, RDF.type.asNode(),FaldoVocabulary.ForwardStrandPosition));
+				triples.addTriple(new Triple(featureBegin, RDF.type.asNode(),FaldoVocab.ForwardStrandPosition.asNode()));
 			} else {
-				triples.addTriple(new Triple(featureBegin, RDF.type.asNode(),FaldoVocabulary.ReverseStrandPosition));
+				triples.addTriple(new Triple(featureBegin, RDF.type.asNode(),FaldoVocab.ReverseStrandPosition.asNode()));
 			}
 		}
-		triples.addTriple(new Triple(featureEnd, FaldoVocabulary.position, featureEndPos));
+		triples.addTriple(new Triple(featureEnd, FaldoVocab.position.asNode(), featureEndPos));
 		
 		mainSelect.addElement(triples);
 
@@ -372,7 +372,7 @@ public class QueryBuilderService {
 		mainQuery.setQuerySelectType();
 		
 		Node featureType = NodeFactory.createVariable(VARIABLE_FEATURE_TYPE);
-		Node label = NodeFactory.createVariable(VARIABLE_LABEL);
+		Node label = NodeFactory.createVariable(VARIABLE_FEATURE_TYPE_LABEL);
 		
 		ElementGroup main = new ElementGroup();
 		ElementTriplesBlock triples = new ElementTriplesBlock();
@@ -415,6 +415,63 @@ public class QueryBuilderService {
 		
 		return mainQuery.toString(Syntax.syntaxSPARQL_11);
 		
+	}
+
+	public String getOperators(Track track) {
+		
+		Query mainQuery = new Query();
+		mainQuery.setQuerySelectType();
+		
+		ElementGroup mainSelect = new ElementGroup();
+		
+		Node trackGraph = NodeFactory.createURI(track.getGraphName());
+		Node supportedOperator = NodeFactory.createVariable(OPERATOR);
+		Node endpointVar = NodeFactory.createVariable(ENDPOINT_URI);
+		Node graphVar = NodeFactory.createVariable(GRAPH_URI);
+		Node rootVar = NodeFactory.createVariable(ROOT_TERM);
+		Node refSeqVar = NodeFactory.createVariable(REFERENCE_ASSEMBLY);
+		Node operatorTypeVar = NodeFactory.createVariable(OPERATOR_TYPE);
+		Node operatorNameVar = NodeFactory.createVariable(OPERATOR_NAME);
+		
+		mainQuery.addResultVar(supportedOperator);
+		mainQuery.addResultVar(operatorNameVar);
+		
+		ElementPathBlock mainElement = new ElementPathBlock();
+		mainElement.addTriple(new Triple(trackGraph, RDF.type.asNode(), TrackVocab.Track.asNode()));
+		mainElement.addTriple(new Triple(trackGraph, TrackVocab.supports.asNode(), supportedOperator));
+		mainElement.addTriple(new Triple(supportedOperator, RDF.type.asNode(), operatorTypeVar));
+		mainElement.addTriplePath(new TriplePath(operatorTypeVar, pathZeroOrMore1(pathLink(RDFS.subClassOf.asNode())),TrackVocab.Operator.asNode()));
+		mainElement.addTriple(new Triple(operatorTypeVar, SKOS.prefLabel.asNode(), operatorNameVar));
+		mainSelect.addElement(mainElement);
+
+		//TODO: handle all specific operators here !
+		//TERM MATCH
+		ElementTriplesBlock termMatchTriples = new ElementTriplesBlock();
+		termMatchTriples.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.MatchTerm.asNode()));
+		termMatchTriples.addTriple(new Triple(supportedOperator, TrackVocab.endpointUrl.asNode(), endpointVar));
+		termMatchTriples.addTriple(new Triple(supportedOperator, TrackVocab.graphUri.asNode(), graphVar));
+		mainSelect.addElement(new ElementOptional(termMatchTriples));
+		ElementTriplesBlock rootTermMatch = new ElementTriplesBlock();
+		rootTermMatch.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.MatchTerm.asNode()));
+		rootTermMatch.addTriple(new Triple(supportedOperator, TrackVocab.motherTerm.asNode(), rootVar));
+		mainSelect.addElement(new ElementOptional(rootTermMatch));
+		mainQuery.addResultVar(endpointVar);
+		mainQuery.addResultVar(graphVar);
+		mainQuery.addResultVar(rootVar);
+		// triple pattern to link feature to term ?
+		// or catch in builder ?
+		
+		
+		// LOCATIONFILTER
+		ElementTriplesBlock localizedSearchTriples = new ElementTriplesBlock();
+		localizedSearchTriples.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.LocationFilter.asNode()));
+		localizedSearchTriples.addTriple(new Triple(supportedOperator, TrackVocab.references.asNode(), refSeqVar));
+		ElementOptional localizedSearch = new ElementOptional(localizedSearchTriples);
+		mainQuery.addResultVar(refSeqVar);
+		mainSelect.addElement(localizedSearch);
+		mainQuery.setQueryPattern(mainSelect);
+		
+		return mainQuery.toString(Syntax.syntaxSPARQL_11);
 	}
 
 }

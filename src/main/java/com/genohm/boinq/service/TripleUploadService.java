@@ -15,7 +15,10 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.riot.system.StreamRDFBase;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
+import org.apache.jena.sparql.modify.request.Target;
+import org.apache.jena.sparql.modify.request.UpdateCopy;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
+import org.apache.jena.sparql.modify.request.UpdateModify;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +90,12 @@ public class TripleUploadService {
 		
 		private void push() {
 			UpdateDataInsert insert = new UpdateDataInsert(quadData);
+			
+			
+			UpdateModify mod = new UpdateModify();
+			//mod.ad
+			//Target src = new Target();
+			
 			log.info("UPLOADING " + count + " TRIPLES");
 			UpdateExecutionFactory.createRemote(insert, endpoint).execute();
 		}

@@ -2,6 +2,7 @@ package com.genohm.boinq.domain.match;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -71,6 +72,10 @@ public class FeatureQuery implements QueryGeneratorAcceptor {
 		return selects;
 	}
 	
+	public Boolean check(QueryGenerator qg, GenomicRegion region) {
+		return qg.check(this, region);
+	}
+	
 	public void accept(QueryGenerator qg, GenomicRegion region) {
 		qg.visit(this, region);
 	}
@@ -83,6 +88,33 @@ public class FeatureQuery implements QueryGeneratorAcceptor {
 		this.name = name;
 	}
 	
+	public Set<FeatureSelect> getOverlappingNeighbours(FeatureSelect select) {
+		Set<FeatureSelect> neighbours = new HashSet<>();
+		for (FeatureJoin join: joins.stream().filter(join -> join instanceof LocationOverlap).collect(Collectors.toSet())) {
+			if (join.getSource() == select || join.getTarget() == select) {
+				neighbours.add(join.getSource() == select ? join.getTarget() : join.getSource());
+			}
+		}
+		return neighbours;
+	}
+
+	public Set<FeatureSelect> getOverlappingSelects(FeatureSelect select) {
+		Set<FeatureSelect> toVisit = new HashSet<>(selects);
+		return getOverlappingSelects(select, toVisit);
+	}
+	
+	private Set<FeatureSelect> getOverlappingSelects(FeatureSelect select, Set<FeatureSelect> toVisit) {
+		Set<FeatureSelect> resultSet = new HashSet<>();
+		resultSet.add(select);
+		toVisit.remove(select);
+		Set<FeatureSelect> neighbours = getOverlappingNeighbours(select);
+		neighbours.retainAll(toVisit);
+		for (FeatureSelect neighbour : neighbours) {
+			resultSet.addAll(getOverlappingSelects(neighbour, toVisit));
+		}
+		return resultSet;
+	}
+
 	public FeatureQueryDTO createDTO() {
 		FeatureQueryDTO result = new FeatureQueryDTO();
 		result.id = this.id;

@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('boinqApp').controller('FeatureQueryController', ['$scope', 'resolvedFeaturequeries', 'FeatureQuery', 
-function ($scope, resolvedFeaturequeries,FeatureQuery) {
+angular.module('boinqApp').controller('FeatureQueryController', ['$scope', 'resolvedFeaturequeries', 'FeatureQuery','FeatureQueryManagement',
+function ($scope, resolvedFeaturequeries,FeatureQuery,FeatureQueryManagement) {
 	$scope.featurequeries = resolvedFeaturequeries;
 	$scope.remove = function(fqId) {
 		FeatureQuery['delete']({id:fqId}).$promise.then(function () {
@@ -9,7 +9,7 @@ function ($scope, resolvedFeaturequeries,FeatureQuery) {
 		});
 	}
 	$scope.start = function(fqId) {
-		console.error("not yet implemented");
+		FeatureQueryManagement.start(fqId);
 	}
 }]);
 

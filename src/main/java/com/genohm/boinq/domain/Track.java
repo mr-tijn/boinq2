@@ -1,6 +1,8 @@
 package com.genohm.boinq.domain;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -12,8 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
+import org.apache.jena.graph.Node;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -29,7 +33,13 @@ public class Track implements Serializable {
 	public static final int STATUS_EMPTY = 0;
 	public static final int STATUS_RAW_DATA = 1;
 	
-	
+	//meta info
+	@Transient
+	private Map<String, Map<String,String>> supportedOperators;
+	@Transient
+	private Map<String,String> supportedFeatureTypes;
+	@Transient
+	private Map<Node, Node> referenceMap;
 	
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
@@ -138,7 +148,31 @@ public class Track implements Serializable {
 		this.status = status;
 	}
 
-    @Override
+	public void setSupportedOperators(Map<String, Map<String, String>> supportedOperators) {
+		this.supportedOperators = supportedOperators;
+	}
+	
+	public Map<String, Map<String,String>> getSupportedOperators() {
+		return supportedOperators;
+	}
+
+	public Map<String,String> getSupportedFeatureTypes() {
+		return supportedFeatureTypes;
+	}
+
+	public void setSupportedFeatureTypes(Map<String,String> supportedFeatureTypes) {
+		this.supportedFeatureTypes = supportedFeatureTypes;
+	}
+
+	public Map<Node, Node> getReferenceMap() {
+		return referenceMap;
+	}
+
+	public void setReferenceMap(Map<Node, Node> referenceMap) {
+		this.referenceMap = referenceMap;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -155,7 +189,7 @@ public class Track implements Serializable {
 
         return true;
     }
-
+    
     @Override
     public String toString() {
     	String rawDataFilesString = "";

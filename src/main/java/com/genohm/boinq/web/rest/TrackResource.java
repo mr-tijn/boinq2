@@ -1,5 +1,26 @@
 package com.genohm.boinq.web.rest;
 
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.codahale.metrics.annotation.Timed;
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
@@ -12,21 +33,6 @@ import com.genohm.boinq.service.AsynchronousJobService;
 import com.genohm.boinq.service.FileManagerService;
 import com.genohm.boinq.service.LocalGraphService;
 import com.genohm.boinq.web.rest.dto.TrackDTO;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * REST controller for managing Track.
@@ -63,8 +69,11 @@ public class TrackResource {
         		throw new Exception("No datasource found");
         	}
         	verifyModifyPermission(principal.getName(), datasource);
-        	Track track = trackRepository.findOne(trackDTO.getId());
-        	if (track == null) {
+        	Optional<Track> result = trackRepository.findOneWithMeta(trackDTO.getId());
+        	Track track;
+        	if (result.isPresent()) {
+        		track = result.get();
+        	} else {
         		track = new Track();
         		track.setRawDataFiles(new HashSet<RawDataFile>());
         	}
@@ -94,20 +103,25 @@ public class TrackResource {
     @Timed
     public ResponseEntity<List<TrackDTO>> getForDatasource(Principal principal, @PathVariable Long ds_id, HttpServletResponse response) {
         log.debug("REST request to get Tracks for datasource : {}", ds_id);
-        List<TrackDTO> tracks = null;
+//        List<TrackDTO> tracks = null;
     	try {
-            Datasource datasource = datasourceRepository.findOne(ds_id);
-            if (datasource == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            tracks = new LinkedList<TrackDTO>();
-            for (Track track: datasource.getTracks()) {
-            	tracks.add(new TrackDTO(track));
-            }
+//            Datasource datasource = datasourceRepository.findOne(ds_id);
+//            if (datasource == null) {
+//                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//            }
+//            tracks = new LinkedList<TrackDTO>();
+//            for (Track track: datasource.getTracks()) {
+//            	tracks.add(new TrackDTO(track));
+//            }
+    		Optional<List<Track>> tracks = trackRepository.findByDatasourceId(ds_id);
+    		List<TrackDTO> dtos = null;
+    		if (tracks.isPresent()) {
+    			dtos = tracks.get().stream().map(track -> new TrackDTO(track)).collect(Collectors.toList());
+    		}
+			return new ResponseEntity<List<TrackDTO>>(dtos, HttpStatus.OK);
     	} catch (Exception e) {
     		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     	}
-        return new ResponseEntity<List<TrackDTO>>(tracks, HttpStatus.OK);
     }
 
     
@@ -143,11 +157,11 @@ public class TrackResource {
     public ResponseEntity<TrackDTO> getDirect(Principal principal, @PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to get Track : {}", id);
         try {
-        	Track track = trackRepository.findOne(id);
-        	if (track == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        	Optional<Track> track = trackRepository.findOneById(id);
+        	if (track.isPresent()) {
+        		return new ResponseEntity<TrackDTO>(new TrackDTO(track.get()), HttpStatus.OK);
         	}
-         	return new ResponseEntity<TrackDTO>(new TrackDTO(track), HttpStatus.OK);
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
         	log.error("could not get track",e);
         	return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -162,7 +176,9 @@ public class TrackResource {
     public ResponseEntity<TrackDTO> get(Principal principal, @PathVariable Long ds_id, @PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to get Track : {}", id);
         try {
-        	Datasource datasource = datasourceRepository.findOne(ds_id);
+        	Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
+        	if (!result.isPresent()) throw new Exception("Could not find datasource "+ds_id);
+        	Datasource datasource = result.get();
         	if (datasource == null) {
         		throw new Exception("No datasource found");
         	}
@@ -202,7 +218,9 @@ public class TrackResource {
     public void deleteTrack(Principal principal, @PathVariable Long ds_id, @PathVariable Long id) {
         log.debug("REST request to delete Track : {}", id);       
         try {
-        	Datasource datasource = datasourceRepository.findOne(ds_id);
+        	Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
+        	if (!result.isPresent()) throw new Exception("Could not find datasource "+ds_id);
+        	Datasource datasource = result.get();
         	verifyModifyPermission(principal.getName(), datasource);
         	if (datasource == null) {
         		throw new Exception("No datasource found");
@@ -229,7 +247,9 @@ public class TrackResource {
     @RequestMapping(value="/rest/datasources/{ds_id}/tracks/{id}/startconversion", method=RequestMethod.PUT)
     public ResponseEntity<String> startTripleConversion(Principal principal, @PathVariable Long ds_id, @PathVariable Long id, @RequestBody Long data_id) {
     	try {
-        	Datasource datasource = datasourceRepository.findOne(ds_id);
+        	Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
+        	if (!result.isPresent()) throw new Exception("Could not find datasource "+ds_id);
+        	Datasource datasource = result.get();
         	verifyModifyPermission(principal.getName(), datasource);
         	Track found = null;
         	for (Track track: datasource.getTracks()) {
@@ -255,7 +275,9 @@ public class TrackResource {
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public ResponseEntity<String> deleteDirect(Principal principal, @PathVariable Long ds_id, @PathVariable Long id, @PathVariable Long data_id) {
     	try {
-        	Datasource datasource = datasourceRepository.findOne(ds_id);
+        	Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
+        	if (!result.isPresent()) throw new Exception("Could not find datasource "+ds_id);
+        	Datasource datasource = result.get();
         	verifyModifyPermission(principal.getName(), datasource);
         	Track foundTrack = null;
         	for (Track track: datasource.getTracks()) {
@@ -289,7 +311,9 @@ public class TrackResource {
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public ResponseEntity<String> deleteDirect(Principal principal, @PathVariable Long id, @PathVariable Long data_id) {
     	try {
-    		Track track = trackRepository.findOne(id);
+    		Optional<Track> result = trackRepository.findOneById(id);
+    		if (!result.isPresent()) throw new Exception("Could not find track "+id);
+    		Track track = result.get();
     		RawDataFile toRemove = null;
     		for (RawDataFile data: track.getRawDataFiles()) {
     			if (data_id == data.getId()) {

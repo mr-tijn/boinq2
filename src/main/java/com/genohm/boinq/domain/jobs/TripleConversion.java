@@ -97,6 +97,8 @@ public class TripleConversion implements AsynchronousJob {
 
 	private Map<String, Node> getReferenceMap(Track track) {
 		String endpoint = track.getDatasource().getMetaEndpointUrl();
+		// the meta endpoint is a local URL
+		
 		String query = queryBuilder.findReferenceMap(track);
 		SPARQLResultSet queryResult = null;
 		Map<String, Node> resultMap = new HashMap<String, Node>();

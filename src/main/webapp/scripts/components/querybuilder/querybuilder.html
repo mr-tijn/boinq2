@@ -14,7 +14,13 @@
 	
 	<div mouse-capture class="row bnq_spacer15">
 		<div class="col-md-12 column">
-			<div class="row"></div>
+			<div class="row">
+				<div class="form-group">
+					<label>Name</label> <input type="text" class="form-control"
+						name="name" ng-model="featureQuery.name" ng-minlength=1
+						ng-maxlength=250>
+				</div>
+			</div>
 		</div>
 		<div class="col-md-3 column">
 			<div class="row">Drag track to the canvas</div>

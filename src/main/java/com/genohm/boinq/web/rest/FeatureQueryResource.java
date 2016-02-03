@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.genohm.boinq.domain.jobs.analysis.SlidingWindowFeatureSelection;
 import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.domain.match.FeatureQueryFactory;
 import com.genohm.boinq.repository.FeatureQueryRepository;
 import com.genohm.boinq.repository.UserRepository;
+import com.genohm.boinq.service.AsynchronousJobService;
 import com.genohm.boinq.web.rest.dto.FeatureQueryDTO;
 
 @RestController
@@ -33,6 +35,8 @@ public class FeatureQueryResource {
 	private FeatureQueryFactory featureQueryFactory;
 	@Inject
 	private UserRepository userRepository;
+	@Inject
+	private AsynchronousJobService jobService;
 	
     @RequestMapping(value = "/rest/featurequery",
             method = RequestMethod.POST,
@@ -75,10 +79,25 @@ public class FeatureQueryResource {
     			.findOneByLogin(principal.getName())
     			.flatMap(owner -> featureQueryRepository.findByOwner(owner))
     			.map(listOfFeatureQueries -> listOfFeatureQueries.stream()
-    					.map(featureQuery -> featureQuery.createDTO())
+    					.map(FeatureQuery::createDTO)
     					.collect(Collectors.toList()))
     			.map(listOfFeatureQueryDTO -> new ResponseEntity<>(listOfFeatureQueryDTO, HttpStatus.OK))
     			.orElseThrow(() -> new Exception("Could not find FeatureQueries"));
     }
+
+    @RequestMapping(value = "/rest/featurequery/{fqId}/start",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public void start(Principal principal, @PathVariable Long fqId, @RequestBody int start) throws Exception {
+    	if (start != 1) return;
+    	Optional<FeatureQuery> featureQuery = featureQueryRepository
+    			.findOneById(fqId)
+    			.filter(fq -> fq.getOwner().getLogin().equals(principal.getName()));
+    	if (featureQuery.isPresent()) {
+    		jobService.add(new SlidingWindowFeatureSelection(featureQuery.get()));
+    	}
+    }
+
     
 }

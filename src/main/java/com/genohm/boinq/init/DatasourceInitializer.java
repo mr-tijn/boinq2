@@ -23,28 +23,35 @@ public class DatasourceInitializer implements EnvironmentAware, ApplicationListe
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		Datasource exampleDS = datasourceRepository.findOne(1L);
+		replaceFields(exampleDS);
+		Datasource ensembl = datasourceRepository.findOne(2L);
+		replaceFields(ensembl);
+	}
+
+	private void replaceFields(Datasource ds) {
 		Boolean changed = false;
-		if ("DSENDPOINT_PLACEHOLDER".equals(exampleDS.getEndpointUrl())) {
-			exampleDS.setEndpointUrl("/local/sparql");
+		if ("DSENDPOINT_PLACEHOLDER".equals(ds.getEndpointUrl())) {
+			ds.setEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.sparql"));
 			changed = true;
 		}
-		if ("DSNAME_PLACEHOLDER".equals(exampleDS.getIri())) {
-			exampleDS.setIri(propertyResolver.getProperty("triplestore.localdatasource"));
+		if ("DSNAME_PLACEHOLDER".equals(ds.getIri())) {
+			ds.setIri(propertyResolver.getProperty("triplestore.localdatasource"));
 			changed = true;
 		}
-		if ("DSENDPOINT_UPDATE_PLACEHOLDER".equals(exampleDS.getEndpointUpdateUrl())) {
-			exampleDS.setEndpointUpdateUrl("/local/update");
+		if ("DSENDPOINT_UPDATE_PLACEHOLDER".equals(ds.getEndpointUpdateUrl())) {
+			ds.setEndpointUpdateUrl(propertyResolver.getProperty("triplestore.endpoint.update"));
 			changed = true;
 		}
-		if ("DSENDPOINT_META_PLACEHOLDER".equals(exampleDS.getMetaEndpointUrl())) {
-			exampleDS.setMetaEndpointUrl("/local/sparql");
+		if ("DSENDPOINT_META_PLACEHOLDER".equals(ds.getMetaEndpointUrl())) {
+			ds.setMetaEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.meta"));
 			changed = true;
 		}
 		if (changed) {
-			datasourceRepository.save(exampleDS);
+			datasourceRepository.save(ds);
 		}
-	}
 
+	}
+	
 	@Override
 	public void setEnvironment(Environment environment) {
         this.propertyResolver = new RelaxedPropertyResolver(environment, "spring.");

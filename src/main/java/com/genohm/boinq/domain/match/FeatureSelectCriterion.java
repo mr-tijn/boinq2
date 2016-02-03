@@ -1,12 +1,19 @@
 package com.genohm.boinq.domain.match;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.apache.jena.sparql.syntax.Element;
 
 import com.genohm.boinq.domain.GenomicRegion;
 import com.genohm.boinq.tools.generators.QueryGenerator;
@@ -19,10 +26,19 @@ public abstract class FeatureSelectCriterion implements QueryGeneratorAcceptor {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
+    
+    @ManyToOne(cascade=CascadeType.DETACH, fetch=FetchType.EAGER)
+    @JoinColumn(name="feature_select_id")
+	private FeatureSelect parent;
 
     public FeatureSelectCriterion() {}
     
-	public void accept(QueryGenerator qg, GenomicRegion region) {}
+	public void accept(QueryGenerator qg, Element parentElement, GenomicRegion region) {}
 	
 	public CriteriaDTO createDTO() {return null;}
+
+	public FeatureSelect getParent() {
+		return parent;
+	}
+	
 }

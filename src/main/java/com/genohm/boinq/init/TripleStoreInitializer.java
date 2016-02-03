@@ -1,8 +1,8 @@
 package com.genohm.boinq.init;
 
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.inject.Inject;
 
@@ -21,23 +21,26 @@ import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.queries.Prefixes;
-import com.mysql.fabric.xmlrpc.base.Array;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.sparql.syntax.ElementTriplesBlock;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.SKOS;
-import org.apache.jena.vocabulary.XSD;
 
 
 @Component
 public class TripleStoreInitializer implements EnvironmentAware, ApplicationListener<ContextRefreshedEvent> {
-    private final Logger log = LoggerFactory.getLogger(TripleStoreInitializer.class);
+    
+	// if necessary clean out with
+	// delete { ?s ?p ?o } using <http://www.boinq.org/iri/graph/meta/> where { ?s ?p ?o } 
+	
+	private final Logger log = LoggerFactory.getLogger(TripleStoreInitializer.class);
 	
 	public static final String ENV_SPRING_TRIPLESTORE = "spring.triplestore.";
     public static final String PROPERTY_ENDPOINT_SPARQL = "endpoint.sparql";
@@ -72,7 +75,8 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	public void checkExtraTriples() {
 		Triple triple = new Triple(NodeFactory.createURI(localDatasource), TrackVocab.provides.asNode(), NodeFactory.createURI("http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844"));
 		if (!alreadyPresent(triple)) {
-			addExtraTriples();
+			addFromFile("ontologies/track.owl", Lang.RDFXML);
+			addFromFile("ontologies/meta.ttl", Lang.TTL);
 		}
 	}
     
@@ -117,18 +121,16 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 		uploader.finish();
 	}
 	
-	private void addExtraTriples() {
-		Node datasource =  NodeFactory.createURI(localDatasource);
-		Node track = NodeFactory.createURI("http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844");
-		Node exampleType1 = NodeFactory.createURI("http://www.boinq.org/iri/exampleType1");
-		Node exampleType2 = NodeFactory.createURI("http://www.boinq.org/iri/exampleType2");
-		TripleUploader uploader = tripleUploadService.getUploader(updateEndpoint, metaGraph, Prefixes.getCommonPrefixes());
-		uploader.triple(new Triple(datasource, TrackVocab.provides.asNode(), track));
-		uploader.triple(new Triple(track, TrackVocab.holds.asNode(), exampleType1));
-		uploader.triple(new Triple(exampleType1, SKOS.prefLabel.asNode(), NodeFactory.createLiteral("Example Type 1",XSDDatatype.XSDstring)));
-		uploader.triple(new Triple(exampleType2, SKOS.prefLabel.asNode(), NodeFactory.createLiteral("Example Type 2",XSDDatatype.XSDstring)));
-		uploader.triple(new Triple(track, TrackVocab.holds.asNode(), exampleType2));
-		uploader.finish();
+	private void addFromFile(String path, Lang lang) {
+		InputStream file = this.getClass().getClassLoader().getResourceAsStream(path);
+		TripleUploader uploader = tripleUploadService.getUploader(updateEndpoint, metaGraph);
+		RDFDataMgr.parse(uploader, file, lang);
+		try {
+			file.close();
+		} catch (IOException io) {
+			log.error("Could not close metadata file", io);
+		}
+
 	}
 
 	@Override

@@ -33,6 +33,11 @@ public class FeatureTypeCriterion extends FeatureSelectCriterion {
 		this.featureTypeLabel = featureTypeLabel;
 	}
 
+	@Override	
+	public Boolean check(QueryGenerator qg, GenomicRegion region) {
+		return qg.check(this, region);
+	}
+
 	@Override
 	public void accept(QueryGenerator qg, GenomicRegion r) {
 		qg.visit(this, r);

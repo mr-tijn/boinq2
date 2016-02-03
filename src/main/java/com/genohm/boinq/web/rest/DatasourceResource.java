@@ -59,24 +59,21 @@ public class DatasourceResource {
     @Timed
     public @ResponseBody ResponseEntity<DatasourceDTO> create(Principal principal, @RequestBody DatasourceDTO datasourceDTO) {
         log.debug("REST request to save Datasource : {}", datasourceDTO);
-        Datasource datasource = datasourceRepository.findOne(datasourceDTO.getId());
-        if (datasource == null) {
+        Optional<Datasource> find = datasourceRepository.findOneWithMeta(datasourceDTO.getId());
+        Datasource datasource;
+        if (find.isPresent()) {
+        	datasource = find.get();
+        } else {
         	datasource = new Datasource();
-        	datasource.setEndpointUrl(datasourceDTO.getEndpointUrl());
-        	datasource.setIsPublic(datasourceDTO.getIsPublic()!=null?datasourceDTO.getIsPublic():false);
-        	datasource.setName(datasourceDTO.getName());
-        	datasource.setType(datasourceDTO.getType());
-        	datasource.setIri(datasourceDTO.getIri());
             datasource.setTracks(new HashSet<Track>());
             Optional<User> currentUser = userRepository.findOneByLogin(principal.getName());
             datasource.setOwner(currentUser.get());
-        } else {
-        	datasource.setEndpointUrl(datasourceDTO.getEndpointUrl());
-        	datasource.setIsPublic(datasourceDTO.getIsPublic()!=null?datasourceDTO.getIsPublic():false);
-        	datasource.setName(datasourceDTO.getName());
-        	datasource.setType(datasourceDTO.getType());
-        	datasource.setIri(datasourceDTO.getIri());
         }
+        datasource.setEndpointUrl(datasourceDTO.getEndpointUrl());
+        datasource.setIsPublic(datasourceDTO.getIsPublic()!=null?datasourceDTO.getIsPublic():false);
+        datasource.setName(datasourceDTO.getName());
+        datasource.setType(datasourceDTO.getType());
+        datasource.setIri(datasourceDTO.getIri());
         if (Datasource.TYPE_LOCAL_FALDO == datasource.getType()) {
         	datasource.setEndpointUrl(localGraphService.getSparqlEndpoint());
         	datasource.setEndpointUpdateUrl(localGraphService.getUpdateEndpoint());
@@ -96,7 +93,7 @@ public class DatasourceResource {
     public List<DatasourceDTO> getAll() {
         log.debug("REST request to get all Datasources");
         List<DatasourceDTO> allDTO = new LinkedList<DatasourceDTO>();
-        for (Datasource ds: datasourceRepository.findAll()) {
+        for (Datasource ds: datasourceRepository.findAllWithMeta()) {
         	allDTO.add(new DatasourceDTO(ds));
         }
         return allDTO;
@@ -111,12 +108,12 @@ public class DatasourceResource {
     @Timed
     public ResponseEntity<DatasourceDTO> get(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to get Datasource : {}", id);
-        Datasource datasource = datasourceRepository.findOne(id);
-        if (datasource == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Optional<Datasource> result = datasourceRepository.findOneWithMeta(id);
+        if (result.isPresent()) {
+            DatasourceDTO datasourceDTO = new DatasourceDTO(result.get());
+            return new ResponseEntity<>(datasourceDTO, HttpStatus.OK);
         }
-        DatasourceDTO datasourceDTO = new DatasourceDTO(datasource);
-        return new ResponseEntity<>(datasourceDTO, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     
@@ -134,6 +131,7 @@ public class DatasourceResource {
         Datasource ds = datasourceRepository.findOne(id);
         if (ds.getOwner() != null && ds.getOwner().getLogin().equals(principal.getName())) {
         	datasourceRepository.delete(id);
+        	//TODO: delete metadata
         } else {
         	log.error("User "+principal.getName()+" attempted to delete datasource "+id);
         }
