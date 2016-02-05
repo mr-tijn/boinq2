@@ -34,21 +34,26 @@ MetadataGraphService metadataGraphService;
 
 	static final private String PREFIX = "spring.triplestore.";
 	
-	static final private String LOCAL_ENDPOINT_SPARQL = "endpoint.sparql";
-	static final private String LOCAL_ENDPOINT_META = "endpoint.meta";
-	static final private String LOCAL_ENDPOINT_UPDATE = "endpoint.update";
+	static final private String LOCAL_ENDPOINT_SPARQL = "endpoint.data.query";
+	static final private String LOCAL_ENDPOINT_UPDATE = "endpoint.data.update";
+	static final private String LOCAL_ENDPOINT_META = "endpoint.meta.query";
+	static final private String LOCAL_ENDPOINT_META_UPDATE = "endpoint.meta.update";
+
 	static final private String LOCAL_DATASOURCE_URI = "localdatasource";
 	static final private String GRAPH_META = "metagraph";
 	static final private String GRAPHBASE = "graphbase";
 	
 	private String graphBase;
-	private String updateEndpoint;
 	private String sparqlEndpoint;
+	private String updateEndpoint;
 	private String metaEndpoint;
+	private String metaUpdateEndpoint;
 	private String metaGraph;
 	private String localDatasourceUri;
 	
 	private RelaxedPropertyResolver propertyResolver;
+
+
 
 	@Override
 	public void setEnvironment(Environment env) {
@@ -59,8 +64,9 @@ MetadataGraphService metadataGraphService;
 	public void init() {
 		this.graphBase = propertyResolver.getProperty(GRAPHBASE);
 		this.sparqlEndpoint = propertyResolver.getProperty(LOCAL_ENDPOINT_SPARQL);
-		this.metaEndpoint = propertyResolver.getProperty(LOCAL_ENDPOINT_META);
 		this.updateEndpoint = propertyResolver.getProperty(LOCAL_ENDPOINT_UPDATE);
+		this.metaEndpoint = propertyResolver.getProperty(LOCAL_ENDPOINT_META);
+		this.metaUpdateEndpoint = propertyResolver.getProperty(LOCAL_ENDPOINT_META_UPDATE);
 		this.metaGraph = propertyResolver.getProperty(GRAPH_META);
 		this.localDatasourceUri = propertyResolver.getProperty(LOCAL_DATASOURCE_URI);
 	}
@@ -105,6 +111,10 @@ MetadataGraphService metadataGraphService;
 		return metaEndpoint;
 	}
 
+	public String getMetaUpdateEndpoint() {
+		return metaUpdateEndpoint;
+	}
+	
 	public String getMetaGraph() {
 		return metaGraph;
 	}

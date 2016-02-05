@@ -121,8 +121,6 @@ public class Track implements Serializable {
 	public void setSpecies(String species) {
 		this.species = species;
 	}
-	
-
 
 	public Set<RawDataFile> getRawDataFiles() {
 		return rawDataFiles;

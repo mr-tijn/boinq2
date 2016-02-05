@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	<changeSet id="martijn0003.1" author="martijn">
+		<addColumn tableName="T_DATASOURCE">
+			<column name="META_ENDPOINT_UPDATE_URL" type="VARCHAR(255)"/>
+		</addColumn>
+		<update tableName="T_DATASOURCE">
+			<column name="META_ENDPOINT_UPDATE_URL" type="VARCHAR(255)">DSENDPOINT_META_UPDATE_PLACEHOLDER</column>
+			<where>TRUE</where>
+		</update>
+	</changeSet>
+</databaseChangeLog>

@@ -46,8 +46,8 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	private String targetEndpoint;
 	@Value("${spring.triplestore.metagraph}")
 	private String metaGraph;
-	@Value("${spring.triplestore.endpoint.meta}")
-	private String metaEndpoint;
+	@Value("${spring.triplestore.endpoint.meta.update}")
+	private String metaUpdateEndpoint;
 	
 	private FeatureQuery queryDefinition;
 	
@@ -90,7 +90,7 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	}
 	
 	private void writeData() {
-		//TODO: fetch this constant data from somewhere 
+		//TODO: fetch this constant data from metadata 
 		Node[] chromosomes = {
 				TrackVocab.GRCh37chr01.asNode(),
 				TrackVocab.GRCh37chr02.asNode(),
@@ -167,7 +167,7 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	}
 	
 	private void writeMetaInfo() {
-		TripleUploader metaUploader = tripleUploadService.getUploader(metaEndpoint, metaGraph, null); 
+		TripleUploader metaUploader = tripleUploadService.getUploader(metaUpdateEndpoint, metaGraph, null); 
 		Node theGraph = NodeFactory.createURI(targetGraph);
 		metaUploader.triple(new Triple(theGraph, RDF.type.asNode(), TrackVocab.FaldoTrack.asNode()));
 		metaUploader.finish();
@@ -186,7 +186,7 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 
 	@Override
 	public void setMeta(String endpoint, String graph) {
-		this.metaEndpoint = endpoint;
+		this.metaUpdateEndpoint = endpoint;
 		this.metaGraph = graph;
 	}
 

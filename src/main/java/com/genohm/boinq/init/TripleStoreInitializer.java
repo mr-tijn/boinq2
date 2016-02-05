@@ -43,10 +43,13 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	private final Logger log = LoggerFactory.getLogger(TripleStoreInitializer.class);
 	
 	public static final String ENV_SPRING_TRIPLESTORE = "spring.triplestore.";
-    public static final String PROPERTY_ENDPOINT_SPARQL = "endpoint.sparql";
-    public static final String PROPERTY_ENDPOINT_UPDATE = "endpoint.update";
+    public static final String PROPERTY_META_ENDPOINT_QUERY = "endpoint.meta.query";
+    public static final String PROPERTY_META_ENDPOINT_UPDATE = "endpoint.meta.update";
     public static final String PROPERTY_METAGRAPH = "metagraph";
 	public static final String PROPERTY_LOCALDATASOURCE = "localdatasource";
+
+	public static final String PROPERTY_DATA_ENDPOINT_QUERY = "endpoint.data.query";
+	
 
     private RelaxedPropertyResolver propertyResolver;
 	
@@ -56,13 +59,10 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
     TripleUploadService tripleUploadService;
 
 	private String localDatasource;
-
-	private String updateEndpoint;
-
+	private String dataQueryEndpoint;
+	private String metaUpdateEndpoint;
+	private String metaQueryEndpoint;
 	private String metaGraph;
-
-	private String queryEndpoint;
-	
 	private Boolean dev;
     
 	public void checkInit() {
@@ -84,9 +84,10 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	public void setEnvironment(Environment environment) {
 		propertyResolver = new RelaxedPropertyResolver(environment, ENV_SPRING_TRIPLESTORE);
 		localDatasource = propertyResolver.getProperty(PROPERTY_LOCALDATASOURCE);
-		updateEndpoint = propertyResolver.getProperty(PROPERTY_ENDPOINT_UPDATE);
+		dataQueryEndpoint = propertyResolver.getProperty(PROPERTY_DATA_ENDPOINT_QUERY);
+		metaUpdateEndpoint = propertyResolver.getProperty(PROPERTY_META_ENDPOINT_UPDATE);
+		metaQueryEndpoint = propertyResolver.getProperty(PROPERTY_META_ENDPOINT_QUERY);
 		metaGraph = propertyResolver.getProperty(PROPERTY_METAGRAPH);
-		queryEndpoint = propertyResolver.getProperty(PROPERTY_ENDPOINT_SPARQL);
 		dev = false;
 		for (String profile: environment.getActiveProfiles()) {
 			if ("dev".equals(profile)) {
@@ -103,7 +104,7 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 		triples.addTriple(t);
 		query.setQueryPattern(triples);
 		try {
-			SPARQLResultSet resultSet = sparqlClient.query(queryEndpoint, metaGraph, query);
+			SPARQLResultSet resultSet = sparqlClient.query(metaQueryEndpoint, metaGraph, query);
 			return (resultSet != null && resultSet.getAskResult());
 		} catch (Exception e) {
 			log.error("Could not check for initialization of triplestore");
@@ -112,18 +113,19 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	}
 	
 	private void init() {
+		//TODO: move this to meta.ttl
 		Node datasource =  NodeFactory.createURI(localDatasource);
-		TripleUploader uploader = tripleUploadService.getUploader(updateEndpoint, metaGraph, Prefixes.getCommonPrefixes());
+		TripleUploader uploader = tripleUploadService.getUploader(metaUpdateEndpoint, metaGraph, Prefixes.getCommonPrefixes());
 		uploader.triple(new Triple(datasource, RDF.type.asNode(), TrackVocab.Datasource.asNode()));
 		uploader.triple(new Triple(datasource, RDF.type.asNode(), TrackVocab.SPARQLDatasource.asNode()));
-		uploader.triple(new Triple(datasource, TrackVocab.references.asNode(), TrackVocab.GRCh37.asNode()));
-		uploader.triple(new Triple(datasource, TrackVocab.endpointUrl.asNode(), NodeFactory.createLiteral(queryEndpoint)));
+		uploader.triple(new Triple(datasource, TrackVocab.references.asNode(), TrackVocab.GRCh38.asNode()));
+		uploader.triple(new Triple(datasource, TrackVocab.endpointUrl.asNode(), NodeFactory.createLiteral(dataQueryEndpoint)));
 		uploader.finish();
 	}
 	
 	private void addFromFile(String path, Lang lang) {
 		InputStream file = this.getClass().getClassLoader().getResourceAsStream(path);
-		TripleUploader uploader = tripleUploadService.getUploader(updateEndpoint, metaGraph);
+		TripleUploader uploader = tripleUploadService.getUploader(metaUpdateEndpoint, metaGraph);
 		RDFDataMgr.parse(uploader, file, lang);
 		try {
 			file.close();

@@ -24,7 +24,7 @@ public class ProxyConfiguration implements EnvironmentAware {
 	protected Environment environment;
     protected RelaxedPropertyResolver propertyResolver;
     
-    @Value(value="${spring.triplestore.endpoint.sparql}")
+    @Value(value="${spring.triplestore.endpoint.data.query}")
     protected String localSparql;
     @Value(value="${spring.triplestore.endpoint.static.query}")
     protected String staticEndpoint;

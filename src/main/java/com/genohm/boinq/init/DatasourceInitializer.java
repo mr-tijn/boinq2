@@ -30,20 +30,24 @@ public class DatasourceInitializer implements EnvironmentAware, ApplicationListe
 
 	private void replaceFields(Datasource ds) {
 		Boolean changed = false;
-		if ("DSENDPOINT_PLACEHOLDER".equals(ds.getEndpointUrl())) {
-			ds.setEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.sparql"));
-			changed = true;
-		}
 		if ("DSNAME_PLACEHOLDER".equals(ds.getIri())) {
 			ds.setIri(propertyResolver.getProperty("triplestore.localdatasource"));
 			changed = true;
 		}
+		if ("DSENDPOINT_PLACEHOLDER".equals(ds.getEndpointUrl())) {
+			ds.setEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.data.query"));
+			changed = true;
+		}
 		if ("DSENDPOINT_UPDATE_PLACEHOLDER".equals(ds.getEndpointUpdateUrl())) {
-			ds.setEndpointUpdateUrl(propertyResolver.getProperty("triplestore.endpoint.update"));
+			ds.setEndpointUpdateUrl(propertyResolver.getProperty("triplestore.endpoint.data.update"));
 			changed = true;
 		}
 		if ("DSENDPOINT_META_PLACEHOLDER".equals(ds.getMetaEndpointUrl())) {
-			ds.setMetaEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.meta"));
+			ds.setMetaEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.meta.query"));
+			changed = true;
+		}
+		if ("DSENDPOINT_META_UPDATE_PLACEHOLDER".equals(ds.getMetaEndpointUpdateUrl())) {
+			ds.setMetaEndpointUpdateUrl(propertyResolver.getProperty("triplestore.endpoint.meta.update"));
 			changed = true;
 		}
 		if (changed) {

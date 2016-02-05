@@ -49,6 +49,10 @@ public class Datasource implements Serializable {
     @Column(name = "meta_endpoint_url", nullable = true)
     private String metaEndpointUrl;
         
+    @Size(min=1, max=200)
+    @Column(name = "meta_endpoint_update_url", nullable=true)
+    private String metaEndpointUpdateUrl;
+    
     @Size(min = 1, max = 200)
     @Column(name = "meta_graph_name", nullable = true)
     private String metaGraphName;
@@ -104,6 +108,14 @@ public class Datasource implements Serializable {
 
 	public void setMetaEndpointUrl(String metaEndpointUrl) {
 		this.metaEndpointUrl = metaEndpointUrl;
+	}
+
+	public String getMetaEndpointUpdateUrl() {
+		return metaEndpointUpdateUrl;
+	}
+
+	public void setMetaEndpointUpdateUrl(String metaEndpointUpdateUrl) {
+		this.metaEndpointUpdateUrl = metaEndpointUpdateUrl;
 	}
 
 	public String getMetaGraphName() {

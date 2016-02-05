@@ -78,6 +78,7 @@ public class DatasourceResource {
         	datasource.setEndpointUrl(localGraphService.getSparqlEndpoint());
         	datasource.setEndpointUpdateUrl(localGraphService.getUpdateEndpoint());
         	datasource.setMetaEndpointUrl(localGraphService.getMetaEndpoint());
+        	datasource.setMetaEndpointUpdateUrl(localGraphService.getMetaUpdateEndpoint());
         	datasource.setMetaGraphName(localGraphService.getMetaGraph());
         }
     	return new ResponseEntity<DatasourceDTO> (new DatasourceDTO(datasourceRepository.save(datasource)),HttpStatus.OK);
