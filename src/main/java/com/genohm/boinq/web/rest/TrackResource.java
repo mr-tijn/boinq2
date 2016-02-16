@@ -82,6 +82,8 @@ public class TrackResource {
         	track.setName(trackDTO.getName());
         	track.setStatus(Track.STATUS_EMPTY);
         	track.setType(trackDTO.getType());
+        	track.setFileType(trackDTO.getFileType());
+        	track.setSpecies(trackDTO.getSpecies());
         	Track savedTrack = trackRepository.save(track);
         	datasource.getTracks().add(track);
         	datasourceRepository.save(datasource);

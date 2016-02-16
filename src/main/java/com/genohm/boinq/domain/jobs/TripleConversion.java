@@ -32,6 +32,8 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Node_URI;
 import org.apache.jena.graph.Triple;
 
+import htsjdk.variant.vcf.VCFHeader;
+
 public class TripleConversion implements AsynchronousJob {
 
 	private Boolean interrupted = false;
@@ -141,10 +143,12 @@ public class TripleConversion implements AsynchronousJob {
 			inputData.setStatus(RawDataFile.STATUS_LOADING);
 			while (!interrupted && tripleIterator.hasNext()) {
 				uploader.triple(tripleIterator.next());
+				meta.tripleCount++;
 			}
 			uploader.finish();
 			String metagraph = track.getDatasource().getMetaGraphName();
-			meta.fileName = inputFile.getPath();
+			meta.fileName = inputFile.getName();
+			meta.file = inputFile.toString();
 			String endpoint = track.getDatasource().getEndpointUpdateUrl();
 			List<Triple> metadata =tripleconverter.createMetadata(meta,track.getGraphName());
 			metadataGraphService.updateFileConversion(endpoint, metagraph, metadata);
@@ -169,6 +173,11 @@ public class TripleConversion implements AsynchronousJob {
 		public List<Node> typeList = new ArrayList<Node>();	
 		public String fileType = new String();
 		public String fileName = new String();
+		public String file = new String();
+		public VCFHeader vcfHeader = new VCFHeader();
+		public List<String> gffHeader = new ArrayList<String>();
+		public List<String> bedHeader = new ArrayList<String>();
+		public int tripleCount;
 	}
 	
 }

@@ -31,6 +31,13 @@
 								ng-maxlength=200 ng-disabled="isLocal(datasource)">
 						</div>
 
+						<div class="form-group">
+							<label>File type</label> <select class="form-control"
+								name="file-type" ng-model="track.fileType">
+								<option ng-repeat="fileType in fileOptions" >{{fileType.name}}</option>
+								</select>
+						</div>
+
   						<div class="form-group">
 							<label>Name</label> <input type="text" class="form-control"
 								name="trackName" ng-model="track.name" ng-minlength=1
@@ -45,6 +52,13 @@
 								multi-valued='true' form-field-name="type" ng-model="track.type"> 
 							</term-tree-picker>
 						</div>
+
+						<div class="form-group">
+							<label>Species</label> <input type="text" class="form-control"
+								name="species" ng-model="track.species" ng-minlength=1
+								ng-maxlength=500 required >
+						</div>
+
 						<input type="hidden" ng-model="track.status" name="status">
                     </div>
                     <div class="modal-footer">

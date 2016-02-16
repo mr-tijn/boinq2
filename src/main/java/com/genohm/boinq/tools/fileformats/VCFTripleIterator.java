@@ -1,9 +1,11 @@
 package com.genohm.boinq.tools.fileformats;
 
+import htsjdk.tribble.FeatureCodecHeader;
 import htsjdk.tribble.readers.AsciiLineReader;
 import htsjdk.tribble.readers.AsciiLineReaderIterator;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFCodec;
+import htsjdk.variant.vcf.VCFHeader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,13 +30,14 @@ public class VCFTripleIterator implements Iterator<Triple> {
 	private VCFCodec codec = new VCFCodec();
 	private Map<String, Node> referenceMap;
 	private Metadata meta;
-
+	
 	public VCFTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException {
 		this.converter = converter;
 		this.referenceMap = referenceMap;
 		lineIterator = new AsciiLineReaderIterator(new AsciiLineReader(new FileInputStream(file)));
-		codec.readActualHeader(lineIterator);
-		this.meta = meta;
+		FeatureCodecHeader header = codec.readHeader(lineIterator);
+        meta.vcfHeader = (VCFHeader)header.getHeaderValue();
+        this.meta = meta;
 	}
 
 	@Override
