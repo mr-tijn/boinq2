@@ -440,6 +440,11 @@
         	<version>master</version>
         </dependency>
         <dependency>
+        	<groupId>de.charite.compbio</groupId>
+			<artifactId>Jannovar-core</artifactId>
+			<version>0.16</version>
+		</dependency>
+		<dependency>
         	<groupId>broad</groupId>
         	<artifactId>htsjdk</artifactId>
         	<version>${htsjdk.version}</version>
