@@ -23,7 +23,6 @@ public class BedTripleIterator implements Iterator<Triple> {
 
 	private List<Triple> currentTriples = new LinkedList<Triple>();
 	private AsciiLineReaderIterator lineIterator;
-	private int idCounter = 0;
 	private BEDCodec codec = new BEDCodec();
 	private Map<String, Node> referenceMap;
 	private TripleConverter converter;
@@ -49,22 +48,19 @@ public class BedTripleIterator implements Iterator<Triple> {
 	@Override
 	public Triple next() {
 		if (currentTriples.isEmpty()){
+			meta.sumFeatureCount++;
 			String nextLine = lineIterator.next();
-			BEDFeature feature = codec.decode(nextLine);
-			while (feature == null){
+			BEDFeature entry = codec.decode(nextLine);
+			while (entry == null){
 				this.meta.bedHeader.add(nextLine);
 				nextLine = lineIterator.next();
-				feature = codec.decode(nextLine);
+				entry = codec.decode(nextLine);
 			}
 			Node globalReference = null;
 			if (referenceMap != null) {
-				globalReference = referenceMap.get(feature.getContig());
+				globalReference = referenceMap.get(entry.getContig());
 			}
-			String id = feature.getName();
-			if (id == null) {
-				id = "GENERATED_ID_" + ++idCounter ;
-			}
-			currentTriples.addAll(converter.convert(feature, id, globalReference, meta));
+			currentTriples.addAll(converter.convert(entry, globalReference, meta));
 		}
 		return currentTriples.remove(0);
 	}

@@ -30,12 +30,23 @@
 								name="graphName" ng-model="track.graphName" ng-minlength=1
 								ng-maxlength=200 ng-disabled="isLocal(datasource)">
 						</div>
+						
+						<div class="form-group">
+                            <label>Feature Count</label>
+                            <input type="text" class="form-control" name="featureCount"
+                                   ng-model="track.featureCount" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Triple Count</label>
+                            <input type="text" class="form-control" name="tripleCount"
+                                   ng-model="track.tripleCount" readonly>
+                        </div>
 
 						<div class="form-group">
-							<label>File type</label> <select class="form-control"
-								name="file-type" ng-model="track.fileType">
-								<option ng-repeat="fileType in fileOptions" >{{fileType.name}}</option>
-								</select>
+							<label>File Format</label> 
+							<input type="text" class="form-control" name="tripleCount"
+								ng-model="track.fileType" readonly>
 						</div>
 
   						<div class="form-group">
@@ -56,7 +67,7 @@
 						<div class="form-group">
 							<label>Species</label> <input type="text" class="form-control"
 								name="species" ng-model="track.species" ng-minlength=1
-								ng-maxlength=500 required >
+								ng-maxlength=500>
 						</div>
 
 						<input type="hidden" ng-model="track.status" name="status">

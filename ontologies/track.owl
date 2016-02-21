@@ -124,7 +124,10 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#bedHeader -->
 
-    <owl:DatatypeProperty rdf:about="&track;bedHeader"/>
+    <owl:DatatypeProperty rdf:about="&track;bedHeader">
+        <rdfs:domain rdf:resource="&track;File"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -134,9 +137,18 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#featureCount -->
+
+    <owl:DatatypeProperty rdf:about="&track;featureCount"/>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#fileExtension -->
 
-    <owl:DatatypeProperty rdf:about="&track;fileExtension"/>
+    <owl:DatatypeProperty rdf:about="&track;fileExtension">
+        <rdfs:domain rdf:resource="&track;File"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -158,6 +170,18 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#identifier -->
+
+    <owl:DatatypeProperty rdf:about="&track;identifier"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#label -->
+
+    <owl:DatatypeProperty rdf:about="&track;label"/>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#motherTerm -->
 
     <owl:DatatypeProperty rdf:about="&track;motherTerm"/>
@@ -166,7 +190,10 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#tripleCount -->
 
-    <owl:DatatypeProperty rdf:about="&track;tripleCount"/>
+    <owl:DatatypeProperty rdf:about="&track;tripleCount">
+        <rdfs:domain rdf:resource="&track;File"/>
+        <rdfs:range rdf:resource="&xsd;int"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -283,6 +310,12 @@
     <owl:Class rdf:about="&track;Field">
         <rdfs:comment xml:lang="en">A field. An attribute of a feature that can be used to filter on.</rdfs:comment>
     </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#File -->
+
+    <owl:Class rdf:about="&track;File"/>
     
 
 
@@ -440,8 +473,8 @@
     <owl:Class rdf:about="&track;Track">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;holds"/>
-                <owl:someValuesFrom rdf:resource="&track;FeatureType"/>
+                <owl:onProperty rdf:resource="&track;supports"/>
+                <owl:someValuesFrom rdf:resource="&track;Operator"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
@@ -452,8 +485,8 @@
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;supports"/>
-                <owl:someValuesFrom rdf:resource="&track;Operator"/>
+                <owl:onProperty rdf:resource="&track;holds"/>
+                <owl:someValuesFrom rdf:resource="&track;FeatureType"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A collection of features of the same type</rdfs:comment>
