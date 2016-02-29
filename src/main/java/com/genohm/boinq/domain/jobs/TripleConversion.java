@@ -2,6 +2,7 @@ package com.genohm.boinq.domain.jobs;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,11 +32,12 @@ import com.genohm.boinq.tools.fileformats.TripleConverter;
 import com.genohm.boinq.tools.queries.Prefixes;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.graph.Node_URI;
 import org.apache.jena.graph.Triple;
+import org.joda.time.DateTime;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.variant.vcf.VCFHeader;
+
 
 public class TripleConversion implements AsynchronousJob {
 
@@ -144,6 +146,7 @@ public class TripleConversion implements AsynchronousJob {
 			}
 			// data needed: featureType for the track; referencemapping for the track
 			Metadata meta = new Metadata();
+			meta.date = DateTime.now().toDate().toString();
 			meta.fileName = inputFile.getName();
 			meta.file = inputFile.toString();
 			meta.sumFeatureCount= track.getFeatureCount();
@@ -187,6 +190,8 @@ public class TripleConversion implements AsynchronousJob {
 	
 	public class Metadata{
 		public List<Node> typeList = new ArrayList<Node>();	
+		public String date = new String();
+		public String user = new String();
 		public String fileType = new String();
 		public String fileName = new String();
 		public String file = new String();

@@ -452,6 +452,11 @@
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-starter-batch</artifactId>
         </dependency>
+        <dependency>
+        	<groupId>org.neo4j</groupId>
+        	<artifactId>neo4j-cypher-commons</artifactId>
+        	<version>2.1.5</version>
+        </dependency>
     </dependencies>
     
     
@@ -743,6 +748,7 @@
 						<include>ontologies/track.owl</include>
 						<include>ontologies/faldo.ttl</include>
 						<include>ontologies/boinq.owl</include>
+						<include>ontologies/format.owl</include>
 					</includes>
 					<fileOptions>
 						<source>
@@ -762,6 +768,11 @@
 						</source>
 						<source>
 							<input>ontologies/boinq.owl</input>
+							<ontology>true</ontology>
+							<individuals-section>// INDIVIDUALS</individuals-section>
+						</source>
+						<source>
+							<input>ontologies/format.owl</input>
 							<ontology>true</ontology>
 							<individuals-section>// INDIVIDUALS</individuals-section>
 						</source>

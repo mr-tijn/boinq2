@@ -111,6 +111,12 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#uploadedBy -->
+
+    <owl:ObjectProperty rdf:about="&track;uploadedBy"/>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -128,6 +134,12 @@
         <rdfs:domain rdf:resource="&track;File"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#createdOn -->
+
+    <owl:DatatypeProperty rdf:about="&track;createdOn"/>
     
 
 
@@ -154,7 +166,10 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#fileName -->
 
-    <owl:DatatypeProperty rdf:about="&track;fileName"/>
+    <owl:DatatypeProperty rdf:about="&track;fileName">
+        <rdfs:domain rdf:resource="&track;File"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -188,12 +203,30 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#samHeader -->
+
+    <owl:DatatypeProperty rdf:about="&track;samHeader"/>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#tripleCount -->
 
     <owl:DatatypeProperty rdf:about="&track;tripleCount">
         <rdfs:domain rdf:resource="&track;File"/>
         <rdfs:range rdf:resource="&xsd;int"/>
     </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#undefinedTemplate -->
+
+    <owl:DatatypeProperty rdf:about="&track;undefinedTemplate"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#uploadedOn -->
+
+    <owl:DatatypeProperty rdf:about="&track;uploadedOn"/>
     
 
 
@@ -251,14 +284,14 @@
         <rdfs:subClassOf rdf:resource="&track;FeatureDatasource"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;references"/>
-                <owl:someValuesFrom rdf:resource="&track;ReferenceAssembly"/>
+                <owl:onProperty rdf:resource="&track;provides"/>
+                <owl:someValuesFrom rdf:resource="&track;FaldoTrack"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;provides"/>
-                <owl:someValuesFrom rdf:resource="&track;FaldoTrack"/>
+                <owl:onProperty rdf:resource="&track;references"/>
+                <owl:someValuesFrom rdf:resource="&track;ReferenceAssembly"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A FaldoDatasource that uses FALDO for referencing an assembly</rdfs:comment>
@@ -479,18 +512,24 @@
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;entry"/>
-                <owl:someValuesFrom rdf:resource="&track;ReferenceMapEntry"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
                 <owl:onProperty rdf:resource="&track;holds"/>
                 <owl:someValuesFrom rdf:resource="&track;FeatureType"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&track;entry"/>
+                <owl:someValuesFrom rdf:resource="&track;ReferenceMapEntry"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A collection of features of the same type</rdfs:comment>
     </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#User -->
+
+    <owl:Class rdf:about="&track;User"/>
     
 
 
