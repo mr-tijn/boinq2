@@ -78,6 +78,10 @@
             <column name="datasource_id" type="BIGINT"/>
             <column name="name" type="VARCHAR(255)"/>
             <column name="type" type="VARCHAR(255)"/>
+            <column name="file_type" type="VARCHAR(255)"/>
+            <column name="species" type="VARCHAR(255)"/>
+            <column name="feature_count" type="BIGINT"/>
+            <column name="triple_count" type="BIGINT"/>
         </createTable>
     </changeSet>
     <changeSet author="martijn (generated)" id="1441697573365-13">

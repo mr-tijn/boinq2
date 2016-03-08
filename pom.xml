@@ -49,26 +49,25 @@
         <spring-security.version>4.0.1.RELEASE</spring-security.version>
         <springfox.version>2.0.3</springfox.version>
         <usertype-core.version>4.0.0.GA</usertype-core.version>
-    	<htsjdk.version>2.1.0</htsjdk.version>
     	<jannovar.version>0.16</jannovar.version>
+    	<htsjdk.version>2.1.0</htsjdk.version>
     </properties>
-    	
     <dependencies>
     	<dependency>
     		<groupId>de.charite.compbio</groupId>
-			<artifactId>jannovar-core</artifactId>
-			<version>${jannovar.version}</version>
+		<artifactId>jannovar-core</artifactId>
+		<version>${jannovar.version}</version>
     	</dependency>
-		<dependency>
-			<groupId>org.rosuda.REngine</groupId>
-			<artifactId>REngine</artifactId>
-			<version>2.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.rosuda.REngine</groupId>
-			<artifactId>Rserve</artifactId>
-			<version>1.8.1</version>
-		</dependency>
+	<dependency>
+		<groupId>org.rosuda.REngine</groupId>
+		<artifactId>REngine</artifactId>
+		<version>2.1.0</version>
+	</dependency>
+	<dependency>
+		<groupId>org.rosuda.REngine</groupId>
+		<artifactId>Rserve</artifactId>
+		<version>1.8.1</version>
+	</dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
@@ -442,12 +441,7 @@
         	<artifactId>quartz</artifactId>
         	<version>2.2.1</version>
         </dependency>
-        <dependency>
-        	<groupId>edu.unc</groupId>
-        	<artifactId>java-genomics-io</artifactId>
-        	<version>master</version>
-        </dependency>
-        <dependency>
+	<dependency>
         	<groupId>com.github.samtools</groupId>
         	<artifactId>htsjdk</artifactId>
         	<version>${htsjdk.version}</version>
@@ -459,6 +453,11 @@
         <dependency>
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-starter-batch</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.neo4j</groupId>
+        	<artifactId>neo4j-cypher-commons</artifactId>
+        	<version>2.1.5</version>
         </dependency>
     </dependencies>
     
@@ -751,6 +750,7 @@
 						<include>ontologies/track.owl</include>
 						<include>ontologies/faldo.ttl</include>
 						<include>ontologies/boinq.owl</include>
+						<include>ontologies/format.owl</include>
 					</includes>
 					<fileOptions>
 						<source>
@@ -770,6 +770,11 @@
 						</source>
 						<source>
 							<input>ontologies/boinq.owl</input>
+							<ontology>true</ontology>
+							<individuals-section>// INDIVIDUALS</individuals-section>
+						</source>
+						<source>
+							<input>ontologies/format.owl</input>
 							<ontology>true</ontology>
 							<individuals-section>// INDIVIDUALS</individuals-section>
 						</source>

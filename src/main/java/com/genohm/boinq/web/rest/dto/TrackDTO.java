@@ -2,8 +2,6 @@ package com.genohm.boinq.web.rest.dto;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +19,8 @@ public class TrackDTO {
     private String name;
     private String type;
     private String species;
+    private long featureCount;
+    private long tripleCount;
     private long datasourceId;
 	private Set<RawDataFileDTO> rawDataFiles;
 	private Map<String, Map<String, String>> supportedOperators;
@@ -43,6 +43,22 @@ public class TrackDTO {
 		this.status = status;
 	}
 
+	public long getFeatureCount() {
+		return featureCount;
+	}
+	
+	public void setFeatureCount(long featureCount) {
+		this.featureCount = featureCount;
+	}
+	
+	public long getTripleCount() {
+		return tripleCount;
+	}
+	
+	public void setTripleCount(long tripleCount) {
+		this.tripleCount = tripleCount;
+	}
+	
 	public String getGraphName() {
 		return graphName;
 	}
@@ -81,7 +97,7 @@ public class TrackDTO {
 	public void setSpecies(String species){
 		this.species = species;
 	}
-
+	
 	public long getDatasourceId() {
 		return datasourceId;
 	}
@@ -98,8 +114,6 @@ public class TrackDTO {
 		this.rawDataFiles = rawDataFiles;
 	}
 
-	
-	
 	public Map<String, Map<String, String>> getSupportedOperators() {
 		return supportedOperators;
 	}
@@ -129,6 +143,8 @@ public class TrackDTO {
 	public TrackDTO(Track track) {
 		this.id = track.getId();
 		this.status = track.getStatus();
+		this.featureCount = track.getFeatureCount();
+		this.tripleCount = track.getTripleCount();
 		this.name = track.getName();
 		this.graphName = track.getGraphName();
 		this.fileType = track.getFileType();

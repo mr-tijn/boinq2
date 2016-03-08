@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
+import com.genohm.boinq.generated.vocabularies.GfvoVocab;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
 
+import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
@@ -30,6 +32,7 @@ import org.apache.jena.sparql.expr.E_Str;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueNode;
+import org.apache.jena.sparql.graph.GraphFactory;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.sparql.path.P_Link;
@@ -64,6 +67,9 @@ public class QueryBuilderService {
 	public static final String FEATURE_ID = "featureId";
 	public static final String VARIABLE_FEATURE_TYPE = "featureType";
 	public static final String VARIABLE_FEATURE_TYPE_LABEL = "featureTypeLabel";
+	public static final String VARIABLE_FEATURE_COUNT = "featureCount";
+	public static final String VARIABLE_TRIPLE_COUNT = "tripleCount";
+	public static final String VARIABLE_FILE_NODE = "fileNode";
 	public static final String OPERATOR = "operator";
 	public static final String ENDPOINT_URI = "endpointUri";
 	public static final String ROOT_TERM = "rootTerm";
@@ -363,9 +369,45 @@ public class QueryBuilderService {
 		mainQuery.setQueryPattern(mainSelect);
 		
 		return mainQuery.toString(Syntax.syntaxSPARQL_11);
-
 	}
 	
+	public String findFeatureCount(String trackGraphName) {
+		Query mainQuery = new Query();
+		mainQuery.setQuerySelectType();
+		Node featureCount = NodeFactory.createVariable(VARIABLE_FEATURE_COUNT);
+		Node fileNode = NodeFactory.createVariable(VARIABLE_FILE_NODE);
+		ElementGroup main = new ElementGroup();
+	
+		ElementTriplesBlock triples = new ElementTriplesBlock();
+		
+		triples.addTriple(new Triple(NodeFactory.createURI(trackGraphName), TrackVocab.File.asNode(),fileNode));
+		triples.addTriple(new Triple(fileNode, TrackVocab.featureCount.asNode(), featureCount));
+		main.addElement(triples);
+		
+		mainQuery.addResultVar(featureCount);
+		mainQuery.setQueryPattern(main);
+		
+		return mainQuery.toString(Syntax.syntaxSPARQL_11);
+	}
+	
+	public String findTripleCount(String trackGraphName) {
+		Query mainQuery = new Query();
+		mainQuery.setQuerySelectType();
+		Node tripleCount = NodeFactory.createVariable(VARIABLE_TRIPLE_COUNT);
+		Node fileNode = NodeFactory.createVariable(VARIABLE_FILE_NODE);
+		ElementGroup main = new ElementGroup();
+	
+		ElementTriplesBlock triples = new ElementTriplesBlock();
+		
+		triples.addTriple(new Triple(NodeFactory.createURI(trackGraphName), TrackVocab.File.asNode(),fileNode));
+		triples.addTriple(new Triple(fileNode, TrackVocab.tripleCount.asNode(), tripleCount));
+		main.addElement(triples);
+		
+		mainQuery.addResultVar(tripleCount);
+		mainQuery.setQueryPattern(main);
+		
+		return mainQuery.toString(Syntax.syntaxSPARQL_11);
+	}
 	
 	public String findFeatureTypes(String trackGraphName) {
 		Query mainQuery = new Query();

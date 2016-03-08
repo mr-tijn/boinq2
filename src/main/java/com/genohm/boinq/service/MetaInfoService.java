@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
-
+import com.genohm.boinq.repository.TrackRepository;
 
 @Service
 public class MetaInfoService {
@@ -60,6 +60,37 @@ public class MetaInfoService {
 		}
 	}
 	
+	public long getFeatureCount(Track track) {
+	long featureCount=0;
+		try {
+			String query = queryBuilderService.findFeatureCount(track.getGraphName());
+			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(),track.getDatasource().getMetaGraphName(), query);
+			for (Map<String,String> record: result.getRecords()) {
+				featureCount += Integer.parseInt(record.get(QueryBuilderService.VARIABLE_FEATURE_COUNT));
+			}
+			
+		} catch (Exception e) {
+			log.error("Could not find supported featurecount for track " + track.getGraphName(), e);
+			track.setFeatureCount(0);
+		}
+		return featureCount;
+	}
+	
+	public long getTripleCount(Track track) {
+		long tripleCount=0;
+			try {
+				String query = queryBuilderService.findTripleCount(track.getGraphName());
+				SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(),track.getDatasource().getMetaGraphName(), query);
+				for (Map<String,String> record: result.getRecords()) {
+					tripleCount += Integer.parseInt(record.get(QueryBuilderService.VARIABLE_TRIPLE_COUNT));
+				}
+				
+			} catch (Exception e) {
+				log.error("Could not find supported featurecount for track " + track.getGraphName(), e);
+				track.setFeatureCount(0);
+			}
+			return tripleCount;
+		}
 	
 	public void getSupportedFeatureTypes(Track track) {
 		try {
@@ -73,6 +104,7 @@ public class MetaInfoService {
 		} catch (Exception e) {
 			log.error("Could not find supported operators for track " + track.getGraphName(), e);
 			track.setSupportedOperators(null);
+			
 		}
 	}
 	

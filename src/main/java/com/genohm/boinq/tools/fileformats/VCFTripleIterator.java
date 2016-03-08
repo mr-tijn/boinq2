@@ -53,6 +53,7 @@ public class VCFTripleIterator implements Iterator<Triple> {
 	@Override
 	public Triple next() {
 		if (currentTriples.isEmpty()){
+			meta.sumFeatureCount++;
 			VariantContext record = codec.decode(lineIterator.next());
 			Node reference = null;
 			if (referenceMap != null) {
@@ -61,7 +62,7 @@ public class VCFTripleIterator implements Iterator<Triple> {
 			if (reference == null){
 				reference = NodeFactory.createLiteral(record.getContig());
 			}
-			currentTriples.addAll(converter.convert(record, reference, record.getID(), record.getStart(), meta));
+			currentTriples.addAll(converter.convert(record, reference, record.getStart(), meta));
 		}
 		return currentTriples.remove(0);
 	}

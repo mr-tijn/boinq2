@@ -25,7 +25,6 @@ import de.charite.compbio.jannovar.impl.parse.gff.GFFVersion;
 public class GFF3TripleIterator implements Iterator<Triple> {
 
 	private List<Triple> currentTriples = new LinkedList<Triple>();
-	private int idCounter = 1;
 	private Map<String, Node> referenceMap;
 	private TripleConverter converter;
 	private Metadata meta;
@@ -55,7 +54,7 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 	@Override
 	public Triple next() {
 		if (currentTriples.isEmpty()) {
-
+			meta.sumFeatureCount++;
 			String nextLine = lineIterator.next();
 			while (nextLine.startsWith("##")) {
 				this.meta.gffHeader.add(nextLine.substring(2));
@@ -68,9 +67,6 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-
-			String id = "id_" + ++idCounter;
 			Node reference = null;
 			if (referenceMap != null) {
 				reference = referenceMap.get(entry.getSequenceID());
@@ -78,7 +74,7 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 			if (reference == null) {
 				reference = NodeFactory.createLiteral(entry.getSequenceID());
 			}
-			List<Triple> triples = converter.convert(entry, reference, id, meta);
+			List<Triple> triples = converter.convert(entry, reference,  meta);
 			currentTriples.addAll(triples);
 		}
 		return currentTriples.remove(0);

@@ -1,5 +1,6 @@
 package com.genohm.boinq.tools.fileformats;
 
+
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SamReader;
@@ -12,24 +13,29 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.jena.graph.Node;
-import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 
+import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
 
 public class SAMTripleIterator implements Iterator<Triple> {
 	
 	private TripleConverter converter;
 	private SAMRecordIterator recordIterator;
 	private List<Triple> currentTriples = new LinkedList<Triple>();
-	
-	private int idCounter = 0;
 	private Map<String, Node> referenceMap;
+	private Metadata meta;
+	private SamReader samReader;
+	
 
-	public SAMTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap) {
+	public SAMTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta) {
+		
 		this.converter = converter;
 		this.referenceMap = referenceMap;
-		SamReader reader = SamReaderFactory.makeDefault().open(file);
-		this.recordIterator = reader.iterator();
+		SamReaderFactory factory =SamReaderFactory.makeDefault();
+		this.samReader = factory.open(new File(file.getPath()));
+		this.recordIterator = samReader.iterator();
+        meta.samHeader = samReader.getFileHeader();
+		this.meta = meta; 
 	}
 	
 	@Override
@@ -45,13 +51,14 @@ public class SAMTripleIterator implements Iterator<Triple> {
 	@Override
 	public Triple next() {
 		if (currentTriples.isEmpty()){
-			SAMRecord record = recordIterator.next();
-			String id = "SAMASSEMBLER_GENERATED_ID_" + ++idCounter;
-			Node reference = referenceMap.get(record.getContig());
-			if (reference == null){
-				reference = NodeFactory.createLiteral(record.getContig());
-			}
-			currentTriples.addAll(converter.convert(record, reference, id));
+			meta.sumFeatureCount++;
+			SAMRecord entry = recordIterator.next();
+			Node reference = referenceMap.get(entry.getContig());
+			/*if (reference == null){
+				reference = NodeFactory.createLiteral(entry.getContig());
+			}*/
+			
+			currentTriples.addAll(converter.convert(entry, reference, meta));
 		}
 		return currentTriples.remove(0);
 	}
