@@ -49,8 +49,16 @@
         <spring-security.version>4.0.1.RELEASE</spring-security.version>
         <springfox.version>2.0.3</springfox.version>
         <usertype-core.version>4.0.0.GA</usertype-core.version>
-    	<htsjdk.version>1.141</htsjdk.version></properties>
+    	<htsjdk.version>2.1.0</htsjdk.version>
+    	<jannovar.version>0.16</jannovar.version>
+    </properties>
+    	
     <dependencies>
+    	<dependency>
+    		<groupId>de.charite.compbio</groupId>
+			<artifactId>jannovar-core</artifactId>
+			<version>${jannovar.version}</version>
+    	</dependency>
 		<dependency>
 			<groupId>org.rosuda.REngine</groupId>
 			<artifactId>REngine</artifactId>
@@ -440,7 +448,7 @@
         	<version>master</version>
         </dependency>
         <dependency>
-        	<groupId>broad</groupId>
+        	<groupId>com.github.samtools</groupId>
         	<artifactId>htsjdk</artifactId>
         	<version>${htsjdk.version}</version>
         </dependency>
