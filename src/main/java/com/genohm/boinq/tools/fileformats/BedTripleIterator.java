@@ -48,7 +48,7 @@ public class BedTripleIterator implements Iterator<Triple> {
 	@Override
 	public Triple next() {
 		if (currentTriples.isEmpty()){
-			meta.sumFeatureCount++;
+			meta.sumEntryCount++;
 			String nextLine = lineIterator.next();
 			BEDFeature entry = codec.decode(nextLine);
 			while (entry == null){

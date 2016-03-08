@@ -1,8 +1,6 @@
 package com.genohm.boinq.service;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.repository.TrackRepository;
 
 @Service
 public class MetaInfoService {
@@ -60,36 +57,21 @@ public class MetaInfoService {
 		}
 	}
 	
-	public long getFeatureCount(Track track) {
-	long featureCount=0;
-		try {
-			String query = queryBuilderService.findFeatureCount(track.getGraphName());
-			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(),track.getDatasource().getMetaGraphName(), query);
-			for (Map<String,String> record: result.getRecords()) {
-				featureCount += Integer.parseInt(record.get(QueryBuilderService.VARIABLE_FEATURE_COUNT));
-			}
-			
-		} catch (Exception e) {
-			log.error("Could not find supported featurecount for track " + track.getGraphName(), e);
-			track.setFeatureCount(0);
-		}
-		return featureCount;
-	}
-	
-	public long getTripleCount(Track track) {
-		long tripleCount=0;
+
+	public long getFileAttributeCount(Track track, Node attributeType) {
+		long count=0;
 			try {
-				String query = queryBuilderService.findTripleCount(track.getGraphName());
+				String query = queryBuilderService.findFileAttributeCount(track.getGraphName(), attributeType);
 				SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(),track.getDatasource().getMetaGraphName(), query);
 				for (Map<String,String> record: result.getRecords()) {
-					tripleCount += Integer.parseInt(record.get(QueryBuilderService.VARIABLE_TRIPLE_COUNT));
+					count += Integer.parseInt(record.get(QueryBuilderService.VARIABLE_ATTRIBUTE_COUNT));
 				}
 				
 			} catch (Exception e) {
-				log.error("Could not find supported featurecount for track " + track.getGraphName(), e);
+				log.error("Could not find supported attributes in track " + track.getGraphName(), e);
 				track.setFeatureCount(0);
 			}
-			return tripleCount;
+			return count;
 		}
 	
 	public void getSupportedFeatureTypes(Track track) {

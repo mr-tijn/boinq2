@@ -18,7 +18,7 @@ import org.apache.jena.graph.Triple;
 @Service
 public class TripleIteratorFactory {
 
-	private static final String GFF3_EXTENSIONS[] = {"GFF", "GFF3"};
+	private static final String GFF3_EXTENSIONS[] = {"GTF", "GFF3"};
 	private static final String BED_EXTENSIONS[] = {"BED"};
 	private static final String VCF_EXTENSIONS[] = {"VCF"};
 	private static final String SAM_EXTENSIONS[] = {"SAM", "BAM"};

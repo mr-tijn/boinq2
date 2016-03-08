@@ -1,7 +1,6 @@
 package com.genohm.boinq.domain;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +31,7 @@ public class Track implements Serializable {
 	private static final long serialVersionUID = 6345156276128476305L;
 	public static final int STATUS_EMPTY = 0;
 	public static final int STATUS_RAW_DATA = 1;
+
 	
 	//meta info
 	@Transient
@@ -65,6 +65,14 @@ public class Track implements Serializable {
     @Column(name = "species", nullable = true)
     private String species;
     
+    @Column(name = "entry_count")
+    private long entryCount;
+    
+    @Column(name = "feature_count")
+    private long featureCount;
+    
+    @Column(name = "triple_count")
+    private long tripleCount;
     
     @OneToMany(fetch=FetchType.EAGER, orphanRemoval=true,targetEntity=RawDataFile.class)
     private Set<RawDataFile> rawDataFiles;
@@ -91,6 +99,30 @@ public class Track implements Serializable {
 		this.graphName = graphName;
 	}
 
+	public long getEntryCount() {
+		return entryCount;
+	}
+	
+	public void setEntryCount(long entryCount) {
+		this.entryCount = entryCount;
+	}
+	
+	public long getFeatureCount() {
+		return featureCount;
+	}
+
+	public void setFeatureCount(long featureCount) {
+		this.featureCount= featureCount;
+	}
+	
+	public long getTripleCount() {
+		return tripleCount;
+	}
+
+	public void setTripleCount(long tripleCount) {
+		this.tripleCount= tripleCount;
+	}
+	
 	public String getFileType() {
 		return fileType;
 	}
@@ -145,7 +177,7 @@ public class Track implements Serializable {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-
+	
 	public void setSupportedOperators(Map<String, Map<String, String>> supportedOperators) {
 		this.supportedOperators = supportedOperators;
 	}
@@ -200,7 +232,10 @@ public class Track implements Serializable {
         return "Track{" +
                 "id=" + id +
                 ", graphName='" + graphName + "'" +
-                ", fileType='" + fileType + "'" +
+                ", entryCount=" + entryCount +
+                ", featureCount=" + featureCount +
+                ", tripleCount=" + tripleCount +
+                ", fileType=" + fileType + 
                 ", name='" + name + "'" +
                 ", type='" + type + "'" +
                 ", species='" + species + "'" +

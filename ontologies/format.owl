@@ -28,6 +28,23 @@
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#defines -->
+
+    <owl:ObjectProperty rdf:about="&format;defines"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
     // Data properties
     //
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +58,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasCIGAR">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to CIGAR value as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -52,7 +69,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasFLAG">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to FLAG value as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;int"/>
     </owl:DatatypeProperty>
     
@@ -63,7 +80,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasMAPQ">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to MAPQ value as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;int"/>
     </owl:DatatypeProperty>
     
@@ -74,7 +91,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasPNEXT">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to PNEXT value as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;int"/>
     </owl:DatatypeProperty>
     
@@ -85,7 +102,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasPOS">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to POS value as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;int"/>
     </owl:DatatypeProperty>
     
@@ -96,7 +113,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasQNAME">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to QNAME value as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -107,7 +124,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasQUAL">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to QUAL as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -118,7 +135,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasRNAME">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to RNAME value as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -129,7 +146,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasRNEXT">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to RNEXT value as defined by</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -140,7 +157,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasSEQ">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to SEQ as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -151,7 +168,7 @@
     <owl:DatatypeProperty rdf:about="&format;hasTLEN">
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
         <rdfs:comment rdf:datatype="&xsd;string">points to TLEN value as defined by:</rdfs:comment>
-        <rdfs:domain rdf:resource="&format;SamEntry"/>
+        <rdfs:domain rdf:resource="&format;SAM_entry"/>
         <rdfs:range rdf:resource="&xsd;int"/>
     </owl:DatatypeProperty>
     
@@ -168,12 +185,129 @@
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/format#SamEntry -->
+    <!-- http://www.boinq.org/iri/ontologies/format#BED_entry -->
 
-    <owl:Class rdf:about="&format;SamEntry">
+    <owl:Class rdf:about="&format;BED_entry"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#CIGAR -->
+
+    <owl:Class rdf:about="&format;CIGAR">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#FLAG -->
+
+    <owl:Class rdf:about="&format;FLAG">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#GFF_entry -->
+
+    <owl:Class rdf:about="&format;GFF_entry"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#MAPQ -->
+
+    <owl:Class rdf:about="&format;MAPQ">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#PNEXT -->
+
+    <owl:Class rdf:about="&format;PNEXT">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#POS -->
+
+    <owl:Class rdf:about="&format;POS">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#QNAME -->
+
+    <owl:Class rdf:about="&format;QNAME">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#QUAL -->
+
+    <owl:Class rdf:about="&format;QUAL">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#RNAME -->
+
+    <owl:Class rdf:about="&format;RNAME">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#RNEXT -->
+
+    <owl:Class rdf:about="&format;RNEXT">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#SAM_entry -->
+
+    <owl:Class rdf:about="&format;SAM_entry">
         <rdfs:comment rdf:datatype="&xsd;string">One line found back in a SAM/BAM file not including the header</rdfs:comment>
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
     </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#SEQ -->
+
+    <owl:Class rdf:about="&format;SEQ">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#TLEN -->
+
+    <owl:Class rdf:about="&format;TLEN">
+        <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#VCF_entry -->
+
+    <owl:Class rdf:about="&format;VCF_entry"/>
 </rdf:RDF>
 
 

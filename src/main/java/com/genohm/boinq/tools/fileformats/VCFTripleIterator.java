@@ -53,7 +53,7 @@ public class VCFTripleIterator implements Iterator<Triple> {
 	@Override
 	public Triple next() {
 		if (currentTriples.isEmpty()){
-			meta.sumFeatureCount++;
+			meta.sumEntryCount++;
 			VariantContext record = codec.decode(lineIterator.next());
 			Node reference = null;
 			if (referenceMap != null) {

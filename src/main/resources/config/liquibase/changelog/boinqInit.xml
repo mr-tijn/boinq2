@@ -80,6 +80,7 @@
             <column name="type" type="VARCHAR(255)"/>
             <column name="file_type" type="VARCHAR(255)"/>
             <column name="species" type="VARCHAR(255)"/>
+            <column name="entry_count" type="BIGINT"/>
             <column name="feature_count" type="BIGINT"/>
             <column name="triple_count" type="BIGINT"/>
         </createTable>
