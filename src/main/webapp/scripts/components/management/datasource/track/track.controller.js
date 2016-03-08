@@ -79,13 +79,6 @@ angular.module('boinqApp').controller('TrackController', ['$scope', 'Track', 'Da
         	$scope.track.type = uris;
         	console.info(uris);
         };
-        
-        		$scope.fileOptions = [
-                       {id: 'VCF', name: 'VCF'},
-                       {id: 'GFF', name: 'GFF/GFF3'},
-                       {id: 'BED', name: 'BED'}
-                     ];
- 
 
         // FILE UPLOADER
         

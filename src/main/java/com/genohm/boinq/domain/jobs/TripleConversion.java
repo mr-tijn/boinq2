@@ -2,6 +2,7 @@ package com.genohm.boinq.domain.jobs;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,8 +19,10 @@ import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.repository.RawDataFileRepository;
+import com.genohm.boinq.repository.TrackRepository;
 import com.genohm.boinq.service.LocalGraphService;
 import com.genohm.boinq.service.MetadataGraphService;
+import com.genohm.boinq.service.MetaInfoService;
 import com.genohm.boinq.service.QueryBuilderService;
 import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
@@ -29,10 +32,12 @@ import com.genohm.boinq.tools.fileformats.TripleConverter;
 import com.genohm.boinq.tools.queries.Prefixes;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.graph.Node_URI;
 import org.apache.jena.graph.Triple;
+import org.joda.time.DateTime;
 
+import htsjdk.samtools.SAMFileHeader;
 import htsjdk.variant.vcf.VCFHeader;
+
 
 public class TripleConversion implements AsynchronousJob {
 
@@ -51,15 +56,19 @@ public class TripleConversion implements AsynchronousJob {
 	private RawDataFileRepository rawDataFileRepository;
 	@Inject
 	MetadataGraphService metadataGraphService;
-
+	@Inject 
+	MetaInfoService metainfoservice;
+    @Inject
+    private TrackRepository trackRepository;
 	
+
 	private int status = JOB_STATUS_UNKNOWN;
 	private String name = "";
 	private String description = "";
 	
 	private RawDataFile inputData;
 	
-	public static final String SUPPORTED_EXTENSIONS[] = {"GFF", "GFF3", "BED", "VCF"};
+	public static final String SUPPORTED_EXTENSIONS[] = {"GFF", "GFF3", "BED", "VCF","SAM","BAM"};
 	
 	private static Logger log = LoggerFactory.getLogger(TripleConversion.class);
 	
@@ -137,6 +146,10 @@ public class TripleConversion implements AsynchronousJob {
 			}
 			// data needed: featureType for the track; referencemapping for the track
 			Metadata meta = new Metadata();
+			meta.date = DateTime.now().toDate().toString();
+			meta.fileName = inputFile.getName();
+			meta.file = inputFile.toString();
+			meta.sumFeatureCount= track.getFeatureCount();
 			Map<String, Node> referenceMap = getReferenceMap(track);
 			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap, meta);
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
@@ -146,12 +159,18 @@ public class TripleConversion implements AsynchronousJob {
 				meta.tripleCount++;
 			}
 			uploader.finish();
+			meta.featureCount=meta.sumFeatureCount-track.getFeatureCount();
 			String metagraph = track.getDatasource().getMetaGraphName();
-			meta.fileName = inputFile.getName();
-			meta.file = inputFile.toString();
 			String endpoint = track.getDatasource().getEndpointUpdateUrl();
 			List<Triple> metadata =tripleconverter.createMetadata(meta,track.getGraphName());
 			metadataGraphService.updateFileConversion(endpoint, metagraph, metadata);
+
+			long featureCount = metainfoservice.getFeatureCount(track);
+			long tripleCount = metainfoservice.getTripleCount(track);
+			track.setFeatureCount(featureCount);
+			track.setTripleCount(tripleCount);
+			track.setFileType(meta.fileType);
+			trackRepository.save(track);
 			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
 			rawDataFileRepository.save(inputData);
@@ -171,13 +190,19 @@ public class TripleConversion implements AsynchronousJob {
 	
 	public class Metadata{
 		public List<Node> typeList = new ArrayList<Node>();	
+		public String date = new String();
+		public String user = new String();
 		public String fileType = new String();
 		public String fileName = new String();
 		public String file = new String();
 		public VCFHeader vcfHeader = new VCFHeader();
+		public SAMFileHeader samHeader = new SAMFileHeader();
 		public List<String> gffHeader = new ArrayList<String>();
 		public List<String> bedHeader = new ArrayList<String>();
-		public int tripleCount;
+		public long tripleCount;
+		public long featureCount;
+		public long sumFeatureCount;
+		
 	}
 	
 }

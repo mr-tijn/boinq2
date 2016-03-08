@@ -78,7 +78,7 @@ public class FileUploadController {
 				return new ResponseEntity<String>("Empty file", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			String fileName = file.getOriginalFilename();
-			checkExtension(FilenameUtils.getExtension(fileName));
+			checkExtension(FilenameUtils.getExtension(fileName),track);
 			track.setStatus(Track.STATUS_RAW_DATA);
 			Set<RawDataFile> rawDataFiles = track.getRawDataFiles();
 			if (rawDataFiles == null) {
@@ -99,11 +99,17 @@ public class FileUploadController {
 		}
 	}
 
-	private void checkExtension(String extension) throws Exception {
-		for (String ext : TripleConversion.SUPPORTED_EXTENSIONS) {
-			if (extension.equalsIgnoreCase(ext)) return; 
-		}
+	private void checkExtension(String extension, Track track) throws Exception {
+		if (track.getFileType() ==null) {
+			for (String ext : TripleConversion.SUPPORTED_EXTENSIONS) {
+				if (extension.equalsIgnoreCase(ext)) return; 
+			}
 		throw new Exception("Unsupported file format "+extension);
+		}
+		else {
+			if (extension.equalsIgnoreCase(track.getFileType())) return; 
+		throw new Exception("Has to be file format "+track.getFileType());
+		}
 	}
 
 	private void verifyUploadPermission(String login, Datasource datasource) throws Exception {
