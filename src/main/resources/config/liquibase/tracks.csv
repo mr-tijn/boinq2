@@ -1,3 +1,3 @@
-ID|GRAPH_NAME|STATUS|DATASOURCE_ID|NAME|TYPE|FILE_TYPE|SPECIES|FEATURE_COUNT|TRIPLE_COUNT
-1|http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844|0|1|Example Track|http://purl.obolibrary.org/obo/SO_0001410|NULL|Homo Sapiens|0|0
-2|http://rdf.ebi.ac.uk/dataset/ensembl/77/9606|0|2|Ensembl Human|http://purl.obolibrary.org/obo/SO_0001410|NULL|Homo Sapiens|0|0
+ID|GRAPH_NAME|STATUS|DATASOURCE_ID|NAME|TYPE|FILE_TYPE|SPECIES|ENTRY_COUNT|FEATURE_COUNT|TRIPLE_COUNT
+1|http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844|0|1|Example Track|http://purl.obolibrary.org/obo/SO_0001410|NULL|Homo Sapiens|0|0|0
+2|http://rdf.ebi.ac.uk/dataset/ensembl/77/9606|0|2|Ensembl Human|http://purl.obolibrary.org/obo/SO_0001410|NULL|Homo Sapiens|0|0|0

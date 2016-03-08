@@ -2,10 +2,8 @@ package com.genohm.boinq.domain.jobs;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +16,9 @@ import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.repository.RawDataFileRepository;
 import com.genohm.boinq.repository.TrackRepository;
-import com.genohm.boinq.service.LocalGraphService;
 import com.genohm.boinq.service.MetadataGraphService;
 import com.genohm.boinq.service.MetaInfoService;
 import com.genohm.boinq.service.QueryBuilderService;
@@ -144,12 +142,22 @@ public class TripleConversion implements AsynchronousJob {
 			if (inputData.getStatus() == RawDataFile.STATUS_COMPLETE) {
 				throw new Exception("Data is already uploaded");
 			}
-			// data needed: featureType for the track; referencemapping for the track
 			Metadata meta = new Metadata();
+			meta.filterCount = metainfoservice.getFileAttributeCount(track, TrackVocab.FilterCount.asNode());
+			meta.sampleCount = metainfoservice.getFileAttributeCount(track, TrackVocab.SampleCount.asNode());
+			meta.sumFilterCount = meta.filterCount;
+			meta.sumSampleCount = meta.sampleCount;
+			track.setEntryCount(metainfoservice.getFileAttributeCount(track, TrackVocab.EntryCount.asNode()));
+			track.setFeatureCount(metainfoservice.getFileAttributeCount(track, TrackVocab.FeatureCount.asNode()));
+			track.setTripleCount(metainfoservice.getFileAttributeCount(track, TrackVocab.TripleCount.asNode()));
+			trackRepository.save(track);
+			
+			// data needed: featureType for the track; referencemapping for the track
 			meta.date = DateTime.now().toDate().toString();
 			meta.fileName = inputFile.getName();
 			meta.file = inputFile.toString();
 			meta.sumFeatureCount= track.getFeatureCount();
+			meta.sumEntryCount = track.getEntryCount();
 			Map<String, Node> referenceMap = getReferenceMap(track);
 			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap, meta);
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
@@ -160,16 +168,16 @@ public class TripleConversion implements AsynchronousJob {
 			}
 			uploader.finish();
 			meta.featureCount=meta.sumFeatureCount-track.getFeatureCount();
+			meta.entryCount=meta.sumEntryCount-track.getEntryCount();
 			String metagraph = track.getDatasource().getMetaGraphName();
 			String endpoint = track.getDatasource().getEndpointUpdateUrl();
 			List<Triple> metadata =tripleconverter.createMetadata(meta,track.getGraphName());
 			metadataGraphService.updateFileConversion(endpoint, metagraph, metadata);
 
-			long featureCount = metainfoservice.getFeatureCount(track);
-			long tripleCount = metainfoservice.getTripleCount(track);
-			track.setFeatureCount(featureCount);
-			track.setTripleCount(tripleCount);
-			track.setFileType(meta.fileType);
+			track.setEntryCount(metainfoservice.getFileAttributeCount(track, TrackVocab.EntryCount.asNode()));
+			track.setFeatureCount(metainfoservice.getFileAttributeCount(track, TrackVocab.FeatureCount.asNode()));
+			track.setTripleCount(metainfoservice.getFileAttributeCount(track, TrackVocab.TripleCount.asNode()));
+				track.setFileType(meta.fileType);
 			trackRepository.save(track);
 			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
@@ -200,9 +208,32 @@ public class TripleConversion implements AsynchronousJob {
 		public List<String> gffHeader = new ArrayList<String>();
 		public List<String> bedHeader = new ArrayList<String>();
 		public long tripleCount;
+		public long entryCount;
 		public long featureCount;
+		public long filterCount;
+		public long sampleCount;
 		public long sumFeatureCount;
-		
+		public long sumEntryCount;
+		public long sumFilterCount;
+		public long sumSampleCount;
+		public Map<String,Node>featureIDmap = new HashMap<>();
+		//TODO EXTEND VCF HEADER MAPS
+		public Map<String,Node> filterMap = new HashMap<>();
+		public Map<String,Node> sampleMap = new HashMap<>();
+		public Map<String,String> formatMap = new HashMap<>();
 	}
+	
+private class Triangle{
+	 int number;
+	 String type;
+	 String descr;
+	
+ Triangle(int number, String type, String descr) {
+	        this.number = number;
+	        this.type = type;
+	        this.descr = descr;
+	    }
+	
+}
 	
 }

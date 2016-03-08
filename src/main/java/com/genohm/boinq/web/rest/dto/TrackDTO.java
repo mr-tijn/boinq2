@@ -19,6 +19,7 @@ public class TrackDTO {
     private String name;
     private String type;
     private String species;
+    private long entryCount;
     private long featureCount;
     private long tripleCount;
     private long datasourceId;
@@ -43,6 +44,13 @@ public class TrackDTO {
 		this.status = status;
 	}
 
+	public long getEntryCount() {
+		return entryCount;
+	}
+	
+	public void setEntryCount(long entryCount) {
+		this.entryCount = entryCount;
+	}
 	public long getFeatureCount() {
 		return featureCount;
 	}
@@ -143,6 +151,7 @@ public class TrackDTO {
 	public TrackDTO(Track track) {
 		this.id = track.getId();
 		this.status = track.getStatus();
+		this.entryCount = track.getEntryCount();
 		this.featureCount = track.getFeatureCount();
 		this.tripleCount = track.getTripleCount();
 		this.name = track.getName();
