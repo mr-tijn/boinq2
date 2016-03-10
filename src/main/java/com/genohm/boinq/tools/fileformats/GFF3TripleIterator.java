@@ -54,7 +54,7 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 	@Override
 	public Triple next() {
 		if (currentTriples.isEmpty()) {
-			meta.sumFeatureCount++;
+			meta.sumEntryCount++;
 			String nextLine = lineIterator.next();
 			while (nextLine.startsWith("##")) {
 				this.meta.gffHeader.add(nextLine.substring(2));

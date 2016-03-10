@@ -84,6 +84,7 @@ public class TrackResource {
         	track.setType(trackDTO.getType());
         	track.setFileType(trackDTO.getFileType());
         	track.setSpecies(trackDTO.getSpecies());
+        	track.setEntryCount(trackDTO.getEntryCount());
         	track.setFeatureCount(trackDTO.getFeatureCount());
         	track.setTripleCount(trackDTO.getTripleCount());
         	Track savedTrack = trackRepository.save(track);

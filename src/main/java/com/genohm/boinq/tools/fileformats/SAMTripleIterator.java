@@ -51,7 +51,7 @@ public class SAMTripleIterator implements Iterator<Triple> {
 	@Override
 	public Triple next() {
 		if (currentTriples.isEmpty()){
-			meta.sumFeatureCount++;
+			meta.sumEntryCount++;
 			SAMRecord entry = recordIterator.next();
 			Node reference = referenceMap.get(entry.getContig());
 			/*if (reference == null){
