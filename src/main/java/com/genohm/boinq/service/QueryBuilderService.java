@@ -67,8 +67,8 @@ public class QueryBuilderService {
 	public static final String FEATURE_ID = "featureId";
 	public static final String VARIABLE_FEATURE_TYPE = "featureType";
 	public static final String VARIABLE_FEATURE_TYPE_LABEL = "featureTypeLabel";
-	public static final String VARIABLE_FEATURE_COUNT = "featureCount";
-	public static final String VARIABLE_TRIPLE_COUNT = "tripleCount";
+	public static final String VARIABLE_ATTRIBUTE = "attribute";
+	public static final String VARIABLE_ATTRIBUTE_COUNT = "featureCount";
 	public static final String VARIABLE_FILE_NODE = "fileNode";
 	public static final String OPERATOR = "operator";
 	public static final String ENDPOINT_URI = "endpointUri";
@@ -371,39 +371,23 @@ public class QueryBuilderService {
 		return mainQuery.toString(Syntax.syntaxSPARQL_11);
 	}
 	
-	public String findFeatureCount(String trackGraphName) {
+	public String findFileAttributeCount(String trackGraphName, Node attributeType) {
 		Query mainQuery = new Query();
 		mainQuery.setQuerySelectType();
-		Node featureCount = NodeFactory.createVariable(VARIABLE_FEATURE_COUNT);
+		Node attribute = NodeFactory.createVariable(VARIABLE_ATTRIBUTE);
+		Node count = NodeFactory.createVariable(VARIABLE_ATTRIBUTE_COUNT);
 		Node fileNode = NodeFactory.createVariable(VARIABLE_FILE_NODE);
 		ElementGroup main = new ElementGroup();
 	
 		ElementTriplesBlock triples = new ElementTriplesBlock();
 		
-		triples.addTriple(new Triple(NodeFactory.createURI(trackGraphName), TrackVocab.File.asNode(),fileNode));
-		triples.addTriple(new Triple(fileNode, TrackVocab.featureCount.asNode(), featureCount));
+		triples.addTriple(new Triple(NodeFactory.createURI(trackGraphName), TrackVocab.holds.asNode(),fileNode));
+		triples.addTriple(new Triple(fileNode, GfvoVocab.has_attribute.asNode(), attribute));
+		triples.addTriple(new Triple(attribute, RDF.type.asNode(), attributeType));
+		triples.addTriple(new Triple(attribute, RDF.value.asNode(), count));
 		main.addElement(triples);
 		
-		mainQuery.addResultVar(featureCount);
-		mainQuery.setQueryPattern(main);
-		
-		return mainQuery.toString(Syntax.syntaxSPARQL_11);
-	}
-	
-	public String findTripleCount(String trackGraphName) {
-		Query mainQuery = new Query();
-		mainQuery.setQuerySelectType();
-		Node tripleCount = NodeFactory.createVariable(VARIABLE_TRIPLE_COUNT);
-		Node fileNode = NodeFactory.createVariable(VARIABLE_FILE_NODE);
-		ElementGroup main = new ElementGroup();
-	
-		ElementTriplesBlock triples = new ElementTriplesBlock();
-		
-		triples.addTriple(new Triple(NodeFactory.createURI(trackGraphName), TrackVocab.File.asNode(),fileNode));
-		triples.addTriple(new Triple(fileNode, TrackVocab.tripleCount.asNode(), tripleCount));
-		main.addElement(triples);
-		
-		mainQuery.addResultVar(tripleCount);
+		mainQuery.addResultVar(count);
 		mainQuery.setQueryPattern(main);
 		
 		return mainQuery.toString(Syntax.syntaxSPARQL_11);

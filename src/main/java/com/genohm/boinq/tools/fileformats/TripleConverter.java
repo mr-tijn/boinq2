@@ -49,7 +49,6 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.neo4j.cypher.internal.compiler.v2_1.planner.logical.steps.labelScanLeafPlanner;
 
 
 @Service
@@ -61,7 +60,7 @@ public class TripleConverter {
 	// the variable names that are included in the valuedInterval are given a
 	// more generic name
 
-	public static final String ENTRYBASEURI = "/Entry#";
+	public static final String ENTRYBASEURI = "/resource/entry#";
 	public static final String LOCATIONBASEURI = "/resource/contig:";
 	public static final String FEATUREBASEURI = "/resource/feature#";
 	public static final String FILTERBASEURI = "/resource/filter#";
@@ -134,8 +133,6 @@ public class TripleConverter {
 		variantAttributeTypeNodes.put("1000G", XSDboolean);
 		
 		featureAttributeNodes = new HashMap<String,Node>();
-		featureAttributeNodes.put("ID", GfvoVocab.Identifier.asNode());
-		featureAttributeNodes.put("Name", GfvoVocab.Name.asNode());
 		featureAttributeNodes.put("Alias", GfvoVocab.Alias.asNode());
 		featureAttributeNodes.put("Derives_from", GfvoVocab.is_temporarily_part_of.asNode());
 		featureAttributeNodes.put("Note", GfvoVocab.Note.asNode());
@@ -191,18 +188,18 @@ public class TripleConverter {
 	}
 	
 	
-	private int addGFFKeyValueTriples(List<Triple> triples, Node entry, String entryName, Map<String, String> keyValues,int attributeCount, Node feature, Metadata meta) {
+	private int addGFFKeyValueTriples(List<Triple> triples, Node entry, String entryName, Map<String, String> keyValues,int attributeCount, Node feature, String featureName, Metadata meta) {
 		for (String key : keyValues.keySet()) {
 			String attributeFeatureName = entryName + "_ATR_"+ attributeCount++;
 			Node attributeFeature = tripleGenerator.generateURI(attributeFeatureName);
 			triples.add(new Triple(entry, GfvoVocab.has_attribute.asNode(), attributeFeature));
 			
 			if(featureAttributeNodes.get(key) != null){
+				
+				
 			triples.add(new Triple(attributeFeature, RDF.type.asNode(), featureAttributeNodes.get(key)));
 			triples.add(new Triple(attributeFeature, RDF.value.asNode(), NodeFactory.createLiteral(keyValues.get(key).toString(), XSDstring)));
-			if (key.equalsIgnoreCase("ID")) {
-				meta.featureIDmap.put(keyValues.get(key),feature);
-			}
+		
 			//TODO implement CIGAR, Target,
 			} else if (key.equalsIgnoreCase("Parent")){
 					String[] parents = keyValues.get(key).split(",");
@@ -213,10 +210,17 @@ public class TripleConverter {
 					}
 				}
 			} else if (key.equalsIgnoreCase("Is_circular")){
-				triples.add(new Triple(attributeFeature, (keyValues.get(key).equalsIgnoreCase("true"))? GfvoVocab.Circular_Helix.asNode():GfvoVocab.Watson_Crick_Helix.asNode(), featureAttributeNodes.get(key)));
-			} else if (key.equalsIgnoreCase("Target")){
-				
+				triples.add(new Triple(attributeFeature, RDF.type.asNode(), (keyValues.get(key).equalsIgnoreCase("true"))? GfvoVocab.Circular_Helix.asNode():GfvoVocab.Watson_Crick_Helix.asNode()));
+			} else if (key.equalsIgnoreCase("Name")){
+				triples.add(new Triple(attributeFeature, RDF.type.asNode(), GfvoVocab.Name.asNode()));
+				triples.add(new Triple(attributeFeature, RDF.value.asNode(), NodeFactory.createLiteral(keyValues.get(key).toString(),XSDstring)));
+				triples.add(new Triple(feature, RDFS.label.asNode(), NodeFactory.createLiteral(keyValues.get(key))));
+			} else if (key.equalsIgnoreCase("Note")){
+				triples.add(new Triple(attributeFeature, RDF.type.asNode(), GfvoVocab.Note.asNode()));
+				triples.add(new Triple(attributeFeature, RDF.value.asNode(), NodeFactory.createLiteral(keyValues.get(key).toString(),XSDstring)));
+				triples.add(new Triple(feature, RDFS.comment.asNode(), NodeFactory.createLiteral(keyValues.get(key))));
 			}
+			
 		}
 		return attributeCount;
 	}
@@ -346,10 +350,7 @@ public class TripleConverter {
 		triples.add(new Triple(feature, RDF.type.asNode(), GfvoVocab.Feature.asNode()));
 		
 		if (entry.getID()!="."){
-			Node idNode =  tripleGenerator.generateURI(featureName + "_ID");
-		triples.add(new Triple(feature, GfvoVocab.has_identifier.asNode(), idNode));
-		triples.add(new Triple(idNode, RDF.type.asNode(), GfvoVocab.Identifier.asNode()));
-		triples.add(new Triple(idNode, RDF.value.asNode(), NodeFactory.createLiteral(entry.getID())));
+		idGenerator(triples,feature,featureName,entry.getID());
 		}
 		for (String filter :entry.getFilters()){
 			if (meta.filterMap.get(filter)!=null){
@@ -416,15 +417,13 @@ public class TripleConverter {
 		Node GFFentry = tripleGenerator.generateURI(GFFentryName);
 		triples.add(new Triple(GFFentry, RDF.type.asNode(), FormatVocab.GFF_entry.asNode()));
 		
-		if (entry.getPhase() != -1) {
-			attributeGenerator(triples, GFFentry, GFFentryName, String.valueOf(entry.getPhase()), XSDint, SoVocab.reading_frame.asNode(), attributeCount++);
-			}
-		if (entry.getSource() != null) {
-			attributeGenerator(triples, GFFentry, GFFentryName, entry.getSource(), XSDstring, GfvoVocab.has_source.asNode(), attributeCount++);
+		
+		if (entry.getAttributes().containsKey("Target")){
+			attributeGenerator(triples, GFFentry, GFFentryName, String.valueOf(entry.getAttributes().get("Target")), XSDstring, FormatVocab.Target.asNode(), attributeCount++);
+			attributeGenerator(triples, GFFentry, GFFentryName, String.valueOf(entry.getAttributes().get("Gap")), XSDstring, FormatVocab.Gap.asNode(), attributeCount++);
+			
 		}
-			if (entry.getScore() != 0.0) {
-			attributeGenerator(triples, GFFentry, GFFentryName, String.valueOf(entry.getScore()), XSDdouble, SoVocab.score.asNode(), attributeCount++);	
-		}
+		
 		
 		//FEATURE
 		String featureName = FEATUREBASEURI + ++meta.sumFeatureCount;
@@ -432,8 +431,22 @@ public class TripleConverter {
 		triples.add(new Triple(GFFentry, FormatVocab.defines.asNode(), feature));
 		
 		
-		triples.add(new Triple(feature, RDFS.label.asNode(),
-				NodeFactory.createLiteral(String.valueOf(entry.getSequenceID()), XSDstring)));
+		if (entry.getAttributes().get("ID")!=null){
+			idGenerator(triples,feature,featureName,entry.getAttributes().get("ID"));
+			meta.featureIDmap.put(entry.getAttributes().get("ID"), feature);
+		}
+		if (entry.getScore() != 0.0) {
+			attributeGenerator(triples, feature, featureName, String.valueOf(entry.getScore()), XSDdouble, SoVocab.score.asNode(), attributeCount++);	
+			attributeGenerator(triples, feature, featureName, String.valueOf(entry.getScore()), XSDdouble,SoVocab.score.asNode(), attributeCount++);
+		}
+		
+		if (entry.getPhase() != -1) {
+			attributeGenerator(triples, feature, featureName, String.valueOf(entry.getPhase()+1), XSDint, SoVocab.reading_frame.asNode(), attributeCount++);
+			attributeGenerator(triples, feature, featureName, String.valueOf(entry.getPhase()), XSDint, GfvoVocab.Coding_Frame_Offset.asNode(), attributeCount++);	
+		}
+		if (entry.getSource() != null) {
+			attributeGenerator(triples, feature, featureName, entry.getSource(), XSDstring, GfvoVocab.has_source.asNode(), attributeCount++);
+		}
 		if (entry.getType() != null) {
 			if (featureTypeNodes.containsKey(entry.getType().toString())) {
 				triples.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getType().toString())));
@@ -444,7 +457,7 @@ public class TripleConverter {
 				meta.typeList.add(NodeFactory.createLiteral(entry.getType().toString(), XSDstring));
 			}
 		}	
-		attributeCount =addGFFKeyValueTriples(triples, GFFentry, GFFentryName, entry.getAttributes(), attributeCount, feature, meta);
+		attributeCount =addGFFKeyValueTriples(triples, GFFentry, GFFentryName, entry.getAttributes(), attributeCount, feature, featureName, meta);
 				
 		//LOCATION
 		addFaldoTriples(feature, reference, Long.valueOf(entry.getStart()), Long.valueOf(entry.getEnd()), entry.getSequenceID(), entry.getStrand(), triples, meta);
@@ -461,15 +474,17 @@ public class TripleConverter {
 		Node BEDentry = tripleGenerator.generateURI(BEDentryName);
 		triples.add(new Triple(BEDentry, RDF.type.asNode(), FormatVocab.BED_entry.asNode()));
 		
-		Float score = entry.getScore();
-		if (score != null && score != 0) {
-			attributeGenerator(triples, BEDentry, BEDentryName, score.toString(), XSDdouble, SoVocab.score.asNode(), attributeCount++);
-			
-		}
+		String attributeName = attributeNGenerator(triples, BEDentry, BEDentryName, String.valueOf(entry.getColor()), XSDstring, FormatVocab.RGBcolor.asNode(), attributeCount++);	
+		Node attributeNameNode = tripleGenerator.generateURI(attributeName);
+		attributeGenerator(triples, attributeNameNode, attributeName, String.valueOf(entry.getColor().getBlue()), XSDint, FormatVocab.RGBblue.asNode(), attributeCount++);	
+		attributeGenerator(triples, attributeNameNode, attributeName, String.valueOf(entry.getColor().getGreen()), XSDint, FormatVocab.RGBgreen.asNode(), attributeCount++);	
+		attributeGenerator(triples, attributeNameNode, attributeName, String.valueOf(entry.getColor().getRed()), XSDint, FormatVocab.RGBred.asNode(), attributeCount++);	
+		
 		//FEATURE
 		String featureName =  FEATUREBASEURI + ++meta.sumFeatureCount;
 		Node feature = tripleGenerator.generateURI(featureName);
 		triples.add(new Triple(BEDentry, FormatVocab.defines.asNode(), feature));
+		
 		
 		if (entry.getName() != null && entry.getName().length() > 0) {
 			triples.add(
@@ -480,7 +495,11 @@ public class TripleConverter {
 			triples.add(new Triple(feature, RDFS.comment.asNode(),
 					NodeFactory.createLiteral(entry.getDescription(), XSDstring)));
 		}
-	
+		Float score = entry.getScore();
+		if (score != null && score != 0) {
+			attributeGenerator(triples, feature, featureName, score.toString(), XSDdouble, SoVocab.score.asNode(), attributeCount++);
+			
+		}
 	
 		addFaldoTriples(feature, reference, Long.valueOf(entry.getStart()), Long.valueOf(entry.getEnd()), entry.getContig(),
 				entry.getStrand() == Strand.POSITIVE, triples, meta);
@@ -491,7 +510,7 @@ public class TripleConverter {
 			triples.add(new Triple(BEDentry, FormatVocab.defines.asNode(), subFeature));
 			triples.add(new Triple(subFeature, SoVocab.has_integral_part.asNode(), feature));
 			triples.add(new Triple(feature, SoVocab.has_part.asNode(), subFeature));
-			triples.add(new Triple(subFeature, RDF.type.asNode(), SoVocab.exon_region.asNode())); //TODO Is this true? always exon?
+			//triples.add(new Triple(subFeature, RDF.type.asNode(), SoVocab.exon_region.asNode())); //TODO Is this true? always exon?
 			
 			addFaldoTriples(subFeature, reference, Long.valueOf(exon.getCdStart()), Long.valueOf(exon.getCdEnd()), entry.getContig(), entry.getStrand() == Strand.POSITIVE,
 					triples, meta);
@@ -565,6 +584,13 @@ public class TripleConverter {
 		return triples;
 	}
 	
+	private void idGenerator(List<Triple> triples, Node feature, String featureName, String ID){
+		Node idNode =  tripleGenerator.generateURI(featureName + "_ID");
+		triples.add(new Triple(feature, GfvoVocab.has_identifier.asNode(), idNode));
+		triples.add(new Triple(idNode, RDF.type.asNode(), GfvoVocab.Identifier.asNode()));
+		triples.add(new Triple(idNode, RDF.value.asNode(), NodeFactory.createLiteral(ID)));
+	
+	}
 	
 	private String attributeNGenerator(List<Triple> triples, Node feature, String featureName, String value, XSDDatatype type, Node attributeType, int attributeCount) {
 		String featureAttributeName = featureName + "_ATR_" + attributeCount;
