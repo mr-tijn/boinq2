@@ -215,6 +215,15 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/format#Gap -->
+
+    <owl:Class rdf:about="&format;Gap">
+        <rdfs:subClassOf rdf:resource="&format;GFF_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">http://www.sequenceontology.org/gff3.shtml</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/format#MAPQ -->
 
     <owl:Class rdf:about="&format;MAPQ">
@@ -260,6 +269,42 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/format#RGBblue -->
+
+    <owl:Class rdf:about="&format;RGBblue">
+        <rdfs:subClassOf rdf:resource="&format;RGBcolor"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://genome.ucsc.edu/FAQ/FAQformat.html</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#RGBcolor -->
+
+    <owl:Class rdf:about="&format;RGBcolor">
+        <rdfs:subClassOf rdf:resource="&format;BED_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://genome.ucsc.edu/FAQ/FAQformat.html</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#RGBgreen -->
+
+    <owl:Class rdf:about="&format;RGBgreen">
+        <rdfs:subClassOf rdf:resource="&format;RGBcolor"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://genome.ucsc.edu/FAQ/FAQformat.html</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#RGBred -->
+
+    <owl:Class rdf:about="&format;RGBred">
+        <rdfs:subClassOf rdf:resource="&format;RGBcolor"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://genome.ucsc.edu/FAQ/FAQformat.html</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/format#RNAME -->
 
     <owl:Class rdf:about="&format;RNAME">
@@ -301,6 +346,15 @@
     <owl:Class rdf:about="&format;TLEN">
         <rdfs:subClassOf rdf:resource="&format;SAM_entry"/>
         <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">https://samtools.github.io/hts-specs/SAMv1.pdf</rdfs:isDefinedBy>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/format#Target -->
+
+    <owl:Class rdf:about="&format;Target">
+        <rdfs:subClassOf rdf:resource="&format;GFF_entry"/>
+        <rdfs:isDefinedBy rdf:datatype="&xsd;anyURI">http://www.sequenceontology.org/gff3.shtml</rdfs:isDefinedBy>
     </owl:Class>
     
 
