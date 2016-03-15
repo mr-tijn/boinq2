@@ -6,6 +6,7 @@ import htsjdk.tribble.readers.AsciiLineReaderIterator;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFCodec;
 import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderVersion;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,10 +21,15 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
+import com.genohm.boinq.service.MetaInfoService;
 
 public class VCFTripleIterator implements Iterator<Triple> {
 	
+	private static Logger log = LoggerFactory.getLogger(VCFTripleIterator.class);
 	private TripleConverter converter;
 	private AsciiLineReaderIterator lineIterator;
 	private List<Triple> currentTriples = new LinkedList<Triple>();
@@ -35,9 +41,14 @@ public class VCFTripleIterator implements Iterator<Triple> {
 		this.converter = converter;
 		this.referenceMap = referenceMap;
 		lineIterator = new AsciiLineReaderIterator(new AsciiLineReader(new FileInputStream(file)));
+		try {
 		FeatureCodecHeader header = codec.readHeader(lineIterator);
-        meta.vcfHeader = (VCFHeader)header.getHeaderValue();
-        this.meta = meta;
+		meta.vcfHeader = (VCFHeader)header.getHeaderValue();
+	       
+		} catch (Exception e) {
+			log.error("Malformed Header" , e);
+		}
+       this.meta = meta;
 	}
 
 	@Override
@@ -53,8 +64,12 @@ public class VCFTripleIterator implements Iterator<Triple> {
 	@Override
 	public Triple next() {
 		if (currentTriples.isEmpty()){
-			meta.sumEntryCount++;
+			
 			VariantContext record = codec.decode(lineIterator.next());
+			while (record==null){
+				record = codec.decode(lineIterator.next());
+			}
+			meta.sumEntryCount++;
 			Node reference = null;
 			if (referenceMap != null) {
 			reference = referenceMap.get(record.getContig());

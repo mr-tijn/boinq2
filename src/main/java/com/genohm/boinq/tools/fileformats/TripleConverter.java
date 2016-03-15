@@ -47,8 +47,13 @@ import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.vocabulary.DC;
+import org.apache.jena.vocabulary.DCTerms;
+import org.apache.jena.vocabulary.DCTypes;
+import org.apache.jena.vocabulary.DC_11;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.SKOS;
 
 
 @Service
@@ -61,7 +66,7 @@ public class TripleConverter {
 	// more generic name
 
 	public static final String ENTRYBASEURI = "/resource/entry#";
-	public static final String LOCATIONBASEURI = "/resource/contig:";
+	public static final String LOCATIONBASEURI = "/resource/";
 	public static final String FEATUREBASEURI = "/resource/feature#";
 	public static final String FILTERBASEURI = "/resource/filter#";
 	public static final String SAMPLEBASEURI = "/resource/sample#";
@@ -133,11 +138,7 @@ public class TripleConverter {
 		variantAttributeTypeNodes.put("1000G", XSDboolean);
 		
 		featureAttributeNodes = new HashMap<String,Node>();
-		featureAttributeNodes.put("Alias", GfvoVocab.Alias.asNode());
-		featureAttributeNodes.put("Derives_from", GfvoVocab.is_temporarily_part_of.asNode());
-		featureAttributeNodes.put("Note", GfvoVocab.Note.asNode());
-		featureAttributeNodes.put("Dbxref", GfvoVocab.External_Reference.asNode());
-	
+		
 		featureTypeNodes = new HashMap<String, Node>();
 		featureTypeNodes.put("CDS", SoVocab.CDS.asNode());
 		featureTypeNodes.put("GENE", SoVocab.gene.asNode());
@@ -192,7 +193,7 @@ public class TripleConverter {
 		for (String key : keyValues.keySet()) {
 			String attributeFeatureName = entryName + "_ATR_"+ attributeCount++;
 			Node attributeFeature = tripleGenerator.generateURI(attributeFeatureName);
-			triples.add(new Triple(entry, GfvoVocab.has_attribute.asNode(), attributeFeature));
+			triples.add(new Triple(entry, SoVocab.has_quality.asNode(), attributeFeature));
 			
 			if(featureAttributeNodes.get(key) != null){
 				
@@ -209,16 +210,26 @@ public class TripleConverter {
 						triples.add(new Triple(meta.featureIDmap.get(parent), SoVocab.part_of.asNode(), feature));
 					}
 				}
+			} else if (key.equalsIgnoreCase("ID")){
+					triples.add(new Triple(feature, DCTerms.identifier.asNode(), NodeFactory.createLiteral(keyValues.get(key), XSDstring)));
+					
+					//idGenerator(triples,feature,featureName,entry.getAttributes().get("ID"));
+					meta.featureIDmap.put(keyValues.get(key), feature);
+			} else if (key.equalsIgnoreCase("Derives_from")){
+				if (meta.featureIDmap.get(keyValues.get(key))!=null){
+					triples.add(new Triple(feature, SoVocab.derives_from.asNode(), meta.featureIDmap.get(key)));
+				}
 			} else if (key.equalsIgnoreCase("Is_circular")){
-				triples.add(new Triple(attributeFeature, RDF.type.asNode(), (keyValues.get(key).equalsIgnoreCase("true"))? GfvoVocab.Circular_Helix.asNode():GfvoVocab.Watson_Crick_Helix.asNode()));
+				triples.add(new Triple(attributeFeature, RDF.type.asNode(), (keyValues.get(key).equalsIgnoreCase("true"))? SoVocab.circular.asNode(): SoVocab.linear.asNode()));
 			} else if (key.equalsIgnoreCase("Name")){
-				triples.add(new Triple(attributeFeature, RDF.type.asNode(), GfvoVocab.Name.asNode()));
-				triples.add(new Triple(attributeFeature, RDF.value.asNode(), NodeFactory.createLiteral(keyValues.get(key).toString(),XSDstring)));
 				triples.add(new Triple(feature, RDFS.label.asNode(), NodeFactory.createLiteral(keyValues.get(key))));
 			} else if (key.equalsIgnoreCase("Note")){
-				triples.add(new Triple(attributeFeature, RDF.type.asNode(), GfvoVocab.Note.asNode()));
-				triples.add(new Triple(attributeFeature, RDF.value.asNode(), NodeFactory.createLiteral(keyValues.get(key).toString(),XSDstring)));
-				triples.add(new Triple(feature, RDFS.comment.asNode(), NodeFactory.createLiteral(keyValues.get(key))));
+					triples.add(new Triple(feature, RDFS.comment.asNode(), NodeFactory.createLiteral(keyValues.get(key))));
+			} else if (key.equalsIgnoreCase("Alias")){
+				triples.add(new Triple(feature, SKOS.altLabel.asNode(), NodeFactory.createLiteral(keyValues.get(key))));
+			} else if (key.equalsIgnoreCase("Dbxref")){
+				triples.add(new Triple(feature, RDFS.seeAlso.asNode(), NodeFactory.createLiteral(keyValues.get(key))));
+				
 			}
 			
 		}
@@ -423,6 +434,10 @@ public class TripleConverter {
 			attributeGenerator(triples, GFFentry, GFFentryName, String.valueOf(entry.getAttributes().get("Gap")), XSDstring, FormatVocab.Gap.asNode(), attributeCount++);
 			
 		}
+		if (entry.getSource() != null) {
+			attributeGenerator(triples, GFFentry, GFFentryName, entry.getSource(), XSDstring, GfvoVocab.has_source.asNode(), attributeCount++);
+		}
+		
 		
 		
 		//FEATURE
@@ -431,22 +446,14 @@ public class TripleConverter {
 		triples.add(new Triple(GFFentry, FormatVocab.defines.asNode(), feature));
 		
 		
-		if (entry.getAttributes().get("ID")!=null){
-			idGenerator(triples,feature,featureName,entry.getAttributes().get("ID"));
-			meta.featureIDmap.put(entry.getAttributes().get("ID"), feature);
-		}
+	
 		if (entry.getScore() != 0.0) {
-			attributeGenerator(triples, feature, featureName, String.valueOf(entry.getScore()), XSDdouble, SoVocab.score.asNode(), attributeCount++);	
 			attributeGenerator(triples, feature, featureName, String.valueOf(entry.getScore()), XSDdouble,SoVocab.score.asNode(), attributeCount++);
 		}
 		
 		if (entry.getPhase() != -1) {
 			attributeGenerator(triples, feature, featureName, String.valueOf(entry.getPhase()+1), XSDint, SoVocab.reading_frame.asNode(), attributeCount++);
-			attributeGenerator(triples, feature, featureName, String.valueOf(entry.getPhase()), XSDint, GfvoVocab.Coding_Frame_Offset.asNode(), attributeCount++);	
-		}
-		if (entry.getSource() != null) {
-			attributeGenerator(triples, feature, featureName, entry.getSource(), XSDstring, GfvoVocab.has_source.asNode(), attributeCount++);
-		}
+			}
 		if (entry.getType() != null) {
 			if (featureTypeNodes.containsKey(entry.getType().toString())) {
 				triples.add(new Triple(feature, RDF.type.asNode(), featureTypeNodes.get(entry.getType().toString())));
@@ -476,9 +483,9 @@ public class TripleConverter {
 		
 		String attributeName = attributeNGenerator(triples, BEDentry, BEDentryName, String.valueOf(entry.getColor()), XSDstring, FormatVocab.RGBcolor.asNode(), attributeCount++);	
 		Node attributeNameNode = tripleGenerator.generateURI(attributeName);
-		attributeGenerator(triples, attributeNameNode, attributeName, String.valueOf(entry.getColor().getBlue()), XSDint, FormatVocab.RGBblue.asNode(), attributeCount++);	
-		attributeGenerator(triples, attributeNameNode, attributeName, String.valueOf(entry.getColor().getGreen()), XSDint, FormatVocab.RGBgreen.asNode(), attributeCount++);	
-		attributeGenerator(triples, attributeNameNode, attributeName, String.valueOf(entry.getColor().getRed()), XSDint, FormatVocab.RGBred.asNode(), attributeCount++);	
+		attributeGeneratorSO(triples, attributeNameNode, attributeName, String.valueOf(entry.getColor().getBlue()), XSDint, FormatVocab.RGBblue.asNode(), attributeCount++);	
+		attributeGeneratorSO(triples, attributeNameNode, attributeName, String.valueOf(entry.getColor().getGreen()), XSDint, FormatVocab.RGBgreen.asNode(), attributeCount++);	
+		attributeGeneratorSO(triples, attributeNameNode, attributeName, String.valueOf(entry.getColor().getRed()), XSDint, FormatVocab.RGBred.asNode(), attributeCount++);	
 		
 		//FEATURE
 		String featureName =  FEATUREBASEURI + ++meta.sumFeatureCount;
@@ -492,12 +499,12 @@ public class TripleConverter {
 		}
 	
 		if (entry.getDescription() != null && entry.getDescription().length() > 0) {
-			triples.add(new Triple(feature, RDFS.comment.asNode(),
+			triples.add(new Triple(feature, DCTerms.description.asNode(),
 					NodeFactory.createLiteral(entry.getDescription(), XSDstring)));
 		}
 		Float score = entry.getScore();
 		if (score != null && score != 0) {
-			attributeGenerator(triples, feature, featureName, score.toString(), XSDdouble, SoVocab.score.asNode(), attributeCount++);
+			attributeGeneratorSO(triples, feature, featureName, score.toString(), XSDdouble, SoVocab.score.asNode(), attributeCount++);
 			
 		}
 	
@@ -527,23 +534,23 @@ public class TripleConverter {
 		triples.add(new Triple(SAMentry, RDF.type.asNode(), FormatVocab.SAM_entry.asNode()));
 		
 		
-		//FIELD: FLAG: each bit explains different description
-		attributeGenerator(triples, SAMentry, SAMentryName, String.valueOf(entry.getFlags()), XSDint, FormatVocab.FLAG.asNode(), attributeCount++);
-		//FIELD: RNAME: Reference sequence name of the alignment
-		attributeGenerator(triples, SAMentry, SAMentryName, entry.getReferenceName(), XSDstring, FormatVocab.RNAME.asNode(), attributeCount++);
-		//FIELD: MAPQ: mapping quality -10logBase
-		attributeGenerator(triples, SAMentry, SAMentryName, String.valueOf(entry.getMappingQuality()), XSDint, FormatVocab.MAPQ.asNode(), attributeCount++);
+		//FLAG: each bit explains different description
+		attributeGeneratorSO(triples, SAMentry, SAMentryName, String.valueOf(entry.getFlags()), XSDint, FormatVocab.FLAG.asNode(), attributeCount++);
+		//RNAME: Reference sequence name of the alignment
+		attributeGeneratorSO(triples, SAMentry, SAMentryName, entry.getReferenceName(), XSDstring, FormatVocab.RNAME.asNode(), attributeCount++);
+		//MAPQ: mapping quality -10logBase
+		attributeGeneratorSO(triples, SAMentry, SAMentryName, String.valueOf(entry.getMappingQuality()), XSDint, FormatVocab.MAPQ.asNode(), attributeCount++);
 		//CIGAR: CIGAR String
-		attributeGenerator(triples, SAMentry, SAMentryName, entry.getCigarString(), XSDstring, FormatVocab.CIGAR.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, SAMentry, SAMentryName, entry.getCigarString(), XSDstring, FormatVocab.CIGAR.asNode(), attributeCount++);
 		//RNEXT: Reference sequence name of the NEXT read in the template
-		attributeGenerator(triples, SAMentry, SAMentryName, entry.getMateReferenceName(), XSDstring, FormatVocab.RNEXT.asNode(), attributeCount++);
-		//PNEXT: Position of the primary allignment of the NEXT read. not necessary -> positions are iterated at end of function
+		attributeGeneratorSO(triples, SAMentry, SAMentryName, entry.getMateReferenceName(), XSDstring, FormatVocab.RNEXT.asNode(), attributeCount++);
+		//PNEXT: Position of the primary alignment of the NEXT read. not necessary -> positions are iterated at end of function
 		//TLEN: signed observed Template LENgth.
-		attributeGenerator(triples, SAMentry, SAMentryName, String.valueOf(entry.getInferredInsertSize()), XSDint, FormatVocab.TLEN.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, SAMentry, SAMentryName, String.valueOf(entry.getInferredInsertSize()), XSDint, FormatVocab.TLEN.asNode(), attributeCount++);
 		//SEQ: segment Sequence
-		attributeGenerator(triples, SAMentry, SAMentryName, entry.getReadString(), XSDstring, FormatVocab.SEQ.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, SAMentry, SAMentryName, entry.getReadString(), XSDstring, FormatVocab.SEQ.asNode(), attributeCount++);
 		//QUAL: base quality plus 33
-		attributeGenerator(triples, SAMentry, SAMentryName, String.valueOf(entry.getBaseQualityString()), XSDstring, FormatVocab.FLAG.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, SAMentry, SAMentryName, String.valueOf(entry.getBaseQualityString()), XSDstring, FormatVocab.FLAG.asNode(), attributeCount++);
 		//ATTRIBUTES
 		for (SAMTagAndValue attribute : entry.getAttributes()) {
 			//TODO not implemented enough in htsjdk
@@ -560,11 +567,10 @@ public class TripleConverter {
 		triples.add(new Triple(feature, RDF.type.asNode(), SoVocab.read.asNode()));
 		triples.add(new Triple(feature, RDFS.label.asNode(), NodeFactory.createLiteral(entry.getReadName(),XSDstring)));
 		
+		
 		//LOCATION
-		Boolean forwardStrand = !entry.getReadNegativeStrandFlag();
-		Long biologicalStartPosBase1 = (forwardStrand ? new Long(entry.getStart()) : new Long(entry.getEnd()));//TODO ASK MARTIJN
-		Long biologicalEndPosBase1 = (forwardStrand ? new Long(entry.getEnd()) : new Long(entry.getStart()));
-		addFaldoTriples(feature, reference, biologicalStartPosBase1, biologicalEndPosBase1, entry.getContig(), forwardStrand, triples, meta);
+
+		addFaldoTriples(feature, reference, new Long(entry.getStart()), new Long(entry.getStart()), entry.getContig(), !entry.getReadNegativeStrandFlag(), triples, meta);
 		
 
 		int childno = 1;
@@ -575,10 +581,8 @@ public class TripleConverter {
 			triples.add(new Triple(feature, SoVocab.has_part.asNode(), subFeature));
 			triples.add(new Triple(subFeature, SoVocab.part_of.asNode(), feature));
 			//POSITIONS
-			Long start = new Long(block.getReferenceStart());
-			Long end = new Long(block.getReferenceStart() + block.getLength() - 1);
-			addFaldoTriples(subFeature, reference, (forwardStrand ? start : end), (forwardStrand ? end : start), entry.getContig(),
-					forwardStrand, triples, meta);
+			addFaldoTriples(subFeature, reference, new Long(block.getReferenceStart()),  new Long(block.getReferenceStart() + block.getLength() - 1), entry.getContig(),
+					!entry.getReadNegativeStrandFlag(), triples, meta);
 			
 		}
 		return triples;
@@ -610,21 +614,32 @@ public class TripleConverter {
 		triples.add(new Triple (featureAttribute, RDF.value.asNode(), NodeFactory.createLiteral(value, type)));					
 	}
 	
+	private void attributeGeneratorSO(List<Triple> triples, Node feature, String featureName, String value, XSDDatatype type, Node attributeType, int attributeCount) {
+		String featureAttributeName = featureName + "_ATR_" + attributeCount;
+		Node featureAttribute =  tripleGenerator.generateURI( featureAttributeName);
+		triples.add(new Triple (feature, SoVocab.has_quality.asNode(), featureAttribute));
+		triples.add(new Triple (featureAttribute, RDF.type.asNode(), attributeType));
+		triples.add(new Triple (featureAttribute, RDF.value.asNode(), NodeFactory.createLiteral(value, type)));					
+	}
+	
+	
 	
 private void addFaldoTriples(Node feature, Node reference, Long biologicalStartPosBase1, Long biologicalEndPosBase1, String contig,
 	Boolean forwardStrand, List<Triple> triples, Metadata meta) {
 	if (meta.fileType.equalsIgnoreCase("BED") || meta.fileType.equalsIgnoreCase("BAM")) {
 		biologicalStartPosBase1++;
 	}
+	//TODO Introduce Assembly
 	if (contig.length()>=3){
 	if (contig.substring(0, 3).equalsIgnoreCase("chr")) {
 		contig = contig.substring(3);
 	}}
-	String featureLocationName = LOCATIONBASEURI+contig+":"+biologicalStartPosBase1+"-"+biologicalEndPosBase1;
-	String featureBeginName = LOCATIONBASEURI+contig+":"+biologicalStartPosBase1;
-	String featureEndName = LOCATIONBASEURI+contig+":"+biologicalEndPosBase1;	
+	
+	String featureLocationName = LOCATIONBASEURI+meta.speciesFaldo+contig+":"+biologicalStartPosBase1+"-"+biologicalEndPosBase1;
+	String featureBeginName = LOCATIONBASEURI+meta.speciesFaldo+contig+":"+biologicalStartPosBase1;
+	String featureEndName = LOCATIONBASEURI+meta.speciesFaldo+contig+":"+biologicalEndPosBase1;	
 	if (forwardStrand != null){
-	String add = (forwardStrand) ? ":1":"-1";
+	String add = (forwardStrand) ? ":1":":-1";
 	featureLocationName += add;
 	featureBeginName += add; 
 	featureEndName += add;
@@ -683,14 +698,14 @@ public List<Triple> headerIterator(List<Triple> triples,Iterator<String> it, Nod
 		triples.add(new Triple(Graph, TrackVocab.holds.asNode(), fileNode));
 		
 			
-		attributeGenerator(triples, fileNode, fileNodeName, metadata.date, XSDstring, TrackVocab.ConversionDate.asNode(), attributeCount++);
-		attributeGenerator(triples, fileNode, fileNodeName, Long.toString(metadata.entryCount), XSDint, TrackVocab.EntryCount.asNode(), attributeCount++);
-		attributeGenerator(triples, fileNode, fileNodeName, Long.toString(metadata.featureCount), XSDint, TrackVocab.FeatureCount.asNode(), attributeCount++);
-		attributeGenerator(triples, fileNode, fileNodeName, Long.toString(metadata.tripleCount), XSDint, TrackVocab.TripleCount.asNode(), attributeCount++);
-		attributeGenerator(triples, fileNode, fileNodeName, Long.toString(metadata.sumFilterCount - metadata.filterCount), XSDint, TrackVocab.FilterCount.asNode(), attributeCount++);
-		attributeGenerator(triples, fileNode, fileNodeName, Long.toString(metadata.sumSampleCount - metadata.sampleCount), XSDint, TrackVocab.SampleCount.asNode(), attributeCount++);
-		attributeGenerator(triples, fileNode, fileNodeName, metadata.fileType, XSDstring, TrackVocab.FileExtension.asNode(), attributeCount++);
-		attributeGenerator(triples, fileNode, fileNodeName, metadata.fileName, XSDstring, TrackVocab.FileName.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, fileNode, fileNodeName, metadata.date, XSDstring, TrackVocab.ConversionDate.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, fileNode, fileNodeName, Long.toString(metadata.entryCount), XSDint, TrackVocab.EntryCount.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, fileNode, fileNodeName, Long.toString(metadata.featureCount), XSDint, TrackVocab.FeatureCount.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, fileNode, fileNodeName, Long.toString(metadata.tripleCount), XSDint, TrackVocab.TripleCount.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, fileNode, fileNodeName, Long.toString(metadata.sumFilterCount - metadata.filterCount), XSDint, TrackVocab.FilterCount.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, fileNode, fileNodeName, Long.toString(metadata.sumSampleCount - metadata.sampleCount), XSDint, TrackVocab.SampleCount.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, fileNode, fileNodeName, metadata.fileType, XSDstring, TrackVocab.FileExtension.asNode(), attributeCount++);
+		attributeGeneratorSO(triples, fileNode, fileNodeName, metadata.fileName, XSDstring, TrackVocab.FileName.asNode(), attributeCount++);
 		
 		
 		Set<Node> uniqueTypes = new HashSet<Node>(metadata.typeList);
