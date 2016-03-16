@@ -158,6 +158,7 @@ public class TripleConversion implements AsynchronousJob {
 			meta.file = inputFile.toString();
 			meta.sumFeatureCount= track.getFeatureCount();
 			meta.sumEntryCount = track.getEntryCount();
+			meta.speciesFaldo= (track.getSpecies()==null) ?"Unknown/" : track.getSpecies().replace(" ","_")+"/" ;
 			Map<String, Node> referenceMap = getReferenceMap(track);
 			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap, meta);
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
@@ -203,6 +204,7 @@ public class TripleConversion implements AsynchronousJob {
 		public String fileType = new String();
 		public String fileName = new String();
 		public String file = new String();
+		public String speciesFaldo = new String();
 		public VCFHeader vcfHeader = new VCFHeader();
 		public SAMFileHeader samHeader = new SAMFileHeader();
 		public List<String> gffHeader = new ArrayList<String>();
