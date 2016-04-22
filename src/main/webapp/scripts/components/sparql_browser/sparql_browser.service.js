@@ -87,6 +87,19 @@ angular.module('boinqApp').factory('QueryBuilderService', ['$http', function ($h
 			});
 			return promise;
 		},
+		mappingQuery: function() {
+			var promise = $http.get('app/rest/querybuilder/mappingQuery').then(function (response) {
+				return response.data;
+			});
+			return promise;
+		},
+		assemblyQuery: function(speciesName) {
+			var promise = $http.get('app/rest/querybuilder/assemblyQuery', {params: {speciesName:speciesName}}).then(function (response) {
+				return response.data;
+			});
+			return promise;
+		},
+		
 		insertQuery: function(graphUri, subject, predicate, object)  {
 			var promise = $http.get('app/rest/querybuilder/insertQuery', {params: {graphUri: graphUri, subject:subject, predicate: predicate, object: object}}).then(function (response) {
 				return response.data;

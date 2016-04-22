@@ -60,6 +60,7 @@ angular.module('boinqApp').directive('termTreePicker', function() {
 		restrict: 'E',
 		templateUrl: 'scripts/components/term_tree/term_tree_picker.html',
 		scope : {
+			modalId: "@",
 			sourceGraph: "@",
 			sourceEndpoint: "@",
 			selectHandler : "=",

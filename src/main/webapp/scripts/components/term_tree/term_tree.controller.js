@@ -7,6 +7,10 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	
 	$scope.selectedTerms = [];
 	
+//	$scope.$watch('ngModel', function(){
+//		$scope.getngModel();
+//	})
+	
 //	$scope.$watch('sourceEndpoint', function() {
 //	      $scope.getRootTerms();
 //	 });
@@ -84,7 +88,7 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	$scope.computeSelection = function() {
 		$scope.selectedTerms = [];
 		$scope.getSelectedTerms($scope.rootTerms);
-		$scope.selectHandler($scope.selectedTerms);
+		$scope.ngModel($scope.selectedTerms);
 		$scope.close();
 	};
 	
@@ -127,15 +131,20 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 		return parent;
 	};
 	
+	$scope.handleSelect = function(term) {
+		console.log($scope.selectHandler);
+		$scope.selectHandler(term);
+		$scope.close()
+	}
 	
     $scope.pickTerm = function() {
     	console.info("getting root terms now");
     	$scope.getRootTerms();
-    	$('#selectTermModal').modal('show');
+    	$("#" + $scope.modalId).modal('show');
     };
 
     $scope.close = function() {
-    	$('#selectTermModal').modal('hide');
+    	$("#" + $scope.modalId).modal('hide');
     };
 		
 }]);
