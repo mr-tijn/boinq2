@@ -18,7 +18,7 @@ angular.module('boinqApp')
             },
             resolve: {
             	resolvedTrack: ['Track', function (Track) {
-                    return Track.query();
+                    return Track.query().$promise;
                 }]
             }
         });

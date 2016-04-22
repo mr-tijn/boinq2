@@ -1,6 +1,5 @@
 package com.genohm.boinq.init;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -33,30 +32,29 @@ import org.apache.jena.sparql.syntax.ElementTriplesBlock;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.SKOS;
 
-
 @Component
 public class TripleStoreInitializer implements EnvironmentAware, ApplicationListener<ContextRefreshedEvent> {
-    
+
 	// if necessary clean out with
-	// delete { ?s ?p ?o } using <http://www.boinq.org/iri/graph/meta/> where { ?s ?p ?o } 
-	
+	// delete { ?s ?p ?o } using <http://www.boinq.org/iri/graph/meta/> where {
+	// ?s ?p ?o }
+
 	private final Logger log = LoggerFactory.getLogger(TripleStoreInitializer.class);
-	
+
 	public static final String ENV_SPRING_TRIPLESTORE = "spring.triplestore.";
-    public static final String PROPERTY_META_ENDPOINT_QUERY = "endpoint.meta.query";
-    public static final String PROPERTY_META_ENDPOINT_UPDATE = "endpoint.meta.update";
-    public static final String PROPERTY_METAGRAPH = "metagraph";
+	public static final String PROPERTY_META_ENDPOINT_QUERY = "endpoint.meta.query";
+	public static final String PROPERTY_META_ENDPOINT_UPDATE = "endpoint.meta.update";
+	public static final String PROPERTY_METAGRAPH = "metagraph";
 	public static final String PROPERTY_LOCALDATASOURCE = "localdatasource";
 
 	public static final String PROPERTY_DATA_ENDPOINT_QUERY = "endpoint.data.query";
-	
 
-    private RelaxedPropertyResolver propertyResolver;
-	
-    @Inject
-    SPARQLClientService sparqlClient;
-    @Inject
-    TripleUploadService tripleUploadService;
+	private RelaxedPropertyResolver propertyResolver;
+
+	@Inject
+	SPARQLClientService sparqlClient;
+	@Inject
+	TripleUploadService tripleUploadService;
 
 	private String localDatasource;
 	private String dataQueryEndpoint;
@@ -64,24 +62,27 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	private String metaQueryEndpoint;
 	private String metaGraph;
 	private Boolean dev;
-    
+
 	public void checkInit() {
-		Triple triple = new Triple(NodeFactory.createURI(localDatasource), RDF.type.asNode(), TrackVocab.Datasource.asNode());
+		Triple triple = new Triple(NodeFactory.createURI(localDatasource), RDF.type.asNode(),
+				TrackVocab.Datasource.asNode());
 		if (!alreadyPresent(triple)) {
 			init();
 		}
 	}
-	
+
 	public void checkExtraTriples() {
-		Triple triple = new Triple(NodeFactory.createURI(localDatasource), TrackVocab.provides.asNode(), NodeFactory.createURI("http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844"));
+		Triple triple = new Triple(NodeFactory.createURI(localDatasource), TrackVocab.provides.asNode(),
+				NodeFactory.createURI("http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844"));
 		if (!alreadyPresent(triple)) {
 			addFromFile("ontologies/track.owl", Lang.RDFXML);
 			addFromFile("ontologies/meta.ttl", Lang.TTL);
 		}
 	}
-    
+
 	@Override
 	public void setEnvironment(Environment environment) {
+
 		propertyResolver = new RelaxedPropertyResolver(environment, ENV_SPRING_TRIPLESTORE);
 		localDatasource = propertyResolver.getProperty(PROPERTY_LOCALDATASOURCE);
 		dataQueryEndpoint = propertyResolver.getProperty(PROPERTY_DATA_ENDPOINT_QUERY);
@@ -89,14 +90,14 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 		metaQueryEndpoint = propertyResolver.getProperty(PROPERTY_META_ENDPOINT_QUERY);
 		metaGraph = propertyResolver.getProperty(PROPERTY_METAGRAPH);
 		dev = false;
-		for (String profile: environment.getActiveProfiles()) {
+		for (String profile : environment.getActiveProfiles()) {
 			if ("dev".equals(profile)) {
 				dev = true;
 				break;
 			}
 		}
 	}
-	
+
 	private Boolean alreadyPresent(Triple t) {
 		Query query = new Query();
 		query.setQueryAskType();
@@ -111,18 +112,24 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 		}
 		return false;
 	}
-	
+
 	private void init() {
-		//TODO: move this to meta.ttl
-		Node datasource =  NodeFactory.createURI(localDatasource);
-		TripleUploader uploader = tripleUploadService.getUploader(metaUpdateEndpoint, metaGraph, Prefixes.getCommonPrefixes());
-		uploader.triple(new Triple(datasource, RDF.type.asNode(), TrackVocab.Datasource.asNode()));
-		uploader.triple(new Triple(datasource, RDF.type.asNode(), TrackVocab.SPARQLDatasource.asNode()));
-		uploader.triple(new Triple(datasource, TrackVocab.references.asNode(), TrackVocab.GRCh38.asNode()));
-		uploader.triple(new Triple(datasource, TrackVocab.endpointUrl.asNode(), NodeFactory.createLiteral(dataQueryEndpoint)));
-		uploader.finish();
+		// TODO: move this to meta.ttl -> DONE
+		/*
+		 * Node datasource = NodeFactory.createURI(localDatasource);
+		 * TripleUploader uploader =
+		 * tripleUploadService.getUploader(metaUpdateEndpoint, metaGraph,
+		 * Prefixes.getCommonPrefixes()); uploader.triple(new Triple(datasource,
+		 * RDF.type.asNode(), TrackVocab.Datasource.asNode()));
+		 * uploader.triple(new Triple(datasource, RDF.type.asNode(),
+		 * TrackVocab.SPARQLDatasource.asNode())); uploader.triple(new
+		 * Triple(datasource, TrackVocab.references.asNode(),
+		 * TrackVocab.GRCh38.asNode())); uploader.triple(new Triple(datasource,
+		 * TrackVocab.endpointUrl.asNode(),
+		 * NodeFactory.createLiteral(dataQueryEndpoint))); uploader.finish();
+		 */
 	}
-	
+
 	private void addFromFile(String path, Lang lang) {
 		InputStream file = this.getClass().getClassLoader().getResourceAsStream(path);
 		TripleUploader uploader = tripleUploadService.getUploader(metaUpdateEndpoint, metaGraph);
@@ -138,7 +145,8 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		checkInit();
-		if (dev) checkExtraTriples();
+		if (dev)
+			checkExtraTriples();
 	}
 
 }

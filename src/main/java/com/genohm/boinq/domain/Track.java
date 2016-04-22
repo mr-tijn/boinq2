@@ -65,6 +65,14 @@ public class Track implements Serializable {
     @Column(name = "species", nullable = true)
     private String species;
     
+    @Size(min = 1, max = 200)
+    @Column(name = "assembly", nullable = true)
+    private String assembly;
+    
+    @Size(min = 1, max = 200)
+    @Column(name = "contig_prefix", nullable = true)
+    private String contigPrefix;
+    
     @Column(name = "entry_count")
     private long entryCount;
     
@@ -153,7 +161,23 @@ public class Track implements Serializable {
 	public void setSpecies(String species) {
 		this.species = species;
 	}
+	
+	public String getAssembly() {
+		return assembly;
+	}
+	
+	public void setAssembly(String assembly){
+		this.assembly = assembly;
+	}
+	
+	public String getContigPrefix() {
+		return contigPrefix;
+	}
 
+	public void setContigPrefix(String contigPrefix){
+		this.contigPrefix = contigPrefix;
+	}
+	
 	public Set<RawDataFile> getRawDataFiles() {
 		return rawDataFiles;
 	}
@@ -239,6 +263,8 @@ public class Track implements Serializable {
                 ", name='" + name + "'" +
                 ", type='" + type + "'" +
                 ", species='" + species + "'" +
+                ", assembly='" + assembly + "'" +
+                ", contigPrefix=" + contigPrefix + "'" +
                 ", rawDataFiles = [" + rawDataFilesString + "]" +
                 '}';
     }

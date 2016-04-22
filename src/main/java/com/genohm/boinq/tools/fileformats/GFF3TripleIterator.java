@@ -67,14 +67,8 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Node reference = null;
-			if (referenceMap != null) {
-				reference = referenceMap.get(entry.getSequenceID());
-			}
-			if (reference == null) {
-				reference = NodeFactory.createLiteral(entry.getSequenceID());
-			}
-			List<Triple> triples = converter.convert(entry, reference,  meta);
+	
+			List<Triple> triples = converter.convert(entry,  meta);
 			currentTriples.addAll(triples);
 		}
 		return currentTriples.remove(0);

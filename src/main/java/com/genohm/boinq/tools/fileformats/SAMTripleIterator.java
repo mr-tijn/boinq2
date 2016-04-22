@@ -53,12 +53,7 @@ public class SAMTripleIterator implements Iterator<Triple> {
 		if (currentTriples.isEmpty()){
 			meta.sumEntryCount++;
 			SAMRecord entry = recordIterator.next();
-			Node reference = referenceMap.get(entry.getContig());
-			/*if (reference == null){
-				reference = NodeFactory.createLiteral(entry.getContig());
-			}*/
-			
-			currentTriples.addAll(converter.convert(entry, reference, meta));
+			currentTriples.addAll(converter.convert(entry, meta));
 		}
 		return currentTriples.remove(0);
 	}

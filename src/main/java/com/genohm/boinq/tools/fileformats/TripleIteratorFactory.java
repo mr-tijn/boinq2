@@ -2,7 +2,6 @@ package com.genohm.boinq.tools.fileformats;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
