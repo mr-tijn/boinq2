@@ -70,14 +70,7 @@ public class VCFTripleIterator implements Iterator<Triple> {
 				record = codec.decode(lineIterator.next());
 			}
 			meta.sumEntryCount++;
-			Node reference = null;
-			if (referenceMap != null) {
-			reference = referenceMap.get(record.getContig());
-			}
-			if (reference == null){
-				reference = NodeFactory.createLiteral(record.getContig());
-			}
-			currentTriples.addAll(converter.convert(record, reference, record.getStart(), meta));
+			currentTriples.addAll(converter.convert(record, record.getStart(), meta));
 		}
 		return currentTriples.remove(0);
 	}

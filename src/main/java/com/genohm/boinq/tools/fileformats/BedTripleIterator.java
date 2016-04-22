@@ -56,11 +56,7 @@ public class BedTripleIterator implements Iterator<Triple> {
 				nextLine = lineIterator.next();
 				entry = codec.decode(nextLine);
 			}
-			Node globalReference = null;
-			if (referenceMap != null) {
-				globalReference = referenceMap.get(entry.getContig());
-			}
-			currentTriples.addAll(converter.convert(entry, globalReference, meta));
+			currentTriples.addAll(converter.convert(entry, meta));
 		}
 		return currentTriples.remove(0);
 	}
