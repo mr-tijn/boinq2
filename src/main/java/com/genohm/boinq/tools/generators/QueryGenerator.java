@@ -6,7 +6,10 @@ import com.genohm.boinq.domain.match.FeatureSelect;
 import com.genohm.boinq.domain.match.FeatureTypeCriterion;
 import com.genohm.boinq.domain.match.LocationCriterion;
 import com.genohm.boinq.domain.match.LocationOverlap;
-import com.genohm.boinq.domain.match.MatchGOTermCriterion;
+import com.genohm.boinq.domain.match.MatchDecimalCriterion;
+import com.genohm.boinq.domain.match.MatchIntegerCriterion;
+import com.genohm.boinq.domain.match.MatchStringCriterion;
+import com.genohm.boinq.domain.match.MatchTermCriterion;
 
 public interface QueryGenerator {
 	void visit(LocationCriterion lc, GenomicRegion r);
@@ -19,6 +22,12 @@ public interface QueryGenerator {
 	Boolean check(FeatureSelect fs, GenomicRegion r);
 	void visit(FeatureQuery fq, GenomicRegion r);
 	Boolean check(FeatureQuery fq, GenomicRegion r);
-	void visit(MatchGOTermCriterion tc, GenomicRegion r);
-	Boolean check(MatchGOTermCriterion tc, GenomicRegion r);
+	void visit(MatchTermCriterion tc, GenomicRegion r);
+	Boolean check(MatchTermCriterion tc, GenomicRegion r);
+	void visit(MatchIntegerCriterion tc, GenomicRegion r);
+	Boolean check(MatchIntegerCriterion tc, GenomicRegion r);
+	void visit(MatchDecimalCriterion tc, GenomicRegion r);
+	Boolean check(MatchDecimalCriterion tc, GenomicRegion r);
+	void visit(MatchStringCriterion tc, GenomicRegion r);
+	Boolean check(MatchStringCriterion tc, GenomicRegion r);
 }

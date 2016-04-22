@@ -1,3 +1,4 @@
 ID|ENDPOINT_URL|TYPE|IS_PUBLIC|NAME|OWNER_ID|ENDPOINT_UPDATE_URL|META_GRAPH_NAME|META_ENDPOINT_URL|IRI
 1|DSENDPOINT_PLACEHOLDER|0|1|Default Local Endpoint|3|DSENDPOINT_UPDATE_PLACEHOLDER|http://www.boinq.org/iri/graph/meta/|DSENDPOINT_META_PLACEHOLDER|DSNAME_PLACEHOLDER
 2|http://wwwdev.ebi.ac.uk/rdf/services/ensembl/sparql|1|1|Ensembl SPARQL Endpoint|3|NULL|http://www.boinq.org/iri/graph/meta/|DSENDPOINT_META_PLACEHOLDER|http://rdf.ebi.ac.uk/dataset/ensembl
+3|http://localhost:2020|1|1|Local Mapped Ensembl|3|NULL|http://www.boinq.org/iri/graph/meta/|DSENDPOINT_META_PLACEHOLDER|http://www.boinq.org/localMappedEnsembl

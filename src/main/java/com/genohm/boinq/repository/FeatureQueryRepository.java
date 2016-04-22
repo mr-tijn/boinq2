@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.genohm.boinq.domain.User;
 import com.genohm.boinq.domain.match.FeatureQuery;
 
-public interface FeatureQueryRepository extends JpaRepository<FeatureQuery, Long> {
+public interface FeatureQueryRepository extends JpaRepository<FeatureQuery, Long>, FeatureQueryRepositoryExtensions {
 
 	Optional<FeatureQuery> findOneById(Long id);
 	Optional<List<FeatureQuery>> findByOwner(User owner);

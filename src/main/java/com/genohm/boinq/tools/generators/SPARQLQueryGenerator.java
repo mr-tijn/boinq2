@@ -2,6 +2,8 @@ package com.genohm.boinq.tools.generators;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,39 +11,60 @@ import javax.inject.Inject;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Node_Variable;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.shared.impl.PrefixMappingImpl;
 import org.apache.jena.sparql.core.BasicPattern;
 import org.apache.jena.sparql.core.Prologue;
+import org.apache.jena.sparql.core.TriplePath;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.binding.BindingFactory;
+import org.apache.jena.sparql.engine.binding.BindingMap;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
 import org.apache.jena.sparql.expr.E_IRI;
 import org.apache.jena.sparql.expr.E_LessThanOrEqual;
 import org.apache.jena.sparql.expr.E_LogicalAnd;
 import org.apache.jena.sparql.expr.E_OneOf;
+import org.apache.jena.sparql.expr.E_Regex;
+import org.apache.jena.sparql.expr.E_SameTerm;
+import org.apache.jena.sparql.expr.E_Str;
+import org.apache.jena.sparql.expr.E_Version;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.ExprVar;
+import org.apache.jena.sparql.expr.nodevalue.NodeValueDouble;
+import org.apache.jena.sparql.expr.nodevalue.NodeValueFloat;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueInteger;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueNode;
+import org.apache.jena.sparql.expr.nodevalue.NodeValueString;
 import org.apache.jena.sparql.modify.request.QuadAcc;
 import org.apache.jena.sparql.modify.request.UpdateModify;
+import org.apache.jena.sparql.path.Path;
+import org.apache.jena.sparql.path.PathFactory;
+import org.apache.jena.sparql.path.PathParser;
 import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.sparql.syntax.ElementNamedGraph;
+import org.apache.jena.sparql.syntax.ElementPathBlock;
 import org.apache.jena.sparql.syntax.ElementService;
 import org.apache.jena.sparql.syntax.ElementTriplesBlock;
 import org.apache.jena.sparql.util.ExprUtils;
+import org.apache.jena.update.Update;
+import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.XSD;
+import org.neo4j.cypher.internal.compiler.v2_1.executionplan.addEagernessIfNecessary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.terracotta.modules.ehcache.store.ValueModeHandlerSerialization;
 
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.GenomicRegion;
@@ -53,9 +76,15 @@ import com.genohm.boinq.domain.match.FeatureSelectCriterion;
 import com.genohm.boinq.domain.match.FeatureTypeCriterion;
 import com.genohm.boinq.domain.match.LocationCriterion;
 import com.genohm.boinq.domain.match.LocationOverlap;
-import com.genohm.boinq.domain.match.MatchGOTermCriterion;
+import com.genohm.boinq.domain.match.MatchDecimalCriterion;
+import com.genohm.boinq.domain.match.MatchIntegerCriterion;
+import com.genohm.boinq.domain.match.MatchStringCriterion;
+import com.genohm.boinq.domain.match.MatchTermCriterion;
+import com.genohm.boinq.domain.match.QueryGeneratorAcceptor;
+import com.genohm.boinq.generated.vocabularies.BoinqVocab;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
 import com.genohm.boinq.generated.vocabularies.GfvoVocab;
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.MetaInfoService;
 import com.genohm.boinq.service.QueryBuilderService;
 
@@ -71,7 +100,7 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	
 	//TODO: some service to generate unique id's
 	
-	private Long idCounter = 0L;
+//	private Long idCounter = 0L;
 	private Query mainQuery;
 	private ElementGroup mainGroup;
 	private PrefixMapping prefixMap;
@@ -80,8 +109,19 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	private UpdateModify updateQuery;
 	private QuadAcc insertQuads;
 	
+	private Map<String, Long> idCounters;
+	
+	
 	private String nextId(String prefix) {
-		return (prefix == null ? "" : prefix) + idCounter++;
+		if (prefix == null) {
+			prefix = "";
+		}
+		if (idCounters.containsKey(prefix)) {
+			idCounters.put(prefix, idCounters.get(prefix) + 1);
+		} else {
+			idCounters.put(prefix, 0L);
+		}
+		return prefix + idCounters.get(prefix);
 	}
 
 	private Map<String, FeatureSelect> featureSelectMap = new HashMap<>();
@@ -89,21 +129,64 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	private Map<String, ElementGroup> selectTriples = new HashMap<>();
 
 	private Map<FeatureSelect, Map<Node,Node>> referenceMapMap;
+	private List<Node> globalReferences = new LinkedList<>();
+	private List<Var> valuesVariables = new LinkedList<>();
+	private List<Binding> valuesBindings = new LinkedList<>();
+	private Var globalReferenceId;
 	
 	public SPARQLQueryGenerator() {
 	}
+	
+	private Node beginVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_Begin");}
+	private Node endVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_End");}
+	private Node beginPosVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_BeginPos");}
+	private Node endPosVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_EndPos");}
+	private Node referenceVar(String featureVarName) {return NodeFactory.createVariable(featureVarName+"_Reference");}
+	private Node locationVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_Location");}
+	private Node strandVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_Strand");}
 
 	private void init() {
-		idCounter = 0L;
+//		idCounter = 0L;
+		idCounters = new HashMap<String,Long>();
 		prefixMap = new PrefixMappingImpl();
 		prefixMap.setNsPrefix("rdf", RDF.getURI());
 		prefixMap.setNsPrefix("rdfs", RDFS.getURI());
 		prefixMap.setNsPrefix("xsd", XSD.getURI());
 		prefixMap.setNsPrefix("owl", OWL.getURI());
+		prefixMap.setNsPrefix("dcterms", DCTerms.getURI());
 		prefixMap.setNsPrefix("faldo", FaldoVocab.getURI());
 		prefixMap.setNsPrefix("gfvo", GfvoVocab.getURI());
 		prefixMap.setNsPrefix("so", "http://purl.obolibrary.org/obo/so-xp.obo#");
+		prefixMap.setNsPrefix("boinq", BoinqVocab.getURI());
+		prefixMap.setNsPrefix("track", TrackVocab.getURI());
 		mainGroup = new ElementGroup();
+		referenceMapMap = new HashMap<>();
+		globalReferences.add(TrackVocab.GRCh38chr01.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr02.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr03.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr04.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr05.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr06.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr07.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr08.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr09.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr10.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr11.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr12.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr13.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr14.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr15.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr16.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr17.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr18.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr19.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr20.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr21.asNode());
+		globalReferences.add(TrackVocab.GRCh38chr22.asNode());
+		globalReferences.add(TrackVocab.GRCh38chrX.asNode());
+		globalReferences.add(TrackVocab.GRCh38chrY.asNode());
+		globalReferenceId = Var.alloc("globalReferenceId");
+		valuesVariables.add(globalReferenceId);
 	}
 	
 	
@@ -113,10 +196,41 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		mainQuery.setQuerySelectType();
 	}
 	
-	private void prepareUpdate() {
+	private Update prepareUpdate(String targetGraph) {
 		UpdateModify updateQuery = new UpdateModify();
 		updateQuery.setElement(mainGroup);
 		insertQuads = updateQuery.getInsertAcc();
+		insertQuads.setGraph(NodeFactory.createURI(targetGraph));
+		for (String featureName: featureSelectMap.keySet()) {
+			if (featureSelectMap.get(featureName).retrieveFeatureData()) {
+				for (Triple triple: updateTriplePattern(featureName)) {
+					insertQuads.addTriple(triple);
+				}
+			}
+		}
+		return updateQuery;
+	}
+	
+	private Set<Triple> updateTriplePattern(String featureVarName) {
+		HashSet<Triple> result = new HashSet<>();
+		result.add(new Triple(NodeFactory.createVariable(featureVarName), RDF.type.asNode(), FaldoVocab.Region.asNode()));
+		result.add(new Triple(NodeFactory.createVariable(featureVarName), FaldoVocab.location.asNode(), locationVar(featureVarName)));
+		result.add(new Triple(locationVar(featureVarName), FaldoVocab.begin.asNode(), beginVar(featureVarName)));
+		result.add(new Triple(locationVar(featureVarName), FaldoVocab.end.asNode(), endVar(featureVarName)));
+		result.add(new Triple(locationVar(featureVarName), FaldoVocab.reference.asNode(), globalReferenceId));
+		result.add(new Triple(locationVar(featureVarName), RDF.type.asNode(), strandVar(featureVarName)));
+		result.add(new Triple(beginVar(featureVarName), FaldoVocab.position.asNode(), beginPosVar(featureVarName)));
+		result.add(new Triple(beginVar(featureVarName), FaldoVocab.reference.asNode(), globalReferenceId));
+		result.add(new Triple(beginVar(featureVarName), RDF.type.asNode(), strandVar(featureVarName)));
+		result.add(new Triple(endVar(featureVarName), FaldoVocab.position.asNode(), endPosVar(featureVarName)));
+		result.add(new Triple(endVar(featureVarName), FaldoVocab.reference.asNode(), globalReferenceId));
+		result.add(new Triple(endVar(featureVarName), RDF.type.asNode(), strandVar(featureVarName)));
+		return result;
+	}
+	
+	public Update computeUpdate(FeatureQuery queryDefinition, GenomicRegion region) {
+		computeQuery(queryDefinition, region);
+		return prepareUpdate(queryDefinition.getTargetGraph());
 		
 	}
 	
@@ -124,26 +238,29 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 
 		init();
 		prepareSelect();
-		prepareUpdate();
 		// do we already know the query will not retrieve anything ?
 		Boolean retrieve = queryDefinition.getSelects().stream().anyMatch(select -> select.check(this, region) && select.retrieveFeatureData());
 		if (!retrieve) {
 			return null;
 		}
-		
-		for (FeatureSelect select: queryDefinition.getSelects()) {
-			if (select.check(this, region)) {
-				select.accept(this, region);
+		if (queryDefinition.check(this, region)) {
+			for (FeatureSelect select: queryDefinition.getSelects()) {
+				if (select.check(this, region)) {
+					select.accept(this, region);
+				}
+			}
+			for (FeatureJoin join: queryDefinition.getJoins()) {
+				if (join.check(this, region)) {
+					join.accept(this, region);
+				}
 			}
 		}
-		for (FeatureJoin join: queryDefinition.getJoins()) {
-			if (join.check(this, region)) {
-				join.accept(this, region);
-			}
-		}
-		
 		mainQuery.setQueryPattern(mainGroup);
 		
+		// add values block
+		addReferenceBindings();
+		mainQuery.setValuesDataBlock(valuesVariables, valuesBindings);
+				
 		return mainQuery;
 	}
 	
@@ -153,22 +270,48 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		
 	}
 
+	private void addReferenceBindings() {
+		// use refMapMap to process all in the end
+		
+		for (String selectFeatureName : featureNameMap.values()) {
+			valuesVariables.add(Var.alloc(selectFeatureName + "_Reference"));
+		}
+		for (Node globalRef: globalReferences) {
+			BindingMap binding = BindingFactory.create();
+			binding.add(Var.alloc("globalReferenceId"), globalRef);
+			for (FeatureSelect select: referenceMapMap.keySet()) {
+				String refVarName = featureNameMap.get(select) + "_Reference";
+				Var refVar = Var.alloc(refVarName);
+				Map<Node,Node> refMap = referenceMapMap.get(select);
+				Node target = refMap.get(globalRef);
+				if (target != null) {
+					binding.add(refVar, target);
+				}
+			}
+			valuesBindings.add(binding);
+		}
+		
+	}
+	
 	@Override
 	public void visit(LocationOverlap lo, GenomicRegion r) {
-		String from = featureNameMap.get(lo.getSource());
-		String to = featureNameMap.get(lo.getTarget());
-		
-		Expr sameRef = new E_Equals(new ExprVar(referenceVar(from)), new ExprVar(referenceVar(to)));
-		// TODO: replace sameRef by understanding same reference means they map on the same global reference:
-//		String fromReference = getLocalReference(r.assemblyURI);
-//		String toReference = getLocalReference(r.assemblyURI);
-//		Expr fromRef = new E_Equals(new ExprVar(referenceVar(from)), fromReference);
-//		Expr toRef = new E_Equals(new ExprVar());
-		
+		String from = featureNameMap.get(lo.getSource()) ;
+		String to = featureNameMap.get(lo.getTarget()) ;
+//		Expr sameRef = new E_Equals(new ExprVar(referenceVar(from)), new ExprVar(referenceVar(to)));
+		// for each select in both queries, add the reference variable to the global binding list, and a column of bindings for every one
+		// example: variables
+		// ?refId ?refEnsembl ?refBoinq
+		// values
+		// (1 http://rdf.ebi.ac.uk/chr1 boinq:GRCh38chr01)
+		// (2 http://rdf.ebi.ac.uk/chr2 boinq:GRCh38chr02)
 		// IDMatch will need to explicitly query the ID mapping RDF
 		// http://www.genome.jp/linkdb/linkdb_rdf.html
 		Expr overlap = new E_LogicalAnd(new E_LessThanOrEqual(new ExprVar(beginPosVar(from)),new ExprVar(endPosVar(to))), new E_GreaterThanOrEqual(new ExprVar(endPosVar(from)), new ExprVar(beginPosVar(to))));
-		mainGroup.addElementFilter(new ElementFilter(new E_LogicalAnd(sameRef, overlap)));
+		mainGroup.addElementFilter(new ElementFilter(overlap));
+		if (lo.getSameStrand()) {
+			Expr sameStrand = new E_Equals(new ExprVar(strandVar(from)), new ExprVar(strandVar(to)));
+			mainGroup.addElementFilter(new ElementFilter(sameStrand));
+		}
 		
 		//TODO: handle same strand
 	}
@@ -189,8 +332,8 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		ElementGroup faldoSelect = getFaldoSelect(featureVarName,fs.retrieveFeatureData(),fs.getLocationIndirection(),region);
 		selectTriples.put(featureVarName, faldoSelect);
 		featureSelectElement = new ElementNamedGraph(graph, faldoSelect);
-		for (FeatureSelectCriterion crit: fs.getCriteria()) {
-			crit.accept(this, featureSelectElement, region);
+		for (QueryGeneratorAcceptor crit: fs.getCriteria()) {
+			crit.accept(this, region);
 		}		
 		if (track.getDatasource().getType() == Datasource.TYPE_REMOTE_FALDO) {
 			String serviceURI = track.getDatasource().getEndpointUrl();
@@ -205,10 +348,6 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		mainGroup.addElement(featureSelectElement);
 	}
 	
-	private Node beginPosVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_BeginPos");}
-	private Node endPosVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_EndPos");}
-	private Node referenceVar(String featureVarName) {return NodeFactory.createVariable(featureVarName+"_Reference");}
-	private Node locationVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_Location");}
 	
 	private ElementGroup getFaldoSelect(String featureVarName, Boolean retrieve, Boolean locationIndirection, GenomicRegion region) {
 		Node feature = NodeFactory.createVariable(featureVarName);
@@ -225,7 +364,7 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 			mainQuery.addResultVar(featureBeginPos);
 			mainQuery.addResultVar(featureEndPos);
 			mainQuery.addResultVar(featureReferenceName);
-			mainQuery.addResultVar(featureVarName + "_Strand", new E_Equals(new ExprVar(featurePositionType), ExprUtils.nodeToExpr(FaldoVocab.ForwardStrandPosition.asNode())));
+			mainQuery.addResultVar(strandVar(featureVarName), new E_Equals(new ExprVar(featurePositionType), ExprUtils.nodeToExpr(FaldoVocab.ForwardStrandPosition.asNode())));
 		}
 		
 		ElementGroup faldoSelect = new ElementGroup();
@@ -238,10 +377,10 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 			featureLocation = locationVar(featureVarName);
 			faldoTriples.addTriple(new Triple(feature, FaldoVocab.location.asNode(), featureLocation));
 		}
-		Node featureBegin = NodeFactory.createVariable(featureVarName + "_Begin");
+		Node featureBegin = beginVar(featureVarName);
 		faldoTriples.addTriple(new Triple(featureLocation, FaldoVocab.begin.asNode(), featureBegin));
 		faldoTriples.addTriple(new Triple(featureBegin, FaldoVocab.position.asNode(), featureBeginPos));
-		Node featureEnd = NodeFactory.createVariable(featureVarName + "_End");
+		Node featureEnd = endVar(featureVarName);
 		faldoTriples.addTriple(new Triple(feature, FaldoVocab.end.asNode(), featureEnd));
 		faldoTriples.addTriple(new Triple(featureEnd, FaldoVocab.position.asNode(), featureEndPos));
 		faldoTriples.addTriple(new Triple(featureReference, RDFS.label.asNode(), featureReferenceName));
@@ -314,7 +453,6 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 
 	@Override
 	public Boolean check(LocationOverlap lo, GenomicRegion r) {
-		// we could check if the target of the overlap has a location filter and see if it overlaps the region
 		return true;
 	}
 
@@ -325,6 +463,7 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 
 	@Override
 	public Boolean check(FeatureQuery fq, GenomicRegion r) {
+		if (fq.getTargetGraph() == null) return false;
 		// reference map
 		referenceMapMap = new HashMap<>();
 		for (FeatureSelect select: fq.getSelects()) {
@@ -345,6 +484,8 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	}
 	
 	private Set<Set<FeatureSelect>> cluster(FeatureQuery fq) {
+		// TODO: should only check for overlap clusters within a connected set
+		// as we only support overlap joins for now this is automatically fulfilled
 		Set<Set<FeatureSelect>> clusters = new HashSet<>();
 		for (FeatureSelect select: fq.getSelects()) {
 			Boolean alreadyIn = clusters.stream().anyMatch(cluster -> cluster.contains(select));
@@ -357,15 +498,109 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	}
 
 	@Override
-	public void visit(MatchGOTermCriterion tc, GenomicRegion r) {
-		// TODO Auto-generated method stub
-		
+	public void visit(MatchTermCriterion mc, GenomicRegion r) {
+		String parentFeatureName = featureNameMap.get(mc.getParent());
+		Node feature = NodeFactory.createVariable(parentFeatureName);
+		Node field = NodeFactory.createVariable(nextId("field"));
+		ElementGroup parentGroup = selectTriples.get(parentFeatureName);
+		ElementPathBlock link = new ElementPathBlock();
+		TriplePath featureToField = new TriplePath(feature, PathParser.parse(mc.getPathExpression(), prefixMap), field);
+		link.addTriplePath(featureToField);
+		parentGroup.addElement(link);
+		parentGroup.addElement(new ElementFilter(new E_SameTerm(new ExprVar(field), new NodeValueNode(NodeFactory.createURI(mc.getTermUri())))));
+	}
+	
+	@Override
+	public void visit(MatchIntegerCriterion mc, GenomicRegion r) {
+		String parentFeatureName = featureNameMap.get(mc.getParent());
+		Node feature = NodeFactory.createVariable(parentFeatureName);
+		Node field = NodeFactory.createVariable(nextId("field"));
+		ElementGroup parentGroup = selectTriples.get(parentFeatureName);
+		ElementPathBlock link = new ElementPathBlock();
+		TriplePath featureToField = new TriplePath(feature, PathParser.parse(mc.getPathExpression(), prefixMap), field);
+		link.addTriplePath(featureToField);
+		parentGroup.addElement(link);
+		if (mc.getExactMatch()) {
+			parentGroup.addElement(new ElementFilter(new E_Equals(new ExprVar(field), new NodeValueInteger(mc.getMatchLong()))));
+		} else {
+			if (null != mc.getMinLong()) {
+				parentGroup.addElement(new ElementFilter(new E_GreaterThanOrEqual(new ExprVar(field), new NodeValueInteger(mc.getMinLong()))));
+			}
+			if (null != mc.getMaxLong()) {
+				parentGroup.addElement(new ElementFilter(new E_LessThanOrEqual(new ExprVar(field), new NodeValueInteger(mc.getMaxLong()))));
+			}
+		}
+	}
+	
+	
+	@Override
+	public void visit(MatchDecimalCriterion mc, GenomicRegion r) {
+		String parentFeatureName = featureNameMap.get(mc.getParent());
+		Node feature = NodeFactory.createVariable(parentFeatureName);
+		Node field = NodeFactory.createVariable(nextId("field"));
+		ElementGroup parentGroup = selectTriples.get(parentFeatureName);
+		ElementPathBlock link = new ElementPathBlock();
+		TriplePath featureToField = new TriplePath(feature, PathParser.parse(mc.getPathExpression(), prefixMap), field);
+		link.addTriplePath(featureToField);
+		parentGroup.addElement(link);
+		if (mc.getExactMatch()) {
+			parentGroup.addElement(new ElementFilter(new E_Equals(new ExprVar(field), new NodeValueDouble(mc.getMatchDouble()))));
+		} else {
+			if (null != mc.getMinDouble()) {
+				parentGroup.addElement(new ElementFilter(new E_GreaterThanOrEqual(new ExprVar(field), new NodeValueDouble(mc.getMinDouble()))));
+			}
+			if (null != mc.getMaxDouble()) {
+				parentGroup.addElement(new ElementFilter(new E_LessThanOrEqual(new ExprVar(field), new NodeValueDouble(mc.getMaxDouble()))));
+			}
+		}
+	}
+	
+	
+	@Override
+	public void visit(MatchStringCriterion mc, GenomicRegion r) {
+		String parentFeatureName = featureNameMap.get(mc.getParent());
+		Node feature = NodeFactory.createVariable(parentFeatureName);
+		Node field = NodeFactory.createVariable(nextId("field"));
+		ElementGroup parentGroup = selectTriples.get(parentFeatureName);
+		ElementPathBlock link = new ElementPathBlock();
+		TriplePath featureToField = new TriplePath(feature, PathParser.parse(mc.getPathExpression(), prefixMap), field);
+		link.addTriplePath(featureToField);
+		parentGroup.addElement(link);
+		if (mc.getExactMatch()) {
+			parentGroup.addElement(new ElementFilter(new E_Equals(new E_Str(new ExprVar(field)), new NodeValueString(mc.getMatchString()))));
+		} else {
+			parentGroup.addElement(new ElementFilter(new E_Regex(new ExprVar(field), mc.getMatchString(), "i")));
+		}
 	}
 
 	@Override
-	public Boolean check(MatchGOTermCriterion tc, GenomicRegion r) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean check(MatchIntegerCriterion mc, GenomicRegion r) {
+		if ((PathParser.parse(mc.getPathExpression(), prefixMap)) == null) return false;
+		if (mc.getExactMatch() && null == mc.getMatchLong()) return false;
+		if (!mc.getExactMatch() && (mc.getMinLong() == null && mc.getMaxLong() == null)) return false;
+		return true;
+	}
+
+	@Override
+	public Boolean check(MatchDecimalCriterion mc, GenomicRegion r) {
+		if ((PathParser.parse(mc.getPathExpression(), prefixMap)) == null) return false;
+		if (mc.getExactMatch() && null == mc.getMatchDouble()) return false;
+		if (!mc.getExactMatch() && (mc.getMinDouble() == null && mc.getMaxDouble() == null)) return false;
+		return true;
+	}
+	
+	@Override
+	public Boolean check(MatchStringCriterion mc, GenomicRegion r) {
+		if ((PathParser.parse(mc.getPathExpression(), prefixMap)) == null) return false;
+		if (mc.getMatchString() == null) return false;
+		return true;
+	}
+
+	@Override
+	public Boolean check(MatchTermCriterion mc, GenomicRegion r) {
+		if ((PathParser.parse(mc.getPathExpression(), prefixMap)) == null) return false;
+		if (!(NodeFactory.createURI(mc.getTermUri())).isURI()) return false;
+		return true;
 	}
 
 }

@@ -208,13 +208,12 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 					queryTypes.push({uri:track.supportedFeatureTypes[typeName], label:typeName});
 				}
 				
-				var operators = [];
-				
-				operatorNames = Object.keys(track.supportedOperators);
-				for (var i=0; i<operatorNames.length; i++) {
-					operatorName = operatorNames[i];
-					operators.push({label:operatorName, operator:track.supportedOperators[operatorName]});
-				}
+				var operators = track.supportedOperators;
+				operators.forEach(function (current, index, array) {
+					if (!current.operatorName) {
+						current.operatorName = current.operatorTypeName;
+					}
+				});
 				
 				var FS = {idx:idx, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes, operators : operators, retrieve : false};
 				idx++;
@@ -238,6 +237,7 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 			var join = $scope.featureQuery.joins[i];
 			featureQuery.joins.push({
 				type:join.type,
+				sameStrand:join.sameStrand,
 				sourceSelectIdx:join.sourceSelect.idx, 
 				targetSelectIdx:join.targetSelect.idx});
 		}
@@ -246,15 +246,29 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 			var criteria = [];
 			for (var j=0; j< select.criteria.length; j++) {
 				var criterion = select.criteria[j];
-				criteria.push({
-					type: criterion.type,
-					contig: criterion.contig,
-					start: criterion.start,
-					end: criterion.end,
-					strand: criterion.strand,
-					featureTypeUri: (criterion.featureType?criterion.featureType.uri:null),
-					featureTypeLabel: (criterion.featureType?criterion.featureType.label:null)
-				});
+				switch (criterion.operator.operatorName) {
+				case "FeatureType" :
+					criteria.push({
+						type: criterion.operator.operatorName,
+						featureTypeUri: (criterion.featureType?criterion.featureType.uri:null),
+						featureTypeLabel: (criterion.featureType?criterion.featureType.label:null)
+					});
+					break;
+				case "Location" :
+					criteria.push({
+						type: criterion.operator.operatorName,
+						contig: criterion.contig,
+						start: criterion.start,
+						end: criterion.end,
+						strand: criterion.strand,
+					});
+					break;
+				// TODO: other types
+				default:
+					criteria.push({
+						type: "undefined"
+					});
+				}
 			}
 			featureQuery.selects.push ({
 				idx: select.idx,

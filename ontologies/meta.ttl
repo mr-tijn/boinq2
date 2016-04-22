@@ -1,6 +1,7 @@
 @prefix track: <http://www.boinq.org/iri/ontologies/track#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix localEnsembl: <http://localhost:2020/resource/> .
 
 <http://www.boinq.org/iri/localdatasource> rdf:type track:FaldoDatasource, track:Datasource
 ; track:provides <http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844>
@@ -13,6 +14,69 @@
 <http://purl.obolibrary.org/obo/SO_0000147> skos:prefLabel "Exon".
 <http://purl.obolibrary.org/obo/SO_0000673> skos:prefLabel "Transcript".
 
+<http://www.boinq.org/localMappedEnsembl> rdf:type track:FaldoDatasource, track:Datasource
+; track:provides <localHuman>
+.
+
+<localHuman> rdf:type track:Track, track:FaldoTrack
+; track:entry [ track:originalReference localEnsembl:chromosome/1 ; 
+				track:targetReference track:GRCh38chr01]
+; track:entry [ track:originalReference localEnsembl:chromosome/2 ; 
+				track:targetReference track:GRCh38chr02]
+; track:entry [ track:originalReference localEnsembl:chromosome/3 ; 
+				track:targetReference track:GRCh38chr03]
+; track:entry [ track:originalReference localEnsembl:chromosome/4 ; 
+				track:targetReference track:GRCh38chr04]
+; track:entry [ track:originalReference localEnsembl:chromosome/5 ; 
+				track:targetReference track:GRCh38chr05]
+; track:entry [ track:originalReference localEnsembl:chromosome/6 ; 
+				track:targetReference track:GRCh38chr06]
+; track:entry [ track:originalReference localEnsembl:chromosome/7 ; 
+				track:targetReference track:GRCh38chr07]
+; track:entry [ track:originalReference localEnsembl:chromosome/8 ; 
+				track:targetReference track:GRCh38chr08]
+; track:entry [ track:originalReference localEnsembl:chromosome/9 ; 
+				track:targetReference track:GRCh38chr09]
+; track:entry [ track:originalReference localEnsembl:chromosome/10 ; 
+				track:targetReference track:GRCh38chr10]
+; track:entry [ track:originalReference localEnsembl:chromosome/11 ; 
+				track:targetReference track:GRCh38chr11]
+; track:entry [ track:originalReference localEnsembl:chromosome/12 ; 
+				track:targetReference track:GRCh38chr12]
+; track:entry [ track:originalReference localEnsembl:chromosome/13 ; 
+				track:targetReference track:GRCh38chr13]
+; track:entry [ track:originalReference localEnsembl:chromosome/14 ; 
+				track:targetReference track:GRCh38chr14]
+; track:entry [ track:originalReference localEnsembl:chromosome/15 ; 
+				track:targetReference track:GRCh38chr15]
+; track:entry [ track:originalReference localEnsembl:chromosome/16 ; 
+				track:targetReference track:GRCh38chr17]
+; track:entry [ track:originalReference localEnsembl:chromosome/18 ; 
+				track:targetReference track:GRCh38chr18]
+; track:entry [ track:originalReference localEnsembl:chromosome/19 ; 
+				track:targetReference track:GRCh38chr19]
+; track:entry [ track:originalReference localEnsembl:chromosome/20 ; 
+				track:targetReference track:GRCh38chr20]
+; track:entry [ track:originalReference localEnsembl:chromosome/21 ; 
+				track:targetReference track:GRCh38chr21]
+; track:entry [ track:originalReference localEnsembl:chromosome/22 ; 
+				track:targetReference track:GRCh38chr22]
+; track:entry [ track:originalReference localEnsembl:chromosome/X ; 
+				track:targetReference track:GRCh38chrX]
+; track:entry [ track:originalReference localEnsembl:chromosome/Y ; 
+				track:targetReference track:GRCh38chrY]
+.
+
+<localHuman> track:holds  <http://purl.obolibrary.org/obo/SO_0000673>,<http://purl.obolibrary.org/obo/SO_0000316>,<http://purl.obolibrary.org/obo/SO_0000147>,<http://purl.obolibrary.org/obo/SO_0000340>.
+<http://purl.obolibrary.org/obo/SO_0000147> skos:prefLabel "Exon".
+<http://purl.obolibrary.org/obo/SO_0000673> skos:prefLabel "Transcript".
+<localHuman> track:supports 
+	[a track:MatchTerm;
+	track:endpointUrl <http://localhost:9999/bigdata/namespace/boinq_static/sparql>;
+	track:graphUri <http://purl.obolibrary.org/obo/so-xp.obo>;
+	track:rootTerm <>];
+	[a track:Location;
+	 track:references track:GRCh38].
 
 <http://rdf.ebi.ac.uk/dataset/ensembl> rdf:type track:FaldoDatasource, track:Datasource
 ; track:provides <file:/opt/blazegraph/Human.ttl>
@@ -71,11 +135,5 @@
 <http://purl.obolibrary.org/obo/SO_0000147> skos:prefLabel "Exon".
 <http://purl.obolibrary.org/obo/SO_0000673> skos:prefLabel "Transcript".
 <file:/opt/blazegraph/Human.ttl> track:supports 
-	[a track:termMatch;
-	 track:termSource <localGO>],
 	[a track:localizedSearch;
 	 track:references track:GRCh38].
-<localGO> a track:TermSource;
-	track:endpoint <http://localhost:9999/bigdata/namespace/boinq_static/sparql>;
-	track:graph <http://purl.obolibrary.org/obo/so-xp.obo>;
-	track:root <>.

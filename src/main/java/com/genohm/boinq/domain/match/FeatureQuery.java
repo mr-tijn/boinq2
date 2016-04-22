@@ -44,6 +44,9 @@ public class FeatureQuery implements QueryGeneratorAcceptor {
 	@Column(name="name")
 	private String name;
 
+	@Column(name="target-graph")
+	private String targetGraph;
+	
 	public Long getId() {
 		return id;
 	}
@@ -88,6 +91,14 @@ public class FeatureQuery implements QueryGeneratorAcceptor {
 		this.name = name;
 	}
 	
+	public String getTargetGraph() {
+		return targetGraph;
+	}
+
+	public void setTargetGraph(String targetGraph) {
+		this.targetGraph = targetGraph;
+	}
+
 	public Set<FeatureSelect> getOverlappingNeighbours(FeatureSelect select) {
 		Set<FeatureSelect> neighbours = new HashSet<>();
 		for (FeatureJoin join: joins.stream().filter(join -> join instanceof LocationOverlap).collect(Collectors.toSet())) {
@@ -119,6 +130,7 @@ public class FeatureQuery implements QueryGeneratorAcceptor {
 		FeatureQueryDTO result = new FeatureQueryDTO();
 		result.id = this.id;
 		result.name = this.name;
+		result.targetGraph = this.targetGraph;
 		result.ownerId = this.owner.getLogin();
 		result.joins = new HashSet<>();
 		for (FeatureJoin join: this.joins) {

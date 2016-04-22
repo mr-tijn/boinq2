@@ -9,14 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.jena.sparql.syntax.Element;
-
-import com.genohm.boinq.domain.GenomicRegion;
-import com.genohm.boinq.tools.generators.QueryGenerator;
 import com.genohm.boinq.web.rest.dto.CriteriaDTO;
 
 @Entity
@@ -33,12 +27,13 @@ public abstract class FeatureSelectCriterion implements QueryGeneratorAcceptor {
 
     public FeatureSelectCriterion() {}
     
-	public void accept(QueryGenerator qg, Element parentElement, GenomicRegion region) {}
-	
 	public CriteriaDTO createDTO() {return null;}
 
 	public FeatureSelect getParent() {
 		return parent;
 	}
 	
+	public void setParent(FeatureSelect parent) {
+		this.parent = parent;
+	}
 }

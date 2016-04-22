@@ -8,6 +8,7 @@ public class FeatureQueryDTO {
 	public Set<FeatureSelectDTO> selects;
 	public String ownerId;
 	public String name;
+	public String targetGraph;
 	
 	public FeatureQueryDTO() {}
 	

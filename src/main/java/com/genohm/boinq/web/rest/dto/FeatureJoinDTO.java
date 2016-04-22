@@ -8,6 +8,8 @@ public class FeatureJoinDTO {
 	public int sourceSelectIdx;
 	public int targetSelectIdx;
 
+	public boolean sameStrand;
+	
 	public FeatureJoinDTO() {}
 	
 }

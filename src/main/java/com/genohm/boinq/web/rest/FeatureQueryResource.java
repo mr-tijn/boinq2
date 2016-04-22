@@ -92,7 +92,7 @@ public class FeatureQueryResource {
     public void start(Principal principal, @PathVariable Long fqId, @RequestBody int start) throws Exception {
     	if (start != 1) return;
     	Optional<FeatureQuery> featureQuery = featureQueryRepository
-    			.findOneById(fqId)
+    			.findOneWithMeta(fqId)
     			.filter(fq -> fq.getOwner().getLogin().equals(principal.getName()));
     	if (featureQuery.isPresent()) {
     		jobService.add(new SlidingWindowFeatureSelection(featureQuery.get()));

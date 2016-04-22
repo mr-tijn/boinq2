@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	<changeSet author="martijn" id="add columns for field match criterion">
+		<addColumn tableName="t_featureselectcriterion">
+			<column name="match_name" type="VARCHAR(255)" />
+			<column name="path_expression" type="VARCHAR(255)" />
+			<column name="exact_match" type="BOOLEAN" />
+			<column name="min_double" type="DOUBLE" />
+			<column name="max_double" type="DOUBLE" />
+			<column name="match_double" type="DOUBLE" />
+			<column name="min_long" type="BIGINT" />
+			<column name="max_long" type="BIGINT" />
+			<column name="match_long" type="BIGINT" />
+			<column name="match_string" type="VARCHAR(255)" />
+			<column name="term_uri" type="VARCHAR(255)" />
+			<column name="term_label" type="VARCHAR(255)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="martijn" id="add column for strand match">
+		<addColumn tableName="t_featurejoin">
+			<column name="same_strand" type="BOOLEAN" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="martijn" id="add target-graph column to featurequery">
+		<addColumn tableName="t_featurequery">
+			<column name="target_graph" type="VARCHAR(255)"/>
+		</addColumn>
+	</changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,11 @@
+<div class="input-group">
+	<div class="form-group">
+		<label>Pick Term</label>
+		<term-tree-picker select-handler="termsPicked"
+			source-endpoint="{{criterion.operator.endpointUri}}"
+			source-graph="{{criterion.operator.graphUri}}"
+			search-filter="searchFilter" multi-valued='false'
+			form-field-name="term" ng-model="criterion.term"> </term-tree-picker>
+	</div>
+
+</div>

@@ -9,7 +9,7 @@
 		Criteria:
 		<div class="btn btn-primary"
 			ng-repeat="crit in featureselect.criteria"
-			ng-click="selectCriterion(crit)">{{crit.type}}</div>
+			ng-click="selectCriterion(crit)">{{crit.operator.operatorName}}</div>
 		<div class="btn btn-primary" ng-click="addCriterion()">+</div>
 		<div ng-include="detailUrl"></div>
 	</div>

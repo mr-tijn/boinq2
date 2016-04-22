@@ -50,7 +50,7 @@ public class FeatureQueryFactory {
 		for (CriteriaDTO criterion: dto.criteria) {
 			featureSelect.addCriteria(createCriterion(criterion));
 		}
-		featureSelect.setTrack(trackRepository.findOne(dto.trackId));
+		featureSelect.setTrack(trackRepository.findOneWithMeta(dto.trackId).get());
 		featureSelect.setViewX(dto.viewX);
 		featureSelect.setViewY(dto.viewY);
 		featureSelect.setIdx(dto.idx);
@@ -62,6 +62,7 @@ public class FeatureQueryFactory {
 		switch (dto.type) {
 		case FeatureJoinDTO.JOIN_TYPE_OVERLAP: 
 			LocationOverlap result = new LocationOverlap();
+			result.setSameStrand(dto.sameStrand);
 			return result;
 		default: throw new Exception("Unhandled type "+dto.type);
 		}

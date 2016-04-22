@@ -120,8 +120,8 @@ public class FeatureSelect implements QueryGeneratorAcceptor {
 		return criteria;
 	}
 	
-
 	public void addCriteria(FeatureSelectCriterion criterion) {
+		criterion.setParent(this);
 		criteria.add(criterion);
 	}
 	

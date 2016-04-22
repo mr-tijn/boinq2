@@ -14,6 +14,7 @@ import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.iri.impl.Parser;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.shared.PrefixMapping;
@@ -56,7 +57,7 @@ import static org.apache.jena.sparql.path.PathFactory.*;
 public class QueryBuilderService {
 
 	
-	public static final String OPERATOR_NAME = "operatorName";
+	public static final String OPERATOR_TYPE_NAME = "operatorTypeName";
 	public static final String ORIGINAL_REFERENCE_LABEL = "originalReferenceLabel";
 	public static final String TARGET_REFERENCE = "targetReference";
 	public static final String ORIGINAL_REFERENCE = "originalReference";
@@ -77,6 +78,8 @@ public class QueryBuilderService {
 	public static final String REFERENCE_ASSEMBLY = "referenceAssembly";
 	public static final String LOCALIZED_SEARCH = "localizedSearch";
 	public static final String OPERATOR_TYPE = "operatorType";
+	public static final String PATH_EXPRESSION = "pathExpression";
+	public static final String OPERATOR_NAME = "operatorName";
 	
 	
 	public static PrefixMapping commonPrefixes = new PrefixMappingImpl();
@@ -457,45 +460,90 @@ public class QueryBuilderService {
 		Node rootVar = NodeFactory.createVariable(ROOT_TERM);
 		Node refSeqVar = NodeFactory.createVariable(REFERENCE_ASSEMBLY);
 		Node operatorTypeVar = NodeFactory.createVariable(OPERATOR_TYPE);
-		Node operatorNameVar = NodeFactory.createVariable(OPERATOR_NAME);
+		Node operatorTypeName = NodeFactory.createVariable(OPERATOR_TYPE_NAME);
+		Node matchNameVar = NodeFactory.createVariable(OPERATOR_NAME);
+		Node pathExpressionVar = NodeFactory.createVariable(PATH_EXPRESSION);
 		
 		mainQuery.addResultVar(supportedOperator);
-		mainQuery.addResultVar(operatorNameVar);
+		mainQuery.addResultVar(operatorTypeName);
 		
 		ElementPathBlock mainElement = new ElementPathBlock();
 		mainElement.addTriple(new Triple(trackGraph, RDF.type.asNode(), TrackVocab.Track.asNode()));
 		mainElement.addTriple(new Triple(trackGraph, TrackVocab.supports.asNode(), supportedOperator));
 		mainElement.addTriple(new Triple(supportedOperator, RDF.type.asNode(), operatorTypeVar));
 		mainElement.addTriplePath(new TriplePath(operatorTypeVar, pathZeroOrMore1(pathLink(RDFS.subClassOf.asNode())),TrackVocab.Operator.asNode()));
-		mainElement.addTriple(new Triple(operatorTypeVar, SKOS.prefLabel.asNode(), operatorNameVar));
+		mainElement.addTriple(new Triple(operatorTypeVar, SKOS.prefLabel.asNode(), operatorTypeName));
 		mainSelect.addElement(mainElement);
 
 		//TODO: handle all specific operators here !
 		//TERM MATCH
-		ElementTriplesBlock termMatchTriples = new ElementTriplesBlock();
-		termMatchTriples.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.MatchTerm.asNode()));
-		termMatchTriples.addTriple(new Triple(supportedOperator, TrackVocab.endpointUrl.asNode(), endpointVar));
-		termMatchTriples.addTriple(new Triple(supportedOperator, TrackVocab.graphUri.asNode(), graphVar));
-		mainSelect.addElement(new ElementOptional(termMatchTriples));
+		ElementGroup termMatch = new ElementGroup();
+		ElementTriplesBlock termTriples = new ElementTriplesBlock();
+		termTriples.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.MatchTerm.asNode()));
+		termTriples.addTriple(new Triple(supportedOperator, TrackVocab.matchName.asNode(), matchNameVar));
+		termTriples.addTriple(new Triple(supportedOperator, TrackVocab.pathExpression.asNode(), pathExpressionVar));
+		termTriples.addTriple(new Triple(supportedOperator, TrackVocab.endpointUrl.asNode(), endpointVar));
+		termTriples.addTriple(new Triple(supportedOperator, TrackVocab.graphUri.asNode(), graphVar));
+		termMatch.addElement(termTriples);
 		ElementTriplesBlock rootTermMatch = new ElementTriplesBlock();
-		rootTermMatch.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.MatchTerm.asNode()));
-		rootTermMatch.addTriple(new Triple(supportedOperator, TrackVocab.motherTerm.asNode(), rootVar));
-		mainSelect.addElement(new ElementOptional(rootTermMatch));
+		rootTermMatch.addTriple(new Triple(supportedOperator, TrackVocab.rootTerm.asNode(), rootVar));
+		termMatch.addElement(new ElementOptional(rootTermMatch));
+		mainSelect.addElement(new ElementOptional(termMatch));
+		mainQuery.addResultVar(pathExpressionVar);
+		mainQuery.addResultVar(matchNameVar);
 		mainQuery.addResultVar(endpointVar);
 		mainQuery.addResultVar(graphVar);
 		mainQuery.addResultVar(rootVar);
-		// triple pattern to link feature to term ?
-		// or catch in builder ?
+
+		// INTEGER MATCH
+		ElementGroup integerMatch = new ElementGroup();
+		ElementTriplesBlock integerTriples = new ElementTriplesBlock();
+		integerTriples.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.MatchInteger.asNode()));
+		integerTriples.addTriple(new Triple(supportedOperator, TrackVocab.matchName.asNode(), matchNameVar));
+		integerTriples.addTriple(new Triple(supportedOperator, TrackVocab.pathExpression.asNode(), pathExpressionVar));
+		integerMatch.addElement(integerTriples);
+		mainSelect.addElement(new ElementOptional(integerMatch));
+		mainQuery.addResultVar(pathExpressionVar);
+		mainQuery.addResultVar(matchNameVar);
+
+		// DECIMAL MATCH
+		ElementGroup decimalMatch = new ElementGroup();
+		ElementTriplesBlock decimalTriples = new ElementTriplesBlock();
+		decimalTriples.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.MatchDecimal.asNode()));
+		decimalTriples.addTriple(new Triple(supportedOperator, TrackVocab.matchName.asNode(), matchNameVar));
+		decimalTriples.addTriple(new Triple(supportedOperator, TrackVocab.pathExpression.asNode(), pathExpressionVar));
+		decimalMatch.addElement(decimalTriples);
+		mainSelect.addElement(new ElementOptional(decimalMatch));
+		mainQuery.addResultVar(pathExpressionVar);
+		mainQuery.addResultVar(matchNameVar);
+	
+		// STRING MATCH
+		ElementGroup stringMatch = new ElementGroup();
+		ElementTriplesBlock stringTriples = new ElementTriplesBlock();
+		stringTriples.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.MatchString.asNode()));
+		stringTriples.addTriple(new Triple(supportedOperator, TrackVocab.matchName.asNode(), matchNameVar));
+		stringTriples.addTriple(new Triple(supportedOperator, TrackVocab.pathExpression.asNode(), pathExpressionVar));
+		stringMatch.addElement(stringTriples);
+		mainSelect.addElement(new ElementOptional(stringMatch));
+		mainQuery.addResultVar(pathExpressionVar);
+		mainQuery.addResultVar(matchNameVar);
 		
 		
 		// LOCATIONFILTER
 		ElementTriplesBlock localizedSearchTriples = new ElementTriplesBlock();
 		localizedSearchTriples.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.LocationFilter.asNode()));
 		localizedSearchTriples.addTriple(new Triple(supportedOperator, TrackVocab.references.asNode(), refSeqVar));
-		ElementOptional localizedSearch = new ElementOptional(localizedSearchTriples);
+		mainSelect.addElement(new ElementOptional(localizedSearchTriples));
 		mainQuery.addResultVar(refSeqVar);
-		mainSelect.addElement(localizedSearch);
+		
+		
+		// FEATURETYPE
+		ElementTriplesBlock featureTypeTriples = new ElementTriplesBlock();
+		featureTypeTriples.addTriple(new Triple(supportedOperator, RDF.type.asNode(), TrackVocab.FeatureType.asNode()));
+		mainSelect.addElement(new ElementOptional(featureTypeTriples));
+		
 		mainQuery.setQueryPattern(mainSelect);
+
 		
 		return mainQuery.toString(Syntax.syntaxSPARQL_11);
 	}

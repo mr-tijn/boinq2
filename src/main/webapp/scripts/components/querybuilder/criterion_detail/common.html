@@ -1,8 +1,8 @@
 <div ng-show="criterion">
 <div class="input-group">
 
-	<span class="input-group-addon">Criterion type</span> <select
-		class="form-control" ng-model="criterion.type" ng-change="computeUrl(criterion)" ng-options="operator.label as operator.label for operator in supportedOperators">
+	<span class="input-group-addon">Criterion builder</span> <select
+		class="form-control" ng-model="criterion.operator" ng-change="computeUrl(criterion)" ng-options="operator as operator.operatorName for operator in supportedOperators">
 	</select>
 </div>
 <div ng-include="detailUrl"></div>

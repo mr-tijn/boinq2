@@ -89,8 +89,8 @@ angular.module('boinqApp').directive('criteriondetail', function() {
 		},
 		link: function(scope, element, attrs) {
 			scope.computeUrl = function(criterion) {
-				if (criterion == null) scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/undefined.html';
-				else scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/' + criterion.type + '.html';
+				if (criterion && criterion.operator) scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/' + criterion.operator.operatorTypeName + '.html';
+				else scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/undefined.html';
 			};
 			scope.computeUrl(scope.criterion);
 			scope.$watch("criterion", scope.computeUrl);

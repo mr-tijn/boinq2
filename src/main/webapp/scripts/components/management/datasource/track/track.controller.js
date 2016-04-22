@@ -40,8 +40,10 @@ angular.module('boinqApp').controller('TrackController', ['$scope', 'Track', 'Da
         	return $scope.managedtrack != null && $scope.datasource.type == DatasourceConstants.TYPE_LOCAL_FALDO;
         };
         $scope.manage= function(track) {
-        	$scope.managedtrack = Track.get({ds_id: $scope.datasource.id, track_id: track.id});
-        	$('#manageTrackModal').modal('show');
+        	$scope.managedtrack = Track.get({ds_id: $scope.datasource.id, track_id: track.id}, function (track){
+        		$('#manageTrackModal').modal('show');
+        	});
+        	
         };
         $scope.canmanage = function(track) {
         	if ($scope.datasource != null) {

@@ -11,6 +11,9 @@ import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.Syntax;
+import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.update.Update;
+import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.vocabulary.RDF;
 import org.crsh.console.jline.internal.Log;
 import org.slf4j.Logger;
@@ -20,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.genohm.boinq.domain.GenomicRegion;
 import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
+import com.genohm.boinq.service.LocalGraphService;
 import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
@@ -35,13 +39,14 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	@Inject
 	SPARQLClientService sparqlClient;
 	@Inject
+	LocalGraphService localGraphService;
+	// TODO: should be a new generator each time
+	@Inject
 	private SPARQLQueryGenerator queryGenerator;
 
 	@Value("${slidingwindow.stepsize}")
 	Integer stepSize;
 	
-	//TODO: get parameters from datasource selected in UI
-	private String targetGraph = "test";
 	
 	private String targetEndpoint;
 	@Value("${spring.triplestore.metagraph}")
@@ -85,6 +90,7 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 
 	@Override
 	public void execute() {
+		queryDefinition.setTargetGraph(localGraphService.createLocalGraph(queryDefinition.getTargetGraph()));
 		writeMetaInfo();
 		writeData();
 	}
@@ -150,15 +156,13 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 		for (Node chrom: chromosomes) {
 			region.assemblyURI = chrom.toString();
 			for (Long l = 0L; l <= chromLengths.get(chrom); l += stepSize) {
+				if (interrupt) return;
 				region.start = l;
 				region.end = l + stepSize - 1;
 				progressPercentages.put(chrom, (int) (.5 + 100. * l / chromLengths.get(chrom)));
-				// determine query
-				Query sparqlQuery = queryGenerator.computeQuery(queryDefinition, region);
-				log.debug(sparqlQuery.toString(Syntax.syntaxSPARQL_11));
-				// execute it
+				Update sparqlQuery = queryGenerator.computeUpdate(queryDefinition, region);
 				try {
-					sparqlClient.query(targetEndpoint, targetGraph, sparqlQuery);
+					UpdateExecutionFactory.createRemote(sparqlQuery, targetEndpoint).execute();
 				} catch (Exception e) {
 //					log.error(messages);
 				}
@@ -168,7 +172,7 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	
 	private void writeMetaInfo() {
 		TripleUploader metaUploader = tripleUploadService.getUploader(metaUpdateEndpoint, metaGraph, null); 
-		Node theGraph = NodeFactory.createURI(targetGraph);
+		Node theGraph = NodeFactory.createURI(queryDefinition.getTargetGraph());
 		metaUploader.triple(new Triple(theGraph, RDF.type.asNode(), TrackVocab.FaldoTrack.asNode()));
 		metaUploader.finish();
 	}
@@ -176,12 +180,6 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	@Override
 	public void kill() {
 		this.interrupt = true;
-	}
-
-	@Override
-	public void setTarget(String endpoint, String graph) {
-		this.targetEndpoint = endpoint;
-		this.targetGraph = graph;
 	}
 
 	@Override

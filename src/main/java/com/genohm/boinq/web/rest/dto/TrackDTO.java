@@ -2,6 +2,8 @@ package com.genohm.boinq.web.rest.dto;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +26,7 @@ public class TrackDTO {
     private long tripleCount;
     private long datasourceId;
 	private Set<RawDataFileDTO> rawDataFiles;
-	private Map<String, Map<String, String>> supportedOperators;
+	private List<Map<String, String>> supportedOperators;
 	private Map<String, String> supportedFeatureTypes;
 	private Map<String, String> referenceMap;
 
@@ -122,11 +124,11 @@ public class TrackDTO {
 		this.rawDataFiles = rawDataFiles;
 	}
 
-	public Map<String, Map<String, String>> getSupportedOperators() {
+	public List<Map<String, String>> getSupportedOperators() {
 		return supportedOperators;
 	}
 
-	public void setSupportedOperators(Map<String, Map<String, String>> supportedOperators) {
+	public void setSupportedOperators(List<Map<String, String>> supportedOperators) {
 		this.supportedOperators = supportedOperators;
 	}
 
@@ -163,14 +165,15 @@ public class TrackDTO {
 		for (RawDataFile dataFile: track.getRawDataFiles()) {
 			rawDataFiles.add(new RawDataFileDTO(dataFile));
 		}
+		// is it necessary to do this ?
 		if (track.getSupportedOperators() != null) {
-			this.supportedOperators = new HashMap<>();
-			for (String operator: track.getSupportedOperators().keySet()) {
-				Map<String, String> parameters = new HashMap<>();
-				for (String parameter: track.getSupportedOperators().get(operator).keySet()) {
-					parameters.put(parameter, track.getSupportedOperators().get(operator).get(parameter));
+			this.supportedOperators = new LinkedList<>();
+			for (Map<String,String> operator: track.getSupportedOperators()) {
+				Map<String, String> newOp = new HashMap<>();
+				for (String parameter: operator.keySet()) {
+					newOp.put(parameter, operator.get(parameter));
 				}
-				supportedOperators.put(operator, parameters);
+				supportedOperators.add(newOp);
 			}
 		}
 		if (track.getSupportedFeatureTypes() != null) {

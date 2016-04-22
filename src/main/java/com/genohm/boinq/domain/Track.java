@@ -1,6 +1,7 @@
 package com.genohm.boinq.domain;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class Track implements Serializable {
 	
 	//meta info
 	@Transient
-	private Map<String, Map<String,String>> supportedOperators;
+	private List<Map<String,String>> supportedOperators;
 	@Transient
 	private Map<String,String> supportedFeatureTypes;
 	@Transient
@@ -178,11 +179,11 @@ public class Track implements Serializable {
 		this.status = status;
 	}
 	
-	public void setSupportedOperators(Map<String, Map<String, String>> supportedOperators) {
+	public void setSupportedOperators(List<Map<String, String>> supportedOperators) {
 		this.supportedOperators = supportedOperators;
 	}
 	
-	public Map<String, Map<String,String>> getSupportedOperators() {
+	public List<Map<String,String>> getSupportedOperators() {
 		return supportedOperators;
 	}
 

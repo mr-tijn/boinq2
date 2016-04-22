@@ -90,12 +90,6 @@ public class TripleUploadService {
 		
 		private void push() {
 			UpdateDataInsert insert = new UpdateDataInsert(quadData);
-			
-			
-			UpdateModify mod = new UpdateModify();
-			//mod.ad
-			//Target src = new Target();
-			
 			log.info("UPLOADING " + count + " TRIPLES");
 			UpdateExecutionFactory.createRemote(insert, endpoint).execute();
 		}

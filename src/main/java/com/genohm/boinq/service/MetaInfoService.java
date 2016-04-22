@@ -1,6 +1,8 @@
 package com.genohm.boinq.service;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
+
 
 @Service
 public class MetaInfoService {
@@ -32,7 +35,7 @@ public class MetaInfoService {
 			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(), track.getDatasource().getMetaGraphName(), query);
 			Map<Node, Node> results = new HashMap<>();
 			for (Map<String,String> record: result.getRecords()) {
-				results.put(NodeFactory.createURI(record.get(QueryBuilderService.ORIGINAL_REFERENCE)), NodeFactory.createURI(QueryBuilderService.TARGET_REFERENCE));
+				results.put(NodeFactory.createURI(record.get(QueryBuilderService.TARGET_REFERENCE)), NodeFactory.createURI(record.get(QueryBuilderService.ORIGINAL_REFERENCE)));
 			}
 			track.setReferenceMap(results);
 		} catch (Exception e) {
@@ -46,9 +49,9 @@ public class MetaInfoService {
 		try {
 			String query = queryBuilderService.getOperators(track);
 			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(), track.getDatasource().getMetaGraphName(), query);
-			Map<String,Map<String,String>> operators = new HashMap<>();
+			List<Map<String,String>> operators = new LinkedList<>();
 			for (Map<String,String> record: result.getRecords()) {
-				operators.put(record.get(QueryBuilderService.OPERATOR_NAME), record);
+				operators.add(record);
 			}
 			track.setSupportedOperators(operators);
 		} catch (Exception e) {
