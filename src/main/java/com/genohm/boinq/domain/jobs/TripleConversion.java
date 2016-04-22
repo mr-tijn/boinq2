@@ -166,11 +166,13 @@ public class TripleConversion implements AsynchronousJob {
 			meta.prefixLength = (track.getContigPrefix()==null)? 0:track.getContigPrefix().length();
 			Map<String, Node> referenceMap = getReferenceMap(track);
 			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap, meta);
-			if(meta.fileType.equals("bed") && track.getType()!=null){
+				if(meta.fileType.equals("bed") && track.getType()!=null){
 				String[] types=track.getType().split("\\|");
 				meta.mainType= NodeFactory.createURI(types[0]);
 				meta.typeList.add(meta.mainType);
-				if (types[1]!=null){
+				int test = types.length;
+				
+				if (types.length==2){
 					meta.subType = NodeFactory.createURI(types[1]);
 					meta.typeList.add(meta.subType);
 				}
