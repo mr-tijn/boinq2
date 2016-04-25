@@ -15,23 +15,31 @@ import javax.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.genohm.boinq.Application;
+import com.genohm.boinq.domain.Datasource;
+import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.RawSPARQLResultSet;
+import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.domain.jobs.TripleConversion;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.init.TripleStoreInitializer;
+import com.genohm.boinq.service.AsynchronousJobService;
 import com.genohm.boinq.service.FusekiMgmtService;
 import com.genohm.boinq.service.LocalGraphService;
 import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.queries.Prefixes;
+
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 
@@ -61,6 +69,9 @@ public class BedConverterTest {
 	@Inject
 	FusekiMgmtService fusekiMgmtService;
 	
+	@Inject
+	ApplicationContext context;
+	
 	@Before
 	public void initTripleStore() {
 		// FIXME: find a way to delay the tripleStoreInitializer to after start of the web container
@@ -89,12 +100,16 @@ public class BedConverterTest {
 		tripleStoreInitializer.checkInit();
 	}
 	
+	@Before
+	public void init() {
+		
+	}
+	
 	@Test
 	public void testBedConversion() throws Exception {
-		String filePath = getClass().getResource("/inputfiles/testBED.bed").getFile();
-		Map<String, Node> refMap = new HashMap<String, Node>();
-		refMap.put("chr9", TrackVocab.GRCh37chr09.asNode());
-		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap, null);
+		String filePath = getClass().getResource("/inputfiles/ucsc_human_GRCh38_repeatmasker_chr9.bed").getFile();
+		TripleConversion.Metadata meta = new TripleConversion.Metadata();
+		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), null, meta);
 		String graphName = localGraphService.createLocalGraph("testGraph");
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {

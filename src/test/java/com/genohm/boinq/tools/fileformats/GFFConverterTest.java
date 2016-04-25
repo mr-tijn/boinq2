@@ -24,6 +24,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.genohm.boinq.Application;
 import com.genohm.boinq.domain.RawSPARQLResultSet;
+import com.genohm.boinq.domain.jobs.TripleConversion;
 import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.init.TripleStoreInitializer;
@@ -92,9 +93,8 @@ public class GFFConverterTest {
 	@Test
 	public void testBedConversion() throws Exception {
 		String filePath = getClass().getResource("/inputfiles/testGFF.gff3").getFile();
-		Map<String, Node> refMap = new HashMap<String, Node>();
-		refMap.put("chr9", TrackVocab.GRCh37chr09.asNode());
-		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap, null);
+		TripleConversion.Metadata meta = new TripleConversion.Metadata();
+		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), null, meta);
 		String graphName = localGraphService.createLocalGraph("testGraph");
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {

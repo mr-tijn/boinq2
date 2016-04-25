@@ -22,12 +22,12 @@ public class SAMTripleIterator implements Iterator<Triple> {
 	private TripleConverter converter;
 	private SAMRecordIterator recordIterator;
 	private List<Triple> currentTriples = new LinkedList<Triple>();
-	private Map<String, Node> referenceMap;
+	private Map<Node, Node> referenceMap;
 	private Metadata meta;
 	private SamReader samReader;
 	
 
-	public SAMTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta) {
+	public SAMTripleIterator(TripleConverter converter, File file, Map<Node, Node> referenceMap, Metadata meta) {
 		
 		this.converter = converter;
 		this.referenceMap = referenceMap;
@@ -53,12 +53,7 @@ public class SAMTripleIterator implements Iterator<Triple> {
 		if (currentTriples.isEmpty()){
 			meta.sumEntryCount++;
 			SAMRecord entry = recordIterator.next();
-			Node reference = referenceMap.get(entry.getContig());
-			/*if (reference == null){
-				reference = NodeFactory.createLiteral(entry.getContig());
-			}*/
-			
-			currentTriples.addAll(converter.convert(entry, reference, meta));
+			currentTriples.addAll(converter.convert(entry, meta));
 		}
 		return currentTriples.remove(0);
 	}

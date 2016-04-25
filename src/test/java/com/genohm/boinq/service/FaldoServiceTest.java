@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.jena.graph.NodeFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,11 +71,12 @@ public class FaldoServiceTest {
 	
 	@Test
 	public void test() throws Exception {
+		String chr1 = "http://www.boinq.org/resource/homo_sapiens/GRCh38/1";
 		List<FaldoFeature> features = new LinkedList<FaldoFeature>();
 		for (Long l = 0L; l < 10L; l++) {
 			FaldoFeature feature = new FaldoFeature();
 			feature.id = "feature" + l;
-			feature.assembly = TrackVocab.GRCh37chr01.toString();
+			feature.assembly = chr1;
 			feature.start = 100*l;
 			feature.end = feature.start+99;
 			feature.strand = true;
@@ -83,7 +85,7 @@ public class FaldoServiceTest {
 		
 		
 		faldoService.writeFeatures(track, features);
-		List<FaldoFeature> readBack = faldoService.getFeatures(track, TrackVocab.GRCh37chr01.toString(), 0L, 499L, true);
+		List<FaldoFeature> readBack = faldoService.getFeatures(track, chr1, 0L, 499L, true);
 		assertThat(readBack).hasSize(5);
 	}
 

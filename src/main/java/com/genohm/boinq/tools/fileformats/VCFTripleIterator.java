@@ -34,10 +34,10 @@ public class VCFTripleIterator implements Iterator<Triple> {
 	private AsciiLineReaderIterator lineIterator;
 	private List<Triple> currentTriples = new LinkedList<Triple>();
 	private VCFCodec codec = new VCFCodec();
-	private Map<String, Node> referenceMap;
+	private Map<Node, Node> referenceMap;
 	private Metadata meta;
 	
-	public VCFTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException {
+	public VCFTripleIterator(TripleConverter converter, File file, Map<Node, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException {
 		this.converter = converter;
 		this.referenceMap = referenceMap;
 		lineIterator = new AsciiLineReaderIterator(new AsciiLineReader(new FileInputStream(file)));
@@ -70,14 +70,7 @@ public class VCFTripleIterator implements Iterator<Triple> {
 				record = codec.decode(lineIterator.next());
 			}
 			meta.sumEntryCount++;
-			Node reference = null;
-			if (referenceMap != null) {
-			reference = referenceMap.get(record.getContig());
-			}
-			if (reference == null){
-				reference = NodeFactory.createLiteral(record.getContig());
-			}
-			currentTriples.addAll(converter.convert(record, reference, record.getStart(), meta));
+			currentTriples.addAll(converter.convert(record, record.getStart(), meta));
 		}
 		return currentTriples.remove(0);
 	}

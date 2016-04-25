@@ -21,9 +21,10 @@
 			<column name="same_strand" type="BOOLEAN" />
 		</addColumn>
 	</changeSet>
-	<changeSet author="martijn" id="add target-graph column to featurequery">
+	<changeSet author="martijn" id="add columns to featurequery">
 		<addColumn tableName="t_featurequery">
 			<column name="target_graph" type="VARCHAR(255)"/>
+			<column name="reference_assembly_uri" type="VARCHAR(255)"/>
 		</addColumn>
 	</changeSet>
 

@@ -142,6 +142,11 @@ class LongRunningJob implements AsynchronousJob {
 	}
 
 	@Override
+	public String getErrorDescription() {
+		return null;
+	}
+
+	@Override
 	public void execute() {
 
 		for (int i = 0; i < 100; i++) {
@@ -159,6 +164,5 @@ class LongRunningJob implements AsynchronousJob {
 	public void kill() {
 		this.kill = true;
 	}
-
 
 }

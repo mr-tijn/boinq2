@@ -25,14 +25,14 @@ import de.charite.compbio.jannovar.impl.parse.gff.GFFVersion;
 public class GFF3TripleIterator implements Iterator<Triple> {
 
 	private List<Triple> currentTriples = new LinkedList<Triple>();
-	private Map<String, Node> referenceMap;
+	private Map<Node, Node> referenceMap;
 	private TripleConverter converter;
 	private Metadata meta;
 	private GFFParser Gffparse;
 	private AsciiLineReaderIterator lineIterator;
 	private GFFVersion version;
 
-	public GFF3TripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta)
+	public GFF3TripleIterator(TripleConverter converter, File file, Map<Node, Node> referenceMap, Metadata meta)
 			throws FileNotFoundException, IOException {
 		this.version = new GFFVersion(3);
 		this.converter = converter;
@@ -67,14 +67,8 @@ public class GFF3TripleIterator implements Iterator<Triple> {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Node reference = null;
-			if (referenceMap != null) {
-				reference = referenceMap.get(entry.getSequenceID());
-			}
-			if (reference == null) {
-				reference = NodeFactory.createLiteral(entry.getSequenceID());
-			}
-			List<Triple> triples = converter.convert(entry, reference,  meta);
+	
+			List<Triple> triples = converter.convert(entry,  meta);
 			currentTriples.addAll(triples);
 		}
 		return currentTriples.remove(0);

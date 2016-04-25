@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <rdf:RDF xmlns="http://www.boinq.org/iri/ontologies/track#"
      xml:base="http://www.boinq.org/iri/ontologies/track"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:track="http://www.boinq.org/iri/ontologies/track#"
-     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:boinq="http://www.boinq.org/resource/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:track="http://www.boinq.org/iri/ontologies/track#">
     <owl:Ontology rdf:about="http://www.boinq.org/iri/ontologies/track"/>
     
 
@@ -48,6 +50,12 @@
     <!-- http://www.boinq.org/iri/ontologies/track#entry -->
 
     <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#entry"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#hasAttribute -->
+
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#hasAttribute"/>
     
 
 
@@ -160,11 +168,17 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#motherTerm -->
+
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#motherTerm"/>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#pathExpression -->
 
     <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#pathExpression">
-        <rdfs:comment xml:lang="en">A (SPARQL 1.1) property path expression between the feature entity and the field entity</rdfs:comment>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment xml:lang="en">A (SPARQL 1.1) property path expression between the feature entity and the field entity</rdfs:comment>
     </owl:DatatypeProperty>
     
 
@@ -172,6 +186,14 @@
     <!-- http://www.boinq.org/iri/ontologies/track#rootTerm -->
 
     <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#rootTerm"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#sequence_length -->
+
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#sequence_length">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -203,8 +225,8 @@
     <!-- http://www.boinq.org/iri/ontologies/track#Datasource -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Datasource">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Datasource</rdfs:label>
         <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal">A Datasource is a source of information. It is usually a SPARQL Endpoint</rdfs:comment>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Datasource</rdfs:label>
     </owl:Class>
     
 
@@ -281,7 +303,6 @@
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FeatureTypeFilter">
         <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Operator"/>
         <skos:prefLabel>FeatureType</skos:prefLabel>
-        <rdfs:comment xml:lang="en">An operator that filters on the feature type. Feature types are taken preferably from the Sequence Ontology.</rdfs:comment>
     </owl:Class>
     
 
@@ -324,6 +345,38 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#HeaderBED -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#HeaderBED">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#HeaderGFF -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#HeaderGFF">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#HeaderSAM -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#HeaderSAM">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#HeaderVCF -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#HeaderVCF">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#LocationFilter -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#LocationFilter">
@@ -336,6 +389,20 @@
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">An operator that filters based on the location of a feature</rdfs:comment>
         <skos:prefLabel>Location</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#Mapping -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Mapping"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#Match -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Match">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Operator"/>
     </owl:Class>
     
 
@@ -398,13 +465,13 @@
         <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#MatchField"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#graphUri"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#endpointUrl"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#endpointUrl"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#graphUri"/>
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -414,8 +481,8 @@
                 <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <skos:prefLabel>MatchTerm</skos:prefLabel>
         <rdfs:comment xml:lang="en">Match a term from a target graph</rdfs:comment>
+        <skos:prefLabel>MatchTerm</skos:prefLabel>
     </owl:Class>
     
 
@@ -426,14 +493,28 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#ReadCount -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#ReadCount">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#Reference -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Reference">
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#partOf"/>
-                <owl:onClass rdf:resource="http://www.boinq.org/iri/ontologies/track#ReferenceAssembly"/>
                 <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://www.boinq.org/iri/ontologies/track#ReferenceAssembly"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#sequence_length"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment>A representation of a reference sequence (e.g. a chromosome) supported by the viewer</rdfs:comment>
@@ -461,8 +542,8 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#targetReference"/>
-                <owl:onClass rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
                 <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment>An entry for mapping the datasources reference sequence IRI to a reference known by the viewer</rdfs:comment>
@@ -473,7 +554,6 @@
     <!-- http://www.boinq.org/iri/ontologies/track#SPARQLDatasource -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#SPARQLDatasource">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SPARQLDatasource</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Datasource"/>
         <rdfs:subClassOf>
             <owl:Restriction>
@@ -482,6 +562,7 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A Datasource that you can query using a SPARQL Endpoint</rdfs:comment>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SPARQLDatasource</rdfs:label>
     </owl:Class>
     
 
@@ -494,6 +575,12 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#SupportedSpecies -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#SupportedSpecies"/>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#TermDatasource -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#TermDatasource">
@@ -502,6 +589,13 @@
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#graphUri"/>
                 <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#motherTerm"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
                 <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
             </owl:Restriction>
         </rdfs:subClassOf>
@@ -521,14 +615,14 @@
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#supports"/>
-                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#Operator"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#holds"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#FeatureType"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#holds"/>
-                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#FeatureType"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#supports"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#Operator"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A collection of features of the same type</rdfs:comment>
@@ -547,468 +641,9 @@
     <!-- http://www.boinq.org/iri/ontologies/track#User -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#User"/>
-    
-
-
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Individuals
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#ReferenceAssembly"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr01 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr01">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr02 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr02">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr03 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr03">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr04 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr04">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr05 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr05">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr06 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr06">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr07 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr07">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr08 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr08">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr09 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr09">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr10 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr10">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr11 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr11">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr12 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr12">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr13 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr13">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr14 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr14">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr15 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr15">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr16 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr16">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr17 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr17">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr18 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr18">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr19 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr19">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr20 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr20">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr21 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr21">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chr22 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chr22">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chrX -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chrX">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh37chrY -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh37chrY">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh37"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#ReferenceAssembly"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr01 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr01">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr02 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr02">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr03 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr03">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr04 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr04">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr05 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr05">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr06 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr06">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr07 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr07">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr08 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr08">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr09 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr09">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr10 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr10">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr11 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr11">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr12 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr12">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr13 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr13">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr14 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr14">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr15 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr15">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr16 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr16">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr17 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr17">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr18 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr18">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr19 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr19">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr20 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr20">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr21 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr21">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chr22 -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chr22">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chrX -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chrX">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#GRCh38chrY -->
-
-    <owl:NamedIndividual rdf:about="http://www.boinq.org/iri/ontologies/track#GRCh38chrY">
-        <rdf:type rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
-        <partOf rdf:resource="http://www.boinq.org/iri/ontologies/track#GRCh38"/>
-    </owl:NamedIndividual>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+<!-- Generated by the OWL API (version 4.1.3.20151118-2017) https://github.com/owlcs/owlapi -->
 

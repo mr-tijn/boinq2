@@ -23,28 +23,30 @@ public class MetaInfoService {
 	//TODO: merge with metadatagraphservice into metadataservice
 
 	private static Logger log = LoggerFactory.getLogger(MetaInfoService.class);
-	
+
 	@Inject
 	private QueryBuilderService queryBuilderService;
 	@Inject
 	private SPARQLClientService sparqlClientService;
-	
+
 	public void getLocalToBoinqReferenceMap(Track track) {
 		try {
 			String query = queryBuilderService.findReferenceMap(track);
-			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(), track.getDatasource().getMetaGraphName(), query);
+			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(),
+					track.getDatasource().getMetaGraphName(), query);
 			Map<Node, Node> results = new HashMap<>();
-			for (Map<String,String> record: result.getRecords()) {
-				results.put(NodeFactory.createURI(record.get(QueryBuilderService.TARGET_REFERENCE)), NodeFactory.createURI(record.get(QueryBuilderService.ORIGINAL_REFERENCE)));
+			for (Map<String, String> record : result.getRecords()) {
+				results.put(NodeFactory.createURI(record.get(QueryBuilderService.ORIGINAL_REFERENCE)),
+						NodeFactory.createURI(QueryBuilderService.TARGET_REFERENCE));
 			}
 			track.setReferenceMap(results);
 		} catch (Exception e) {
-			log.error("Couldn't get reference map for track " + track.getGraphName(),e);
+			log.error("Couldn't get reference map for track " + track.getGraphName(), e);
 			track.setReferenceMap(null);
 		}
-		
+
 	}
-	
+
 	public void getSupportedOperators(Track track) {
 		try {
 			String query = queryBuilderService.getOperators(track);
@@ -59,45 +61,46 @@ public class MetaInfoService {
 			track.setSupportedOperators(null);
 		}
 	}
-	
 
 	public long getFileAttributeCount(Track track, Node attributeType) {
-		long count=0;
-			try {
-				String query = queryBuilderService.findFileAttributeCount(track.getGraphName(), attributeType);
-				SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(),track.getDatasource().getMetaGraphName(), query);
-				for (Map<String,String> record: result.getRecords()) {
-					count += Integer.parseInt(record.get(QueryBuilderService.VARIABLE_ATTRIBUTE_COUNT));
-				}
-				
-			} catch (Exception e) {
-				log.error("Could not find supported attributes in track " + track.getGraphName(), e);
-				track.setFeatureCount(0);
+		long count = 0;
+		try {
+			String query = queryBuilderService.findFileAttributeCount(track.getGraphName(), attributeType);
+			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(),
+					track.getDatasource().getMetaGraphName(), query);
+			for (Map<String, String> record : result.getRecords()) {
+				count += Integer.parseInt(record.get(QueryBuilderService.VARIABLE_ATTRIBUTE_COUNT));
 			}
-			return count;
+
+		} catch (Exception e) {
+			log.error("Could not find supported attributes in track " + track.getGraphName(), e);
+			track.setFeatureCount(0);
 		}
-	
+		return count;
+	}
+
 	public void getSupportedFeatureTypes(Track track) {
 		try {
 			String query = queryBuilderService.findFeatureTypes(track.getGraphName());
-			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(), track.getDatasource().getMetaGraphName(), query);
+			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(),
+					track.getDatasource().getMetaGraphName(), query);
 			Map<String, String> results = new HashMap<>();
-			for (Map<String,String> record: result.getRecords()) {
-				results.put(record.get(QueryBuilderService.VARIABLE_FEATURE_TYPE_LABEL), record.get(QueryBuilderService.VARIABLE_FEATURE_TYPE));
+			for (Map<String, String> record : result.getRecords()) {
+				results.put(record.get(QueryBuilderService.VARIABLE_FEATURE_TYPE_LABEL),
+						record.get(QueryBuilderService.VARIABLE_FEATURE_TYPE));
 			}
 			track.setSupportedFeatureTypes(results);
 		} catch (Exception e) {
 			log.error("Could not find supported operators for track " + track.getGraphName(), e);
 			track.setSupportedOperators(null);
-			
+
 		}
 	}
-	
+
 	public void addMetaInfo(Track track) {
 		getLocalToBoinqReferenceMap(track);
 		getSupportedOperators(track);
 		getSupportedFeatureTypes(track);
 	}
 
-	
 }

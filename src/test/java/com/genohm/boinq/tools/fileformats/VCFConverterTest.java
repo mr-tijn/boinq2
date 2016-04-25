@@ -24,6 +24,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.genohm.boinq.Application;
 import com.genohm.boinq.domain.RawSPARQLResultSet;
+import com.genohm.boinq.domain.jobs.TripleConversion;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.init.TripleStoreInitializer;
 import com.genohm.boinq.service.FusekiMgmtService;
@@ -92,10 +93,8 @@ public class VCFConverterTest {
 	@Test
 	public void testBedConversion() throws Exception {
 		String filePath = getClass().getResource("/inputfiles/testVCF.vcf").getFile();
-		Map<String, Node> refMap = new HashMap<String, Node>();
-		refMap.put("chrom1", TrackVocab.GRCh37chr01.asNode());
-		refMap.put("chrom2", TrackVocab.GRCh37chr02.asNode());
-		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), refMap, null);
+		TripleConversion.Metadata meta = new TripleConversion.Metadata();
+		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), null, null);
 		String graphName = localGraphService.createLocalGraph("testGraph");
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {

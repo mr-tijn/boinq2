@@ -2,6 +2,8 @@ package com.genohm.boinq.domain.jobs.analysis;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -21,9 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.genohm.boinq.domain.GenomicRegion;
+import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.LocalGraphService;
+import com.genohm.boinq.service.QueryBuilderService;
 import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
@@ -40,6 +44,8 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	SPARQLClientService sparqlClient;
 	@Inject
 	LocalGraphService localGraphService;
+	@Inject
+	QueryBuilderService queryBuilderService;
 	// TODO: should be a new generator each time
 	@Inject
 	private SPARQLQueryGenerator queryGenerator;
@@ -48,17 +54,21 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	Integer stepSize;
 	
 	
-	private String targetEndpoint;
 	@Value("${spring.triplestore.metagraph}")
 	private String metaGraph;
 	@Value("${spring.triplestore.endpoint.meta.update}")
 	private String metaUpdateEndpoint;
+	@Value("${spring.triplestore.endpoint.meta.query}")
+	private String metaQueryEndpoint;
+	@Value("${spring.triplestore.endpoint.data.update}")
+	private String dataUpdateEndpoint;
 	
 	private FeatureQuery queryDefinition;
 	
 	private Boolean interrupt = false;
 	private Date startDate;
 	private String name;
+	private String errorDescription;
 	private int status = JOB_STATUS_UNKNOWN;
 	private Map<Node, Integer> progressPercentages = new HashMap<>();
 	
@@ -82,6 +92,10 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	public int getStatus() {
 		return status;
 	}
+	
+	private void setStatus(int status) {
+		this.status = status;
+	}
 
 	@Override
 	public String getDescription() {
@@ -89,80 +103,57 @@ public class SlidingWindowFeatureSelection implements TrackBuildingAnalysis, Gen
 	}
 
 	@Override
-	public void execute() {
-		queryDefinition.setTargetGraph(localGraphService.createLocalGraph(queryDefinition.getTargetGraph()));
-		writeMetaInfo();
-		writeData();
+	public String getErrorDescription() {
+		return errorDescription;
 	}
 	
-	private void writeData() {
-		//TODO: fetch this constant data from metadata 
-		Node[] chromosomes = {
-				TrackVocab.GRCh37chr01.asNode(),
-				TrackVocab.GRCh37chr02.asNode(),
-				TrackVocab.GRCh37chr03.asNode(),
-				TrackVocab.GRCh37chr04.asNode(),
-				TrackVocab.GRCh37chr05.asNode(),
-				TrackVocab.GRCh37chr06.asNode(),
-				TrackVocab.GRCh37chr07.asNode(),
-				TrackVocab.GRCh37chr08.asNode(),
-				TrackVocab.GRCh37chr09.asNode(),
-				TrackVocab.GRCh37chr10.asNode(),
-				TrackVocab.GRCh37chr11.asNode(),
-				TrackVocab.GRCh37chr12.asNode(),
-				TrackVocab.GRCh37chr13.asNode(),
-				TrackVocab.GRCh37chr14.asNode(),
-				TrackVocab.GRCh37chr15.asNode(),
-				TrackVocab.GRCh37chr16.asNode(),
-				TrackVocab.GRCh37chr17.asNode(),
-				TrackVocab.GRCh37chr18.asNode(),
-				TrackVocab.GRCh37chr19.asNode(),
-				TrackVocab.GRCh37chr20.asNode(),
-				TrackVocab.GRCh37chr21.asNode(),
-				TrackVocab.GRCh37chr22.asNode(),
-				TrackVocab.GRCh37chrX.asNode(),
-				TrackVocab.GRCh37chrY.asNode(),
-				};
-		Map<Node, Long> chromLengths = new HashMap<>();
-		chromLengths.put(TrackVocab.GRCh37chr01.asNode(), 249250621L);
-		chromLengths.put(TrackVocab.GRCh37chr02.asNode(), 243199373L);
-		chromLengths.put(TrackVocab.GRCh37chr03.asNode(), 198022430L);
-		chromLengths.put(TrackVocab.GRCh37chr04.asNode(), 191154276L);
-		chromLengths.put(TrackVocab.GRCh37chr05.asNode(), 180915260L);
-		chromLengths.put(TrackVocab.GRCh37chr06.asNode(), 171115067L);
-		chromLengths.put(TrackVocab.GRCh37chr07.asNode(), 159138663L);
-		chromLengths.put(TrackVocab.GRCh37chr08.asNode(), 146364022L);
-		chromLengths.put(TrackVocab.GRCh37chr09.asNode(), 141213431L);
-		chromLengths.put(TrackVocab.GRCh37chr10.asNode(), 135534747L);
-		chromLengths.put(TrackVocab.GRCh37chr11.asNode(), 135006516L);
-		chromLengths.put(TrackVocab.GRCh37chr12.asNode(), 133851895L);
-		chromLengths.put(TrackVocab.GRCh37chr13.asNode(), 115169878L);
-		chromLengths.put(TrackVocab.GRCh37chr14.asNode(), 107349540L);
-		chromLengths.put(TrackVocab.GRCh37chr15.asNode(), 102531392L);
-		chromLengths.put(TrackVocab.GRCh37chr16.asNode(), 90354753L);
-		chromLengths.put(TrackVocab.GRCh37chr17.asNode(), 81195210L);
-		chromLengths.put(TrackVocab.GRCh37chr18.asNode(), 78077248L);
-		chromLengths.put(TrackVocab.GRCh37chr19.asNode(), 59128983L);
-		chromLengths.put(TrackVocab.GRCh37chr20.asNode(), 63025520L);
-		chromLengths.put(TrackVocab.GRCh37chr21.asNode(), 48129895L);
-		chromLengths.put(TrackVocab.GRCh37chr22.asNode(), 51304566L);
-		chromLengths.put(TrackVocab.GRCh37chrX.asNode(), 155270560L);
-		chromLengths.put(TrackVocab.GRCh37chrY.asNode(), 59373566L);
+	@Override
+	public void execute() {
+		this.setStatus(JOB_STATUS_COMPUTING);
+		queryDefinition.setTargetGraph(localGraphService.createLocalGraph(queryDefinition.getTargetGraph()));
+		try {
+			writeMetaInfo();
+			writeData();
+		} catch (Exception e) {
+			this.setStatus(JOB_STATUS_ERROR);
+			this.errorDescription = e.getMessage();
+			log.error(errorDescription);
+		}
+	}
+	
+	private void writeData() throws Exception {
+		
+		if (queryDefinition.getReferenceAssemblyUri() == null) {
+			throw new Exception("No reference assembly given");
+		}
+		String referenceQuery = queryBuilderService.getReferencesForAssembly(queryDefinition.getReferenceAssemblyUri());
+		List<Node> references = new LinkedList<>();
+		Map<Node, Long> referenceLengths = new HashMap<>();
+		SPARQLResultSet resultSet = sparqlClient.querySelect(metaQueryEndpoint, metaGraph, referenceQuery);
+		for (Map<String, String> record: resultSet.getRecords()) {
+			String refString = record.get(QueryBuilderService.URI);
+			String lengthString = record.get(QueryBuilderService.LENGTH);
+			Node reference = NodeFactory.createURI(refString);
+			references.add(reference);
+			referenceLengths.put(reference,Long.parseLong(lengthString));
+		}
+		queryGenerator.setReferences(references);
+		
 		GenomicRegion region = new GenomicRegion();
 		region.strand = null;
 		
 		this.startDate = new Date();
 		
-		for (Node chrom: chromosomes) {
+		for (Node chrom: references) {
 			region.assemblyURI = chrom.toString();
-			for (Long l = 0L; l <= chromLengths.get(chrom); l += stepSize) {
+			for (Long l = 0L; l <= referenceLengths.get(chrom); l += stepSize) {
 				if (interrupt) return;
 				region.start = l;
 				region.end = l + stepSize - 1;
-				progressPercentages.put(chrom, (int) (.5 + 100. * l / chromLengths.get(chrom)));
+				progressPercentages.put(chrom, (int) (.5 + 100. * l / referenceLengths.get(chrom)));
 				Update sparqlQuery = queryGenerator.computeUpdate(queryDefinition, region);
 				try {
-					UpdateExecutionFactory.createRemote(sparqlQuery, targetEndpoint).execute();
+					UpdateExecutionFactory.createRemote(sparqlQuery, dataUpdateEndpoint).execute();
 				} catch (Exception e) {
 //					log.error(messages);
 				}

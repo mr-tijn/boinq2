@@ -9,6 +9,7 @@ public class FeatureQueryDTO {
 	public String ownerId;
 	public String name;
 	public String targetGraph;
+	public String referenceAssemblyUri;
 	
 	public FeatureQueryDTO() {}
 	

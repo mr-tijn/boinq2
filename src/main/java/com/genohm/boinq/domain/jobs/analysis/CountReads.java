@@ -42,4 +42,10 @@ public class CountReads implements Analysis {
 
 	}
 
+	@Override
+	public String getErrorDescription() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

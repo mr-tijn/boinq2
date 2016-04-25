@@ -18,6 +18,7 @@ public interface AsynchronousJob {
 	void setName(String name);
 	int getStatus();
 	String getDescription();
+	String getErrorDescription();
 	void execute();
 	void kill();
 	

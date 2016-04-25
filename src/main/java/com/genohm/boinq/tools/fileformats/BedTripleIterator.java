@@ -24,11 +24,11 @@ public class BedTripleIterator implements Iterator<Triple> {
 	private List<Triple> currentTriples = new LinkedList<Triple>();
 	private AsciiLineReaderIterator lineIterator;
 	private BEDCodec codec = new BEDCodec();
-	private Map<String, Node> referenceMap;
+	private Map<Node, Node> referenceMap;
 	private TripleConverter converter;
 	private Metadata meta;
 	
-	public BedTripleIterator(TripleConverter converter, File file, Map<String, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException{
+	public BedTripleIterator(TripleConverter converter, File file, Map<Node, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException{
 		this.converter = converter;
 		this.referenceMap = referenceMap;
 		lineIterator = new AsciiLineReaderIterator(new AsciiLineReader(new FileInputStream(file)));
@@ -56,11 +56,7 @@ public class BedTripleIterator implements Iterator<Triple> {
 				nextLine = lineIterator.next();
 				entry = codec.decode(nextLine);
 			}
-			Node globalReference = null;
-			if (referenceMap != null) {
-				globalReference = referenceMap.get(entry.getContig());
-			}
-			currentTriples.addAll(converter.convert(entry, globalReference, meta));
+			currentTriples.addAll(converter.convert(entry, meta));
 		}
 		return currentTriples.remove(0);
 	}

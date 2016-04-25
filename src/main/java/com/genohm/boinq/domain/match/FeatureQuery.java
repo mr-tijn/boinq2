@@ -44,8 +44,11 @@ public class FeatureQuery implements QueryGeneratorAcceptor {
 	@Column(name="name")
 	private String name;
 
-	@Column(name="target-graph")
+	@Column(name="target_graph")
 	private String targetGraph;
+	
+	@Column(name="reference_assembly_uri")
+	private String referenceAssemblyUri;
 	
 	public Long getId() {
 		return id;
@@ -99,6 +102,14 @@ public class FeatureQuery implements QueryGeneratorAcceptor {
 		this.targetGraph = targetGraph;
 	}
 
+	public String getReferenceAssemblyUri() {
+		return referenceAssemblyUri;
+	}
+
+	public void setReferenceAssemblyUri(String referenceAssemblyUri) {
+		this.referenceAssemblyUri = referenceAssemblyUri;
+	}
+
 	public Set<FeatureSelect> getOverlappingNeighbours(FeatureSelect select) {
 		Set<FeatureSelect> neighbours = new HashSet<>();
 		for (FeatureJoin join: joins.stream().filter(join -> join instanceof LocationOverlap).collect(Collectors.toSet())) {
@@ -131,6 +142,7 @@ public class FeatureQuery implements QueryGeneratorAcceptor {
 		result.id = this.id;
 		result.name = this.name;
 		result.targetGraph = this.targetGraph;
+		result.referenceAssemblyUri = this.referenceAssemblyUri;
 		result.ownerId = this.owner.getLogin();
 		result.joins = new HashSet<>();
 		for (FeatureJoin join: this.joins) {

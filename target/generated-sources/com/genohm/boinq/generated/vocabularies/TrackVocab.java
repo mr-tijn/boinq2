@@ -25,6 +25,8 @@ public class TrackVocab {
     
     public static final ObjectProperty entry = m_model.createObjectProperty( "http://www.boinq.org/iri/ontologies/track#entry" );
     
+    public static final ObjectProperty hasAttribute = m_model.createObjectProperty( "http://www.boinq.org/iri/ontologies/track#hasAttribute" );
+    
     public static final ObjectProperty holds = m_model.createObjectProperty( "http://www.boinq.org/iri/ontologies/track#holds" );
     
     public static final ObjectProperty originalReference = m_model.createObjectProperty( "http://www.boinq.org/iri/ontologies/track#originalReference" );
@@ -57,6 +59,8 @@ public class TrackVocab {
     
     /** <p>A name representing the match operator.</p> */
     public static final DatatypeProperty matchName = m_model.createDatatypeProperty( "http://www.boinq.org/iri/ontologies/track#matchName" );
+
+    //public static final DatatypeProperty motherTerm = m_model.createDatatypeProperty( "http://www.boinq.org/iri/ontologies/track#motherTerm" );
     
     /** <p>A (SPARQL 1.1) property path expression between the feature entity and the 
      *  field entity</p>
@@ -101,9 +105,20 @@ public class TrackVocab {
     
     public static final OntClass FilterCount = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#FilterCount" );
     
-    /** <p>An operator that filters based on the location of a feature</p> */
+    public static final OntClass HeaderBED = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#HeaderBED" );
+    
+    public static final OntClass HeaderGFF = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#HeaderGFF" );
+    
+    public static final OntClass HeaderSAM = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#HeaderSAM" );
+    
+    public static final OntClass HeaderVCF = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#HeaderVCF" );
+    
     public static final OntClass LocationFilter = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#LocationFilter" );
     
+    public static final OntClass Mapping = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#Mapping" );
+    
+    public static final OntClass Match = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#Match" );
+
     /** <p>Match a decimal value</p> */
     public static final OntClass MatchDecimal = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#MatchDecimal" );
     
@@ -120,6 +135,8 @@ public class TrackVocab {
     public static final OntClass MatchTerm = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#MatchTerm" );
     
     public static final OntClass Operator = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#Operator" );
+    
+    public static final OntClass ReadCount = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#ReadCount" );
     
     /** <p>A representation of a reference sequence (e.g. a chromosome) supported by 
      *  the viewer</p>
@@ -139,6 +156,8 @@ public class TrackVocab {
     
     public static final OntClass SampleCount = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#SampleCount" );
     
+    public static final OntClass SupportedSpecies = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#SupportedSpecies" );
+    
     /** <p>A SPARQL Datasource offering terms</p> */
     public static final OntClass TermDatasource = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#TermDatasource" );
     
@@ -150,104 +169,4 @@ public class TrackVocab {
     public static final OntClass User = m_model.createClass( "http://www.boinq.org/iri/ontologies/track#User" );
     
 // INDIVIDUALS
-    public static final Individual GRCh37 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37", ReferenceAssembly );
-    
-    public static final Individual GRCh37chr01 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr01", Reference );
-    
-    public static final Individual GRCh37chr02 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr02", Reference );
-    
-    public static final Individual GRCh37chr03 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr03", Reference );
-    
-    public static final Individual GRCh37chr04 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr04", Reference );
-    
-    public static final Individual GRCh37chr05 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr05", Reference );
-    
-    public static final Individual GRCh37chr06 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr06", Reference );
-    
-    public static final Individual GRCh37chr07 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr07", Reference );
-    
-    public static final Individual GRCh37chr08 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr08", Reference );
-    
-    public static final Individual GRCh37chr09 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr09", Reference );
-    
-    public static final Individual GRCh37chr10 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr10", Reference );
-    
-    public static final Individual GRCh37chr11 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr11", Reference );
-    
-    public static final Individual GRCh37chr12 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr12", Reference );
-    
-    public static final Individual GRCh37chr13 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr13", Reference );
-    
-    public static final Individual GRCh37chr14 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr14", Reference );
-    
-    public static final Individual GRCh37chr15 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr15", Reference );
-    
-    public static final Individual GRCh37chr16 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr16", Reference );
-    
-    public static final Individual GRCh37chr17 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr17", Reference );
-    
-    public static final Individual GRCh37chr18 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr18", Reference );
-    
-    public static final Individual GRCh37chr19 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr19", Reference );
-    
-    public static final Individual GRCh37chr20 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr20", Reference );
-    
-    public static final Individual GRCh37chr21 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr21", Reference );
-    
-    public static final Individual GRCh37chr22 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chr22", Reference );
-    
-    public static final Individual GRCh37chrX = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chrX", Reference );
-    
-    public static final Individual GRCh37chrY = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh37chrY", Reference );
-    
-    public static final Individual GRCh38 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38", ReferenceAssembly );
-    
-    public static final Individual GRCh38chr01 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr01", Reference );
-    
-    public static final Individual GRCh38chr02 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr02", Reference );
-    
-    public static final Individual GRCh38chr03 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr03", Reference );
-    
-    public static final Individual GRCh38chr04 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr04", Reference );
-    
-    public static final Individual GRCh38chr05 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr05", Reference );
-    
-    public static final Individual GRCh38chr06 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr06", Reference );
-    
-    public static final Individual GRCh38chr07 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr07", Reference );
-    
-    public static final Individual GRCh38chr08 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr08", Reference );
-    
-    public static final Individual GRCh38chr09 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr09", Reference );
-    
-    public static final Individual GRCh38chr10 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr10", Reference );
-    
-    public static final Individual GRCh38chr11 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr11", Reference );
-    
-    public static final Individual GRCh38chr12 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr12", Reference );
-    
-    public static final Individual GRCh38chr13 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr13", Reference );
-    
-    public static final Individual GRCh38chr14 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr14", Reference );
-    
-    public static final Individual GRCh38chr15 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr15", Reference );
-    
-    public static final Individual GRCh38chr16 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr16", Reference );
-    
-    public static final Individual GRCh38chr17 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr17", Reference );
-    
-    public static final Individual GRCh38chr18 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr18", Reference );
-    
-    public static final Individual GRCh38chr19 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr19", Reference );
-    
-    public static final Individual GRCh38chr20 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr20", Reference );
-    
-    public static final Individual GRCh38chr21 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr21", Reference );
-    
-    public static final Individual GRCh38chr22 = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chr22", Reference );
-    
-    public static final Individual GRCh38chrX = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chrX", Reference );
-    
-    public static final Individual GRCh38chrY = m_model.createIndividual( "http://www.boinq.org/iri/ontologies/track#GRCh38chrY", Reference );
-    
 }

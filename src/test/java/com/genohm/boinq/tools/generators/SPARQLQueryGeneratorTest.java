@@ -56,7 +56,7 @@ public class SPARQLQueryGeneratorTest {
 		noCriteria.setTrack(track1);
 		featureQueryNoCriteria.addSelect(noCriteria);
 		featureQueryNoCriteria.setTargetGraph("http://nocriteria.com");
-		testRegion.assemblyURI = TrackVocab.GRCh38chr01.getURI();
+		testRegion.assemblyURI = "http://www.boinq.org/resource/homo_sapiens/GRCh38";
 		testRegion.start = 0L;
 		testRegion.end = 10000L;
 		testRegion.strand = true;
@@ -185,8 +185,10 @@ public class SPARQLQueryGeneratorTest {
 		FeatureSelect firstSelect = new FeatureSelect();
 		firstSelect.setRetrieveFeatureData(true);
 		HashMap<Node,Node> referenceMap1 = new HashMap<>();
-		referenceMap1.put(TrackVocab.GRCh38chr01.asNode(), NodeFactory.createURI("http://track1/chrom1"));
-		referenceMap1.put(TrackVocab.GRCh38chr02.asNode(), NodeFactory.createURI("http://track1/chrom2"));
+		Node chr1 = NodeFactory.createURI("http://www.boinq.org/resource/homo_sapiens/GRCh38/1");
+		Node chr2 = NodeFactory.createURI("http://www.boinq.org/resource/homo_sapiens/GRCh38/2");
+		referenceMap1.put(chr1, NodeFactory.createURI("http://track1/chrom1"));
+		referenceMap1.put(chr2, NodeFactory.createURI("http://track1/chrom2"));
 		track1.setReferenceMap(referenceMap1);
 		firstSelect.setTrack(track1);
 		FeatureTypeCriterion typeCriterion = new FeatureTypeCriterion();
@@ -196,8 +198,8 @@ public class SPARQLQueryGeneratorTest {
 		FeatureSelect secondSelect = new FeatureSelect();
 		secondSelect.setRetrieveFeatureData(false);
 		HashMap<Node,Node> referenceMap2 = new HashMap<>();
-		referenceMap2.put(TrackVocab.GRCh38chr01.asNode(), NodeFactory.createURI("http://track2/GRCh38#chromosome1"));
-		referenceMap2.put(TrackVocab.GRCh38chr02.asNode(), NodeFactory.createURI("http://track2/GRCh38#chromosome2"));
+		referenceMap2.put(chr1, NodeFactory.createURI("http://track2/GRCh38#chromosome1"));
+		referenceMap2.put(chr2, NodeFactory.createURI("http://track2/GRCh38#chromosome2"));
 		track2.setReferenceMap(referenceMap2);
 		secondSelect.setTrack(track2);
 		LocationOverlap overlap = new LocationOverlap();

@@ -93,10 +93,11 @@ public class RawDataFile implements Serializable {
 
     @Override
     public String toString() {
+    	
         return "RawDataFile{" +
                 "id=" + id +
-                "status=" + status +
-                "trackId='" + (track==null?"":track.getId()) + "'" +
+                ", status=" + status +
+                ", trackId='" + (track==null?"":track.getId()) + "'" +
                 ", filePath='" + filePath + '\'' +
                 '}';
     }

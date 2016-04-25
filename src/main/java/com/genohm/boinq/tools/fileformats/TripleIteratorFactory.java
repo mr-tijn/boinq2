@@ -2,7 +2,6 @@ package com.genohm.boinq.tools.fileformats;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -26,7 +25,7 @@ public class TripleIteratorFactory {
 	@Inject
 	TripleConverter tripleConverter;
 	
-	public Iterator<Triple> getIterator(File inputFile, Map<String, Node> referenceMap, Metadata meta) throws Exception {
+	public Iterator<Triple> getIterator(File inputFile, Map<Node, Node> referenceMap, Metadata meta) throws Exception {
 		String extension = FilenameUtils.getExtension(inputFile.getName());
 		meta.fileType = extension;
 		for (String ext: GFF3_EXTENSIONS) {

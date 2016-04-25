@@ -104,13 +104,12 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	private Query mainQuery;
 	private ElementGroup mainGroup;
 	private PrefixMapping prefixMap;
-	private BasicPattern constructPattern;
-
+	
 	private UpdateModify updateQuery;
 	private QuadAcc insertQuads;
 	
 	private Map<String, Long> idCounters;
-	
+	private List<Node> references;
 	
 	private String nextId(String prefix) {
 		if (prefix == null) {
@@ -145,6 +144,10 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	private Node locationVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_Location");}
 	private Node strandVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_Strand");}
 
+	public void setReferences(List<Node> references) {
+		this.globalReferences = references;
+	}
+	
 	private void init() {
 //		idCounter = 0L;
 		idCounters = new HashMap<String,Long>();
@@ -161,30 +164,6 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		prefixMap.setNsPrefix("track", TrackVocab.getURI());
 		mainGroup = new ElementGroup();
 		referenceMapMap = new HashMap<>();
-		globalReferences.add(TrackVocab.GRCh38chr01.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr02.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr03.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr04.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr05.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr06.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr07.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr08.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr09.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr10.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr11.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr12.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr13.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr14.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr15.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr16.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr17.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr18.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr19.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr20.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr21.asNode());
-		globalReferences.add(TrackVocab.GRCh38chr22.asNode());
-		globalReferences.add(TrackVocab.GRCh38chrX.asNode());
-		globalReferences.add(TrackVocab.GRCh38chrY.asNode());
 		globalReferenceId = Var.alloc("globalReferenceId");
 		valuesVariables.add(globalReferenceId);
 	}
@@ -197,7 +176,7 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	}
 	
 	private Update prepareUpdate(String targetGraph) {
-		UpdateModify updateQuery = new UpdateModify();
+		updateQuery = new UpdateModify();
 		updateQuery.setElement(mainGroup);
 		insertQuads = updateQuery.getInsertAcc();
 		insertQuads.setGraph(NodeFactory.createURI(targetGraph));

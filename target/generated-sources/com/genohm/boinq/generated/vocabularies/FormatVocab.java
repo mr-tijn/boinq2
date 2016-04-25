@@ -56,13 +56,13 @@ public class FormatVocab {
     /** <p>points to TLEN value as defined by:</p> */
     public static final DatatypeProperty hasTLEN = m_model.createDatatypeProperty( "http://www.boinq.org/iri/ontologies/format#hasTLEN" );
     
-    public static final OntClass BED_entry = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#BED_entry" );
+    public static final OntClass BED_Entry = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#BED_Entry" );
     
     public static final OntClass CIGAR = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#CIGAR" );
     
     public static final OntClass FLAG = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#FLAG" );
     
-    public static final OntClass GFF_entry = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#GFF_entry" );
+    public static final OntClass GFF_Entry = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#GFF_Entry" );
     
     public static final OntClass Gap = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#Gap" );
     
@@ -89,7 +89,7 @@ public class FormatVocab {
     public static final OntClass RNEXT = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#RNEXT" );
     
     /** <p>One line found back in a SAM/BAM file not including the header</p> */
-    public static final OntClass SAM_entry = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#SAM_entry" );
+    public static final OntClass SAM_Entry = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#SAM_Entry" );
     
     public static final OntClass SEQ = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#SEQ" );
     
@@ -97,7 +97,7 @@ public class FormatVocab {
     
     public static final OntClass Target = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#Target" );
     
-    public static final OntClass VCF_entry = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#VCF_entry" );
+    public static final OntClass VCF_Entry = m_model.createClass( "http://www.boinq.org/iri/ontologies/format#VCF_Entry" );
     
 // INDIVIDUALS
 }

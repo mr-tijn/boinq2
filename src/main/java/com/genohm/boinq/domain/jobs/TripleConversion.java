@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -63,6 +64,7 @@ public class TripleConversion implements AsynchronousJob {
 	private int status = JOB_STATUS_UNKNOWN;
 	private String name = "";
 	private String description = "";
+	private String errorDescription = "";
 	
 	private RawDataFile inputData;
 	
@@ -93,6 +95,11 @@ public class TripleConversion implements AsynchronousJob {
 	public String getDescription() {
 		return description;
 	}
+	
+	@Override
+	public String getErrorDescription() {
+		return errorDescription;
+	}
 
 	@Override
 	public String getName() {
@@ -104,26 +111,6 @@ public class TripleConversion implements AsynchronousJob {
 	}
 	
 
-	private Map<String, Node> getReferenceMap(Track track) {
-		String endpoint = track.getDatasource().getMetaEndpointUrl();
-		// the meta endpoint is a local URL
-		
-		String query = queryBuilder.findReferenceMap(track);
-		SPARQLResultSet queryResult = null;
-		Map<String, Node> resultMap = new HashMap<String, Node>();
-		try {
-			queryResult = sparqlClient.querySelect(endpoint, track.getGraphName(), query);
-		} catch (Exception e) {
-			log.error("Could not find reference Map");
-			return null;
-		}
-		for (Map<String,String> record: queryResult.getRecords()) {
-			resultMap.put(record.get(QueryBuilderService.ORIGINAL_REFERENCE), NodeFactory.createURI(QueryBuilderService.TARGET_REFERENCE));
-		}
-		return resultMap;
-	}
-	
-	
 	@Override
 	public void execute() {
 		try {
@@ -142,11 +129,14 @@ public class TripleConversion implements AsynchronousJob {
 			if (inputData.getStatus() == RawDataFile.STATUS_COMPLETE) {
 				throw new Exception("Data is already uploaded");
 			}
+		
 			Metadata meta = new Metadata();
 			meta.filterCount = metainfoservice.getFileAttributeCount(track, TrackVocab.FilterCount.asNode());
 			meta.sampleCount = metainfoservice.getFileAttributeCount(track, TrackVocab.SampleCount.asNode());
+			meta.readCount = metainfoservice.getFileAttributeCount(track, TrackVocab.ReadCount.asNode());
 			meta.sumFilterCount = meta.filterCount;
 			meta.sumSampleCount = meta.sampleCount;
+			meta.sumReadCount = meta.readCount;
 			track.setEntryCount(metainfoservice.getFileAttributeCount(track, TrackVocab.EntryCount.asNode()));
 			track.setFeatureCount(metainfoservice.getFileAttributeCount(track, TrackVocab.FeatureCount.asNode()));
 			track.setTripleCount(metainfoservice.getFileAttributeCount(track, TrackVocab.TripleCount.asNode()));
@@ -158,9 +148,18 @@ public class TripleConversion implements AsynchronousJob {
 			meta.file = inputFile.toString();
 			meta.sumFeatureCount= track.getFeatureCount();
 			meta.sumEntryCount = track.getEntryCount();
-			meta.speciesFaldo= (track.getSpecies()==null) ?"Unknown/" : track.getSpecies().replace(" ","_")+"/" ;
-			Map<String, Node> referenceMap = getReferenceMap(track);
-			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, referenceMap, meta);
+			meta.organismMapping = track.getSpecies().replace(" ","_").toLowerCase() +"/"+ track.getAssembly() +"/";
+			meta.prefixLength = (track.getContigPrefix()==null)? 0:track.getContigPrefix().length();
+			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, track.getReferenceMap(), meta);
+			if(meta.fileType.equals("bed") && track.getType()!=null){
+				String[] types=track.getType().split("\\|");
+				meta.mainType= NodeFactory.createURI(types[0]);
+				meta.typeList.add(meta.mainType);
+				if (types[1]!=null){
+					meta.subType = NodeFactory.createURI(types[1]);
+					meta.typeList.add(meta.subType);
+				}
+			}
 			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
 			inputData.setStatus(RawDataFile.STATUS_LOADING);
 			while (!interrupted && tripleIterator.hasNext()) {
@@ -178,7 +177,9 @@ public class TripleConversion implements AsynchronousJob {
 			track.setEntryCount(metainfoservice.getFileAttributeCount(track, TrackVocab.EntryCount.asNode()));
 			track.setFeatureCount(metainfoservice.getFileAttributeCount(track, TrackVocab.FeatureCount.asNode()));
 			track.setTripleCount(metainfoservice.getFileAttributeCount(track, TrackVocab.TripleCount.asNode()));
-				track.setFileType(meta.fileType);
+			metainfoservice.getSupportedFeatureTypes(track);
+			track.setFileType(meta.fileType);
+			
 			trackRepository.save(track);
 			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
 			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
@@ -187,8 +188,8 @@ public class TripleConversion implements AsynchronousJob {
 			setStatus(JOB_STATUS_ERROR);
 			inputData.setStatus(RawDataFile.STATUS_ERROR);
 			rawDataFileRepository.save(inputData);
-			this.description = e.getMessage();
-			log.error(description);
+			this.errorDescription = e.getMessage();
+			log.error(errorDescription);
 		}
 	}
 	
@@ -197,45 +198,41 @@ public class TripleConversion implements AsynchronousJob {
 		this.interrupted = true;
 	}
 	
-	public class Metadata{
-		public List<Node> typeList = new ArrayList<Node>();	
-		public String date = new String();
-		public String user = new String();
-		public String fileType = new String();
-		public String fileName = new String();
-		public String file = new String();
-		public String speciesFaldo = new String();
-		public VCFHeader vcfHeader = new VCFHeader();
-		public SAMFileHeader samHeader = new SAMFileHeader();
-		public List<String> gffHeader = new ArrayList<String>();
-		public List<String> bedHeader = new ArrayList<String>();
+	public static class Metadata{
+		public int prefixLength;
 		public long tripleCount;
 		public long entryCount;
 		public long featureCount;
 		public long filterCount;
 		public long sampleCount;
+		public long readCount;
 		public long sumFeatureCount;
 		public long sumEntryCount;
 		public long sumFilterCount;
 		public long sumSampleCount;
+		public long sumReadCount;
+		public Node mainType;
+		public Node subType;
+		public String date = new String();
+		public String user = new String();
+		public String fileType = new String();
+		public String fileName = new String();
+		public String file = new String();
+		public String organismMapping = new String();
+		public List<String> gffHeader = new ArrayList<String>();
+		public List<String> bedHeader = new ArrayList<String>();
+		public List<Node> typeList = new ArrayList<Node>();
 		public Map<String,Node>featureIDmap = new HashMap<>();
-		//TODO EXTEND VCF HEADER MAPS
 		public Map<String,Node> filterMap = new HashMap<>();
 		public Map<String,Node> sampleMap = new HashMap<>();
+		public Map<String,Node> readMap = new HashMap<>();
+		public Map<String,Node> referenceMap = new HashMap<>();
 		public Map<String,String> formatMap = new HashMap<>();
+		public VCFHeader vcfHeader = new VCFHeader();
+		public SAMFileHeader samHeader = new SAMFileHeader();
+		
 	}
 	
-private class Triangle{
-	 int number;
-	 String type;
-	 String descr;
-	
- Triangle(int number, String type, String descr) {
-	        this.number = number;
-	        this.type = type;
-	        this.descr = descr;
-	    }
-	
-}
+
 	
 }
