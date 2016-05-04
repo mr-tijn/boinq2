@@ -374,6 +374,7 @@ public class TripleConverter {
 
 		if (entry.getID() != ".") {
 			idGenerator(triples, feature, featureName, entry.getID());
+			triples.add(new Triple(feature, DCTerms.identifier.asNode(), NodeFactory.createLiteral(entry.getID(),XSDstring)));
 		}
 		for (String filter : entry.getFilters()) {
 			if (meta.readMap.get(filter) != null) {
