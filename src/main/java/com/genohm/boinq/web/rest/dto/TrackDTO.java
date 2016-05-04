@@ -28,7 +28,8 @@ public class TrackDTO {
 	private long tripleCount;
 	private long datasourceId;
 	private Set<RawDataFileDTO> rawDataFiles;
-	private List<Map<String, String>> supportedOperators;
+	private List<Map<String, String>> supportedFilters;
+	private List<Map<String, String>> supportedConnectors;
 	private Map<String, String> supportedFeatureTypes;
 	private Map<String, String> referenceMap;
 
@@ -144,12 +145,12 @@ public class TrackDTO {
 		this.rawDataFiles = rawDataFiles;
 	}
 
-	public List<Map<String, String>> getSupportedOperators() {
-		return supportedOperators;
+	public List<Map<String, String>> getSupportedFilters() {
+		return supportedFilters;
 	}
 
-	public void setSupportedOperators(List<Map<String, String>> supportedOperators) {
-		this.supportedOperators = supportedOperators;
+	public void setSupportedFilters(List<Map<String, String>> supportedFilters) {
+		this.supportedFilters = supportedFilters;
 	}
 
 	public Map<String, String> getSupportedFeatureTypes() {
@@ -188,14 +189,24 @@ public class TrackDTO {
 			rawDataFiles.add(new RawDataFileDTO(dataFile));
 		}
 		// is it necessary to do this ?
-		if (track.getSupportedOperators() != null) {
-			this.supportedOperators = new LinkedList<>();
-			for (Map<String,String> operator: track.getSupportedOperators()) {
+		if (track.getSupportedFilters() != null) {
+			this.supportedFilters = new LinkedList<>();
+			for (Map<String,String> operator: track.getSupportedFilters()) {
 				Map<String, String> newOp = new HashMap<>();
 				for (String parameter: operator.keySet()) {
 					newOp.put(parameter, operator.get(parameter));
 				}
-				supportedOperators.add(newOp);
+				supportedFilters.add(newOp);
+			}
+		}
+		if (track.getSupportedConnectors() != null) {
+			this.supportedConnectors = new LinkedList<>();
+			for (Map<String, String> connector: track.getSupportedConnectors()) {
+				Map<String,String> newCon = new HashMap<>();
+				for (String parameter: connector.keySet()) {
+					newCon.put(parameter, connector.get(parameter));
+				}
+				supportedConnectors.add(newCon);
 			}
 		}
 		if (track.getSupportedFeatureTypes() != null) {

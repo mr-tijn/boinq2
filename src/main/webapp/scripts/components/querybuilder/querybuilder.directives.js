@@ -64,6 +64,12 @@ angular.module('boinqApp').directive('featureselectdetail', function() {
 				scope.selectCriterion(newcrit);
 				scope.featureselect.criteria.push(newcrit);
 			}
+			scope.removeCriterion = function(crit) {
+				var idx = scope.featureselect.criteria.indexOf(crit);
+				if (idx > -1) {
+					scope.featureselect.criteria.splice(idx,1);
+				}
+			}
 			scope.selectCriterion = function(crit) {
 				scope.activeCriterion = crit;
 			}
@@ -85,11 +91,11 @@ angular.module('boinqApp').directive('criteriondetail', function() {
 		scope: {
 			criterion: '=',
 			supportedFeatureTypes: '=',
-			supportedOperators: '='
+			supportedFilters: '='
 		},
 		link: function(scope, element, attrs) {
 			scope.computeUrl = function(criterion) {
-				if (criterion && criterion.operator) scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/' + criterion.operator.operatorTypeName + '.html';
+				if (criterion && criterion.filter) scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/' + criterion.filter.filterTypeName + '.html';
 				else scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/undefined.html';
 			};
 			scope.computeUrl(scope.criterion);

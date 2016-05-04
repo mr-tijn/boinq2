@@ -85,6 +85,8 @@ public class FeatureQueryFactory {
 		User owner = userRepository.findOneByLogin(fq.ownerId).get();
 		featureQuery.setOwner(owner);
 		featureQuery.setName(fq.name);
+		featureQuery.setReferenceAssemblyUri(fq.referenceAssemblyUri);
+		featureQuery.setTargetGraph(fq.targetGraph);
 		return featureQuery;
 	}
 }

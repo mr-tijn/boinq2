@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -74,6 +75,7 @@ import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.domain.match.FeatureSelect;
 import com.genohm.boinq.domain.match.FeatureSelectCriterion;
 import com.genohm.boinq.domain.match.FeatureTypeCriterion;
+import com.genohm.boinq.domain.match.Connect;
 import com.genohm.boinq.domain.match.LocationCriterion;
 import com.genohm.boinq.domain.match.LocationOverlap;
 import com.genohm.boinq.domain.match.MatchDecimalCriterion;
@@ -580,6 +582,35 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		if ((PathParser.parse(mc.getPathExpression(), prefixMap)) == null) return false;
 		if (!(NodeFactory.createURI(mc.getTermUri())).isURI()) return false;
 		return true;
+	}
+
+	// not used yet
+	
+	@Override
+	public Boolean check(Connect idMatch, GenomicRegion region) {
+		
+		if ((PathParser.parse(idMatch.getSourceConnector().getPathExpression(), prefixMap)) == null) return false;
+		if ((PathParser.parse(idMatch.getTargetConnector().getPathExpression(), prefixMap)) == null) return false;
+		return true;
+	}
+
+	@Override
+	public void visit(Connect idMatch, GenomicRegion region) {
+
+		String idString = nextId("idMatch");
+		
+		String from = featureNameMap.get(idMatch.getSource()) ;
+		String to = featureNameMap.get(idMatch.getTarget()) ;
+		
+		addConnectTriples(selectTriples.get(from),from,idMatch.getSourceConnector().getPathExpression(),idString);
+		addConnectTriples(selectTriples.get(to),to,idMatch.getTargetConnector().getPathExpression(),idString);
+		
+	}
+	
+	public void addConnectTriples(ElementGroup featureTriples, String from, String path, String common) {
+		ElementPathBlock connect = new ElementPathBlock();
+		connect.addTriplePath(new TriplePath(NodeFactory.createVariable(from), PathParser.parse(path, prefixMap), NodeFactory.createVariable(common)));
+		featureTriples.addElement(connect);
 	}
 
 }

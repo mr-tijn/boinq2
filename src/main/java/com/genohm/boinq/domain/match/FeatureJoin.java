@@ -45,7 +45,7 @@ public abstract class FeatureJoin implements QueryGeneratorAcceptor {
 	public FeatureSelect getTarget() {
 		return targetSelect;
 	}
-	public void accept(QueryGenerator qg, GenomicRegion region) {}
+	public abstract void accept(QueryGenerator qg, GenomicRegion region);
 	
 	public FeatureJoinDTO createDTO() {
 		FeatureJoinDTO result = new FeatureJoinDTO();

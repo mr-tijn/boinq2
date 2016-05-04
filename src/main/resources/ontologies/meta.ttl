@@ -3,117 +3,145 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
 
 <http://www.boinq.org/iri/localdatasource> rdf:type track:FaldoDatasource, track:Datasource
 ; track:provides <http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844>
 .
 
-<http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844> track:supports
-[a track:localizedSearch; track:refAssembly <http://www.boinq.org/resource/homo_sapiens/GRCh38>].
+<http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844> a track:Track; track:supports 
+[a track:LocationFilter; track:references <http://www.boinq.org/resource/homo_sapiens/GRCh38>],
+[a track:FeatureTypeFilter].
 
-<http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844> track:holds  <http://purl.obolibrary.org/obo/SO_0000147>,<http://purl.obolibrary.org/obo/SO_0000673>.
-<http://purl.obolibrary.org/obo/SO_0000147> skos:prefLabel "Exon".
-<http://purl.obolibrary.org/obo/SO_0000673> skos:prefLabel "Transcript".
+<http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844> track:holds  obo:SO_0000147,obo:SO_0000673.
+obo:SO_0000147 skos:prefLabel "Exon".
+obo:SO_0000673 skos:prefLabel "Transcript".
 
+<http://sparql.uniprot.org> a track:Datasource;
+track:provides <http://sparql.uniprot.org/uniprot/>.
 
-<file:/opt/blazegraph/Human.ttl> track:holds  <http://purl.obolibrary.org/obo/SO_0000147>,<http://purl.obolibrary.org/obo/SO_0000673>.
-<http://purl.obolibrary.org/obo/SO_0000147> skos:prefLabel "Exon".
-<http://purl.obolibrary.org/obo/SO_0000673> skos:prefLabel "Transcript".
-<file:/opt/blazegraph/Human.ttl> track:supports 
-	[a track:termMatch;
-	 track:termSource <localGO>],
-	[a track:localizedSearch;
-	 track:references <http://www.boinq.org/resource/homo_sapiens/GRCh38>].
-<localGO> a track:TermSource;
-	track:endpoint <http://localhost:9999/bigdata/namespace/boinq_static/sparql>;
-	track:graph <http://purl.obolibrary.org/obo/so-xp.obo>;
-	track:root <>.
+<http://sparql.uniprot.org/uniprot/> a track:Track;
+track:supports [a track:FeatureTypeFilter],
+[a track:MatchTermFilter;
+ track:operatorName "classified with GO term";
+ track:pathExpression "<http://purl.uniprot.org/core/classifiedWith>";
+ track:endpointUrl "/local/static/sparql";
+ track:graphUri "http://purl.obolibrary.org/obo/go.obo"];
+track:holds obo:SO_0000104.
+obo:SO_0000673 skos:prefLabel "Protein".
+
+<https://www.ebi.ac.uk/rdf/services/ensembl/sparql> a track:Datasource, track:FaldoDatasource;
+track:provides <http://rdf.ebi.ac.uk/dataset/ensembl/84>.
+
+<http://rdf.ebi.ac.uk/dataset/ensembl/84> a track:Track, track:FaldoTrack;
+track:supports [a track:LocationFilter; track:references <http://www.boinq.org/resource/homo_sapiens/GRCh38>],
+[a track:FeatureTypeFilter];
+track:holds  obo:SO_0000147,obo:SO_0000673,obo:SO_0001217;
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/1>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/1>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/2>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/2>];
+track:entry [ a track:ReferenceMapEntry;
+		 	  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/3>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/3>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/4>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/4>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/5>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/5>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/6>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/6>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/7>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/7>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/8>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/8>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/9>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/9>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/10>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/10>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/11>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/11>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/12>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/12>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/13>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/13>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/14>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/14>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/15>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/15>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/16>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/16>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/17>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/17>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/18>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/18>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/19>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/19>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/20>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/20>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/21>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/21>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/22>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/22>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/X>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/X>];
+track:entry [ a track:ReferenceMapEntry;
+			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/Y>; 
+			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/Y>].
+obo:SO_0001217 skos:prefLabel "Protein coding gene".
 
 <http://www.boinq.org/iri/localdatasource> a track:Datasource; a track:SPARQLDatasource; track:references <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:endpointUrl <http://localhost:9999/blazegraph/namespace/boinq/sparql> . 
-
-<http://rdf.ebi.ac.uk/dataset/ensembl> rdf:type track:FaldoDatasource, track:Datasource
-; track:provides <file:/opt/blazegraph/Human.ttl>.
-<file:/opt/blazegraph/Human.ttl> rdf:type track:Track, track:FaldoTrack
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/1>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/1>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/2>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/2>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/3>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/3>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/4>; 
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/4>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/5>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/5>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/6>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/6>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/7>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/7>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/8>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/8>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/9>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/9>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/10>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/10>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/11>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/11>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/12>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/12>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/13>; 
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/13>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/14>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/14>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/15>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/15>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/16>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/16>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/17>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/17>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/18>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/18>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/19>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/19>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/20>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/20>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/21>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/21>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/22>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/22>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/X>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/X>]
-; track:entry [ track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/Y>;
-				track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/Y>]
-.
-
 
 <http://www.boinq.org/resource/homo_sapiens> a track:SupportedSpecies; rdfs:label "Homo sapiens"^^xsd:string ; track:holds <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
 <http://www.boinq.org/resource/mus_musculus> a track:SupportedSpecies; rdfs:label "Mus musculus"^^xsd:string ; track:holds <http://www.boinq.org/resource/mus_musculus/GRCm37> .
 
 <http://www.boinq.org/resource/homo_sapiens/GRCh38> a track:ReferenceAssembly; rdfs:label "GRCh38"^^xsd:string .
 
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/1> a track:Reference ; rdfs:label "1"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/2> a track:Reference ; rdfs:label "2"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/3> a track:Reference ; rdfs:label "3"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/4> a track:Reference ; rdfs:label "4"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/5> a track:Reference ; rdfs:label "5"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/6> a track:Reference ; rdfs:label "6"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/7> a track:Reference ; rdfs:label "7"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/8> a track:Reference ; rdfs:label "8"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/9> a track:Reference ; rdfs:label "9"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/10> a track:Reference ; rdfs:label "10"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/11> a track:Reference ; rdfs:label "11"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/12> a track:Reference ; rdfs:label "12"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/13> a track:Reference ; rdfs:label "13"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/14> a track:Reference ; rdfs:label "14"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/15> a track:Reference ; rdfs:label "15"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/16> a track:Reference ; rdfs:label "16"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/17> a track:Reference ; rdfs:label "17"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/18> a track:Reference ; rdfs:label "18"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/19> a track:Reference ; rdfs:label "19"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/20> a track:Reference ; rdfs:label "20"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/21> a track:Reference ; rdfs:label "21"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/22> a track:Reference ; rdfs:label "22"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/X> a track:Reference ; rdfs:label "X"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
-<http://www.boinq.org/resource/homo_sapiens/GRCh38/Y> a track:Reference ; rdfs:label "Y"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/1> a track:Reference ; rdfs:label "1"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "249250621"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/2> a track:Reference ; rdfs:label "2"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "243199373"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/3> a track:Reference ; rdfs:label "3"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "198022430"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/4> a track:Reference ; rdfs:label "4"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "191154276"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/5> a track:Reference ; rdfs:label "5"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "180915260"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/6> a track:Reference ; rdfs:label "6"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "171115067"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/7> a track:Reference ; rdfs:label "7"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "159138663"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/8> a track:Reference ; rdfs:label "8"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "146364022"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/9> a track:Reference ; rdfs:label "9"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "141213431"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/10> a track:Reference ; rdfs:label "10"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "135534747"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/11> a track:Reference ; rdfs:label "11"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "135006516"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/12> a track:Reference ; rdfs:label "12"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "133851895"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/13> a track:Reference ; rdfs:label "13"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "115169878"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/14> a track:Reference ; rdfs:label "14"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "107349540"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/15> a track:Reference ; rdfs:label "15"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "102531392"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/16> a track:Reference ; rdfs:label "16"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "90354753"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/17> a track:Reference ; rdfs:label "17"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "81195210"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/18> a track:Reference ; rdfs:label "18"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "78077248"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/19> a track:Reference ; rdfs:label "19"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "59128983"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/20> a track:Reference ; rdfs:label "20"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "63025520"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/21> a track:Reference ; rdfs:label "21"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "48129895"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/22> a track:Reference ; rdfs:label "22"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "51304566"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/X> a track:Reference ; rdfs:label "X"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "155270560"^^xsd:long .
+<http://www.boinq.org/resource/homo_sapiens/GRCh38/Y> a track:Reference ; rdfs:label "Y"^^xsd:string ; track:partOf <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:sequence_length "59373566"^^xsd:long .
 
 <http://www.boinq.org/resource/mus_musculus/GRCm37> a track:ReferenceAssembly; rdfs:label "GRCm37"^^xsd:string .
 

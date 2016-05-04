@@ -34,6 +34,7 @@ import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 public class StaticFileUploader implements ApplicationListener<ContextRefreshedEvent> {
 
 	private static final String SO_URI = "http://purl.obolibrary.org/obo/so-xp.obo";
+	private static final String GO_URI = "http://purl.obolibrary.org/obo/go.owl";
 
 	private static final String GRAPH_VARIABLE_NAME = "graph";
 
@@ -79,6 +80,8 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 		}
 		// insert sequence ontology 
 		checkSO(graphs);
+		// insert gene ontology
+		checkGO(graphs);
 	}
 
 	private void checkSO(List<String> graphs) {
@@ -98,6 +101,25 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 			log.error("Could not close so.owl");
 		}
 	}
+	
+	private void checkGO(List<String> graphs) {
+		for (String graph: graphs) {
+			if (GO_URI.equals(graph)) return;
+		}
+		log.info("Uploading go.owl into static endpoint");
+		UpdateCreate create = new UpdateCreate(NodeFactory.createURI(GO_URI));
+		UpdateExecutionFactory.createRemote(create, staticUpdateEndpoint).execute();
+		
+		InputStream go = this.getClass().getClassLoader().getResourceAsStream("ontologies/go.owl");
+		TripleUploader uploader = tripleUploadService.getUploader(staticUpdateEndpoint, GO_URI);
+		RDFDataMgr.parse(uploader, go, Lang.RDFXML);
+		try {
+			go.close();
+		} catch (IOException io) {
+			log.error("Could not close go.owl");
+		}
+	}
+
 	
 	
 }

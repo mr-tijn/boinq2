@@ -1,4 +1,4 @@
-angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','FeatureQuery','resolvedDatasource','resolvedFeatureQuery','resolvedAccount','QueryBuilderService','callEndpoint','$state',function($scope,dragging,FeatureQuery,resolvedDatasource,resolvedFeatureQuery,resolvedAccount,QueryBuilderService,callEndpoint,$state) {
+angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','boinqOneTimeFetch','FeatureQuery','resolvedDatasource','resolvedFeatureQuery','resolvedAccount','QueryBuilderService','callEndpoint','$state',function($scope,dragging,boinqOneTimeFetch,FeatureQuery,resolvedDatasource,resolvedFeatureQuery,resolvedAccount,QueryBuilderService,callEndpoint,$state) {
 
 	console.log("Registering controller QueryBuilderController");
 	
@@ -7,8 +7,10 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 	$scope.datasourceref = {};
 	$scope.featureQuery = {selects: [], joins: []};
 	$scope.cansave = true;
-	
-	console.log(resolvedDatasource);
+	boinqOneTimeFetch.then(function(globals) {
+		$scope.speciesList = globals.species;
+		$scope.assemblies = globals.assemblies;
+	});
 	
 	var processResolvedFeatureQuery = function(resolvedFeatureQuery) {
 		if (resolvedFeatureQuery != null) {
@@ -208,14 +210,14 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 					queryTypes.push({uri:track.supportedFeatureTypes[typeName], label:typeName});
 				}
 				
-				var operators = track.supportedOperators;
-				operators.forEach(function (current, index, array) {
-					if (!current.operatorName) {
-						current.operatorName = current.operatorTypeName;
+				var filters = track.supportedFilters;
+				filters.forEach(function (current, index, array) {
+					if (!current.filterName) {
+						current.filterName = current.filterTypeName;
 					}
 				});
 				
-				var FS = {idx:idx, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes, operators : operators, retrieve : false};
+				var FS = {idx:idx, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes, filters : filters, retrieve : false};
 				idx++;
 				$scope.featureQuery.selects.push(FS);
 				$scope.selectedFS = FS;
@@ -231,7 +233,9 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 				joins : [],
 				selects : [],
 				name: $scope.featureQuery.name,
-				ownerId : resolvedAccount.login
+				ownerId : resolvedAccount.login,
+				targetGraph : $scope.featureQuery.targetGraph,
+				referenceAssemblyUri: $scope.featureQuery.referenceAssembly.uri
 		};
 		for (var i=0; i<$scope.featureQuery.joins.length; i++) {
 			var join = $scope.featureQuery.joins[i];
@@ -246,17 +250,17 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 			var criteria = [];
 			for (var j=0; j< select.criteria.length; j++) {
 				var criterion = select.criteria[j];
-				switch (criterion.operator.operatorName) {
-				case "FeatureType" :
+				switch (criterion.filter.filterName) {
+				case "FeatureTypeFilter" :
 					criteria.push({
-						type: criterion.operator.operatorName,
+						type: criterion.filter.filterName,
 						featureTypeUri: (criterion.featureType?criterion.featureType.uri:null),
 						featureTypeLabel: (criterion.featureType?criterion.featureType.label:null)
 					});
 					break;
-				case "Location" :
+				case "LocationFilter" :
 					criteria.push({
-						type: criterion.operator.operatorName,
+						type: criterion.filter.filterName,
 						contig: criterion.contig,
 						start: criterion.start,
 						end: criterion.end,

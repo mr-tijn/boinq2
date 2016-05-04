@@ -47,18 +47,33 @@ public class MetaInfoService {
 
 	}
 
-	public void getSupportedOperators(Track track) {
+	public void getSupportedFilters(Track track) {
 		try {
-			String query = queryBuilderService.getOperators(track);
+			String query = queryBuilderService.getFilters(track);
 			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(), track.getDatasource().getMetaGraphName(), query);
-			List<Map<String,String>> operators = new LinkedList<>();
+			List<Map<String,String>> filters = new LinkedList<>();
 			for (Map<String,String> record: result.getRecords()) {
-				operators.add(record);
+				filters.add(record);
 			}
-			track.setSupportedOperators(operators);
+			track.setSupportedFilters(filters);
 		} catch (Exception e) {
 			log.error("Could not find supported operators for track " + track.getGraphName(), e);
-			track.setSupportedOperators(null);
+			track.setSupportedFilters(null);
+		}
+	}
+	
+	public void getSupportedConnectors(Track track) {
+		try {
+			String query = queryBuilderService.getConnectors(track);
+			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(), track.getDatasource().getMetaGraphName(), query);
+			List<Map<String,String>> connectors = new LinkedList<>();
+			for (Map<String,String> record: result.getRecords()) {
+				connectors.add(record);
+			}
+			track.setSupportedConnectors(connectors);
+		} catch (Exception e) {
+			log.error("Could not find supported connectors for track " + track.getGraphName(), e);
+			track.setSupportedConnectors(null);
 		}
 	}
 
@@ -92,14 +107,15 @@ public class MetaInfoService {
 			track.setSupportedFeatureTypes(results);
 		} catch (Exception e) {
 			log.error("Could not find supported operators for track " + track.getGraphName(), e);
-			track.setSupportedOperators(null);
+			track.setSupportedFilters(null);
 
 		}
 	}
 
 	public void addMetaInfo(Track track) {
 		getLocalToBoinqReferenceMap(track);
-		getSupportedOperators(track);
+		getSupportedFilters(track);
+		getSupportedConnectors(track);
 		getSupportedFeatureTypes(track);
 	}
 

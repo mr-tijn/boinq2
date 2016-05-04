@@ -41,6 +41,12 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#connector -->
+
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#connector"/>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#endpoint -->
 
     <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#endpoint"/>
@@ -214,6 +220,14 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#Connector -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Connector">
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A connector is a predefined path to an entity that can be connected to another connector by referring to the same target entity.</rdfs:comment>
+    </owl:Class>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#ConversionDate -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#ConversionDate">
@@ -301,8 +315,25 @@
     <!-- http://www.boinq.org/iri/ontologies/track#FeatureTypeFilter -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FeatureTypeFilter">
-        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Operator"/>
-        <skos:prefLabel>FeatureType</skos:prefLabel>
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Filter"/>
+        <skos:prefLabel>FeatureTypeFilter</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#FieldMatchFilter -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Filter"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#pathExpression"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">Operators matching the value of a field</rdfs:comment>
+        <rdfs:label>FieldMatchFilter</rdfs:label>
     </owl:Class>
     
 
@@ -334,6 +365,12 @@
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FileName">
         <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#Filter -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Filter"/>
     
 
 
@@ -380,7 +417,7 @@
     <!-- http://www.boinq.org/iri/ontologies/track#LocationFilter -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#LocationFilter">
-        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Operator"/>
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Filter"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#references"/>
@@ -388,7 +425,7 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">An operator that filters based on the location of a feature</rdfs:comment>
-        <skos:prefLabel>Location</skos:prefLabel>
+        <skos:prefLabel>LocationFilter</skos:prefLabel>
     </owl:Class>
     
 
@@ -399,18 +436,10 @@
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#Match -->
+    <!-- http://www.boinq.org/iri/ontologies/track#MatchDecimalFilter -->
 
-    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Match">
-        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Operator"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#MatchDecimal -->
-
-    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchDecimal">
-        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#MatchField"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchDecimalFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#decimalValue"/>
@@ -418,51 +447,35 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">Match a decimal value</rdfs:comment>
-        <skos:prefLabel xml:lang="en">MatchDecimal</skos:prefLabel>
+        <skos:prefLabel xml:lang="en">MatchDecimalFilter</skos:prefLabel>
     </owl:Class>
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#MatchField -->
+    <!-- http://www.boinq.org/iri/ontologies/track#MatchIntegerFilter -->
 
-    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchField">
-        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Operator"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#pathExpression"/>
-                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:comment xml:lang="en">Operators matching the value of a field</rdfs:comment>
-    </owl:Class>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#MatchInteger -->
-
-    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchInteger">
-        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#MatchField"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchIntegerFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter"/>
         <rdfs:comment xml:lang="en">Match an integer value</rdfs:comment>
-        <skos:prefLabel xml:lang="en">MatchInteger</skos:prefLabel>
+        <skos:prefLabel xml:lang="en">MatchIntegerFilter</skos:prefLabel>
     </owl:Class>
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#MatchString -->
+    <!-- http://www.boinq.org/iri/ontologies/track#MatchStringFilter -->
 
-    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchString">
-        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#MatchField"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchStringFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter"/>
         <rdfs:comment xml:lang="en">Match a string value</rdfs:comment>
-        <skos:prefLabel xml:lang="en">MatchString</skos:prefLabel>
+        <skos:prefLabel xml:lang="en">MatchStringFilter</skos:prefLabel>
     </owl:Class>
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#MatchTerm -->
+    <!-- http://www.boinq.org/iri/ontologies/track#MatchTermFilter -->
 
-    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchTerm">
-        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#MatchField"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchTermFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#endpointUrl"/>
@@ -482,14 +495,8 @@
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">Match a term from a target graph</rdfs:comment>
-        <skos:prefLabel>MatchTerm</skos:prefLabel>
+        <skos:prefLabel>MatchTermFilter</skos:prefLabel>
     </owl:Class>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#Operator -->
-
-    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Operator"/>
     
 
 
@@ -609,6 +616,12 @@
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Track">
         <rdfs:subClassOf>
             <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#connector"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#Connector"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#entry"/>
                 <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#ReferenceMapEntry"/>
             </owl:Restriction>
@@ -622,7 +635,7 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#supports"/>
-                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#Operator"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#Filter"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A collection of features of the same type</rdfs:comment>

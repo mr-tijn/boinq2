@@ -1,0 +1,53 @@
+<div>
+
+	<div class="modal fade" id="analysisDetail" tabindex="-1"
+		role="dialog" aria-labelledby="myDatasourceLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<analysisdetail analysis="selectedAnalysis" referencenames="referencenames"></analysisdetail>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal"
+					ng-click="clear()">
+					<span class="glyphicon glyphicon-ban-circle"></span> Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<h2>Analyses</h2>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Status</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="analysis in analyses">
+					<td>{{analysis.name}}</td>
+					<td>{{analysis.status| jobstatus}}</td>
+					<td>
+						<button class="btn btn-danger btn-sm" ng-click="cancel(analysis)"
+							ng-disabled='cancancel(analysis)'>
+							<span class="glyphicon glyphicon-remove-circle"></span> Cancel
+						</button>
+						<button class="btn btn-danger btn-sm" ng-click="showerror(analysis)"
+							ng-show='haserror(analysis)'>
+							<span class="glyphicon glyphicon-fire"></span> Error message
+						</button>
+						<button class="btn btn-primary btn-sm" data-toggle="modal"
+							data-target="#analysisDetail" ng-click="detail(analysis)">
+							<span class="glyphicon glyphicon-flash"></span> Detail
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+		
+</div>
+

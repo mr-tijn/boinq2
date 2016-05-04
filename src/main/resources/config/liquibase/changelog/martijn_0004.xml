@@ -27,5 +27,22 @@
 			<column name="reference_assembly_uri" type="VARCHAR(255)"/>
 		</addColumn>
 	</changeSet>
-
+	<changeSet author="martijn" id="add analysis table">
+		<createTable tableName="T_ANALYSIS">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="name" type="VARCHAR(255)"/>
+			<column name="status" type="INTEGER"/>
+			<column name="type" type="VARCHAR(255)"/>
+			<column name="description" type="TEXT"/>
+			<column name="error_description" type="TEXT"/>
+		</createTable>
+		<createTable tableName="T_PROGRESS">
+			<column name="analysis_id" type="BIGINT"/>
+			<column name="reference" type="VARCHAR(255)"/>
+			<column name="percentage" type="FLOAT"/>
+		</createTable>
+		<addForeignKeyConstraint baseColumnNames="analysis_id" baseTableName="T_PROGRESS" constraintName="fk_progressToAnalysis" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_ANALYSIS"/>
+	</changeSet>
 </databaseChangeLog>

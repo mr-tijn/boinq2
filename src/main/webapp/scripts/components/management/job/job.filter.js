@@ -1,4 +1,4 @@
-angular.module('boinqApp').filter('jobstatus', ['JobConstants', function(DatasourceConstants) {
+angular.module('boinqApp').filter('jobstatus', ['JobConstants', function(JobConstants) {
 
 	console.log('Registering filter jobstatus');
 

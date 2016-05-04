@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
+import com.genohm.boinq.domain.jobs.analysis.GenomeAnalysis;
 import com.genohm.boinq.domain.jobs.analysis.SlidingWindowFeatureSelection;
 import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.domain.match.FeatureQueryFactory;
+import com.genohm.boinq.repository.AnalysisRepository;
 import com.genohm.boinq.repository.FeatureQueryRepository;
 import com.genohm.boinq.repository.UserRepository;
 import com.genohm.boinq.service.AsynchronousJobService;
@@ -37,6 +39,8 @@ public class FeatureQueryResource {
 	private UserRepository userRepository;
 	@Inject
 	private AsynchronousJobService jobService;
+	@Inject
+	private AnalysisRepository analysisRepository;
 	
     @RequestMapping(value = "/rest/featurequery",
             method = RequestMethod.POST,
@@ -95,6 +99,7 @@ public class FeatureQueryResource {
     			.findOneWithMeta(fqId)
     			.filter(fq -> fq.getOwner().getLogin().equals(principal.getName()));
     	if (featureQuery.isPresent()) {
+    		SlidingWindowFeatureSelection analysis = new SlidingWindowFeatureSelection(featureQuery.get());
     		jobService.add(new SlidingWindowFeatureSelection(featureQuery.get()));
     	}
     }

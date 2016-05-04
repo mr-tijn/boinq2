@@ -36,7 +36,9 @@ public class Track implements Serializable {
 	
 	//meta info
 	@Transient
-	private List<Map<String,String>> supportedOperators;
+	private List<Map<String,String>> supportedFilters;
+	@Transient
+	private List<Map<String, String>> supportedConnectors;
 	@Transient
 	private Map<String,String> supportedFeatureTypes;
 	@Transient
@@ -203,12 +205,12 @@ public class Track implements Serializable {
 		this.status = status;
 	}
 	
-	public void setSupportedOperators(List<Map<String, String>> supportedOperators) {
-		this.supportedOperators = supportedOperators;
+	public void setSupportedFilters(List<Map<String, String>> supportedFilters) {
+		this.supportedFilters = supportedFilters;
 	}
 	
-	public List<Map<String,String>> getSupportedOperators() {
-		return supportedOperators;
+	public List<Map<String,String>> getSupportedFilters() {
+		return supportedFilters;
 	}
 
 	public Map<String,String> getSupportedFeatureTypes() {
@@ -267,6 +269,16 @@ public class Track implements Serializable {
                 ", assembly='" + assembly + "'" +
                 ", contigPrefix=" + contigPrefix + "'" +
                 ", rawDataFiles = [" + rawDataFilesString + "]" +
+                ", supportedFilters = [" + supportedFilters + "]" +
+                ", supportedConnectors = [" + supportedConnectors + "]" +
                 '}';
     }
+
+    public List<Map<String, String>> getSupportedConnectors() {
+    	return this.supportedConnectors;
+    }
+    
+	public void setSupportedConnectors(List<Map<String, String>> connectors) {
+		this.supportedConnectors = connectors;
+	}
 }

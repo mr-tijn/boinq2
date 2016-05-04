@@ -27,7 +27,7 @@ angular.module('boinqApp')
                 }],
                 resolvedAccount: ['Principal', function(Principal) {
                 	return Principal.identity();
-                }]	
+                }]
             }
         });
 });

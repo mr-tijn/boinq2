@@ -1,21 +1,9 @@
 <?xml version="1.0"?>
-
-
-<!DOCTYPE rdf:RDF [
-    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
-    <!ENTITY boinq "http://www.boinq.org/resource/" >
-    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
-    <!ENTITY skos "http://www.w3.org/2004/02/skos/core#" >
-    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
-    <!ENTITY track "http://www.boinq.org/iri/ontologies/track#" >
-    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-]>
-
-
 <rdf:RDF xmlns="http://www.boinq.org/iri/ontologies/track#"
      xml:base="http://www.boinq.org/iri/ontologies/track"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:boinq="http://www.boinq.org/resource/"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:skos="http://www.w3.org/2004/02/skos/core#"
@@ -38,7 +26,7 @@
 
     <!-- http://www.w3.org/2004/02/skos/core#prefLabel -->
 
-    <owl:AnnotationProperty rdf:about="&skos;prefLabel"/>
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#prefLabel"/>
     
 
 
@@ -53,75 +41,81 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#connector -->
+
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#connector"/>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#endpoint -->
 
-    <owl:ObjectProperty rdf:about="&track;endpoint"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#endpoint"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#entry -->
 
-    <owl:ObjectProperty rdf:about="&track;entry"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#entry"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#hasAttribute -->
 
-    <owl:ObjectProperty rdf:about="&track;hasAttribute"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#hasAttribute"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#holds -->
 
-    <owl:ObjectProperty rdf:about="&track;holds"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#holds"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#originalReference -->
 
-    <owl:ObjectProperty rdf:about="&track;originalReference"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#originalReference"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#partOf -->
 
-    <owl:ObjectProperty rdf:about="&track;partOf"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#partOf"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#provides -->
 
-    <owl:ObjectProperty rdf:about="&track;provides"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#provides"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#references -->
 
-    <owl:ObjectProperty rdf:about="&track;references"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#references"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#supports -->
 
-    <owl:ObjectProperty rdf:about="&track;supports"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#supports"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#targetReference -->
 
-    <owl:ObjectProperty rdf:about="&track;targetReference"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#targetReference"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#targets -->
 
-    <owl:ObjectProperty rdf:about="&track;targets"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#targets"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#uploadedBy -->
 
-    <owl:ObjectProperty rdf:about="&track;uploadedBy"/>
+    <owl:ObjectProperty rdf:about="http://www.boinq.org/iri/ontologies/track#uploadedBy"/>
     
 
 
@@ -138,43 +132,74 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#createdOn -->
 
-    <owl:DatatypeProperty rdf:about="&track;createdOn"/>
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#createdOn"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#decimalValue -->
+
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#decimalValue"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#endpointUrl -->
 
-    <owl:DatatypeProperty rdf:about="&track;endpointUrl"/>
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#endpointUrl"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#graphUri -->
 
-    <owl:DatatypeProperty rdf:about="&track;graphUri"/>
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#graphUri"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#identifier -->
 
-    <owl:DatatypeProperty rdf:about="&track;identifier"/>
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#identifier"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#label -->
 
-    <owl:DatatypeProperty rdf:about="&track;label"/>
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#label"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#matchName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#matchName">
+        <rdfs:comment xml:lang="en">A name representing the match operator.</rdfs:comment>
+    </owl:DatatypeProperty>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#motherTerm -->
 
-    <owl:DatatypeProperty rdf:about="&track;motherTerm"/>
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#motherTerm"/>
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#undefinedTemplate -->
+    <!-- http://www.boinq.org/iri/ontologies/track#pathExpression -->
 
-    <owl:DatatypeProperty rdf:about="&track;undefinedTemplate"/>
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#pathExpression">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:comment xml:lang="en">A (SPARQL 1.1) property path expression between the feature entity and the field entity</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#rootTerm -->
+
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#rootTerm"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#sequence_length -->
+
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#sequence_length">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -191,49 +216,57 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#Attribute -->
 
-    <owl:Class rdf:about="&track;Attribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Attribute"/>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#Connector -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Connector">
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A connector is a predefined path to an entity that can be connected to another connector by referring to the same target entity.</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#ConversionDate -->
 
-    <owl:Class rdf:about="&track;ConversionDate">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#ConversionDate">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#Datasource -->
 
-    <owl:Class rdf:about="&track;Datasource">
-        <rdfs:label rdf:datatype="&xsd;string">Datasource</rdfs:label>
-        <rdfs:comment rdf:datatype="&rdfs;Literal">A Datasource is a source of information. It is usually a SPARQL Endpoint</rdfs:comment>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Datasource">
+        <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal">A Datasource is a source of information. It is usually a SPARQL Endpoint</rdfs:comment>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Datasource</rdfs:label>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#EntryCount -->
 
-    <owl:Class rdf:about="&track;EntryCount">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#EntryCount">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#FaldoDatasource -->
 
-    <owl:Class rdf:about="&track;FaldoDatasource">
-        <rdfs:subClassOf rdf:resource="&track;FeatureDatasource"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FaldoDatasource">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FeatureDatasource"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;provides"/>
-                <owl:someValuesFrom rdf:resource="&track;FaldoTrack"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#provides"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#FaldoTrack"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;references"/>
-                <owl:someValuesFrom rdf:resource="&track;ReferenceAssembly"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#references"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#ReferenceAssembly"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A FaldoDatasource that uses FALDO for referencing an assembly</rdfs:comment>
@@ -243,13 +276,13 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#FaldoTrack -->
 
-    <owl:Class rdf:about="&track;FaldoTrack">
-        <rdfs:subClassOf rdf:resource="&track;Track"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FaldoTrack">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Track"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;graphUri"/>
-                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="&xsd;anyURI"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#graphUri"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -258,16 +291,16 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#FeatureCount -->
 
-    <owl:Class rdf:about="&track;FeatureCount">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FeatureCount">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#FeatureDatasource -->
 
-    <owl:Class rdf:about="&track;FeatureDatasource">
-        <rdfs:subClassOf rdf:resource="&track;SPARQLDatasource"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FeatureDatasource">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#SPARQLDatasource"/>
         <rdfs:comment xml:lang="en">A SPARQLDatasource offering features.</rdfs:comment>
     </owl:Class>
     
@@ -275,185 +308,220 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#FeatureType -->
 
-    <owl:Class rdf:about="&track;FeatureType"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FeatureType"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#FeatureTypeFilter -->
 
-    <owl:Class rdf:about="&track;FeatureTypeFilter">
-        <rdfs:subClassOf rdf:resource="&track;Operator"/>
-        <skos:prefLabel>FeatureType</skos:prefLabel>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FeatureTypeFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Filter"/>
+        <skos:prefLabel>FeatureTypeFilter</skos:prefLabel>
     </owl:Class>
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#Field -->
+    <!-- http://www.boinq.org/iri/ontologies/track#FieldMatchFilter -->
 
-    <owl:Class rdf:about="&track;Field">
-        <rdfs:comment xml:lang="en">A field. An attribute of a feature that can be used to filter on.</rdfs:comment>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Filter"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#pathExpression"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">Operators matching the value of a field</rdfs:comment>
+        <rdfs:label>FieldMatchFilter</rdfs:label>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#File -->
 
-    <owl:Class rdf:about="&track;File"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#File"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#FileAttribute -->
 
-    <owl:Class rdf:about="&track;FileAttribute">
-        <rdfs:subClassOf rdf:resource="&track;Attribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FileAttribute">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Attribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#FileExtension -->
 
-    <owl:Class rdf:about="&track;FileExtension">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FileExtension">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#FileName -->
 
-    <owl:Class rdf:about="&track;FileName">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FileName">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
+    
+
+
+    <!-- http://www.boinq.org/iri/ontologies/track#Filter -->
+
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Filter"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#FilterCount -->
 
-    <owl:Class rdf:about="&track;FilterCount">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#FilterCount">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#HeaderBED -->
 
-    <owl:Class rdf:about="&track;HeaderBED">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#HeaderBED">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#HeaderGFF -->
 
-    <owl:Class rdf:about="&track;HeaderGFF">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#HeaderGFF">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#HeaderSAM -->
 
-    <owl:Class rdf:about="&track;HeaderSAM">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#HeaderSAM">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#HeaderVCF -->
 
-    <owl:Class rdf:about="&track;HeaderVCF">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#HeaderVCF">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#LocationFilter -->
 
-    <owl:Class rdf:about="&track;LocationFilter">
-        <rdfs:subClassOf rdf:resource="&track;Operator"/>
-        <skos:prefLabel>Location</skos:prefLabel>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#LocationFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Filter"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#references"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#ReferenceAssembly"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">An operator that filters based on the location of a feature</rdfs:comment>
+        <skos:prefLabel>LocationFilter</skos:prefLabel>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#Mapping -->
 
-    <owl:Class rdf:about="&track;Mapping"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Mapping"/>
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#Match -->
+    <!-- http://www.boinq.org/iri/ontologies/track#MatchDecimalFilter -->
 
-    <owl:Class rdf:about="&track;Match">
-        <rdfs:subClassOf rdf:resource="&track;Operator"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#MatchField -->
-
-    <owl:Class rdf:about="&track;MatchField">
-        <rdfs:subClassOf rdf:resource="&track;Match"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchDecimalFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;targets"/>
-                <owl:onClass rdf:resource="&track;Field"/>
-                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#decimalValue"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">Match a decimal value</rdfs:comment>
+        <skos:prefLabel xml:lang="en">MatchDecimalFilter</skos:prefLabel>
     </owl:Class>
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#MatchNumber -->
+    <!-- http://www.boinq.org/iri/ontologies/track#MatchIntegerFilter -->
 
-    <owl:Class rdf:about="&track;MatchNumber">
-        <rdfs:subClassOf rdf:resource="&track;MatchField"/>
-        <rdfs:comment xml:lang="en">Match a numeric value</rdfs:comment>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchIntegerFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter"/>
+        <rdfs:comment xml:lang="en">Match an integer value</rdfs:comment>
+        <skos:prefLabel xml:lang="en">MatchIntegerFilter</skos:prefLabel>
     </owl:Class>
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#MatchString -->
+    <!-- http://www.boinq.org/iri/ontologies/track#MatchStringFilter -->
 
-    <owl:Class rdf:about="&track;MatchString">
-        <rdfs:subClassOf rdf:resource="&track;MatchField"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchStringFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter"/>
         <rdfs:comment xml:lang="en">Match a string value</rdfs:comment>
+        <skos:prefLabel xml:lang="en">MatchStringFilter</skos:prefLabel>
     </owl:Class>
     
 
 
-    <!-- http://www.boinq.org/iri/ontologies/track#MatchTerm -->
+    <!-- http://www.boinq.org/iri/ontologies/track#MatchTermFilter -->
 
-    <owl:Class rdf:about="&track;MatchTerm">
-        <rdfs:subClassOf rdf:resource="&track;MatchField"/>
-        <skos:prefLabel>MatchTerm</skos:prefLabel>
-        <rdfs:comment xml:lang="en">match a term from a target graph</rdfs:comment>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#MatchTermFilter">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FieldMatchFilter"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#endpointUrl"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#graphUri"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#rootTerm"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">Match a term from a target graph</rdfs:comment>
+        <skos:prefLabel>MatchTermFilter</skos:prefLabel>
     </owl:Class>
-    
-
-
-    <!-- http://www.boinq.org/iri/ontologies/track#Operator -->
-
-    <owl:Class rdf:about="&track;Operator"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#ReadCount -->
 
-    <owl:Class rdf:about="&track;ReadCount">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#ReadCount">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#Reference -->
 
-    <owl:Class rdf:about="&track;Reference">
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Reference">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;partOf"/>
-                <owl:onClass rdf:resource="&track;ReferenceAssembly"/>
-                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#partOf"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://www.boinq.org/iri/ontologies/track#ReferenceAssembly"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#sequence_length"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#long"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment>A representation of a reference sequence (e.g. a chromosome) supported by the viewer</rdfs:comment>
@@ -463,7 +531,7 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#ReferenceAssembly -->
 
-    <owl:Class rdf:about="&track;ReferenceAssembly">
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#ReferenceAssembly">
         <rdfs:comment>A referenceAssembly supported by the viewer</rdfs:comment>
     </owl:Class>
     
@@ -471,18 +539,18 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#ReferenceMapEntry -->
 
-    <owl:Class rdf:about="&track;ReferenceMapEntry">
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#ReferenceMapEntry">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;originalReference"/>
-                <owl:someValuesFrom rdf:resource="&owl;Thing"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#originalReference"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;targetReference"/>
-                <owl:onClass rdf:resource="&track;Reference"/>
-                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#targetReference"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://www.boinq.org/iri/ontologies/track#Reference"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment>An entry for mapping the datasources reference sequence IRI to a reference known by the viewer</rdfs:comment>
@@ -492,50 +560,50 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#SPARQLDatasource -->
 
-    <owl:Class rdf:about="&track;SPARQLDatasource">
-        <rdfs:label rdf:datatype="&xsd;string">SPARQLDatasource</rdfs:label>
-        <rdfs:subClassOf rdf:resource="&track;Datasource"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#SPARQLDatasource">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#Datasource"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;endpointUrl"/>
-                <owl:someValuesFrom rdf:resource="&xsd;anyURI"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#endpointUrl"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A Datasource that you can query using a SPARQL Endpoint</rdfs:comment>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SPARQLDatasource</rdfs:label>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#SampleCount -->
 
-    <owl:Class rdf:about="&track;SampleCount">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#SampleCount">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#SupportedSpecies -->
 
-    <owl:Class rdf:about="&track;SupportedSpecies"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#SupportedSpecies"/>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#TermDatasource -->
 
-    <owl:Class rdf:about="&track;TermDatasource">
-        <rdfs:subClassOf rdf:resource="&track;SPARQLDatasource"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#TermDatasource">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#SPARQLDatasource"/>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;graphUri"/>
-                <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onDataRange rdf:resource="&xsd;anyURI"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#graphUri"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;motherTerm"/>
-                <owl:maxQualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxQualifiedCardinality>
-                <owl:onDataRange rdf:resource="&xsd;anyURI"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#motherTerm"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A SPARQL Datasource offering terms</rdfs:comment>
@@ -545,23 +613,29 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#Track -->
 
-    <owl:Class rdf:about="&track;Track">
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Track">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;holds"/>
-                <owl:someValuesFrom rdf:resource="&track;FeatureType"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#connector"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#Connector"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;supports"/>
-                <owl:someValuesFrom rdf:resource="&track;Operator"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#entry"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#ReferenceMapEntry"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="&track;entry"/>
-                <owl:someValuesFrom rdf:resource="&track;ReferenceMapEntry"/>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#holds"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#FeatureType"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#supports"/>
+                <owl:someValuesFrom rdf:resource="http://www.boinq.org/iri/ontologies/track#Filter"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:comment xml:lang="en">A collection of features of the same type</rdfs:comment>
@@ -571,18 +645,18 @@
 
     <!-- http://www.boinq.org/iri/ontologies/track#TripleCount -->
 
-    <owl:Class rdf:about="&track;TripleCount">
-        <rdfs:subClassOf rdf:resource="&track;FileAttribute"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#TripleCount">
+        <rdfs:subClassOf rdf:resource="http://www.boinq.org/iri/ontologies/track#FileAttribute"/>
     </owl:Class>
     
 
 
     <!-- http://www.boinq.org/iri/ontologies/track#User -->
 
-    <owl:Class rdf:about="&track;User"/>
+    <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#User"/>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 3.5.1) http://owlapi.sourceforge.net -->
+<!-- Generated by the OWL API (version 4.1.3.20151118-2017) https://github.com/owlcs/owlapi -->
 

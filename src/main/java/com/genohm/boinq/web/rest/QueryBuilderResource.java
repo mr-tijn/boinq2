@@ -83,6 +83,18 @@ public class QueryBuilderResource {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	@RequestMapping(value = "/rest/querybuilder/referenceQuery", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<QueryDTO> getReferenceQuery(@RequestParam String assemblyUri) {
+		try {
+			QueryDTO result = new QueryDTO(queryBuilderService.getReferencesForAssembly(assemblyUri), "SPARQL1.1");
+			return new ResponseEntity<QueryDTO>(result, HttpStatus.OK);
+		} catch (Exception e) {
+			log.error("Could not get references for assembly", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@RequestMapping(value = "/rest/querybuilder/insertQuery", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<String> getInsertQuery(@RequestParam String graphUri,

@@ -15,6 +15,7 @@
 				<tr>
 					<th>ID</th>
 					<th>Name</th>
+					<th>ReferenceAssembly</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -22,6 +23,7 @@
 				<tr ng-repeat="fq in featurequeries">
 					<td>{{fq.id}}</td>
 					<td>{{fq.name}}</td>
+					<td>{{fq.referenceAssemblyUri}}</td>
 					<td>
 						<button type="submit" ng-click="remove(fq.id)"
 							class="btn btn-danger btn-sm">

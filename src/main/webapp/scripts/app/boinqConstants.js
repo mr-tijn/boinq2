@@ -53,6 +53,18 @@ angular.module('boinqApp').constant('SPARQLConstants',{
 	STATIC_ENDPOINT : "/static/sparql"
 });
 
+
+
+angular.module('boinqApp').constant('Endpoints',{
+	localQuery: "/local/sparql",
+	localUpdate: "/local/update",
+	metaGraph: "http://www.boinq.org/iri/graph/meta/"
+});
+
+angular.module('boinqApp').constant('AnalysisConstants',{
+	TYPE_FEATURESELECTION : 0,
+});
+
 angular.module('boinqApp').constant('JobConstants',{
 	
 	STATUS_PENDING : 0,

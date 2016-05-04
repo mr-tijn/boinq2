@@ -75,12 +75,12 @@
 
 						<div class="form-group">
 							<label>Species</label> <input type="text" class="form-control"
-								name="trackSpecies" ng-disbaled="true" ng-model="track.species"
+								name="trackSpecies" ng-disabled="true" ng-model="track.species"
 								ng-minlength=1 ng-maxlength=200 readonly>
 						</div>
 						<div class="form-group">
 							<label>Assembly</label> <input type="text" class="form-control"
-								name="trackAssembly" ng-disbaled="true"
+								name="trackAssembly" ng-disabled="true"
 								ng-model="track.assembly" ng-minlength=1 ng-maxlength=200
 								readonly>
 						</div>
@@ -124,7 +124,7 @@
 							<div class="form-group" ng-show="species==null">
 								<label>Species</label> <select name="species"
 									ng-model="track.species" class="form-control"
-									ng-disabeled="track.species"
+									ng-disabled="track.species"
 									ng-change="getAssemblies(track.species)"
 									ng-options="item.label as item.label for item in speciesList">
 									<option value=track.species>track.species</option>
@@ -133,7 +133,7 @@
 							<div class="form-group" ng-show="assembly==null">
 								<label>Assembly</label> <select name="assembly"
 									ng-model="track.assembly" class="form-control"
-									ng-disabeled="track.assembly"
+									ng-disabled="track.assembly"
 									ng-options="item.label as item.label for item in assemblyList">
 									<option value="track.assembly">track.species</option>
 								</select>
@@ -141,12 +141,12 @@
 						
 							<div class="form-group" ng-show="species">
 								<label>Species</label> <input type="text" class="form-control"
-									name="trackSpecies" ng-disbaled="true" ng-model="track.species"
+									name="trackSpecies" ng-disabled="true" ng-model="track.species"
 									ng-minlength=1 ng-maxlength=200 readonly>
 							</div>
 							<div class="form-group" ng-show="assembly">
 								<label>Assembly</label> <input type="text" class="form-control"
-									name="trackAssembly" ng-disbaled="true"
+									name="trackAssembly" ng-disabled="true"
 									ng-model="track.assembly" ng-minlength=1 ng-maxlength=200
 									readonly>
 							</div>

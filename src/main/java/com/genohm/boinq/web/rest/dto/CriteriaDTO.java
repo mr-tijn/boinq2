@@ -3,12 +3,12 @@ package com.genohm.boinq.web.rest.dto;
 import com.genohm.boinq.generated.vocabularies.TrackVocab;
 
 public class CriteriaDTO {
-	public static final String LOCATION_CRITERIA = "Location";
-	public static final String FEATURETYPE_CRITERIA = "FeatureType";
-	public static final String MATCHTERM_CRITERIA = "MatchTerm";
-	public static final String MATCHINTEGER_CRITERIA = "MatchInteger";
-	public static final String MATCHDECIMAL_CRITERIA = "MatchDecimal";
-	public static final String MATCHSTRING_CRITERIA = "MatchString";
+	public static final String LOCATION_CRITERIA = "LocationFilter";
+	public static final String FEATURETYPE_CRITERIA = "FeatureTypeFilter";
+	public static final String MATCHTERM_CRITERIA = "MatchTermFilter";
+	public static final String MATCHINTEGER_CRITERIA = "MatchIntegerFilter";
+	public static final String MATCHDECIMAL_CRITERIA = "MatchDecimalFilter";
+	public static final String MATCHSTRING_CRITERIA = "MatchStringFilter";
 
 	public String name;
 	public String type;

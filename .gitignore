@@ -141,4 +141,6 @@ fuseki
 files/*
 reference_tools
 ontologies/catalog-v001.xml
+ontologies/go.owl
+src/main/resources/ontologies/go.owl
 /target/
