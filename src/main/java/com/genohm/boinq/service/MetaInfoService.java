@@ -115,7 +115,6 @@ public class MetaInfoService {
 	public void addMetaInfo(Track track) {
 		getLocalToBoinqReferenceMap(track);
 		getSupportedFilters(track);
-		getSupportedConnectors(track);
 		getSupportedFeatureTypes(track);
 	}
 

@@ -10,6 +10,8 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
@@ -17,10 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.genohm.boinq.domain.RawDataFile;
+import com.genohm.boinq.web.rest.FileUploadController;
 
 @Service
 public class FileManagerService implements EnvironmentAware {
 
+	private static Logger log = LoggerFactory.getLogger(FileManagerService.class);
 	
 	private static final String FILEMANAGER_PREFIX = "boinq.filemanager.";
 	private static final String BASEPATH_KEY = "basepath";
@@ -56,17 +60,20 @@ public class FileManagerService implements EnvironmentAware {
         String targetPath = FilenameUtils.concat(uuidString.substring(0, 3), uuidString.substring(3));
         targetPath = FilenameUtils.concat(targetPath, fileName);
         String fullPath = FilenameUtils.concat(basePath, targetPath);
+        log.debug("Creating file "+fullPath);
         File targetFile = new File(fullPath);
         targetFile.getParentFile().mkdirs();
         targetFile.createNewFile();
         FileOutputStream out = new FileOutputStream(targetFile);
         byte[] buffer = new byte[4096];  
         int bytesRead;  
+        log.debug("Writing file "+fullPath);
         while ((bytesRead = input.read(buffer)) != -1) {  
           out.write(buffer, 0, bytesRead);  
         }  
         input.close();  
         out.close();  
+        log.debug("Closed file "+fullPath);
         return new RawDataFile(fullPath);
 	}
 	
