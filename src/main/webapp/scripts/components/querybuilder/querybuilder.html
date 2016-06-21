@@ -12,27 +12,28 @@
 	
 	</div>
 	
+	<form>
+	
 	<div mouse-capture class="row bnq_spacer15">
 		<div class="col-md-12 column">
 			<div class="row">
 				<div class="form-group">
 					<label>Name</label> <input type="text" class="form-control"
 						name="name" ng-model="featureQuery.name" ng-minlength=1
-						ng-maxlength=250>
+						ng-maxlength=250 ng-required="true">
 				</div>
 				<div class="form-group">
 					<label>Target Graph</label> <input type="text" class="form-control"
 						name="name" ng-model="featureQuery.targetGraph" ng-minlength=1
-						ng-maxlength=250>
+						ng-maxlength=250 ng-required="true">
 				</div>
 				<div class="form-group">
-					<label>Species</label> <select class="form-control" ng-model="selectedSpecies" ng-options="species as species.label for species in speciesList"> </select>
+					<label>Species</label> <select class="form-control" ng-required="true" ng-model="selectedSpecies" ng-options="species as species.label for species in speciesList">  <option value="">-- Please select species --</option> </select>
 				</div>
 				<div class="form-group">
-					<label>Assembly</label> <select class="form-control" ng-model="featureQuery.referenceAssembly" ng-disabled="selectedSpecies == null" ng-options="assembly as assembly.uri for assembly in assemblies[selectedSpecies.label]"> </select>
+					<label>Assembly</label> <select class="form-control" ng-required="true" ng-model="featureQuery.referenceAssembly" ng-disabled="selectedSpecies == null" ng-options="assembly as assembly.uri for assembly in assemblies[selectedSpecies.label]"> <option value="">-- Please select assembly --</option> </select>
 				</div>
 			</div>
-			
 		</div>
 		<div class="col-md-3 column">
 			<div class="row">Drag track to the canvas</div>
@@ -72,7 +73,7 @@
 				<featureselectdetail featureselect="selectedFS"></featureselectdetail>
 			</div>
 			<div class="row">
-				<button type="button" class="btn btn-default" ng-show="cansave"
+				<button type="submit" class="btn btn-default" ng-show="cansave"
 					ng-click="save()">
 					<span class="glyphicon glyphicon-save"></span> Save
 				</button>
@@ -81,5 +82,5 @@
 
 
 	</div>
-
+	</form>
 </div>

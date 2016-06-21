@@ -12,6 +12,7 @@ public interface AsynchronousJob {
 	public static int JOB_STATUS_SUCCESS = 2;
 	public static int JOB_STATUS_ERROR = 3;
 	public static int JOB_STATUS_UNKNOWN = 4;
+	public static int JOB_STATUS_INTERRUPTED = 5;
 	
 	String getName();
 	void setName(String name);

@@ -65,6 +65,15 @@ angular.module('boinqApp').constant('AnalysisConstants',{
 	TYPE_FEATURESELECTION : 0,
 });
 
+angular.module('boinqApp').constant('CriteriaConstants', {
+	LOCATION_CRITERIA : "LocationFilter",
+	FEATURETYPE_CRITERIA : "FeatureTypeFilter",
+	MATCHTERM_CRITERIA : "MatchTermFilter",
+	MATCHINTEGER_CRITERIA : "MatchIntegerFilter",
+	MATCHDECIMAL_CRITERIA : "MatchDecimalFilter",
+	MATCHSTRING_CRITERIA : "MatchStringFilter"
+});
+
 angular.module('boinqApp').constant('JobConstants',{
 	
 	STATUS_PENDING : 0,

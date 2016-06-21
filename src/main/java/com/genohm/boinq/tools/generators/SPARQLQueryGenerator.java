@@ -1,5 +1,7 @@
 package com.genohm.boinq.tools.generators;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -48,6 +50,7 @@ import org.apache.jena.sparql.path.Path;
 import org.apache.jena.sparql.path.PathFactory;
 import org.apache.jena.sparql.path.PathParser;
 import org.apache.jena.sparql.syntax.Element;
+import org.apache.jena.sparql.syntax.ElementBind;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementGroup;
 import org.apache.jena.sparql.syntax.ElementNamedGraph;
@@ -76,6 +79,7 @@ import com.genohm.boinq.domain.match.FeatureSelect;
 import com.genohm.boinq.domain.match.FeatureSelectCriterion;
 import com.genohm.boinq.domain.match.FeatureTypeCriterion;
 import com.genohm.boinq.domain.match.Connect;
+import com.genohm.boinq.domain.match.FeatureConnector;
 import com.genohm.boinq.domain.match.LocationCriterion;
 import com.genohm.boinq.domain.match.LocationOverlap;
 import com.genohm.boinq.domain.match.MatchDecimalCriterion;
@@ -111,7 +115,6 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	private QuadAcc insertQuads;
 	
 	private Map<String, Long> idCounters;
-	private List<Node> references;
 	
 	private String nextId(String prefix) {
 		if (prefix == null) {
@@ -168,6 +171,11 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		referenceMapMap = new HashMap<>();
 		globalReferenceId = Var.alloc("globalReferenceId");
 		valuesVariables.add(globalReferenceId);
+//		for (Integer i=1; i < 23; i++) {
+//			globalReferences.add(NodeFactory.createURI("http://www.boinq.org/resource/homo_sapiens/GRCh38/" + i));
+//		}
+//		globalReferences.add(NodeFactory.createURI("http://www.boinq.org/resource/homo_sapiens/GRCh38/X"));
+//		globalReferences.add(NodeFactory.createURI("http://www.boinq.org/resource/homo_sapiens/GRCh38/Y"));
 	}
 	
 	
@@ -254,8 +262,12 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	private void addReferenceBindings() {
 		// use refMapMap to process all in the end
 		
-		for (String selectFeatureName : featureNameMap.values()) {
-			valuesVariables.add(Var.alloc(selectFeatureName + "_Reference"));
+		for (FeatureSelect select: referenceMapMap.keySet()) {
+			if (select.getTrack().getDatasource().getType() == Datasource.TYPE_REMOTE_FALDO || 
+					select.getTrack().getDatasource().getType() == Datasource.TYPE_LOCAL_FALDO) {
+				String refVarName = featureNameMap.get(select) + "_Reference";
+				valuesVariables.add(Var.alloc(refVarName));
+			}
 		}
 		for (Node globalRef: globalReferences) {
 			BindingMap binding = BindingFactory.create();
@@ -263,10 +275,15 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 			for (FeatureSelect select: referenceMapMap.keySet()) {
 				String refVarName = featureNameMap.get(select) + "_Reference";
 				Var refVar = Var.alloc(refVarName);
-				Map<Node,Node> refMap = referenceMapMap.get(select);
-				Node target = refMap.get(globalRef);
-				if (target != null) {
-					binding.add(refVar, target);
+				if (select.getTrack().getDatasource().getType() == Datasource.TYPE_REMOTE_FALDO) {
+					Map<Node,Node> refMap = referenceMapMap.get(select);
+					Node target = refMap.get(globalRef);
+					if (target != null) {
+						binding.add(refVar, target);
+					}
+				}
+				if (select.getTrack().getDatasource().getType() == Datasource.TYPE_LOCAL_FALDO) {
+					binding.add(refVar, globalRef);
 				}
 			}
 			valuesBindings.add(binding);
@@ -316,7 +333,7 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		for (QueryGeneratorAcceptor crit: fs.getCriteria()) {
 			crit.accept(this, region);
 		}		
-		if (track.getDatasource().getType() == Datasource.TYPE_REMOTE_FALDO) {
+		if (track.getDatasource().getType() == Datasource.TYPE_REMOTE_FALDO || track.getDatasource().getType() == Datasource.TYPE_REMOTE_SPARQL) {
 			String serviceURI = track.getDatasource().getEndpointUrl();
 			//TODO: checkifnotnull
 			featureSelectElement = new ElementService(serviceURI, featureSelectElement);
@@ -445,12 +462,14 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 	@Override
 	public Boolean check(FeatureQuery fq, GenomicRegion r) {
 		if (fq.getTargetGraph() == null) return false;
-		// reference map
+		// build reference map
 		referenceMapMap = new HashMap<>();
 		for (FeatureSelect select: fq.getSelects()) {
-			Map<Node,Node> localRefToBoinqRef = select.getTrack().getReferenceMap();
-			if (localRefToBoinqRef != null) {
-				referenceMapMap.put(select, localRefToBoinqRef);
+			if (select.getTrack().getDatasource().getType() == Datasource.TYPE_REMOTE_FALDO) {
+				Map<Node,Node> localRefToBoinqRef = select.getTrack().getReferenceMap();
+				if (localRefToBoinqRef != null) {
+					referenceMapMap.put(select, localRefToBoinqRef);
+				}
 			}
 		}
 		// get operators
@@ -485,7 +504,7 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		Node field = NodeFactory.createVariable(nextId("field"));
 		ElementGroup parentGroup = selectTriples.get(parentFeatureName);
 		ElementPathBlock link = new ElementPathBlock();
-		TriplePath featureToField = new TriplePath(feature, PathParser.parse(mc.getPathExpression(), prefixMap), field);
+		TriplePath featureToField = new TriplePath(feature, parsePath(mc.getPathExpression()), field);
 		link.addTriplePath(featureToField);
 		parentGroup.addElement(link);
 		parentGroup.addElement(new ElementFilter(new E_SameTerm(new ExprVar(field), new NodeValueNode(NodeFactory.createURI(mc.getTermUri())))));
@@ -498,7 +517,7 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		Node field = NodeFactory.createVariable(nextId("field"));
 		ElementGroup parentGroup = selectTriples.get(parentFeatureName);
 		ElementPathBlock link = new ElementPathBlock();
-		TriplePath featureToField = new TriplePath(feature, PathParser.parse(mc.getPathExpression(), prefixMap), field);
+		TriplePath featureToField = new TriplePath(feature, parsePath(mc.getPathExpression()), field);
 		link.addTriplePath(featureToField);
 		parentGroup.addElement(link);
 		if (mc.getExactMatch()) {
@@ -521,7 +540,7 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		Node field = NodeFactory.createVariable(nextId("field"));
 		ElementGroup parentGroup = selectTriples.get(parentFeatureName);
 		ElementPathBlock link = new ElementPathBlock();
-		TriplePath featureToField = new TriplePath(feature, PathParser.parse(mc.getPathExpression(), prefixMap), field);
+		TriplePath featureToField = new TriplePath(feature, parsePath(mc.getPathExpression()), field);
 		link.addTriplePath(featureToField);
 		parentGroup.addElement(link);
 		if (mc.getExactMatch()) {
@@ -544,7 +563,7 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		Node field = NodeFactory.createVariable(nextId("field"));
 		ElementGroup parentGroup = selectTriples.get(parentFeatureName);
 		ElementPathBlock link = new ElementPathBlock();
-		TriplePath featureToField = new TriplePath(feature, PathParser.parse(mc.getPathExpression(), prefixMap), field);
+		TriplePath featureToField = new TriplePath(feature, parsePath(mc.getPathExpression()), field);
 		link.addTriplePath(featureToField);
 		parentGroup.addElement(link);
 		if (mc.getExactMatch()) {
@@ -556,42 +575,56 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 
 	@Override
 	public Boolean check(MatchIntegerCriterion mc, GenomicRegion r) {
-		if ((PathParser.parse(mc.getPathExpression(), prefixMap)) == null) return false;
 		if (mc.getExactMatch() && null == mc.getMatchLong()) return false;
 		if (!mc.getExactMatch() && (mc.getMinLong() == null && mc.getMaxLong() == null)) return false;
-		return true;
+		return checkPathExpression(mc.getPathExpression());
 	}
 
 	@Override
 	public Boolean check(MatchDecimalCriterion mc, GenomicRegion r) {
-		if ((PathParser.parse(mc.getPathExpression(), prefixMap)) == null) return false;
 		if (mc.getExactMatch() && null == mc.getMatchDouble()) return false;
 		if (!mc.getExactMatch() && (mc.getMinDouble() == null && mc.getMaxDouble() == null)) return false;
-		return true;
+		return checkPathExpression(mc.getPathExpression());
 	}
 	
 	@Override
 	public Boolean check(MatchStringCriterion mc, GenomicRegion r) {
-		if ((PathParser.parse(mc.getPathExpression(), prefixMap)) == null) return false;
 		if (mc.getMatchString() == null) return false;
-		return true;
+		return checkPathExpression(mc.getPathExpression());
 	}
 
 	@Override
 	public Boolean check(MatchTermCriterion mc, GenomicRegion r) {
-		if ((PathParser.parse(mc.getPathExpression(), prefixMap)) == null) return false;
 		if (!(NodeFactory.createURI(mc.getTermUri())).isURI()) return false;
-		return true;
+		return checkPathExpression(mc.getPathExpression());
 	}
 
 	// not used yet
 	
-	@Override
-	public Boolean check(Connect idMatch, GenomicRegion region) {
-		
-		if ((PathParser.parse(idMatch.getSourceConnector().getPathExpression(), prefixMap)) == null) return false;
-		if ((PathParser.parse(idMatch.getTargetConnector().getPathExpression(), prefixMap)) == null) return false;
+	private String urldecode(String input) {
+		String output = null;
+		try {
+			output = URLDecoder.decode(input, StandardCharsets.UTF_8.toString());
+		} catch (Exception e) {
+			log.error("Cannot urldecode "+ input, e);
+		}
+		return output;
+	}
+	
+	private Boolean checkPathExpression(String pathExpression) {
+		try {
+			String decoded = URLDecoder.decode(pathExpression, StandardCharsets.UTF_8.toString());
+			if ((PathParser.parse(decoded, prefixMap)) == null) return false;
+		} catch (Exception e) {
+			return false;
+		}
 		return true;
+	}
+	
+	@Override
+	public Boolean check(Connect idMatch, GenomicRegion region)  {
+		return (checkPathExpression(idMatch.getSourceConnector().getPathExpression()) 
+				&& checkPathExpression(idMatch.getTargetConnector().getPathExpression()));
 	}
 
 	@Override
@@ -602,15 +635,41 @@ public class SPARQLQueryGenerator implements QueryGenerator {
 		String from = featureNameMap.get(idMatch.getSource()) ;
 		String to = featureNameMap.get(idMatch.getTarget()) ;
 		
-		addConnectTriples(selectTriples.get(from),from,idMatch.getSourceConnector().getPathExpression(),idString);
-		addConnectTriples(selectTriples.get(to),to,idMatch.getTargetConnector().getPathExpression(),idString);
+		int sourceType = idMatch.getSourceConnector().getType();
+		if (FeatureConnector.CONNECTOR_TYPE_PATH == sourceType) {
+			addConnectTriples(selectTriples.get(from),from,idMatch.getSourceConnector().getPathExpression(),idString);
+		} else if (FeatureConnector.CONNECTOR_TYPE_ENTITY == sourceType) {
+			addConnectBind(selectTriples.get(from),from,idString);
+		} else {
+//			throw new Exception("Cannot handle connector type "+sourceType);
+		}
+		int targetType = idMatch.getTargetConnector().getType();
+		if (FeatureConnector.CONNECTOR_TYPE_PATH == targetType) {
+			addConnectTriples(selectTriples.get(to),to,idMatch.getTargetConnector().getPathExpression(),idString);
+		} else if (FeatureConnector.CONNECTOR_TYPE_ENTITY == targetType) {
+			addConnectBind(selectTriples.get(to),to,idString);
+		} else {
+			// TODO CHECK if we know the type
+		}
 		
+	}
+	
+	public void addConnectBind(ElementGroup featureTriples, String orig, String target) {
+		featureTriples.addElement(new ElementBind(Var.alloc(target), new ExprVar(orig)));
 	}
 	
 	public void addConnectTriples(ElementGroup featureTriples, String from, String path, String common) {
 		ElementPathBlock connect = new ElementPathBlock();
-		connect.addTriplePath(new TriplePath(NodeFactory.createVariable(from), PathParser.parse(path, prefixMap), NodeFactory.createVariable(common)));
+		try {
+			connect.addTriplePath(new TriplePath(NodeFactory.createVariable(from), parsePath(path), NodeFactory.createVariable(common)));
+		} catch (Exception e) {
+			log.error("Could not urldecode path expression ", e);
+		}
 		featureTriples.addElement(connect);
+	}
+
+	private Path parsePath(String path) {
+		return PathParser.parse(urldecode(path), prefixMap);
 	}
 
 }

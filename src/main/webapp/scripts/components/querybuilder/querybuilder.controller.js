@@ -1,4 +1,4 @@
-angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','boinqOneTimeFetch','FeatureQuery','resolvedDatasource','resolvedFeatureQuery','resolvedAccount','QueryBuilderService','callEndpoint','$state',function($scope,dragging,boinqOneTimeFetch,FeatureQuery,resolvedDatasource,resolvedFeatureQuery,resolvedAccount,QueryBuilderService,callEndpoint,$state) {
+angular.module('boinqApp').controller("QueryBuilderController",['$scope','dragging','boinqOneTimeFetch','FeatureQuery','resolvedDatasource','resolvedFeatureQuery','resolvedAccount','QueryBuilderService','callEndpoint','$state','CriteriaConstants',function($scope,dragging,boinqOneTimeFetch,FeatureQuery,resolvedDatasource,resolvedFeatureQuery,resolvedAccount,QueryBuilderService,callEndpoint,$state,CriteriaConstants) {
 
 	console.log("Registering controller QueryBuilderController");
 	
@@ -22,6 +22,9 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 					var crit = select.criteria[j];
 					if (crit.featureTypeUri) {
 						crit.featureType = {uri:crit.featureTypeUri, label:crit.featureTypeLabel};
+					}
+					if (crit.termUri) {
+						crit.term = {uri: crit.termUri, label: crit.termLabel};
 					}
 				}
 				select.xpos = select.viewX+"px";
@@ -217,7 +220,9 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 					}
 				});
 				
-				var FS = {idx:idx, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes, filters : filters, retrieve : false};
+				var connectors = track.supportedConnectors;
+				
+				var FS = {idx:idx, xpos:xpos, ypos:ypos, viewX:x, viewY:y, criteria: [], trackId: trackId, trackName : trackName, type: "undefined", queryTypes : queryTypes, filters : filters, supportedConnectors : connectors, retrieve : false};
 				idx++;
 				$scope.featureQuery.selects.push(FS);
 				$scope.selectedFS = FS;
@@ -243,24 +248,31 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 				type:join.type,
 				sameStrand:join.sameStrand,
 				sourceSelectIdx:join.sourceSelect.idx, 
-				targetSelectIdx:join.targetSelect.idx});
+				targetSelectIdx:join.targetSelect.idx,
+				sourceConnector:join.sourceConnector,
+				targetConnector:join.targetConnector});
 		}
 		for (var i=0; i<$scope.featureQuery.selects.length; i++) {
 			var select = $scope.featureQuery.selects[i];
 			var criteria = [];
 			for (var j=0; j< select.criteria.length; j++) {
 				var criterion = select.criteria[j];
-				switch (criterion.filter.filterName) {
-				case "FeatureTypeFilter" :
+				if (criterion.filter == undefined) {
+					select.criteria.splice(j,0);
+					j--;
+					continue;
+				}
+				switch (criterion.filter.filterTypeName) {
+				case CriteriaConstants.FEATURETYPE_CRITERIA :
 					criteria.push({
-						type: criterion.filter.filterName,
+						type: criterion.filter.filterTypeName,
 						featureTypeUri: (criterion.featureType?criterion.featureType.uri:null),
 						featureTypeLabel: (criterion.featureType?criterion.featureType.label:null)
 					});
 					break;
-				case "LocationFilter" :
+				case CriteriaConstants.LOCATION_CRITERIA :
 					criteria.push({
-						type: criterion.filter.filterName,
+						type: criterion.filter.filterTypeName,
 						contig: criterion.contig,
 						start: criterion.start,
 						end: criterion.end,
@@ -268,6 +280,40 @@ angular.module('boinqApp').controller("QueryBuilderController",['$scope','draggi
 					});
 					break;
 				// TODO: other types
+				case CriteriaConstants.MATCHTERM_CRITERIA :
+					criteria.push({
+						type: criterion.filter.filterTypeName,
+						termLabel: criterion.term.label,
+						termUri: criterion.term.uri,
+						pathExpression: criterion.filter.pathExpression
+					});
+					break;
+				case CriteriaConstants.MATCHINTEGER_CRITERIA : 
+					criteria.push({
+						type: criterion.filter.filterTypeName,
+						exactMatch: criterion.exactMatch,
+						minInteger: criterion.minInteger,
+						maxInteger: criterion.maxInteger,
+						pathExpression: criterion.filter.pathExpression
+					});
+					break;
+				case CriteriaConstants.MATCHDECIMAL_CRITERIA :
+					criteria.push({
+						type: criterion.filter.filterTypeName,
+						exactMatch: criterion.exactMatch,
+						minDouble: criterion.minDouble,
+						maxDouble: criterion.maxDouble,
+						pathExpression: criterion.filter.pathExpression
+					});
+					break;
+				case CriteriaConstants.MATCHSTRING_CRITERIA : 
+					criteria.push({
+						type: criterion.filter.filterTypeName,
+						exactMatch: criterion.exactMatch,
+						matchString: criterion.matchString,
+						pathExpression: criterion.filter.pathExpression
+					});
+					break;
 				default:
 					criteria.push({
 						type: "undefined"

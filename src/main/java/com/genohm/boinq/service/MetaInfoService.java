@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.domain.match.FeatureConnector;
+import com.genohm.boinq.tools.generators.SPARQLQueryGenerator;
 
 
 @Service
@@ -67,6 +69,8 @@ public class MetaInfoService {
 			String query = queryBuilderService.getConnectors(track);
 			SPARQLResultSet result = sparqlClientService.querySelect(track.getDatasource().getMetaEndpointUrl(), track.getDatasource().getMetaGraphName(), query);
 			List<Map<String,String>> connectors = new LinkedList<>();
+			// entity connector is always supported
+			connectors.add(getEntityConnector());
 			for (Map<String,String> record: result.getRecords()) {
 				connectors.add(record);
 			}
@@ -75,6 +79,14 @@ public class MetaInfoService {
 			log.error("Could not find supported connectors for track " + track.getGraphName(), e);
 			track.setSupportedConnectors(null);
 		}
+	}
+	
+	private Map<String,String> getEntityConnector() {
+		// return a connector directly to the entity
+		Map<String,String> connector = new HashMap<>();
+		connector.put(QueryBuilderService.CONNECTOR_NAME, "core");
+		connector.put("type", Integer.toString(FeatureConnector.CONNECTOR_TYPE_ENTITY));
+		return connector;
 	}
 
 	public long getFileAttributeCount(Track track, Node attributeType) {
@@ -106,14 +118,14 @@ public class MetaInfoService {
 			}
 			track.setSupportedFeatureTypes(results);
 		} catch (Exception e) {
-			log.error("Could not find supported operators for track " + track.getGraphName(), e);
+			log.error("Could not find supported feature types for track " + track.getGraphName(), e);
 			track.setSupportedFilters(null);
-
 		}
 	}
 
 	public void addMetaInfo(Track track) {
 		getLocalToBoinqReferenceMap(track);
+		getSupportedConnectors(track);
 		getSupportedFilters(track);
 		getSupportedFeatureTypes(track);
 	}

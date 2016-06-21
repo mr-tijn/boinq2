@@ -20,7 +20,7 @@ import com.genohm.boinq.web.rest.dto.FeatureJoinDTO;
 public abstract class FeatureJoin implements QueryGeneratorAcceptor {
 	
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     public Long getId() { return id; }

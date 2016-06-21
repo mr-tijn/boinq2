@@ -86,7 +86,8 @@ public class QueryBuilderService {
 	public static final String FILTER_NAME = "filterName";
 	public static final String PATH_EXPRESSION = "pathExpression";
 	public static final String CONNECTOR = "connector";
-	public static final String CONNECTOR_NAME = "connectorName";
+	public static final String CONNECTOR_NAME = "name";
+	public static final String CONNECTOR_PREFIX = "connectorPrefix";
 	
 	
 	public static PrefixMapping commonPrefixes = new PrefixMappingImpl();
@@ -186,8 +187,8 @@ public class QueryBuilderService {
 		childrenOfThing.addElement(labelPattern(uri, label));
 
 		ElementUnion union = new ElementUnion();
-		union.addElement(orphans);
 		union.addElement(childrenOfThing);
+		union.addElement(orphans);
 
 		query.setQueryPattern(union);
 		query.addOrderBy(label, 0);
@@ -627,6 +628,7 @@ public class QueryBuilderService {
 		Node supportedConnector = NodeFactory.createVariable(CONNECTOR);
 		Node connectorNameVar = NodeFactory.createVariable(CONNECTOR_NAME);
 		Node pathExpressionVar = NodeFactory.createVariable(PATH_EXPRESSION);
+		Node prefixVar = NodeFactory.createVariable(CONNECTOR_PREFIX);
 		
 		mainQuery.addResultVar(connectorNameVar);
 		mainQuery.addResultVar(pathExpressionVar);
@@ -636,10 +638,20 @@ public class QueryBuilderService {
 		mainElement.addTriple(new Triple(trackGraph, TrackVocab.connector.asNode(), supportedConnector));
 		mainElement.addTriple(new Triple(supportedConnector, RDF.type.asNode(), TrackVocab.Connector.asNode()));
 		mainElement.addTriple(new Triple(supportedConnector, SKOS.prefLabel.asNode(), connectorNameVar));
-		mainElement.addTriple(new Triple(supportedConnector, TrackVocab.pathExpression.asNode(), pathExpressionVar));
 		mainSelect.addElement(mainElement);
+		
+		ElementTriplesBlock pathExpression = new ElementTriplesBlock();
+		pathExpression.addTriple(new Triple(supportedConnector, TrackVocab.pathExpression.asNode(), pathExpressionVar));
+		mainSelect.addElement(new ElementOptional(pathExpression));
 
-		return null;
+		// TODO: add 
+		ElementTriplesBlock prefix = new ElementTriplesBlock();
+		prefix.addTriple(new Triple(supportedConnector, TrackVocab.addPrefix.asNode(), prefixVar));
+		mainSelect.addElement(new ElementOptional(prefix));
+		
+		mainQuery.setQueryPattern(mainSelect);
+
+		return mainQuery.toString(Syntax.syntaxSPARQL_11);
 	}
 
 }

@@ -153,6 +153,14 @@ public class TrackDTO {
 		this.supportedFilters = supportedFilters;
 	}
 
+	public List<Map<String, String>> getSupportedConnectors() {
+		return supportedConnectors;
+	}
+
+	public void setSupportedConnectors(List<Map<String, String>> supportedConnectors) {
+		this.supportedConnectors = supportedConnectors;
+	}
+
 	public Map<String, String> getSupportedFeatureTypes() {
 		return supportedFeatureTypes;
 	}

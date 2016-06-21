@@ -5,7 +5,7 @@ angular.module('boinqApp')
             parent: 'management',
             url: '/querybuilder?{fqId:[0-9]}',
             data: {
-                roles: [],
+                roles: ['ROLE_USER'],
                 pageTitle: 'querybuilder.title'
             },
             views: {

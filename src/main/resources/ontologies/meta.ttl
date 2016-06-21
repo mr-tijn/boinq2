@@ -4,6 +4,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix up: <http://www.uniprot.org/core/> .
+@prefix sio: <http://semanticscience.org/resource/> .
 
 <http://www.boinq.org/iri/localdatasource> rdf:type track:FaldoDatasource, track:Datasource
 ; track:provides <http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844>
@@ -17,18 +19,37 @@
 obo:SO_0000147 skos:prefLabel "Exon".
 obo:SO_0000673 skos:prefLabel "Transcript".
 
+<http://rdf.disgenet.org/sparql/> a track:Datasource;
+track:provides <http://rdf.disgenet.org>.
+
+<http://rdf.disgenet.org> a track:Track;
+track:holds sio:SIO_000983;
+track:connector [ a track:Connector; 
+	skos:prefLabel "Uniprot identifier";
+	track:pathExpression "&lt;http://semanticscience.org/resource/SIO_000628&gt;|&lt;http://semanticscience.org/resource/SIO_0100078&gt;|&lt;http://www.w3.org/2004/02/skos/core#exactMatch&gt;";
+];
+track:supports [a track:MatchTermFilter;
+	track:matchName "classified with MeSH term";
+ 	track:pathExpression "&lt;http://semanticscience.org/resource/SIO_000628&gt;|&lt;http://semanticscience.org/resource/SIO_0100078&gt;|&lt;http://www.w3.org/2004/02/skos/core#exactMatch&gt;";
+ 	track:endpointUrl "/static/sparql";
+ 	track:graphUri "file:/Users/martijn/Documents/workspace-sts-3.7.0.RELEASE/boinq/ontologies/MESH.ttl"].
+sio:SIO_000983 skos:prefLabel "Gene disease association".
+
 <http://sparql.uniprot.org> a track:Datasource;
 track:provides <http://sparql.uniprot.org/uniprot/>.
 
 <http://sparql.uniprot.org/uniprot/> a track:Track;
 track:supports [a track:FeatureTypeFilter],
 [a track:MatchTermFilter;
- track:operatorName "classified with GO term";
- track:pathExpression "<http://purl.uniprot.org/core/classifiedWith>";
- track:endpointUrl "/local/static/sparql";
- track:graphUri "http://purl.obolibrary.org/obo/go.obo"];
-track:holds obo:SO_0000104.
-obo:SO_0000673 skos:prefLabel "Protein".
+ track:matchName "classified with GO term";
+ track:pathExpression "&lt;http://purl.uniprot.org/core/classifiedWith&gt;";
+ track:endpointUrl "/static/sparql";
+ track:graphUri "http://purl.obolibrary.org/obo/go.owl"];
+track:holds up:Protein.
+up:Protein skos:prefLabel "Protein";
+rdfs:subClassOf obo:SO_0000104.
+obo:SO_0000104 skos:prefLabel "Protein".
+
 
 <https://www.ebi.ac.uk/rdf/services/ensembl/sparql> a track:Datasource, track:FaldoDatasource;
 track:provides <http://rdf.ebi.ac.uk/dataset/ensembl/84>.
@@ -37,6 +58,11 @@ track:provides <http://rdf.ebi.ac.uk/dataset/ensembl/84>.
 track:supports [a track:LocationFilter; track:references <http://www.boinq.org/resource/homo_sapiens/GRCh38>],
 [a track:FeatureTypeFilter];
 track:holds  obo:SO_0000147,obo:SO_0000673,obo:SO_0001217;
+track:connector [ a track:Connector; 
+	skos:prefLabel "identifier";
+	track:pathExpression "<http://rdf.ebi.ac.uk/terms/ensembl/DEPENDENT>/<http://purl.org/dc/elements/1.1/identifier>";
+	track:addPrefix "http://purl.uniprot.org/uniprot/"
+];
 track:entry [ a track:ReferenceMapEntry;
 			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/1>; 
 			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/1>];
@@ -110,6 +136,8 @@ track:entry [ a track:ReferenceMapEntry;
 			  track:originalReference <http://rdf.ebi.ac.uk/resource/ensembl/84/homo_sapiens/GRCh38/Y>; 
 			  track:targetReference <http://www.boinq.org/resource/homo_sapiens/GRCh38/Y>].
 obo:SO_0001217 skos:prefLabel "Protein coding gene".
+
+
 
 <http://www.boinq.org/iri/localdatasource> a track:Datasource; a track:SPARQLDatasource; track:references <http://www.boinq.org/resource/homo_sapiens/GRCh38> ; track:endpointUrl <http://localhost:9999/blazegraph/namespace/boinq/sparql> . 
 

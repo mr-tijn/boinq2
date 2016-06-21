@@ -130,6 +130,12 @@
     
 
 
+    <!-- http://www.boinq.org/iri/ontologies/track#addPrefix -->
+
+    <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#addPrefix"/>
+    
+
+
     <!-- http://www.boinq.org/iri/ontologies/track#createdOn -->
 
     <owl:DatatypeProperty rdf:about="http://www.boinq.org/iri/ontologies/track#createdOn"/>
@@ -223,6 +229,12 @@
     <!-- http://www.boinq.org/iri/ontologies/track#Connector -->
 
     <owl:Class rdf:about="http://www.boinq.org/iri/ontologies/track#Connector">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.boinq.org/iri/ontologies/track#addPrefix"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">A connector is a predefined path to an entity that can be connected to another connector by referring to the same target entity.</rdfs:comment>
     </owl:Class>
     

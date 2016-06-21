@@ -22,10 +22,9 @@ public class DatasourceInitializer implements EnvironmentAware, ApplicationListe
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		Datasource exampleDS = datasourceRepository.findOne(1L);
-		replaceFields(exampleDS);
-		Datasource ensembl = datasourceRepository.findOne(2L);
-		replaceFields(ensembl);
+		for (Datasource ds: datasourceRepository.findAll()) {
+			replaceFields(ds);
+		}
 	}
 
 	private void replaceFields(Datasource ds) {

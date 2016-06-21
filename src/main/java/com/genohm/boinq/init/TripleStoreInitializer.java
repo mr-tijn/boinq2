@@ -36,8 +36,7 @@ import org.apache.jena.vocabulary.SKOS;
 public class TripleStoreInitializer implements EnvironmentAware, ApplicationListener<ContextRefreshedEvent> {
 
 	// if necessary clean out with
-	// delete { ?s ?p ?o } using <http://www.boinq.org/iri/graph/meta/> where {
-	// ?s ?p ?o }
+	// delete { ?s ?p ?o } using <http://www.boinq.org/iri/graph/meta/> where { ?s ?p ?o }
 
 	private final Logger log = LoggerFactory.getLogger(TripleStoreInitializer.class);
 

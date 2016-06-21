@@ -41,12 +41,12 @@ angular.module('boinqApp').directive('joindetail', function() {
 			join: '='
 		},
 		link: function(scope, element, attrs) {
-			scope.computeUrl = function(join) {
-				if (join == null) scope.detailUrl = 'scripts/components/querybuilder/featurejoin_detail/undefined.html';
-				else scope.detailUrl = 'scripts/components/querybuilder/featurejoin_detail/' + join.type + '.html';
+			scope.computeUrl = function(type) {
+				if (type == null) scope.detailUrl = 'scripts/components/querybuilder/featurejoin_detail/undefined.html';
+				else scope.detailUrl = 'scripts/components/querybuilder/featurejoin_detail/' + type + '.html';
 			};
-			scope.computeUrl(scope.join);
-			scope.$watch("join", scope.computeUrl);
+			scope.computeUrl(scope.join != null ? scope.join.type : null);
+			scope.$watch("join.type", scope.computeUrl);
 		},
 		templateUrl: 'scripts/components/querybuilder/featurejoin_detail/common.html'
 	}
@@ -94,6 +94,10 @@ angular.module('boinqApp').directive('criteriondetail', function() {
 			supportedFilters: '='
 		},
 		link: function(scope, element, attrs) {
+			scope.termPicked = function(term) {
+				newTerm = { uri: term.uri.value, label: term.label.value };
+				scope.criterion.term = newTerm;
+			}
 			scope.computeUrl = function(criterion) {
 				if (criterion && criterion.filter) scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/' + criterion.filter.filterTypeName + '.html';
 				else scope.detailUrl = 'scripts/components/querybuilder/criterion_detail/undefined.html';

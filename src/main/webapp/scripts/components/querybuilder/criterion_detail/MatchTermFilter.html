@@ -1,11 +1,14 @@
-<div class="input-group">
-	<div class="form-group">
-		<label>Pick Term</label>
-		<term-tree-picker select-handler="termsPicked"
-			source-endpoint="{{criterion.filter.endpointUri}}"
-			source-graph="{{criterion.filter.graphUri}}"
-			search-filter="searchFilter" multi-valued='false'
-			form-field-name="term" ng-model="criterion.term"> </term-tree-picker>
+<div class="form-group">
+	<term-tree-picker modal-id="{{criterion.filter.filter}}_modal"
+		select-handler="termPicked"
+		source-endpoint="{{criterion.filter.endpointUri}}"
+		source-graph="{{criterion.filter.graphUri}}"
+		search-filter="searchFilter" multi-valued='false'
+		form-field-name="term" ng-model="criterion.term.uri">
+	</term-tree-picker>
+	<div class="input-group">
+		<span class="input-group-addon">Label</span> <input type="text"
+			class="form-control" name="name" ng-model="criterion.term.label"
+			ng-disabled="true">
 	</div>
-
 </div>

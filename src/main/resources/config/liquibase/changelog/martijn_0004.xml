@@ -45,4 +45,21 @@
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="analysis_id" baseTableName="T_PROGRESS" constraintName="fk_progressToAnalysis" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_ANALYSIS"/>
 	</changeSet>
+	<changeSet author="martijn" id="add connector table">
+		<createTable tableName="T_FEATURECONNECTOR">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="name" type="VARCHAR(255)"/>
+			<column name="path_expression" type="VARCHAR(255)" />
+			<column name="type" type="INT" />
+		</createTable>
+		<addColumn tableName="T_FEATUREJOIN">
+			<column name="source_connector_id" type="BIGINT" startWith="99"/>
+			<column name="target_connector_id" type="BIGINT" startWith="99"/>
+		</addColumn>
+		<addForeignKeyConstraint baseColumnNames="source_connector_id" baseTableName="T_FEATUREJOIN" constraintName="fk_featureJoinToSourceConnector" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATURECONNECTOR"/>
+		<addForeignKeyConstraint baseColumnNames="target_connector_id" baseTableName="T_FEATUREJOIN" constraintName="fk_featureJoinToTargetConnector" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_FEATURECONNECTOR"/>
+	</changeSet>
+	
 </databaseChangeLog>

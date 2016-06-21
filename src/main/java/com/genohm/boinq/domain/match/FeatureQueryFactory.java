@@ -13,6 +13,7 @@ import com.genohm.boinq.repository.FeatureQueryRepository;
 import com.genohm.boinq.repository.TrackRepository;
 import com.genohm.boinq.repository.UserRepository;
 import com.genohm.boinq.web.rest.dto.CriteriaDTO;
+import com.genohm.boinq.web.rest.dto.FeatureConnectorDTO;
 import com.genohm.boinq.web.rest.dto.FeatureJoinDTO;
 import com.genohm.boinq.web.rest.dto.FeatureQueryDTO;
 import com.genohm.boinq.web.rest.dto.FeatureSelectDTO;
@@ -41,6 +42,33 @@ public class FeatureQueryFactory {
 			featureTypeCrit.setFeatureTypeLabel(dto.featureTypeLabel);
 			featureTypeCrit.setFeatureTypeUri(dto.featureTypeUri);
 			return featureTypeCrit;
+		case CriteriaDTO.MATCHTERM_CRITERIA:
+			MatchTermCriterion matchTermCrit = new MatchTermCriterion();
+			matchTermCrit.setTermUri(dto.termUri);
+			matchTermCrit.setTermLabel(dto.termLabel);
+			matchTermCrit.setPathExpression(dto.pathExpression);
+			// todo: other fields ?
+			return matchTermCrit;
+		case CriteriaDTO.MATCHDECIMAL_CRITERIA:
+			MatchDecimalCriterion matchDecimalCriterion = new MatchDecimalCriterion();
+			matchDecimalCriterion.setExactMatch(dto.exactMatch);
+			matchDecimalCriterion.setMatchDouble(dto.minDouble);
+			matchDecimalCriterion.setMinDouble(dto.minDouble);
+			matchDecimalCriterion.setMaxDouble(dto.maxDouble);
+			return matchDecimalCriterion;
+		case CriteriaDTO.MATCHINTEGER_CRITERIA:
+			MatchIntegerCriterion matchIntegerCriterion = new MatchIntegerCriterion();
+			matchIntegerCriterion.setExactMatch(dto.exactMatch);
+			matchIntegerCriterion.setMatchLong(dto.minLong);
+			matchIntegerCriterion.setMinLong(dto.minLong);
+			matchIntegerCriterion.setMaxLong(dto.maxLong);
+			return matchIntegerCriterion;
+		case CriteriaDTO.MATCHSTRING_CRITERIA:
+			MatchStringCriterion matchStringCriterion = new MatchStringCriterion();
+			matchStringCriterion.setExactMatch(dto.exactMatch);
+			matchStringCriterion.setMatchString(dto.matchString);
+			return matchStringCriterion;
+			// TODO: other criteria
 		default: throw new Exception("Unhandled type "+dto.type);
 		}
 	}
@@ -61,11 +89,24 @@ public class FeatureQueryFactory {
 	public FeatureJoin createJoin(FeatureJoinDTO dto) throws Exception {
 		switch (dto.type) {
 		case FeatureJoinDTO.JOIN_TYPE_OVERLAP: 
-			LocationOverlap result = new LocationOverlap();
-			result.setSameStrand(dto.sameStrand);
-			return result;
+			LocationOverlap overlap = new LocationOverlap();
+			overlap.setSameStrand(dto.sameStrand);
+			return overlap;
+		case FeatureJoinDTO.JOIN_TYPE_CONNECT:
+			Connect connect = new Connect();
+			connect.setSourceConnector(createFeatureConnector(dto.sourceConnector));
+			connect.setTargetConnector(createFeatureConnector(dto.targetConnector));
+			return connect;
 		default: throw new Exception("Unhandled type "+dto.type);
 		}
+	}
+	
+	public FeatureConnector createFeatureConnector(FeatureConnectorDTO dto) throws Exception {
+		FeatureConnector connector = new FeatureConnector();
+		connector.setType(dto.type);
+		connector.setName(dto.name);
+		connector.setPathExpression(dto.pathExpression);
+		return connector;
 	}
 	
 	public FeatureQuery createFeatureQuery(FeatureQueryDTO fq) throws Exception {

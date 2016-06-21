@@ -50,6 +50,7 @@ angular.module('boinqApp')
 					});
 
 					var addErrorAlert = function (message, key, data) {
+						key = key && key !== null ? key : message;
 						AlertService.error(key, data);
 					}
 

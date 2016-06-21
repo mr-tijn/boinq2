@@ -83,8 +83,6 @@ public class SlidingWindowFeatureSelection extends GenomeAnalysis {
 	private FeatureQuery queryDefinition;
 	
 	@Transient
-	private Boolean interrupt = false;
-	@Transient
 	private Date startDate;
 	@Transient
 	private Map<Node, Long> referenceLengths = new HashMap<>();
@@ -164,7 +162,7 @@ public class SlidingWindowFeatureSelection extends GenomeAnalysis {
 		for (Node chrom: references) {
 			region.assemblyURI = chrom.toString();
 			for (Long l = 0L; l <= referenceLengths.get(chrom); l += stepSize) {
-				if (interrupt) return;
+				if (JOB_STATUS_INTERRUPTED == getStatus()) return;
 				region.start = l;
 				region.end = l + stepSize - 1;
 				progressPercentages.put(chrom.getURI(), 100. * l / referenceLengths.get(chrom));
@@ -188,7 +186,12 @@ public class SlidingWindowFeatureSelection extends GenomeAnalysis {
 	
 	@Override
 	public void kill() {
-		this.interrupt = true;
+		this.setStatus(JOB_STATUS_INTERRUPTED);
+		try {
+			save();
+		} catch (Exception e) {
+			log.error("Could not save interrupted analysis: ", e);
+		}
 	}
 	
 	@Override

@@ -75,6 +75,7 @@ public class FileUploadController {
 			}
 			verifyUploadPermission(login, datasource);
 			if (file.isEmpty()) {
+				log.error("Empty file " + file.getName());
 				return new ResponseEntity<String>("Empty file", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 			String fileName = file.getOriginalFilename();
@@ -100,23 +101,27 @@ public class FileUploadController {
 	}
 
 	private void checkExtension(String extension, Track track) throws Exception {
-		if (track.getFileType() ==null) {
+		if (null == track.getFileType()) {
 			for (String ext : TripleConversion.SUPPORTED_EXTENSIONS) {
 				if (extension.equalsIgnoreCase(ext)) return; 
 			}
-		throw new Exception("Unsupported file format "+extension);
+			log.error("Unsupported file format " + extension);
+			throw new Exception("Unsupported file format "+extension);
 		}
 		else {
-			if (extension.equalsIgnoreCase(track.getFileType())) return; 
-		throw new Exception("Has to be file format "+track.getFileType());
+			if (extension.equalsIgnoreCase(track.getFileType())) return;
+			log.error("Cannot mix file formats currently. Please use "+track.getFileType());
+			throw new Exception("Cannot mix file formats currently. Please use "+track.getFileType());
 		}
 	}
 
 	private void verifyUploadPermission(String login, Datasource datasource) throws Exception {
 		if (datasource.getType() != Datasource.TYPE_LOCAL_FALDO) {
+			log.error("Only possible for local faldo datasources");
 			throw new Exception("Only possible for local faldo datasources");
 		}
 		if (datasource.getOwner() != userRepository.findOneByLogin(login).get()) {
+			log.error("Only possible for your own datasources");
 			throw new Exception("Only possible for your own datasources");
 		}
 	}

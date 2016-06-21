@@ -6,6 +6,7 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	
 	
 	$scope.selectedTerms = [];
+	$scope.selectedTerm = {};
 	
 //	$scope.$watch('ngModel', function(){
 //		$scope.getngModel();
@@ -50,7 +51,11 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 				$scope.rootNodesQuery = query;
 				callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
 						function(successResponse) {
-							$scope.rootTerms = successResponse.data.results.bindings;
+							if (successResponse && successResponse.data && successResponse.data.results) {
+								$scope.rootTerms = successResponse.data.results.bindings;
+							} else {
+								$scope.rootTerms = null;
+							}
 						},
 						processError);
 			});
@@ -64,7 +69,11 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 			var query = response.query;
 			callEndpoint($scope.sourceEndpoint,$scope.sourceGraph,query).then(
 					function(successResponse) {
-						parentTerm.subTerms = successResponse.data.results.bindings;
+						if (successResponse && successResponse.data && successResponse.data.results) {
+							parentTerm.subTerms = successResponse.data.results.bindings;
+						} else {
+							parentTerm.subTerms = null;
+						}
 					},
 					function(errorResponse) {
 						$scope.sparqlError = true;
@@ -88,7 +97,9 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	$scope.computeSelection = function() {
 		$scope.selectedTerms = [];
 		$scope.getSelectedTerms($scope.rootTerms);
-		$scope.ngModel($scope.selectedTerms);
+		if ($scope.selectHandler) {
+			$scope.selectHandler($scope.selectedTerms);
+		}
 		$scope.close();
 	};
 	
@@ -132,8 +143,10 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	};
 	
 	$scope.handleSelect = function(term) {
-		console.log($scope.selectHandler);
-		$scope.selectHandler(term);
+		$scope.selectedTerm = term;
+		if ($scope.selectHandler) {
+			$scope.selectHandler(term);
+		}
 		$scope.close()
 	}
 	

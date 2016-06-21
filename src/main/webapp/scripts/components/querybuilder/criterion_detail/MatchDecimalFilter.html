@@ -1,0 +1,20 @@
+<div class="input-group">
+		<div class="checkbox">
+			<label> <input type="checkbox"
+				ng-model="criterion.exactMatch"> Exact Match
+			</label>
+		</div>
+</div>
+<div class="input-group" ng-show="criterion.exactMatch">
+	<span class="input-group-addon">Value</span> <input class="form-control"
+		type="number" ng-model="criterion.minDouble"></input>
+</div>
+<div class="input-group" ng-show="!criterion.exactMatch">
+	<span class="input-group-addon">Min</span> <input class="form-control"
+		type="number" ng-model="criterion.minDouble"></input>
+</div>
+<div class="input-group" ng-show="!criterion.exactMatch">
+	<span class="input-group-addon">Max</span> <input class="form-control"
+		type="number" ng-model="criterion.maxDouble"
+		greater-than="{{criterion.minDouble}}"></input>
+</div>

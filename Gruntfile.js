@@ -409,20 +409,20 @@ module.exports = function (grunt) {
 	});
 
     grunt.registerTask('buildOpenshift', [
-        'test',
+//        'test',
         'build',
         'copy:generateOpenshiftDirectory',
     ]);
 
     grunt.registerTask('deployOpenshift', [
-        'test',
+//        'test',
         'build',
         'copy:generateOpenshiftDirectory',
         'buildcontrol:openshift'
     ]);
 
     grunt.registerTask('default', [
-        'test',
+//        'test',
         'build'
     ]);
 };
