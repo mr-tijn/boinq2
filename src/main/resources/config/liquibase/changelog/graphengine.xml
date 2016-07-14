@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	<changeSet author="martijn" id="add template tables">
+		<createTable tableName="T_GRAPHTEMPLATE">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="type" type="INT" />
+			<column name="name" type="VARCHAR(255)"/>
+			<column name="endpoint_url" type="VARCHAR(255)"/>
+			<column name="graph_iri" type="VARCHAR(255)"/>
+		</createTable>
+		<createTable tableName="T_EDGETEMPLATE">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="from_nodetemplate_id" type="BIGINT" />
+			<column name="to_nodetemplate_id" type="BIGINT" />
+			<column name="term" type="VARCHAR(255)"/>
+			<column name="graphtemplate_id" type="BIGINT" />
+		</createTable>
+		<createTable tableName="T_NODETEMPLATE">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="type" type="INT" />
+			<column name="name" type="VARCHAR(255)"/>
+			<column name="description" type="VARCHAR(255)"/>
+			<column name="variable_prefix" type="VARCHAR(255)"/>
+			<column name="value_source_type" type="INT"/>
+			<column name="values_endpoint" type="VARCHAR(255)"/>
+			<column name="values_graph" type="VARCHAR(255)"/>
+			<column name="values_root_term" type="VARCHAR(255)"/>
+			<column name="fixed_value" type="VARCHAR(255)"/>
+			<column name="literal_xsd_type" type="VARCHAR(255)"/>
+			<column name="filterable" type="BOOLEAN" />
+			<column name="color" type="VARCHAR(255)"/>
+			<column name="x" type="INT" />
+			<column name="y" type="INT" />
+		</createTable>
+		<addForeignKeyConstraint baseTableName="T_EDGETEMPLATE" baseColumnNames="from_nodetemplate_id"  constraintName="fk_edge_fromNode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_NODETEMPLATE"/>
+		<addForeignKeyConstraint baseTableName="T_EDGETEMPLATE" baseColumnNames="to_nodetemplate_id"  constraintName="fk_edge_tomNode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_NODETEMPLATE"/>
+		<addForeignKeyConstraint baseTableName="T_EDGETEMPLATE" baseColumnNames="graphtemplate_id"  constraintName="fk_edge_graphtemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_GRAPHTEMPLATE"/>
+		<createTable tableName="T_QUERYDEFINITION">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+            <column name="target_graph" type="VARCHAR(255)" />
+			<column name="result_as_table" type="BOOLEAN" />
+		</createTable>
+		<createTable tableName="T_QUERYGRAPH">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="querydefinition_id" type="BIGINT"/>
+			<column name="graphtemplate_id" type="BIGINT"/>
+		</createTable>
+		<addForeignKeyConstraint baseTableName="T_QUERYGRAPH" baseColumnNames="querydefinition_id"  constraintName="fk_querygraph_querydefinition" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYDEFINITION"/>
+		<addForeignKeyConstraint baseTableName="T_QUERYGRAPH" baseColumnNames="graphtemplate_id"  constraintName="fk_querygraph_graphtemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_GRAPHTEMPLATE"/>
+		<createTable tableName="T_QUERYNODE">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="nodetemplate_id" type="BIGINT"/>
+			<column name="entity_values" type="TEXT"/>
+		</createTable>
+		<addForeignKeyConstraint baseTableName="T_QUERYNODE" baseColumnNames="nodetemplate_id"  constraintName="fk_querynode_nodetemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_NODETEMPLATE"/>
+		<createTable tableName="T_NODEFILTER">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="type" type="INT" />
+			<column name="case_insensitive" type="BOOLEAN" />
+			<column name="negate" type="BOOLEAN" />
+			<column name="min_integer" type="BIGINT" />
+			<column name="max_integer" type="BIGINT" />
+			<column name="integer_value" type="BIGINT" />
+			<column name="min_double" type="DOUBLE" />
+			<column name="max_double" type="DOUBLE" />
+			<column name="double_value" type="DOUBLE" />
+			<column name="include_min" type="BOOLEAN" />
+			<column name="include_max" type="BOOLEAN" />
+			<column name="string_value" type="VARCHAR(255)"/>
+			<column name="term_values" type="TEXT"/>
+			<column name="contig" type="VARCHAR(255)"/>
+			<column name="strand" type="BOOLEAN" />
+			<column name="querynode_id" type="BIGINT" />
+		</createTable>
+		<addForeignKeyConstraint baseTableName="T_NODEFILTER" baseColumnNames="querynode_id"  constraintName="fk_nodefilter_querynode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYNODE"/>
+		<createTable tableName="T_QUERYEDGE">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="edgetemplate_id" type="BIGINT"/>
+			<column name="from_querynode_id" type="BIGINT"/>
+			<column name="to_querynode_id" type="BIGINT"/>
+			<column name="retrieve" type="BOOLEAN" />
+			<column name="querygraph_id" type="BIGINT"/>
+		</createTable>
+		<addForeignKeyConstraint baseTableName="T_QUERYEDGE" baseColumnNames="edgetemplate_id"  constraintName="fk_queryedge_edgetemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_EDGETEMPLATE"/>
+		<addForeignKeyConstraint baseTableName="T_QUERYEDGE" baseColumnNames="from_querynode_id"  constraintName="fk_queryedge_from_querynode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYNODE"/>
+		<addForeignKeyConstraint baseTableName="T_QUERYEDGE" baseColumnNames="to_querynode_id"  constraintName="fk_queryedge_to_querynode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYNODE"/>
+		<addForeignKeyConstraint baseTableName="T_QUERYEDGE" baseColumnNames="querygraph_id"  constraintName="fk_queryedge_querygraph" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYGRAPH"/>
+		<createTable tableName="T_QUERYBRIDGE">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="from_node_id" type="BIGINT" />
+			<column name="from_graph_id" type="BIGINT" />
+			<column name="to_node_id" type="BIGINT" />
+			<column name="to_graph_id" type="BIGINT" />
+			<column name="string_to_entity_template" type="VARCHAR(255)"/>
+			<column name="literal_to_literal_match_type" type="INT"/>
+			<column name="match_strand" type="BOOLEAN" />
+			<column name="querydefinition_id" type="BIGINT"/>
+		</createTable>
+		<addForeignKeyConstraint baseTableName="T_QUERYBRIDGE" baseColumnNames="from_graph_id"  constraintName="fk_querybridge_fromGraph" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYGRAPH"/>
+		<addForeignKeyConstraint baseTableName="T_QUERYBRIDGE" baseColumnNames="from_node_id"  constraintName="fk_querybridge_fromNode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYNODE"/>
+		<addForeignKeyConstraint baseTableName="T_QUERYBRIDGE" baseColumnNames="to_graph_id"  constraintName="fk_querybridge_toGraph" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYGRAPH"/>
+		<addForeignKeyConstraint baseTableName="T_QUERYBRIDGE" baseColumnNames="to_node_id"  constraintName="fk_querybridge_toNode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYNODE"/>
+		<addForeignKeyConstraint baseTableName="T_QUERYBRIDGE" baseColumnNames="querydefinition_id"  constraintName="fk_querybridge_querydefinition" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_QUERYDEFINITION"/>
+		<createTable tableName="T_STRINGCOLLECTIONS">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+            <column name="nodetemplate_id" type="BIGINT" />
+            <column name="value" type="VARCHAR(255)" />
+            <column name="idx" type="INT" />
+		</createTable>
+		<addForeignKeyConstraint baseTableName="T_STRINGCOLLECTIONS" baseColumnNames="nodetemplate_id"  constraintName="fk_stringcollections_nodetemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_NODETEMPLATE"/>
+ 	</changeSet>
+	
+</databaseChangeLog>

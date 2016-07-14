@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import com.genohm.boinq.domain.jobs.AsynchronousJob;
@@ -20,7 +21,7 @@ public abstract class Analysis implements AsynchronousJob {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-	private Integer id;
+	private Long id;
 	
 	@Column(name="name")
 	private String name;
@@ -28,9 +29,11 @@ public abstract class Analysis implements AsynchronousJob {
 	@Column(name="status")
 	private int status;
 	
+	@Lob
 	@Column(name="description")
 	private String description;
 	
+	@Lob
 	@Column(name="error_description")
 	protected String errorDescription;
 
