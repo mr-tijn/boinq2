@@ -16,9 +16,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -29,12 +29,13 @@ import com.genohm.boinq.Application;
 import com.genohm.boinq.repository.GraphTemplateRepository;
 import com.genohm.boinq.service.GraphTemplateRepositoryTestData;
 import com.genohm.boinq.web.rest.dto.GraphTemplateDTO;
+import com.genohm.boinq.config.Constants;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @WebAppConfiguration
-@IntegrationTest
-@Profile("test")
+@IntegrationTest("server.port:7777")
+@ActiveProfiles(value = {Constants.SPRING_PROFILE_TEST})
 public class GraphTemplateResourceTest {
 	
     @Inject

@@ -88,6 +88,8 @@ public class SlidingWindowFeatureSelection extends GenomeAnalysis {
 	private Map<Node, Long> referenceLengths = new HashMap<>();
 	@Transient
 	private List<Node> references = new LinkedList<>();
+	@Transient
+	private Date endDate;
 
 	
 	public SlidingWindowFeatureSelection() {}
@@ -199,6 +201,11 @@ public class SlidingWindowFeatureSelection extends GenomeAnalysis {
 		AnalysisDTO result = super.createDTO();
 		result.type = AnalysisDTO.TYPE_FEATURESELECTION;
 		return result;
+	}
+
+	@Override
+	public Long getDuration() {
+		return endDate.getTime() - startDate.getTime();
 	}
 
 

@@ -1,8 +1,9 @@
 package com.genohm.boinq.domain.query;
 
+import org.apache.jena.graph.Node;
 import org.apache.jena.vocabulary.RDF;
 
-import com.github.jsonldjava.core.RDFDataset.Node;
+import com.genohm.boinq.generated.vocabularies.FaldoVocab;
 import com.google.common.base.CaseFormat;
 
 public class TemplateFactory {
@@ -10,13 +11,24 @@ public class TemplateFactory {
 	public static NodeTemplate entityNode(String name, Boolean filterable) {
 		NodeTemplate entityNode = new NodeTemplate();
 		entityNode.setName(name);
-		entityNode.setVariablePrefix(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name.toLowerCase().replaceAll(" ", "_")));
+		entityNode.setVariablePrefix(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name.toLowerCase().replaceAll(" ", "_")));
 		entityNode.setFilterable(filterable);
 		entityNode.setNodeType(QueryNode.NODETYPE_GENERICENTITY);
 		entityNode.setColor("blue");
 		return entityNode;
 	}
 
+	public static NodeTemplate typedEntityNode(String name, String type, Boolean filterable) {
+		NodeTemplate entityNode = new NodeTemplate();
+		entityNode.setName(name);
+		entityNode.setVariablePrefix(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name.toLowerCase().replaceAll(" ", "_")));
+		entityNode.setFilterable(filterable);
+		entityNode.setNodeType(QueryNode.NODETYPE_TYPEDENTITY);
+		entityNode.setFixedType(type);
+		entityNode.setColor("blue");
+		return entityNode;
+	}
+	
 	public static NodeTemplate entityNode(String name, String variablePrefix, Boolean filterable) {
 		NodeTemplate entityNode = new NodeTemplate();
 		entityNode.setName(name);
@@ -27,6 +39,17 @@ public class TemplateFactory {
 		return entityNode;
 	}
 	
+	public static NodeTemplate locationNode(String assembly) {
+		NodeTemplate locationNode = new NodeTemplate();
+		locationNode.setNodeType(QueryNode.NODETYPE_FALDOLOCATION);
+		locationNode.setName("Faldo Location");
+		locationNode.setDescription("Location according the FALDO ontology");
+		locationNode.setAssembly(assembly);
+		locationNode.setColor("green");
+		locationNode.setFilterable(true);
+		return locationNode;
+	}
+	
 	public static NodeTemplate literalNode(String name, Node type) {
 		return literalNode(name, type.toString());
 	}
@@ -35,8 +58,9 @@ public class TemplateFactory {
 		NodeTemplate literalNode = new NodeTemplate();
 		literalNode.setName(name);
 		literalNode.setNodeType(QueryNode.NODETYPE_GENERICLITERAL);
-		literalNode.setColor("green");
+		literalNode.setColor("yellow");
 		literalNode.setLiteralXsdType(type);
+		literalNode.setFilterable(true);
 		return literalNode;
 	}
 	

@@ -1,0 +1,57 @@
+<div>
+
+	<h2>Query Definitions</h2>
+
+	<a ui-sref="graphbuilder">
+		<button class="btn btn-primary btn-sm" >
+			<span class="glyphicon glyphicon-flash"></span> Create a new
+			QueryDefinition
+		</button>
+	</a>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Status</th>
+					<th>Species</th>
+					<th>Assembly</th>
+					<th>Result as Table</th>
+					<th>Target Graph</th>
+					<th>Target File</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="qd in queryDefinitions">
+					<td>{{qd.id}}</td>
+					<td>{{qd.name}}</td>
+					<td>{{qd.status | jobstatus}}</td>
+					<td>{{qd.species}}</td>
+					<td>{{qd.assembly}}</td>
+					<td>{{qd.resultAsTable?"YES":"NO"}}</td>
+					<td>{{qd.resultAsTable?"NA":qd.targetGraph}}</td>
+					<td>{{qd.resultAsTable?qd.targetFile:"NA"}} <a href="/app/rest/querydefinition/{{qd.id}}/resultfile"><span class="glyphicon glyphicon-download"></span></a></td>
+					<td>
+						<button type="submit" ng-click="remove(fq.id)"
+							class="btn btn-danger btn-sm">
+							<span class="glyphicon glyphicon-remove-circle"></span> Delete
+						</button> 
+						<a ui-sref="graphbuilder({qdId:qd.id})">
+							<button class="btn btn-primary btn-sm">
+								<span class="glyphicon glyphicon-eye-open"></span> View
+							</button>
+						</a>
+						<button ng-click="start(qd.id)" class="btn btn-primary btn-sm">
+							<span class="glyphicon glyphicon-play"></span> Start
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+
+</div>

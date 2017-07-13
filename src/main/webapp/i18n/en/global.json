@@ -37,7 +37,9 @@
             },
             "routine": {
             	"title": "Routine",
-                "featurequery" : "Feature Queries"
+                "featurequery" : "Feature Queries",
+                "querydefinition" :"Query Definitions",
+                "graphbuilder" : "Graph Builder"
             },
             "language": "Language"
         },

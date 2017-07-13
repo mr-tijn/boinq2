@@ -1,0 +1,121 @@
+<div ng-show="filter" ng-controller="NodeFilterController">
+	<div ng-show="isText(template)">
+		<div class="input-group">
+			<div class="checkbox">
+				<label> <input type="checkbox" ng-model="filter.exactMatch">
+					Exact Match
+				</label>
+			</div>
+		</div>
+		<div class="input-group">
+			<span class="input-group-addon">String Value</span> <input
+				type="text" class="form-control" name="name"
+				ng-model="filter.stringValue" />
+		</div>
+	</div>
+	<div ng-show="isInteger(template)">
+		<div>Expression: {{filter.exactMatch?(filter.integerValue?"=
+			"+filter.integerValue:""):(filter.minInteger?filter.minInteger+(filter.includeMin?"&lt;=
+			":"&lt;
+			"):"")+"Value"+(filter.maxInteger?(filter.includeMax?"&lt;=":"&lt;")+filter.maxInteger:"")}}
+		</div>
+		<div class="input-group">
+			<div class="checkbox">
+				<label> <input type="checkbox" ng-model="filter.exactMatch">
+					Exact Match
+				</label>
+			</div>
+		</div>
+		<div class="input-group" ng-show="filter.exactMatch">
+			<span class="input-group-addon">Value</span> <input type="number"
+				class="form-control" name="name" ng-model="filter.integerValue" />
+		</div>
+		<div class="input-group" ng-show="!filter.exactMatch">
+			<span class="input-group-addon">Min</span> <input type="number"
+				class="form-control" name="name" ng-model="filter.minInteger" /> <span
+				class="input-group-addon">Inclusive <input type="checkbox"
+				ng-model="filter.includeMin">
+			</span>
+		</div>
+		<div class="input-group" ng-show="!filter.exactMatch">
+			<span class="input-group-addon">Max</span> <input type="number"
+				class="form-control" name="name" ng-model="filter.maxInteger" /> <span
+				class="input-group-addon">Inclusive <input type="checkbox"
+				ng-model="filter.includeMax">
+			</span>
+		</div>
+	</div>
+	<div ng-show="isFloat(template)">
+		<div>Expression: {{filter.exactMatch?(filter.doubleValue?"=
+			"+filter.doubleValue:""):(filter.minDouble?filter.minDouble+(filter.includeMin?"&lt;=
+			":"&lt;
+			"):"")+"Value"+(filter.maxDouble?(filter.includeMax?"&lt;=":"&lt;")+filter.maxDouble:"")}}
+		</div>
+		<div class="input-group">
+			<div class="checkbox">
+				<label> <input type="checkbox" ng-model="filter.exactMatch">
+					Exact Match
+				</label>
+			</div>
+		</div>
+		<div class="input-group" ng-show="filter.exactMatch">
+			<span class="input-group-addon">Value</span> <input type="number" step="any"
+				class="form-control" name="name" ng-model="filter.doubleValue" />
+		</div>
+		<div class="input-group" ng-show="!filter.exactMatch">
+			<span class="input-group-addon">Min</span> <input type="number" step="any"
+				class="form-control" name="name" ng-model="filter.minDouble" /> <span
+				class="input-group-addon">Inclusive <input type="checkbox"
+				ng-model="filter.includeMin">
+			</span>
+		</div>
+		<div class="input-group" ng-show="!filter.exactMatch">
+			<span class="input-group-addon">Max</span> <input type="number" step="any"
+				class="form-control" name="name" ng-model="filter.maxDouble" /> <span
+				class="input-group-addon">Inclusive <input type="checkbox"
+				ng-model="filter.includeMax">
+			</span>
+		</div>
+	</div>
+	<div ng-show="isTerm(template)">
+		<term-tree-picker modal-id="{{filter}}_modal"
+			select-handler="termPicked"
+			source-endpoint="{{template.valuesEndpoint}}"
+			source-graph="{{template.valuesGraph}}"
+			search-filter="searchFilter" multi-valued='false'
+			form-field-name="term" ng-model="filter.termValues">
+		</term-tree-picker>
+		<div class="input-group">
+			<span class="input-group-addon">Label</span> <input type="text"
+				class="form-control" name="name"
+				ng-model="filter.term" ng-disabled="true">
+		</div>
+	</div>
+	<div ng-show="isLocation(template)">
+		<div class="input-group">
+			<span class="input-group-addon">Reference</span> <select
+				class="form-control" ng-model="filter.stringValue">
+				<option
+					ng-repeat="reference in globals.references[template.assembly]">{{reference.label}}</option>
+				<!--  options should come from the filter  -->
+			</select>
+		</div>
+		<div class="input-group">
+			<span class="input-group-addon">start</span> <input
+				class="form-control" type="number" ng-model="filter.minInteger"></input>
+		</div>
+		<div class="input-group">
+			<span class="input-group-addon">end</span> <input
+				class="form-control" type="number" ng-model="filter.maxInteger"
+				greater-than="{{filter.minInteger}}"></input>
+		</div>
+		<div class="input-group">
+			<span class="input-group-addon">Strand</span> <select
+				class="form-control" ng-model="filter.strand">
+				<option value=null>Any</option>
+				<option value=true>Positive</option>
+				<option value=false>Negative</option>
+			</select>
+		</div>
+	</div>
+</div>

@@ -168,24 +168,60 @@ ul#strength {
 }
 .bnq_ds_circle {
 	fill: rgb(137,221,36);
+	cursor: move;
 }
 .bnq_ds_selected {
-	fill: rgb(167,251,86);
+	fill: rgb(255,255,104);
+	cursor: move;
+}
+.bnq_ds_delete {
+	fill: rgb(255,0,0);
 }
 .bnq_ds_ring {
 	fill: rgb(104,104,104);
+	cursor: pointer;
 }
 .bnq_link {
 	stroke: rgb(104,104,104);
 	stroke-width:2
 }
+.bnq_link.active {
+	stroke: rgb(104,255,104);
+}
+.bnq_link.inactive {
+	stroke: rgb(104,104,104);
+}
 .bnq_link.over {
-	stroke: rgb(134,134,134);
+	stroke: rgb(255,255,0);
 	stroke-width:5
+}
+.bnq_link:hover {
+	stroke-width:5
+}
+.bnq_link.invalid {
+	stroke: rgb(255,0,0);
+}
+.bnq_node.inactive {
+	fill: rgb(104,104,104);
+}
+.bnq_node.active {
+	fill: rgb(104,255,104);
+}
+.bnq_node.selected {
+	fill: rgb(255,255,104);
+}
+.bnq_node.delete {
+	fill: rgb(255,0,0);
 }
 .bnq_drag_line {
 	stroke: rgb(137,221,36);
 	stroke-width:2
+}
+.bnq_tooltip {
+	font-family: "Verdana";
+}
+.bnq_tooltip.error {
+	fill: rgb(255,0,0)
 }
 .bnq_spacer5 { margin-top:5px; }
 .bnq_spacer15 { margin-top:15px; }

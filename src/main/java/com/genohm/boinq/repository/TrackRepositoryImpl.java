@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.service.FileManagerService;
+import com.genohm.boinq.service.LocalGraphService;
 import com.genohm.boinq.service.MetaInfoService;
 
 public class TrackRepositoryImpl implements TrackRepositoryExtensions {
@@ -17,12 +18,19 @@ public class TrackRepositoryImpl implements TrackRepositoryExtensions {
 	private FileManagerService fileManager;
 	@Inject
 	private MetaInfoService metaInfoService;
+	@Inject
+	private LocalGraphService localGraphService;
 	
 	@Override
 	public void deleteFiles(Track track) {
 		for (RawDataFile file: track.getRawDataFiles()) {
 			fileManager.remove(file);
 		}
+	}
+	
+	@Override
+	public void empty(Track track) {
+		localGraphService.deleteGraph(track.getGraphName());
 	}
 
 	@Override

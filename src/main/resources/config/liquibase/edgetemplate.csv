@@ -1,0 +1,9 @@
+ID|FROM_NODETEMPLATE_ID|TO_NODETEMPLATE_ID|TERM|LABEL|GRAPHTEMPLATE_ID
+1|1|2|http://semanticscience.org/resource/SIO_000628|refers to|1
+2|3|4|http://www.w3.org/119/02/22-rdf-syntax-ns#type|a|1
+3|2|5|http://www.w3.org/119/02/22-rdf-syntax-ns#type|a|1
+4|2|3|http://semanticscience.org/resource/SIO_000062|is participant in|1
+5|3|6|http://www.w3.org/2004/02/skos/core#exactMatch|exactMatch|1
+6|7|8|http://www.w3.org/2004/02/skos/core#exactMatch|exactMatch|1
+7|1|9|http://www.w3.org/119/02/22-rdf-syntax-ns#type|a|1
+8|1|7|http://semanticscience.org/resource/SIO_000628|refers to|1

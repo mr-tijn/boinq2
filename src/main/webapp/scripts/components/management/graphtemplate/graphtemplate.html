@@ -1,0 +1,58 @@
+<div ng-controller='GraphTemplateController'>
+<div class="row">
+	<a ui-sref="trackdetail({id:trackId, dsId:datasourceId})">
+		<button class="btn btn-primary btn-sm">
+			<span class="glyphicon glyphicon-fast-backward"></span> Back to track
+		</button>
+	</a>
+</div>
+<div class="row">
+ 	<div class="btn btn-default" draggable>
+		<span class="glyphicon glyphicon-save"></span> Drag to add node
+	</div>	
+</div>
+<div class="row well" style="overflow: scroll; overflow: scroll">
+	<svg width="100%" id="graphTemplateCanvas" height="375"
+		ng-mousemove="mouseMove($event)"
+		ng-mouseenter="mouseEnter($event)" droppable drop="addNode"> 
+			 	<defs>
+			    <marker id='arrow' orient='auto' markerWidth='18' markerHeight='12' markerUnits="userSpaceOnUse" refX='23' refY='6' >
+			      <path d='M0,0 L0,12 L18,6 z' fill="#686868"/>
+			    </marker>
+			  	</defs>
+				<path id="trash" d='M50,50 h-24 l-4,-30 h32 l-4,30 z' fill="white" stroke="none" trash=''/>
+				<path id="trash" d='M50,50 h-24 l-4,-30 h32 l-4,30 z m-2,0 l0,-30 m-10,30 l0,-30 m-10,30 l0,-30 m-7,-6 h34 h-22 v-6 h10 v6' stroke="#337AB7" stroke-width="2" stroke-linecap="butt" fill="none"/>
+ 				<line ng-repeat="edgeTemplate in graphTemplate.edgeTemplates"
+			ng-attr-x1="{{fromNode(edgeTemplate).x}}px"
+			ng-attr-y1="{{fromNode(edgeTemplate).y}}px"
+			ng-attr-x2="{{toNode(edgeTemplate).x}}px"
+			ng-attr-y2="{{toNode(edgeTemplate).y}}px" 
+			marker-end="url(#arrow)"
+			class="bnq_link inactive"
+			ng-click="selectEdge(edgeTemplate)" />
+ 				<line ng-model="selectLine" ng-attr-x1="{{selectLine.x1}}"
+			ng-attr-y1="{{selectLine.y1}}" ng-attr-x2="{{selectLine.x2}}"
+			ng-attr-y2="{{selectLine.y2}}" class="bnq_drag_line" />
+ 			 	<circle ng-mousedown="ringMouseDown($event, nodeTemplate)"
+			ng-repeat="nodeTemplate in graphTemplate.nodeTemplates" 
+			ng-attr-cx="{{nodeTemplate.x}}px"
+			ng-attr-cy="{{nodeTemplate.y}}px" r="20"
+			class="bnq_ds_ring"></circle>
+				<circle 
+			ng-repeat="nodeTemplate in graphTemplate.nodeTemplates" 
+			ng-attr-cx="{{nodeTemplate.x}}px"
+			ng-attr-cy="{{nodeTemplate.y}}px" r="10"
+			class="bnq_node"
+			ng-class="nodeClass(nodeTemplate)"
+			ng-mousedown="nodeMouseDown($event, nodeTemplate)"></circle>
+				<text pointer-events="none" ng-attr-x="{{nodeTemplate.x+20}}px" ng-attr-y="{{nodeTemplate.y+20}}px" ng-repeat="nodeTemplate in graphTemplate.nodeTemplates">{{nodeTemplate.name}}</text>
+ 	</svg>
+</div>
+<nodetemplatedetail node-template="localselection.nodeTemplate" ng-show="localselection.mode == 'node'"></nodetemplatedetail>
+<edgetemplatedetail edge-template="localselection.edgeTemplate" ng-show="localselection.mode == 'edge'"></edgetemplatedetail>
+<div class="row">
+	<button class="btn btn-default" ng-click="save()">
+		<span class="glyphicon glyphicon-save"></span> Save template
+	</button>
+</div>
+</div>

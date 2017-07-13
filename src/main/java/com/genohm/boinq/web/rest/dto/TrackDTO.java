@@ -11,6 +11,7 @@ import org.apache.jena.graph.Node;
 
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.domain.query.GraphTemplate;
 
 public class TrackDTO {
 
@@ -32,6 +33,8 @@ public class TrackDTO {
 	private List<Map<String, String>> supportedConnectors;
 	private Map<String, String> supportedFeatureTypes;
 	private Map<String, String> referenceMap;
+	
+	private Long graphTemplateId;
 
 	public long getId() {
 		return id;
@@ -177,6 +180,14 @@ public class TrackDTO {
 		this.referenceMap = referenceMap;
 	}
 
+	public Long getGraphTemplateId() {
+		return graphTemplateId;
+	}
+
+	public void setGraphTemplateId(Long graphTemplateId) {
+		this.graphTemplateId = graphTemplateId;
+	}
+
 	public TrackDTO() {}
 	
 	public TrackDTO(Track track) {
@@ -193,6 +204,7 @@ public class TrackDTO {
 		this.assembly = track.getAssembly();
 		this.contigPrefix = track.getContigPrefix();
 		this.rawDataFiles = new HashSet<RawDataFileDTO>();
+		this.graphTemplateId = (track.getGraphTemplate()!= null?track.getGraphTemplate().getId():0);
 		for (RawDataFile dataFile: track.getRawDataFiles()) {
 			rawDataFiles.add(new RawDataFileDTO(dataFile));
 		}

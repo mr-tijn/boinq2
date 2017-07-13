@@ -13,6 +13,8 @@ public final class Constants {
     public static final String SPRING_PROFILE_CLOUD = "cloud";
     // Spring profile used when deploying to Heroku
     public static final String SPRING_PROFILE_HEROKU = "heroku";
+    public static final String SPRING_PROFILE_TEST = "test";
+    public static final String SPRING_PROFILE_DOCKER = "docker";
 
     public static final String SYSTEM_ACCOUNT = "system";
 

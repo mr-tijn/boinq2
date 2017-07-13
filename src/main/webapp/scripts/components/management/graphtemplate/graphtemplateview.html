@@ -1,0 +1,34 @@
+<div ng-controller="GraphTemplateController" >
+<div class="row" style="overflow: scroll; overflow: scroll">
+	<svg width="100%"  id="graphTemplateCanvas" height="375"
+		ng-mousemove="mouseMove($event)"
+		ng-mouseenter="mouseEnter($event)"> 
+			 	<defs>
+			    <marker id='arrow' orient='auto' markerWidth='18' markerHeight='12' markerUnits="userSpaceOnUse" refX='23' refY='6' >
+			      <path d='M0,0 L0,12 L18,6 z' fill="#686868"/>
+			    </marker>
+			  	</defs>
+ 				<line ng-repeat="edgeTemplate in graphTemplate.edgeTemplates"
+			ng-attr-x1="{{fromNode(edgeTemplate).x}}px"
+			ng-attr-y1="{{fromNode(edgeTemplate).y}}px"
+			ng-attr-x2="{{toNode(edgeTemplate).x}}px"
+			ng-attr-y2="{{toNode(edgeTemplate).y}}px" 
+			marker-end="url(#arrow)"
+			class="bnq_link inactive"
+			ng-click="selectEdge(edgeTemplate)" />
+				<circle
+			ng-repeat="nodeTemplate in graphTemplate.nodeTemplates" 
+			ng-attr-cx="{{nodeTemplate.x}}px"
+			ng-attr-cy="{{nodeTemplate.y}}px" r="10"
+			class="bnq_node inactive"
+			ng-mousedown="nodeMouseDown($event, nodeTemplate)"></circle>
+				<text pointer-events="none" ng-attr-x="{{nodeTemplate.x+20}}px" ng-attr-y="{{nodeTemplate.y+20}}px" ng-repeat="nodeTemplate in graphTemplate.nodeTemplates">{{nodeTemplate.name}}</text>
+				<text pointer-events="none" ng-attr-x="{{edgeTemplate.x+20}}px" ng-attr-y="{{edgeTemplate.y+20}}px" ng-repeat="edgeTemplate in graphTemplate.edgeTemplates">{{edgeTemplate.name}}</text>
+ 	</svg>
+</div>
+<div class="row">
+	<button class="btn btn-default" ng-click="save()">
+		<span class="glyphicon glyphicon-save"></span> Save template
+	</button>
+</div>
+</div>

@@ -1,0 +1,10 @@
+ID|TYPE|NAME|DESCRIPTION|VARIABLE_PREFIX|VALUE_SOURCE_TYPE|VALUES_ENDPOINT|VALUES_GRAPH|VALUES_ROOT_TERM|FIXED_VALUE|LITERAL_XSD_TYPE|FILTERABLE|COLOR|X|Y|IDX
+1|0|?gda||gda|0||||||FALSE|blue|92|93|1
+2|0|?gene||gene|0||||||FALSE|blue|93|183|2
+3|0|?pw||pw|0||||||FALSE|blue|194|255|3
+4|0|Biochemical Pathway||type|0||||http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20633||FALSE|blue|298|252|4
+5|0|Gene||type|0||||http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C20633||FALSE|blue|195|180|5
+6|1|pathway ID||pathwayId|0||||||TRUE|blue|294|320|6
+7|0|Disease Disorder Finding||diseaseDisorderFinding|0||||||TRUE|blue|197|20|7
+8|1|Disease Identifier||diseaseIdentifier|0||||||TRUE|blue|340|19|8
+9|0|Gene-disease association||type|0||||http://semanticscience.org/resource/SIO_000983||FALSE|blue|197|92|9

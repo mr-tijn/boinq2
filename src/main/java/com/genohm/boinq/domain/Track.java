@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -20,6 +21,8 @@ import javax.validation.constraints.Size;
 import org.apache.jena.graph.Node;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.genohm.boinq.domain.query.GraphTemplate;
 
 /**
  * A Track.
@@ -32,6 +35,12 @@ public class Track implements Serializable {
 	private static final long serialVersionUID = 6345156276128476305L;
 	public static final int STATUS_EMPTY = 0;
 	public static final int STATUS_RAW_DATA = 1;
+	public static final int STATUS_PROCESSING = 2;
+	public static final int STATUS_DONE = 3;
+	public static final int STATUS_ERROR = 4;
+	
+	public static final String TYPE_GENERIC = "generic";
+	public static final String TYPE_FEATURE = "feature";
 
 	
 	//meta info
@@ -90,6 +99,10 @@ public class Track implements Serializable {
     
     @ManyToOne
     private Datasource datasource;
+    
+    @ManyToOne
+    @JoinColumn(name="graphtemplate_id")
+    private GraphTemplate graphTemplate;
     
     @Column(name="status")
     private int status;
@@ -195,6 +208,14 @@ public class Track implements Serializable {
 
 	public void setDatasource(Datasource datasource) {
 		this.datasource = datasource;
+	}
+
+	public GraphTemplate getGraphTemplate() {
+		return graphTemplate;
+	}
+
+	public void setGraphTemplate(GraphTemplate graphTemplate) {
+		this.graphTemplate = graphTemplate;
 	}
 
 	public int getStatus() {

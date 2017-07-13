@@ -115,16 +115,16 @@
 						disabled></td>
 					<td>
 						<button type="submit" ng-click="update(datasource.id)"
-							ng-disabled='manageddatasource != null' class="btn">
+							ng-disabled='manageddatasource != null' class="btn btn-primary btn-sm">
 							<span class="glyphicon glyphicon-pencil"></span> Edit
 						</button>
-						<button type="submit" ng-click="manage(datasource)"
-							ng-show="canmanage(datasource)"
-							ng-disabled='manageddatasource == datasource' class="btn">
-							<span class="glyphicon glyphicon-remove-circle"></span> Tracks
-						</button>
+						<a ui-sref="track({dsId:datasource.id})">
+							<button class="btn btn-primary btn-sm">
+								<span class="glyphicon glyphicon-remove-circle"></span> Tracks
+							</button>
+						</a>
 						<button type="submit" ng-click="delete(datasource.id)"
-							ng-disabled='manageddatasource != null' class="btn btn-danger">
+							ng-disabled='manageddatasource != null' class="btn btn-danger btn-sm">
 							<span class="glyphicon glyphicon-remove-circle"></span> Delete
 						</button>
 

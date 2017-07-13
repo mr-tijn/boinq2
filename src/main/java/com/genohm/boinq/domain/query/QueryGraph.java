@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,7 +27,16 @@ public class QueryGraph implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@Column(name="idx")
+	private Integer idx;
+	@Column(name="x")
+	private Integer x;
+	@Column(name="y")
+	private Integer y;
+	@Column(name="name")
+	private String name;
+	
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.MERGE)
 	@JoinColumn(name="graphtemplate_id")
 	private GraphTemplate template;
 	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
@@ -41,6 +51,30 @@ public class QueryGraph implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+	public Integer getIdx() {
+		return idx;
+	}
+	public void setIdx(Integer idx) {
+		this.idx = idx;
+	}
+	public Integer getX() {
+		return x;
+	}
+	public void setX(Integer x) {
+		this.x = x;
+	}
+	public Integer getY() {
+		return y;
+	}
+	public void setY(Integer y) {
+		this.y = y;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	public GraphTemplate getTemplate() {
 		return template;
 	}
@@ -53,7 +87,5 @@ public class QueryGraph implements Serializable {
 	public void setQueryEdges(Set<QueryEdge> queryEdges) {
 		this.queryEdges = queryEdges;
 	}
-	
-
 	
 }

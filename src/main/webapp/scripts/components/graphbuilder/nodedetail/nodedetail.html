@@ -1,0 +1,10 @@
+<div ng-show="node" ng-controller="QueryNodeController">
+	<div class="row">
+		Filters:
+		<div class="btn btn-primary"
+			ng-repeat="filter in selection.node.nodeFilters"
+			ng-click="selectFilter(filter)">{{name(nodeTemplate)}}<div ng-click="removeFilter(filter);$event.stopPropagation()">x</div> </div>
+		<div class="btn btn-primary" ng-click="addFilter()">+</div>
+		<filterdetail filter="selection.filter" template="nodeTemplate"></filterdetail>
+	</div>
+</div>

@@ -31,11 +31,11 @@ public class GraphTemplateRepositoryTestData {
 	private static GraphTemplate buildDisGeNet() {
 		GraphTemplate disGeNet = new GraphTemplate();
 		Set<EdgeTemplate> edges = new HashSet<>();
-		NodeTemplate gda = entityNode("GeneDiseaseAssociation", false);
+		NodeTemplate gda = entityNode("Gene disease association", false);
 		edges.add(typeEdgeTemplate(gda, SioVocab.gene_disease_association.toString()));
 		geneNode = entityNode("gene", false);
 		edges.add(typeEdgeTemplate(geneNode, ncit("C16612")));
-		NodeTemplate dis = entityNode("Disease, Disorder or Finding", false);
+		NodeTemplate dis = entityNode("Disease Disorder Finding", false);
 		edges.add(new EdgeTemplate(gda, dis, SioVocab.refers_to.toString()));
 		edges.add(new EdgeTemplate(gda, geneNode, SioVocab.refers_to.toString()));
 		NodeTemplate disId = entityNode("Disease identifier", true);

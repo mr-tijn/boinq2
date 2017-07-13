@@ -60,6 +60,7 @@ import com.genohm.boinq.domain.query.QueryEdge;
 import com.genohm.boinq.domain.query.QueryGraph;
 import com.genohm.boinq.domain.query.QueryNode;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
+import com.genohm.boinq.web.rest.dto.NodeTemplateDTO;
 
 @Service
 public class GenerateQueryService {
@@ -135,7 +136,7 @@ public class GenerateQueryService {
 				result.add(variableNames.get(edge.getTo()));
 			}
 		}
-		return null;
+		return result;
 	}
 
 	private Node localUri(String postfix) {
@@ -298,6 +299,16 @@ public class GenerateQueryService {
 		return graphFilters;
 	}
 	
+	private Boolean isString(String xsdType) {
+		return xsdType.equals(XSD.xstring);
+	}
+	private Boolean isInteger(String xsdType) {
+		return xsdType.equals(XSD.integer) || xsdType.equals(XSD.xlong) || xsdType.equals(XSD.xshort) || xsdType.equals(XSD.xbyte);
+	}
+	private Boolean isFloat(String xsdType) {
+		return xsdType.equals(XSD.xfloat) || xsdType.equals(XSD.xdouble) || xsdType.equals(XSD.decimal);
+	}
+	
 
 	private List<ElementFilter> generateFilters(QueryNode node, String variableName) {
 		List<ElementFilter> result = new LinkedList<>();
@@ -315,7 +326,28 @@ public class GenerateQueryService {
 			}
 		} else if (QueryNode.NODETYPE_GENERICLITERAL == node.getNodeType()) {
 			for (NodeFilter filter: node.getNodeFilters()) {
+				
 				Expr expr = null;
+				
+						
+				// compute type (a bit redundant; need to fix)
+				
+				if (filter.getExactMatch()) {
+					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_EQUALS);
+				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_FALDOLOCATION) {
+					filter.setType(NodeFilter.FILTER_TYPE_FALDOLOCATION);
+				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_GENERICLITERAL) {
+					if (NodeFilter.isString(node.getTemplate().getLiteralXsdType())) {
+						filter.setType(NodeFilter.FILTER_TYPE_GENERIC_CONTAINS);
+					} else {
+						filter.setType(NodeFilter.FILTER_TYPE_GENERIC_BETWEEN);
+					}
+				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_GENERICENTITY || node.getTemplate().getNodeType() == QueryNode.NODETYPE_TYPEDENTITY) {
+					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_VALUES);
+				}
+				
+				// end need to fix
+				
 				switch (filter.getType()) {
 				case NodeFilter.FILTER_TYPE_GENERIC_EQUALS:
 					if (filter.getNot()) {

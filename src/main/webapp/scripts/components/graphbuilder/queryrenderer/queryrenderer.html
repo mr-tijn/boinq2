@@ -1,0 +1,43 @@
+<div class="row">Drag green center to move, drag grey ring to
+	connect, click to select</div>
+<div class="row well" ng-controller='QueryRendererController'>
+	<svg width="100%" height="275" 
+			ng-mouseenter="mouseEnter($event)" 
+		ng-mousemove="mouseMove($event)" droppable drop="dropped">
+<!-- 		mouseCapture  -->
+			 	<defs>
+			    <marker id='arrow' orient='auto' markerWidth='18' markerHeight='12' markerUnits="userSpaceOnUse" refX='28' refY='6' >
+			      <path d='M0,0 L0,12 L18,6 z' fill="#686868"/>
+			    </marker>
+			  	</defs>
+			  	<text id="tooltip" 
+			 		ng-attr-x="{{toolTip.x}}px" 
+			 		ng-attr-y="{{toolTip.y}}px" 
+			 		ng-show="toolTip.show"
+			 		class="bnq_tooltip"
+			 		ng-class="toolTip.class">{{toolTip.text}}</text>
+				<path id="trash" d='M50,50 h-24 l-4,-30 h32 l-4,30 z' fill="white" stroke="none" trash=''/>
+				<path id="trash" d='M50,50 h-24 l-4,-30 h32 l-4,30 z m-2,0 l0,-30 m-10,30 l0,-30 m-10,30 l0,-30 m-7,-6 h34 h-22 v-6 h10 v6' stroke="#337AB7" stroke-width="2" stroke-linecap="butt" fill="none"/>
+ 				<line ng-repeat="bridge in queryDefinition.queryBridges"
+			ng-attr-x1="{{getfromgraph(bridge).x}}px"
+			ng-attr-y1="{{getfromgraph(bridge).y}}px"
+			ng-attr-x2="{{gettograph(bridge).x}}px"
+			ng-attr-y2="{{gettograph(bridge).y}}px" class="bnq_link"
+			marker-end="url(#arrow)"
+			ng-click="selectBridge(bridge)"
+			ng-class="valid(bridge)"
+			ng-mouseenter="$parent.bridgeTooltip($event, bridge)" 
+			ng-mouseleave="$parent.hideTooltip()" />
+				<line ng-model="selectLine" ng-attr-x1="{{selectLine.x1}}"
+			ng-attr-y1="{{selectLine.y1}}" ng-attr-x2="{{selectLine.x2}}"
+			ng-attr-y2="{{selectLine.y2}}" class="bnq_drag_line" />
+ 				<circle ng-mousedown="ringMouseDown($event, graph)"
+			ng-repeat="graph in queryDefinition.queryGraphs" ng-attr-cx="{{graph.x}}px"
+			ng-attr-cy="{{graph.y}}px" r="20" class="bnq_ds_ring"></circle>
+				<text pointer-events="none" ng-attr-x="{{graph.x+20}}px" ng-attr-y="{{graph.y+20}}px" ng-repeat="graph in queryDefinition.queryGraphs">{{graph.name}}</text>
+ 				<circle ng-mousedown="nodeMouseDown($event, graph)"
+			ng-repeat="graph in queryDefinition.queryGraphs" ng-attr-cx="{{graph.x}}px"
+			ng-attr-cy="{{graph.y}}px" r="10"
+			ng-class="getClass(graph)"></circle>
+ 	</svg>
+</div>

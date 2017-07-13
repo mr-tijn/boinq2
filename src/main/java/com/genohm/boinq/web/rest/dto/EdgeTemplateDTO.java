@@ -13,21 +13,24 @@ public abstract class EdgeTemplateDTO {
 	public static EdgeTemplateDTO create(EdgeTemplate template) {
 		return new AutoValue_EdgeTemplateDTO(
 				template.getId(), 
-				NodeTemplateDTO.create(template.getFrom()), 
-				NodeTemplateDTO.create(template.getTo()), 
-				template.getTerm());
+				template.getFrom().getIdx(), 
+				template.getTo().getIdx(), 
+				template.getTerm(),
+				template.getLabel());
 	}
 	
 	@JsonCreator public static EdgeTemplateDTO create(
 			@JsonProperty("id") Long id,
-			@JsonProperty("from") NodeTemplateDTO from,
-			@JsonProperty("to") NodeTemplateDTO to,
-			@JsonProperty("term") String term) {
-		return new AutoValue_EdgeTemplateDTO(id, from, to, term);
+			@JsonProperty("from") Integer fromIdx,
+			@JsonProperty("to") Integer toIdx,
+			@JsonProperty("term") String term,
+			@JsonProperty("label") String label) {
+		return new AutoValue_EdgeTemplateDTO(id, fromIdx, toIdx, term, label);
 	}
 	
 	@JsonProperty("id") @Nullable public abstract Long id();
-	@JsonProperty("from") public abstract NodeTemplateDTO from();
-	@JsonProperty("to") public abstract NodeTemplateDTO to();
+	@JsonProperty("from") public abstract Integer fromIdx();
+	@JsonProperty("to") public abstract Integer toIdx();
 	@JsonProperty("term") public abstract String term();
+	@JsonProperty("label") @Nullable public abstract String label();
 }

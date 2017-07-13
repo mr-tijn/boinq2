@@ -17,7 +17,7 @@
 				<tr ng-repeat="job in jobs">
 					<td>{{job.name}}</td>
 					<td>{{job.description}}</td>
-					<td>{{job.status | jobstatusfilter}}</td>
+					<td>{{job.status | jobstatus}}</td>
 					<td>
 						<button type="submit" ng-click="cancel(job.name)"
 							ng-disabled='cancancel(job)' class="btn btn-danger">

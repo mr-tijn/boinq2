@@ -1,0 +1,112 @@
+<div ng-controller="NodeTemplateDetailController">
+<div class="form-group">
+	<label>Name</label> <input type="text" class="form-control" name="name"
+		ng-model="nodeTemplate.name" ng-minlength=1 ng-maxlength=250
+		ng-required="true">
+</div>
+<div class="form-group">
+	<label>Description</label> <input type="text" class="form-control"
+		name="description" ng-model="nodeTemplate.description" ng-minlength=1
+		ng-maxlength=250 ng-required="false">
+</div>
+<div class="form-group">
+	<label>Variable Prefix</label> <input type="text" class="form-control"
+		name="variablePrefix" ng-model="nodeTemplate.variablePrefix" ng-minlength=1
+		ng-maxlength=250 ng-required="true">
+</div>
+<div class="input-group">
+	<div class="checkbox">
+		<label> <input type="checkbox" ng-model="nodeTemplate.filterable" ng-change="changeFilterable()">
+			Filterable
+		</label>
+	</div>
+</div>
+<div class="form-group">
+	<label>Node Type</label> <select class="form-control" ng-required="true"
+		ng-model="nodeTemplate.nodeType" 
+		ng-options="type.value as type.label for type in TermTools.nodeTypes">
+		<option value="">-- Please select Node Type --</option>
+	</select>
+</div>
+<div class="form-group" ng-show="isliteral()">
+	<label>XSD Type</label> <select class="form-control" ng-required="true"
+		ng-model="nodeTemplate.literalXsdType" 
+		ng-options="type.term as type.label for type in TermTools.XSDTypes">
+		<option value="">-- Please select XSD Type --</option>
+	</select>
+</div>
+<!-- <div class="form-group" ng-show="nodeTemplate.filterable && nodeTemplate.nodeType == NodeConstants.TYPE_FALDOENTITY">
+	<label>Species</label> <select class="form-control"
+		name="selectedSpecies" ng-model="species" ng-required="true" 
+		ng-options="species.term as species.label for species in globals.species">
+		<option value="">-- Please select Species --</option>
+		</select>
+</div>
+<div class="form-group" ng-show="nodeTemplate.filterable && nodeTemplate.nodeType == NodeConstants.TYPE_FALDOENTITY">
+	<label>Assembly</label> <select class="form-control"
+		name="assembly" ng-model="nodeTemplate.assembly" ng-required="true" 
+		ng-options="assembly.term as assembly.label for assembly in globals.assemblies[selectedSpecies]">
+		<option value="">-- Please select Assembly --</option>
+		</select>
+</div>
+ -->
+<div class="form-group" ng-show="isentity()">
+	<label>Value Source</label> <select class="form-control" ng-required="true"
+		ng-model="nodeTemplate.valueSource" 
+		ng-change="changeValueSource()"
+		ng-options="source.value as source.label for source in TermTools.valueSources">
+		<option value="">-- Please select Value Source --</option>
+	</select>
+</div>
+
+<div class="form-group" ng-show="islistentity()">
+	<label>Values Term List</label> <input type="text" class="form-control"
+		name="valuesTermList" ng-model="nodeTemplate.valuesTermList" ng-minlength=1
+		ng-maxlength=250 ng-required="true" >
+</div>
+<div class="form-group" ng-show="isendpointentity()">
+	<label>Values Endpoint</label> <input type="text" class="form-control"
+		name="variablePrefix" ng-model="nodeTemplate.valuesEndpoint" ng-minlength=1
+		ng-maxlength=250 ng-required="true" >
+</div>
+<div class="form-group" ng-show="isendpointentity()">
+	<label>Values Root Term</label> <input type="text" class="form-control"
+		name="variablePrefix" ng-model="nodeTemplate.valuesRootTerm" ng-minlength=1
+		ng-maxlength=250 ng-required="false" >
+</div>
+<div class="form-group" ng-show="isendpointentity()">
+	<label>Values Graph</label> <input type="text" class="form-control"
+		name="variablePrefix" ng-model="nodeTemplate.valuesGraph" ng-minlength=1
+		ng-maxlength=250 ng-required="true" >
+</div>
+<div class="form-group" ng-show="istypedentity()">
+	<label>Fixed Type</label> <input type="text" class="form-control"
+		name="fixedType" ng-model="nodeTemplate.fixedType" ng-minlength=1
+		ng-maxlength=250 ng-required="false" >
+</div>
+<div class="form-group" ng-show="isfixedentity()">
+	<label>Fixed Value</label> <input type="text" class="form-control"
+		name="variablePrefix" ng-model="nodeTemplate.fixedValue" ng-minlength=1
+		ng-maxlength=250 ng-required="true" >
+</div>
+
+<div class="modal fade ng-scope" 
+	id="warningDialog" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Warning</h4>
+			</div>
+			<div class="modal-body">{{warningText}}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">
+					<span class="glyphicon glyphicon-ban-circle"></span> Close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+</div>

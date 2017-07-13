@@ -16,6 +16,7 @@ public abstract class NodeTemplateDTO {
 		return new AutoValue_NodeTemplateDTO(
 				template.getId(),
 				template.getName(), 
+				template.getNodeType(),
 				template.getDescription(), 
 				template.getVariablePrefix(), 
 				template.getValueSource(), 
@@ -24,16 +25,20 @@ public abstract class NodeTemplateDTO {
 				template.getValuesGraph(), 
 				template.getValuesRootTerm(), 
 				template.getFixedValue(), 
-				template.getLiteralXsdType(), 
+				template.getFixedType(),
+				template.getLiteralXsdType(),
+				template.getAssembly(),
 				template.getFilterable(), 
 				template.getColor(), 
 				template.getX(), 
-				template.getY());
+				template.getY(),
+				template.getIdx());
 	}
 	
 	@JsonCreator public static NodeTemplateDTO create(
 			@JsonProperty("id") Long id,
 			@JsonProperty("name") String name,
+			@JsonProperty("nodeType") Integer nodeType,
 			@JsonProperty("description") String description,
 			@JsonProperty("variablePrefix") String variablePrefix,
 			@JsonProperty("valueSource") int valueSource,
@@ -42,17 +47,21 @@ public abstract class NodeTemplateDTO {
 			@JsonProperty("valuesGraph") String valuesGraph,
 			@JsonProperty("valuesRootTerm") String valuesRootTerm,
 			@JsonProperty("fixedValue") String fixedValue,
+			@JsonProperty("fixedType") String fixedType,
 			@JsonProperty("literalXsdType") String literalXsdType,
+			@JsonProperty("assembly") String assembly,
 			@JsonProperty("filterable") Boolean filterable,
 			@JsonProperty("color") String color,
 			@JsonProperty("x") int x,
-			@JsonProperty("y") int y) {
-		return new AutoValue_NodeTemplateDTO(id, name, description, variablePrefix, valueSource, valuesTermList, valuesEndpoint, valuesGraph, valuesRootTerm, fixedValue, literalXsdType, filterable, color, x, y);
+			@JsonProperty("y") int y,
+			@JsonProperty("idx") Integer idx) {
+		return new AutoValue_NodeTemplateDTO(id, name, nodeType, description, variablePrefix, valueSource, valuesTermList, valuesEndpoint, valuesGraph, valuesRootTerm, fixedValue, fixedType, literalXsdType, assembly, filterable, color, x, y, idx);
 	}
 	
 
 	@JsonProperty("id") @Nullable 	public abstract Long id();
 	@JsonProperty("name") @Nullable public abstract String name();
+	@JsonProperty("nodeType") 			public abstract Integer nodeType();
 	@JsonProperty("description") @Nullable public abstract String description();
 	@JsonProperty("variablePrefix") @Nullable public abstract String variablePrefix();
 	@JsonProperty("valueSource")		  public abstract Integer valueSource();
@@ -61,9 +70,12 @@ public abstract class NodeTemplateDTO {
 	@JsonProperty("valuesGraph") @Nullable public abstract String valuesGraph();
 	@JsonProperty("valuesRootTerm") @Nullable public abstract String valuesRootTerm();
 	@JsonProperty("fixedValue") @Nullable public abstract String fixedValue();
+	@JsonProperty("fixedType") @Nullable public abstract String fixedType();
 	@JsonProperty("literalXsdType")@Nullable public abstract String literalXsdType();
+	@JsonProperty("assembly") @Nullable public abstract String assembly();
 	@JsonProperty("filterable")public abstract Boolean filterable();
 	@JsonProperty("color")public abstract String color();
 	@JsonProperty("x") public abstract Integer x();
 	@JsonProperty("y")		  public abstract Integer y();
+	@JsonProperty("idx") public abstract Integer idx();
 }

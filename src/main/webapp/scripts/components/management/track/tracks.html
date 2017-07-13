@@ -1,0 +1,130 @@
+<div >
+
+
+	<a ui-sref="datasource">
+		<button class="btn btn-primary btn-sm">
+			<span class="glyphicon glyphicon-fast-backward"></span> Datasource Overview
+		</button>
+	</a>
+
+
+	<h2>Tracks for {{datasource.name}}</h2>
+
+	<button class="btn btn-primary btn-sm" data-toggle="modal"
+		data-target="#saveTrackModal" ng-click="clear()">
+		<span class="glyphicon glyphicon-flash"></span> Create a new Track
+	</button>
+	<div class="modal fade" id="saveTrackModal" tabindex="-1" role="dialog"
+		aria-labelledby="myTrackLabel" aria-hidden="true">
+		<h4 class="modal-title" id="myTrackLabel"></h4>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form name="trackForm" role="form" novalidate
+					class="ng-scope ng-invalid ng-invalid-required ng-dirty ng-valid-minlength"
+					ng-submit="create()">
+
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true" ng-click="clear()">&times;</button>
+						<h4 class="modal-title" id="myTrackLabel">Create or edit a
+							Track</h4>
+					</div>
+					<div class="modal-body">
+					
+					
+						<div class="form-group">
+							<label>Name</label> <input type="text" class="form-control"
+								name="trackName" ng-model="track.name" ng-minlength=1
+								ng-maxlength=200>
+						</div>
+						
+				<div class="form-group" >
+					<label>Type</label> <select name="type"
+						ng-model="track.type" class="form-control">
+						<option>generic</option>
+						<option>feature</option>
+					</select>
+				</div>
+
+						<div class="form-group">
+							<label>Graph name</label> <input type="text" class="form-control"
+								name="graphName" ng-model="track.graphName" ng-minlength=1
+								ng-maxlength=200 ng-disabled="isLocal(datasource)">
+						</div>
+
+				<div class="form-group" ng-show="track.type == 'feature'">
+					<label>Species</label> <select name="species"
+						ng-model="track.species" class="form-control"
+						ng-disabled="track.species"
+						ng-change="getAssemblies(track.species)"
+						ng-options="item.label as item.label for item in supportedSpecies">
+					</select>
+				</div>
+				<div class="form-group" ng-show="track.type == 'feature'">
+					<label>Assembly</label> <select name="assembly"
+						ng-model="track.assembly" class="form-control"
+						ng-disabled="track.assembly"
+						ng-options="item.label as item.label for item in assemblyList">
+					</select>
+				</div>
+
+				<div class="form-group" ng-show="track.type == 'feature'">
+					<label>File Format</label> <select type="text" class="form-control"
+						name="fileFormat" ng-model="track.fileType">
+						<option>BED</option>
+						<option>GFF</option>
+					</select>
+				</div>
+
+
+						<input type="hidden" ng-model="track.status" name="status">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							ng-click="clear()">
+							<span class="glyphicon glyphicon-ban-circle"></span> Cancel
+						</button>
+						<button type="submit" ng-disabled="trackForm.$invalid"
+							class="btn btn-primary" ng-click="active=null">
+							<span class="glyphicon glyphicon-save"></span> Save
+						</button>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Type</th>
+					<th>Status</th>
+					<th>Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="track in datasource.tracks">
+					<td>{{track.id}}</td>
+					<td>{{track.type}}</td>
+					<td>{{track.status | trackstatus}}</td>
+					<td>{{track.name}}</td>
+					<td>
+						<a ui-sref="trackdetail({id:track.id, dsId:datasource.id})">
+							<button class="btn btn-primary btn-sm">
+								<span class="glyphicon glyphicon-pencil"></span> Details
+							</button>
+						</a>
+						<button type="submit" ng-click="delete(track.id)"
+							class="btn btn-danger btn-sm">
+							<span class="glyphicon glyphicon-remove-circle"></span> Delete
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+</div>

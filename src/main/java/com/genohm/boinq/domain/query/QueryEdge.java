@@ -19,6 +19,9 @@ import org.apache.jena.graph.Node;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.genohm.boinq.web.rest.dto.QueryEdgeDTO;
+import com.genohm.boinq.web.rest.dto.QueryNodeDTO;
+
 @Entity
 @Table(name = "T_QUERYEDGE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -28,7 +31,7 @@ public class QueryEdge implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.MERGE)
 	@JoinColumn(name="edgetemplate_id")
 	private EdgeTemplate template;
 	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
@@ -76,23 +79,23 @@ public class QueryEdge implements Serializable {
 
 	@Transient
 	public Boolean adjoins(QueryEdge target) {
-		return (from == target.from 
-				|| from == target.to 
-				|| to == target.from 
-				|| to == target.to);
+		return (from.getId().equals(target.from.getId()) 
+				|| from.getId().equals(target.to.getId()) 
+				|| to.getId().equals(target.from.getId())
+				|| to.getId().equals(target.to.getId()));
 	}
 	
 	@Transient
 	public Boolean adjoins(QueryBridge target) {
-		return (from == target.getFromNode()
-				|| from == target.getToNode() 
-				|| to == target.getFromNode() 
-				|| to == target.getToNode());
+		return (from.getId().equals(target.getFromNode().getId())
+				|| from.getId().equals(target.getToNode().getId()) 
+				|| to.getId().equals(target.getFromNode().getId()) 
+				|| to.getId().equals(target.getToNode().getId()));
 	}
 
 	@Transient
 	public Boolean adjoins(Collection<QueryBridge> targets) {
 		return targets.stream().anyMatch(target -> this.adjoins(target));
 	}
-
+	
 }

@@ -24,9 +24,10 @@ public class RawDataFile implements Serializable {
 
 	private static final long serialVersionUID = -7426424004291201354L;
 	
-	public static final int STATUS_LOADING = 0;
-	public static final int STATUS_COMPLETE = 1;
-	public static final int STATUS_ERROR = 2;
+	public static final int STATUS_WAITING = 0;
+	public static final int STATUS_LOADING = 1;
+	public static final int STATUS_COMPLETE = 2;
+	public static final int STATUS_ERROR = 3;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.TABLE)

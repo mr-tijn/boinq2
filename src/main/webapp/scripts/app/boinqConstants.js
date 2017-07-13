@@ -1,3 +1,8 @@
+angular.module('boinqApp').constant('GlobalConstants', {
+	supportedSpecies : [{label:'Homo sapiens'}],
+});
+
+
 angular.module('boinqApp').constant('DatasourceConstants', {
 	TYPE_LOCAL_FALDO : 0,
 	TYPE_REMOTE_FALDO : 1,
@@ -18,24 +23,34 @@ angular.module('boinqApp').constant('TrackConstants', {
 
 	STATUS_EMPTY : 0,
 	STATUS_RAW_DATA : 1,
+	STATUS_PROCESSING : 2,
+	STATUS_DONE : 3,
+	STATUS_ERROR : 4,
+
+	
 	
 	STATUS_ITEMS : {
   		'0': "Empty",
-  		'1': "Contains raw data"
+  		'1': "Contains raw data",
+  		'2': "Processing",
+  		'3': "Done",
+  		'4': "Error"
 	}
 	
 });
 
 angular.module('boinqApp').constant('DataFileConstants', {
-	
-	STATUS_LOADING : 0,
-	STATUS_COMPLETE : 1,
-	STATUS_ERROR : 2,
-	
+
+	STATUS_WAITING : 0,
+	STATUS_LOADING : 1,
+	STATUS_COMPLETE : 2,
+	STATUS_ERROR : 3,
+
 	STATUS_ITEMS : {
-  		'0': "Loading into endpoint",
-  		'1': "Complete",
-  		'2': "Error"
+		'0': "Waiting for processing",
+  		'1': "Loading into endpoint",
+  		'2': "Complete",
+  		'3': "Error"
 	}
 
 });
@@ -92,3 +107,43 @@ angular.module('boinqApp').constant('JobConstants',{
 
 	
 });
+
+angular.module('boinqApp').constant('FilterConstants',{
+	TYPE_GENERIC_EQUALS : 0,
+	TYPE_GENERIC_BETWEEN : 1,
+	TYPE_GENERIC_STARTSWITH : 2,
+	TYPE_GENERIC_CONTAINS :  3,
+	
+	TYPE_GENERIC_VALUES : 20,
+	TYPE_FALDOLOCATION : 21
+
+});
+
+
+angular.module('boinqApp').constant('NodeConstants',{
+	TYPE_ENTITY : 0,
+	TYPE_LITERAL : 1,
+	TYPE_FALDOENTITY : 2,
+	TYPE_ATTRIBUTE : 3,
+	TYPE_TYPEDENTITY : 4,
+	
+	TYPE_ITEMS : {
+		'0' : 'Entity',
+		'1' : 'Literal',
+		'2' : 'Location',
+		'3' : 'Attribute',
+		'4' : 'Typed entity'
+	},
+	
+	SOURCE_LIST : 0,
+	SOURCE_ENDPOINT : 1,
+	SOURCE_FIXED : 2,
+
+	SOURCE_ITEMS : {
+		'0'	: 'List',
+		'1' : 'Endpoint',
+		'2'	: 'Fixed'
+	}
+	
+});
+

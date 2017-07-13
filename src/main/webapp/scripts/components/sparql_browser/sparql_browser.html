@@ -139,21 +139,4 @@
 			</form>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-1"></div>
-		<div class="col-md-10">
-
-			<h1>Brol</h1>
-
-			<term-tree-picker select-handler="termPicked"
-				source-endpoint="http://localhost:8899/META_DYNAMIC/sparql"
-				source-graph="http://boinq.org/hierarchy"> </term-tree-picker>
-
-			<h1>Nog brol</h1>
-				
-			<match-tree root-node="rootNode"></match-tree>
-			
-			<pre>{{rootNode | json}}</pre>
-		</div>
-	</div>
 </div>

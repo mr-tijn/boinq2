@@ -111,6 +111,7 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 		UpdateExecutionFactory.createRemote(create, staticUpdateEndpoint).execute();
 		
 		InputStream go = this.getClass().getClassLoader().getResourceAsStream("ontologies/go.owl");
+		if (null == go) return;
 		TripleUploader uploader = tripleUploadService.getUploader(staticUpdateEndpoint, GO_URI);
 		RDFDataMgr.parse(uploader, go, Lang.RDFXML);
 		try {

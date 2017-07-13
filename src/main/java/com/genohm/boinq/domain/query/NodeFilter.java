@@ -4,6 +4,7 @@ import java.beans.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,8 @@ public class NodeFilter implements Serializable {
 	private Boolean caseInsensitive = false;
 	@Column(name="negate", nullable=false)
 	private Boolean not = false;
+	@Column(name="exact_match")
+	private Boolean exactMatch = false;
 	
 	@Column(name="min_integer")
 	private Long minInteger;
@@ -109,6 +112,12 @@ public class NodeFilter implements Serializable {
 	public void setNot(Boolean not) {
 		this.not = not;
 	}
+	public Boolean getExactMatch() {
+		return exactMatch;
+	}
+	public void setExactMatch(Boolean exactMatch) {
+		this.exactMatch = exactMatch;
+	}
 	public void setMinInteger(Long minInteger) {
 		this.minInteger = minInteger;
 	}
@@ -161,7 +170,7 @@ public class NodeFilter implements Serializable {
 		this.stringValue = stringValue;
 	}
 	public List<String> getTermValues() {
-		return Arrays.asList(termValues.split("|"));
+		return (termValues != null ? Arrays.asList(termValues.split("|")): new LinkedList<>());
 	}
 	public void setTermValues(List<String> termValues) {
 		this.termValues = termValues.stream().collect(Collectors.joining("|"));
@@ -184,15 +193,30 @@ public class NodeFilter implements Serializable {
 	private static final List<String> stringTypes = Arrays.asList(XSD.normalizedString, XSD.xstring).stream().map((Resource node) -> node.asNode().toString()).collect(Collectors.toList());
 	
 	@Transient
+	public static Boolean isInteger(String nodeType) {
+		return integerTypes.stream().anyMatch(t -> t.equals(nodeType));
+	}
+	
+	@Transient
+	public static Boolean isDecimal(String nodeType) {
+		return decimalTypes.stream().anyMatch(t -> t.equals(nodeType));
+	}
+	
+	@Transient
+	public static Boolean isString(String nodeType) {
+		return stringTypes.stream().anyMatch(t -> t.equals(nodeType));
+	}
+	
+	@Transient
 	public NodeValue getValue(String nodeType) {
 		NodeValue value = null;
-		if (integerTypes.stream().anyMatch(t -> t.equals(nodeType))) {
+		if (isInteger(nodeType)) {
 			value = new NodeValueInteger(this.getIntegerValue());
 		}
-		else if (decimalTypes.stream().anyMatch(t -> t.equals(nodeType))) {
+		else if (isDecimal(nodeType)) {
 			value = new NodeValueDouble(this.getDoubleValue());
 		}
-		else if (stringTypes.stream().anyMatch(t -> t.equals(nodeType))) {
+		else if (isString(nodeType)) {
 			value = new NodeValueString(this.getStringValue());
 		}
 		return value;
@@ -201,10 +225,10 @@ public class NodeFilter implements Serializable {
 	@Transient
 	public NodeValue getMinValue(String nodeType) {
 		NodeValue value = null;
-		if (integerTypes.stream().anyMatch(t -> t.equals(nodeType))) {
+		if (isInteger(nodeType)) {
 			value = new NodeValueInteger(this.getMinInteger());
 		}
-		else if (decimalTypes.stream().anyMatch(t -> t.equals(nodeType))) {
+		else if (isDecimal(nodeType)) {
 			value = new NodeValueDouble(this.getMinDouble());
 		}
 		return value;
@@ -213,10 +237,10 @@ public class NodeFilter implements Serializable {
 	@Transient
 	public NodeValue getMaxValue(String nodeType) {
 		NodeValue value = null;
-		if (integerTypes.stream().anyMatch(t -> t.equals(nodeType))) {
+		if (isInteger(nodeType)) {
 			value = new NodeValueInteger(this.getMaxInteger());
 		}
-		else if (decimalTypes.stream().anyMatch(t -> t.equals(nodeType))) {
+		else if (isDecimal(nodeType)) {
 			value = new NodeValueDouble(this.getMaxDouble());
 		}
 		return value;

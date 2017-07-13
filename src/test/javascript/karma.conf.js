@@ -67,6 +67,23 @@ module.exports = function (config) {
 
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
-        singleRun: false
+        singleRun: false,
+        
+        // Preprocessor (for serving templates)
+        preprocessors: {
+        	"main/webapp/scripts/components/**/*.html": ["ng-html2js"]
+        },
+        
+        ngHtml2JsPreprocessor: {
+        	stripPrefix: "main/webapp/",
+        	moduleName: "templates.cache"
+        },
+        
+        // should not be necessary
+//        plugins : [
+//                   'karma-ng-html2js-preprocessor',
+//		   'karma-jasmine',
+//		   'karma-phantomjs-launcher'
+//        ],
     });
 };

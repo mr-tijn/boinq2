@@ -15,6 +15,12 @@ angular.module('boinqApp')
                     templateUrl: 'scripts/components/sparql_browser/sparql_browser.html',
                     controller: 'SparqlBrowserController'
                 }
+            },
+            resolve: {
+                translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
+                    $translatePartialLoader.addPart('main');
+                    return $translate.refresh();
+                }]
             }
         });
 });

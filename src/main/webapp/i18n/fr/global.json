@@ -37,7 +37,9 @@
             },
             "routine": {
             	"title": "Routine",
-                "featurequery" : "Requetes"
+                "featurequery" : "Requetes",
+                "querydefinition" : "Definitions de Requete",
+                "graphbuilder" : "Requetes"
             },
             
             "language": "Langue"

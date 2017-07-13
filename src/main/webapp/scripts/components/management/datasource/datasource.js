@@ -17,6 +17,10 @@ angular.module('boinqApp')
                 }
             },
             resolve: {
+                translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
+                    $translatePartialLoader.addPart('main');
+                    return $translate.refresh();
+                }],	
             	resolvedDatasource: ['Datasource', function (Datasource) {
                     return Datasource.query();
                 }]

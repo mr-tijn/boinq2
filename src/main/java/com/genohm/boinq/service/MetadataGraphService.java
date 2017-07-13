@@ -10,7 +10,9 @@ import javax.inject.Inject;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
-
+import org.apache.jena.query.Query;
+import org.apache.jena.sparql.modify.request.QuadDataAcc;
+import org.apache.jena.sparql.modify.request.UpdateDataDelete;
 import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Service;
 
@@ -42,12 +44,12 @@ public class MetadataGraphService {
 		
 	}
 	
-	public void updateTrackCreation(String graphName, String MetaGraphIRI, String LocalDatasource, String endpoint) {
+	public void updateTrackCreation(String graphName, String metaGraphIRI, String localDatasource, String endpoint) {
 		List<Triple> Meta = new ArrayList<Triple>();
 		Node graphIRI = NodeFactory.createURI(graphName);
 		Meta.add(new Triple(graphIRI, RDF.type.asNode(), TrackVocab.Track.asNode()));
-		Meta.add(new Triple(NodeFactory.createURI(LocalDatasource), TrackVocab.provides.asNode(), graphIRI));
-		TripleUploader uploader = tripleUploadService.getUploader(endpoint, MetaGraphIRI, Prefixes.getCommonPrefixes());
+		Meta.add(new Triple(NodeFactory.createURI(localDatasource), TrackVocab.provides.asNode(), graphIRI));
+		TripleUploader uploader = tripleUploadService.getUploader(endpoint, metaGraphIRI, Prefixes.getCommonPrefixes());
 	    while (!Meta.isEmpty()){
 			uploader.triple(Meta.get(0));
 			Meta.remove(0);
@@ -55,4 +57,9 @@ public class MetadataGraphService {
 		uploader.finish();
 
 	}
+	
+	public void removeTrackInfo(String graphName, String metaGraphIRI, String localDatasource, String endpoint) {
+		//TODO: actually remove metadata or add a statement to indicate removal.
+	}
+	
 }

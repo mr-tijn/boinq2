@@ -63,14 +63,6 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	private Boolean dev;
 
 	public void checkInit() {
-		Triple triple = new Triple(NodeFactory.createURI(localDatasource), RDF.type.asNode(),
-				TrackVocab.Datasource.asNode());
-		if (!alreadyPresent(triple)) {
-			init();
-		}
-	}
-
-	public void checkExtraTriples() {
 		Triple triple = new Triple(NodeFactory.createURI(localDatasource), TrackVocab.provides.asNode(),
 				NodeFactory.createURI("http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844"));
 		if (!alreadyPresent(triple)) {
@@ -112,23 +104,6 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 		return false;
 	}
 
-	private void init() {
-		// TODO: move this to meta.ttl -> DONE
-		/*
-		 * Node datasource = NodeFactory.createURI(localDatasource);
-		 * TripleUploader uploader =
-		 * tripleUploadService.getUploader(metaUpdateEndpoint, metaGraph,
-		 * Prefixes.getCommonPrefixes()); uploader.triple(new Triple(datasource,
-		 * RDF.type.asNode(), TrackVocab.Datasource.asNode()));
-		 * uploader.triple(new Triple(datasource, RDF.type.asNode(),
-		 * TrackVocab.SPARQLDatasource.asNode())); uploader.triple(new
-		 * Triple(datasource, TrackVocab.references.asNode(),
-		 * TrackVocab.GRCh38.asNode())); uploader.triple(new Triple(datasource,
-		 * TrackVocab.endpointUrl.asNode(),
-		 * NodeFactory.createLiteral(dataQueryEndpoint))); uploader.finish();
-		 */
-	}
-
 	private void addFromFile(String path, Lang lang) {
 		InputStream file = this.getClass().getClassLoader().getResourceAsStream(path);
 		TripleUploader uploader = tripleUploadService.getUploader(metaUpdateEndpoint, metaGraph);
@@ -144,8 +119,6 @@ public class TripleStoreInitializer implements EnvironmentAware, ApplicationList
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		checkInit();
-		if (dev)
-			checkExtraTriples();
 	}
 
 }

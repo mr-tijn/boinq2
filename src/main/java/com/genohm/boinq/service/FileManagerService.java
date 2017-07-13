@@ -56,6 +56,21 @@ public class FileManagerService implements EnvironmentAware {
  	}
 	
 	public RawDataFile putFile(InputStream input, String fileName) throws IOException {
+        File targetFile = createFile(fileName);
+		FileOutputStream out = new FileOutputStream(targetFile);
+        byte[] buffer = new byte[4096];  
+        int bytesRead;  
+        log.debug("Writing file "+targetFile.getAbsolutePath());
+        while ((bytesRead = input.read(buffer)) != -1) {  
+          out.write(buffer, 0, bytesRead);  
+        }  
+        input.close();  
+        out.close();  
+        log.debug("Closed file "+targetFile.getAbsolutePath());
+        return new RawDataFile(targetFile.getAbsolutePath());
+	}
+	
+	public File createFile(String fileName) throws IOException {
        	String uuidString = UUID.randomUUID().toString();
         String targetPath = FilenameUtils.concat(uuidString.substring(0, 3), uuidString.substring(3));
         targetPath = FilenameUtils.concat(targetPath, fileName);
@@ -64,17 +79,7 @@ public class FileManagerService implements EnvironmentAware {
         File targetFile = new File(fullPath);
         targetFile.getParentFile().mkdirs();
         targetFile.createNewFile();
-        FileOutputStream out = new FileOutputStream(targetFile);
-        byte[] buffer = new byte[4096];  
-        int bytesRead;  
-        log.debug("Writing file "+fullPath);
-        while ((bytesRead = input.read(buffer)) != -1) {  
-          out.write(buffer, 0, bytesRead);  
-        }  
-        input.close();  
-        out.close();  
-        log.debug("Closed file "+fullPath);
-        return new RawDataFile(fullPath);
+        return targetFile;
 	}
 	
 	public File getFile(RawDataFile rawDataFile) {

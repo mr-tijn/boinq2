@@ -17,7 +17,8 @@
                         <span translate="global.menu.home">Home</span>
                     </a>
                 </li>
-                <li ui-sref-active="active" ng-switch-when="true" class="dropdown pointer">
+                <!-- we are not using the jhipster entity editors -->
+<!--                 <li ui-sref-active="active" ng-switch-when="true" class="dropdown pointer">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="">
                                 <span>
                                     <span class="glyphicon glyphicon-th-list"></span>
@@ -28,10 +29,10 @@
                                 </span>
                     </a>
                     <ul class="dropdown-menu">
-                        <!-- JHipster will add entities to the menu here -->
+                        JHipster will add entities to the menu here
                     </ul>
                 </li>
-                <li ng-class="{active: $state.includes('account')}" class="dropdown pointer">
+ -->                <li ng-class="{active: $state.includes('account')}" class="dropdown pointer">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="">
                                 <span>
                                     <span class="glyphicon glyphicon-user"></span>
@@ -91,8 +92,8 @@
 						</span>
 					</a>
 					<ul class="dropdown-menu">
-	                      <li ui-sref-active="active"><a ui-sref="featurequery"><span class="glyphicon glyphicon-asterisk"></span>
-                            &#xA0;<span translate="global.menu.routine.featurequery">FeatureQueries</span></a></li>
+                          <li ui-sref-active="active"><a ui-sref="querydefinition"><span class="glyphicon glyphicon-asterisk"></span>
+                            &#xA0;<span translate="global.menu.routine.querydefinition">Query Definitions</span></a></li>
 					</ul>
                 </li>
                 <li ng-class="{active: $state.includes('admin')}"  ng-switch-when="true" has-role="ROLE_ADMIN" class="dropdown pointer">
@@ -106,16 +107,15 @@
 					<ul class="dropdown-menu">
 	                      <li ui-sref-active="active"><a ui-sref="datasource"><span class="glyphicon glyphicon-hdd"></span>
                             &#xA0;<span translate="global.menu.management.datasources">Datasources</span></a></li>
-	                      <li ui-sref-active="active"><a ui-sref="project"><span class="glyphicon glyphicon-folder-close"></span>
-                            &#xA0;<span translate="global.menu.management.projects">Projects</span></a></li>
 	                      <li ui-sref-active="active"><a ui-sref="job"><span class="glyphicon glyphicon-dashboard"></span>
                             &#xA0;<span translate="global.menu.management.jobs">Running jobs</span></a></li>
 	                      <li ui-sref-active="active"><a ui-sref="sparql_browser"><span class="glyphicon glyphicon-asterisk"></span>
                             &#xA0;<span translate="global.menu.management.sparqlbrowser">SPARQL</span></a></li>
 					</ul>
 				</li>
-                
-                <li ui-sref-active="active" class="dropdown pointer" ng-controller="LanguageController">
+				
+<!--  Inactiv until all resources have proper translations -->            
+<!--                 <li ui-sref-active="active" class="dropdown pointer" ng-controller="LanguageController">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="">
                                 <span>
                                     <span class="glyphicon glyphicon-flag"></span>
@@ -129,7 +129,7 @@
                         </li>
                     </ul>
                 </li>
-            </ul>
+ -->            </ul>
         </div>
     </div>
 </nav>

@@ -6,5 +6,6 @@ import com.genohm.boinq.domain.Track;
 
 public interface TrackRepositoryExtensions {
 	void deleteFiles(Track track);
+	void empty(Track track);
 	Optional<Track> findOneWithMeta(Long id);
 }

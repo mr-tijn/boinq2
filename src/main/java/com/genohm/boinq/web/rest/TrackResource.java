@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
@@ -26,7 +28,9 @@ import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.jobs.TripleConversion;
+import com.genohm.boinq.domain.query.GraphTemplate;
 import com.genohm.boinq.repository.DatasourceRepository;
+import com.genohm.boinq.repository.GraphTemplateRepository;
 import com.genohm.boinq.repository.TrackRepository;
 import com.genohm.boinq.security.AuthoritiesConstants;
 import com.genohm.boinq.service.AsynchronousJobService;
@@ -45,6 +49,8 @@ public class TrackResource {
 
 	@Inject
 	private TrackRepository trackRepository;
+	@Inject
+	private GraphTemplateRepository graphTemplateRepository;
 	@Inject
 	private DatasourceRepository datasourceRepository;
 	@Inject
@@ -78,7 +84,7 @@ public class TrackResource {
 			track.setDatasource(datasource);
 			track.setGraphName(trackDTO.getGraphName());
 			track.setName(trackDTO.getName());
-			track.setStatus(Track.STATUS_EMPTY);
+			track.setStatus(trackDTO.getStatus());
 			track.setType(trackDTO.getType());
 			track.setFileType(trackDTO.getFileType());
 			track.setSpecies(trackDTO.getSpecies());
@@ -87,6 +93,20 @@ public class TrackResource {
 			track.setEntryCount(trackDTO.getEntryCount());
 			track.setFeatureCount(trackDTO.getFeatureCount());
 			track.setTripleCount(trackDTO.getTripleCount());
+			if (trackDTO.getGraphTemplateId() == null) {
+				GraphTemplate gt = new GraphTemplate();
+				gt = graphTemplateRepository.save(gt);
+				track.setGraphTemplate(gt);
+			} else {
+				Optional<GraphTemplate> gtOpt = graphTemplateRepository.findOneById(trackDTO.getGraphTemplateId());
+				if (gtOpt.isPresent()) {
+					track.setGraphTemplate(gtOpt.get());
+				} else {
+					GraphTemplate gt = new GraphTemplate();
+					gt = graphTemplateRepository.save(gt);
+					track.setGraphTemplate(gt);
+				}
+			}
 			Track savedTrack = trackRepository.save(track);
 			datasource.getTracks().add(track);
 			datasourceRepository.save(datasource);
@@ -107,16 +127,7 @@ public class TrackResource {
 	public ResponseEntity<List<TrackDTO>> getForDatasource(Principal principal, @PathVariable Long ds_id,
 			HttpServletResponse response) {
 		log.debug("REST request to get Tracks for datasource : {}", ds_id);
-		// List<TrackDTO> tracks = null;
 		try {
-			// Datasource datasource = datasourceRepository.findOne(ds_id);
-			// if (datasource == null) {
-			// return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			// }
-			// tracks = new LinkedList<TrackDTO>();
-			// for (Track track: datasource.getTracks()) {
-			// tracks.add(new TrackDTO(track));
-			// }
 			Optional<List<Track>> tracks = trackRepository.findByDatasourceId(ds_id);
 			List<TrackDTO> dtos = null;
 			if (tracks.isPresent()) {
@@ -221,17 +232,13 @@ public class TrackResource {
 			if (datasource == null) {
 				throw new Exception("No datasource found");
 			}
-			Track found = null;
-			for (Track track : datasource.getTracks()) {
-				if (track.getId() == id) {
-					found = track;
-					break;
-				}
-			}
-			if (found != null) {
+			Optional<Track> trackOpt = datasource.getTracks().stream().filter(track -> (id == track.getId())).findFirst();
+			if (trackOpt.isPresent()) {
+				Track found = trackOpt.get();
 				datasource.getTracks().remove(found);
 				datasourceRepository.save(datasource);
 				trackRepository.deleteFiles(found);
+				trackRepository.empty(found);
 				trackRepository.delete(found);
 			}
 
@@ -240,28 +247,51 @@ public class TrackResource {
 		}
 	}
 
-	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{id}/startconversion", method = RequestMethod.PUT)
-	public ResponseEntity<String> startTripleConversion(Principal principal, @PathVariable Long ds_id,
-			@PathVariable Long id, @RequestBody Long data_id) {
+	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{id}/empty", method = RequestMethod.GET, produces = "application/json")
+	@Timed
+	@RolesAllowed(AuthoritiesConstants.ADMIN)
+	public Track emptyTrack(Principal principal, @PathVariable Long ds_id, @PathVariable Long track_id) {
+		log.debug("REST request to empty Track : {}", track_id);
 		try {
 			Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
 			if (!result.isPresent())
 				throw new Exception("Could not find datasource " + ds_id);
 			Datasource datasource = result.get();
 			verifyModifyPermission(principal.getName(), datasource);
-			Track found = null;
-			for (Track track : datasource.getTracks()) {
-				if (track.getId() == id) {
-					found = track;
-					break;
-				}
+			Optional<Track> found = datasource.getTracks().stream().filter(track -> track.getId() == track_id).findFirst();
+			if (!found.isPresent()) {
+				throw new Exception("Could not find track " + track_id);
 			}
-			if (found != null) {
-				for (RawDataFile file : found.getRawDataFiles()) {
-					if (data_id == null || file.getId() == data_id) {
-						jobService.add(new TripleConversion(file));
-					}
+			Track track = found.get();
+			trackRepository.deleteFiles(track);
+			trackRepository.empty(track);
+			trackRepository.save(track);
+			return track;
+		} catch (Exception e) {
+			log.error("could not empty track", e);
+			return null;
+		}
+	}
+
+	
+	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{track_id}/startconversion", method = RequestMethod.PUT)
+	public ResponseEntity<String> startTripleConversion(Principal principal, @PathVariable Long ds_id,
+			@PathVariable Long track_id, @RequestParam String mainType, @RequestParam String subType) {
+		try {
+			Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
+			if (!result.isPresent())
+				throw new Exception("Could not find datasource " + ds_id);
+			Datasource datasource = result.get();
+			verifyModifyPermission(principal.getName(), datasource);
+			Optional<Track> findTrack = datasource.getTracks().stream().filter(test -> test.getId() == track_id).findFirst();
+			if (findTrack.isPresent()) {
+				Track track = findTrack.get();
+				for (RawDataFile file : track.getRawDataFiles()) {
+					if (file.getStatus() != RawDataFile.STATUS_COMPLETE && file.getStatus() != RawDataFile.STATUS_LOADING) {
+						jobService.add(new TripleConversion(file, mainType, subType));
+					} 
 				}
+				trackRepository.save(track);
 			}
 		} catch (Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

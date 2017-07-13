@@ -1,0 +1,68 @@
+<div ng-controller='GraphRendererController'>
+<div class="row">Clicking an edge will select for retrieval, clicking a node allows filtering</div>
+<div class="row well" style="overflow:auto">
+	<svg width="100%" height="375" id="graphCanvas"
+		ng-mousemove="mouseMove($event)"
+		ng-mouseenter="mouseEnter($event)"> 
+			 	<defs>
+			    <marker id='arrow' orient='auto' markerWidth='18' markerHeight='12' markerUnits="userSpaceOnUse" refX='23' refY='6' >
+			      <path d='M0,0 L0,12 L18,6 z' fill="#686868"/>
+			    </marker>
+			    <marker id='greenarrow' orient='auto' markerWidth='18' markerHeight='12' markerUnits="userSpaceOnUse" refX='23' refY='6' >
+			      <path d='M0,0 L0,12 L18,6 z' fill="#68FF68"/>
+			    </marker>
+			  	</defs>
+			  	<text id="tooltip" ng-attr-x="{{toolTip.x}}px" ng-attr-y="{{toolTip.y}}px" ng-show="toolTip.show">{{toolTip.text}}</text>
+ 				<line ng-repeat="edgeTemplate in graphTemplate.edgeTemplates"
+			ng-attr-x1="{{fromNode(edgeTemplate).x}}px"
+			ng-attr-y1="{{fromNode(edgeTemplate).y}}px"
+			ng-attr-x2="{{toNode(edgeTemplate).x}}px"
+			ng-attr-y2="{{toNode(edgeTemplate).y}}px" 
+			marker-end="url(#arrow)"
+			class="bnq_link inactive"
+			ng-click="select(edgeTemplate)" ng-mouseenter="$parent.showTooltip($event, edgeTemplate)" ng-mouseleave="$parent.hideTooltip()"/>
+			<text ng-repeat="edgeTemplate in graphTemplate.edgeTemplates" ng-attr-x="{{(fromNode(edgeTemplate).x + toNode(edgeTemplate).x)/2 +10}}px" ng-attr-y="{{(fromNode(edgeTemplate).y + toNode(edgeTemplate).y)/2 + 10}}px">{{edgeTemplate.label}}</text>
+			<line ng-repeat="queryEdge in queryGraph.queryEdges"
+			ng-attr-x1="{{fromNode(findById(queryEdge.template, graphTemplate.edgeTemplates)).x}}px"
+			ng-attr-y1="{{fromNode(findById(queryEdge.template, graphTemplate.edgeTemplates)).y}}px"
+			ng-attr-x2="{{toNode(findById(queryEdge.template, graphTemplate.edgeTemplates)).x}}px"
+			ng-attr-y2="{{toNode(findById(queryEdge.template, graphTemplate.edgeTemplates)).y}}px" 
+			marker-end="url(#greenarrow)"
+			class="bnq_link active"
+			ng-click="deselect(queryEdge)" 
+			ng-show="queryEdge.selected" />
+ 				<line ng-repeat="incomingBridge in toBridges(queryGraph)" 
+			ng-attr-x1 = "{{inBridgeX(incomingBridge)}}px"
+			ng-attr-y1 = "{{inBridgeY(incomingBridge)}}px"
+			ng-attr-x2 = "{{targetNodeTemplate(incomingBridge).x}}px"
+			ng-attr-y2 = "{{targetNodeTemplate(incomingBridge).y}}px" 
+			class="bnq_link active"/>
+				<line ng-repeat="outgoingBridge in fromBridges(queryGraph)" 
+			ng-attr-x1 = "{{sourceNodeTemplate(outgoingBridge).x}}px"
+			ng-attr-y1 = "{{sourceNodeTemplate(outgoingBridge).y}}px" 
+			ng-attr-x2 = "{{outBridgeX(outgoingBridge)}}px"
+			ng-attr-y2 = "{{outBridgeY(outgoingBridge)}}px"
+			class="bnq_link active"/>
+			 	<line ng-model="selectLine" ng-attr-x1="{{selectLine.x1}}"
+			ng-attr-y1="{{selectLine.y1}}" ng-attr-x2="{{selectLine.x2}}"
+			ng-attr-y2="{{selectLine.y2}}" class="bnq_drag_line" />
+ 				<circle 
+			ng-repeat="nodeTemplate in graphTemplate.nodeTemplates" 
+			ng-attr-cx="{{nodeTemplate.x}}px"
+			ng-attr-cy="{{nodeTemplate.y}}px" r="10"
+			class="bnq_node inactive"></circle>
+			<text ng-repeat="nodeTemplate in graphTemplate.nodeTemplates" ng-attr-x="{{nodeTemplate.x +10}}px" ng-attr-y="{{nodeTemplate.y + 10}}px">{{nodeTemplate.name}}</text>
+				<circle ng-click="selectNode(queryNode)"
+			ng-repeat="queryNode in queryGraph.queryNodes" 
+			ng-attr-cx="{{findX(queryNode)}}px"
+			ng-attr-cy="{{findY(queryNode)}}px" r="10"
+			class="bnq_node active" ng-class="nodeSelected(queryNode)?'selected':''" ng-show="queryNode.selected"
+			ng-mousedown="fromNodeMouseDown($event, queryNode)"></circle>
+			<path ng-attr-d="M {{inBridgeX(incomingBridge)}},{{inBridgeY(incomingBridge)}} l -10,10 20,0 10,-10 -10,-10 -20,0z" fill="#686868" ng-mousedown="fromBridgeMouseDown($event,incomingBridge)" ng-repeat="incomingBridge in toBridges(queryGraph)"></path>
+			<path ng-attr-d="M {{outBridgeX(outgoingBridge)}},{{outBridgeY(outgoingBridge)}} l -10,10 20,0 10,-10 -10,-10 -20,0z" fill="#686868" ng-mousedown="toBridgeMouseDown($event.outgoingBridge)" ng-repeat="outgoingBridge in fromBridges(queryGraph)"></path>
+ 	</svg>
+</div>
+<div class="row well">
+	<nodedetail selection="selection" graph-template="graphTemplate" node="selection.node" ng-if="isFilterable(selection.node)" ></nodedetail>
+</div>
+</div>

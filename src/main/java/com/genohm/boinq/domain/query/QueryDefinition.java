@@ -15,11 +15,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.genohm.boinq.domain.User;
 
 @Entity
 @Table(name = "T_QUERYDEFINITION")
@@ -29,9 +32,26 @@ public class QueryDefinition implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+	
+	@Column(name="status")
+	private Integer status;
+	
+	@Column(name="name")
+	private String name;
+	@Column(name="description")
+	private String description;
+	@Column(name="species")
+	private String species;
+	@Column(name="assembly")
+	private String assembly;
+	@ManyToOne
+	@JoinColumn(name="owner_id")
+	private User owner;
 
 	@Column(name="result_as_table")
 	private Boolean resultAsTable;
+	@Column(name="sparql_query")
+	private String sparqlQuery;
 	
 	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="querydefinition_id")
@@ -43,6 +63,8 @@ public class QueryDefinition implements Serializable {
 
 	@Column(name="target_graph")
 	private String targetGraph;
+	@Column(name="target_file")
+	private String targetFile;
 	
 	
 	public QueryDefinition() {}
@@ -52,6 +74,42 @@ public class QueryDefinition implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getSpecies() {
+		return species;
+	}
+	public void setSpecies(String species) {
+		this.species = species;
+	}
+	public String getAssembly() {
+		return assembly;
+	}
+	public void setAssembly(String assembly) {
+		this.assembly = assembly;
+	}
+	public User getOwner() {
+		return owner;
+	}
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
 	public Boolean getResultAsTable() {
 		return resultAsTable;
 	}
@@ -75,8 +133,19 @@ public class QueryDefinition implements Serializable {
 	}
 	public void setTargetGraph(String targetGraph) {
 		this.targetGraph = targetGraph;
-	}	
-	
+	}
+	public String getTargetFile() {
+		return targetFile;
+	}
+	public void setTargetFile(String targetFile) {
+		this.targetFile = targetFile;
+	}
+	public String getSparqlQuery() {
+		return sparqlQuery;
+	}
+	public void setSparqlQuery(String sparqlQuery) {
+		this.sparqlQuery = sparqlQuery;
+	}
 	public Set<Set<QueryEdge>> findClusters() {
 		Set<QueryEdge> allEdges = new HashSet<>();
 		Set<Set<QueryEdge>> clusters = new HashSet<>();
