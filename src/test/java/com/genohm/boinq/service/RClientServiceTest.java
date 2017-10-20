@@ -1,5 +1,8 @@
 package com.genohm.boinq.service;
 
+import static org.assertj.core.api.StrictAssertions.assertThat;
+import static org.assertj.core.api.StrictAssertions.fail;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,8 +19,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import static org.assertj.core.api.Assertions.*;
 
 import com.genohm.boinq.Application;
 

@@ -1,7 +1,12 @@
 /* CVS $Id: $ */
 package com.genohm.boinq.generated.vocabularies; 
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.ontology.*;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
  
 /**
  * Vocabulary definitions from ontologies/gfvo.owl 

@@ -1,8 +1,12 @@
 package com.genohm.boinq.security;
 
-import com.genohm.boinq.domain.PersistentToken;
-import com.genohm.boinq.repository.PersistentTokenRepository;
-import com.genohm.boinq.repository.UserRepository;
+import java.security.SecureRandom;
+import java.util.Arrays;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +23,9 @@ import org.springframework.security.web.authentication.rememberme.RememberMeAuth
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.SecureRandom;
-import java.util.Arrays;
+import com.genohm.boinq.domain.PersistentToken;
+import com.genohm.boinq.repository.PersistentTokenRepository;
+import com.genohm.boinq.repository.UserRepository;
 
 /**
  * Custom implementation of Spring Security's RememberMeServices.

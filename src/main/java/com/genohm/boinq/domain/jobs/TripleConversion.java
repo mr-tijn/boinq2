@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -23,7 +22,6 @@ import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.query.GraphTemplate;
-import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.repository.GraphTemplateRepository;
 import com.genohm.boinq.repository.RawDataFileRepository;
 import com.genohm.boinq.repository.TrackRepository;
@@ -32,7 +30,8 @@ import com.genohm.boinq.service.MetaInfoService;
 import com.genohm.boinq.service.MetadataGraphService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
-import com.genohm.boinq.tools.fileformats.TripleConverter;
+import com.genohm.boinq.tools.Counter;
+import com.genohm.boinq.tools.fileformats.MetaTripleBuilder;
 import com.genohm.boinq.tools.fileformats.TripleIteratorFactory;
 import com.genohm.boinq.tools.queries.Prefixes;
 
@@ -48,8 +47,6 @@ public class TripleConversion implements AsynchronousJob {
 	@Inject
 	private TripleIteratorFactory tripleIteratorFactory;
 	@Inject
-	private TripleConverter tripleconverter;
-	@Inject
 	private RawDataFileRepository rawDataFileRepository;
 	@Inject
 	private GraphTemplateRepository graphTemplateRepository;
@@ -61,6 +58,9 @@ public class TripleConversion implements AsynchronousJob {
     private TrackRepository trackRepository;
     @Inject
     private GraphTemplateBuilderService templateBuilder;
+    @Inject
+    private MetaTripleBuilder metaTripleBuilder;
+    
 	
 
 	private int status = JOB_STATUS_UNKNOWN;
@@ -72,19 +72,18 @@ public class TripleConversion implements AsynchronousJob {
 	private Date startDate = null;
 	private Date endDate = null;
 	
-	private RawDataFile inputData;
+	private Track track;
 	
 	public static final String SUPPORTED_EXTENSIONS[] = {"GFF", "GFF3", "BED", "VCF","SAM","BAM"};
 	
 	private static Logger log = LoggerFactory.getLogger(TripleConversion.class);
 	
-	public TripleConversion(RawDataFile inputData, String mainType, String subType) {
+	public TripleConversion(Track track, String mainType, String subType) {
 		// only use setters !
 		// some stuff is initialized upon job launch
-		this.inputData = inputData;
-		this.description = "Triple conversion of "
-				+ inputData.getFilePath() + " into track "
-				+ inputData.getTrack().getId();
+		this.track = track;
+		this.description = "Triple conversion of track "
+				+ track.getId();
 		this.name = this.description;
 		this.mainType = mainType;
 		this.subType = subType;
@@ -123,7 +122,6 @@ public class TripleConversion implements AsynchronousJob {
 	@Transactional
 	public void execute() {
 		try {
-			Track track = inputData.getTrack();
 			if (track == null) {
 				throw new Exception("Track is null");
 			}
@@ -134,91 +132,85 @@ public class TripleConversion implements AsynchronousJob {
 			if (Datasource.TYPE_LOCAL_FALDO != datasource.getType()) {
 				throw new Exception("Datasource should be of type local faldo in order to support upload");
 			}
-			if (inputData.getStatus() == RawDataFile.STATUS_COMPLETE) {
-				throw new Exception("Data is already uploaded");
-			}
-			File inputFile = new File(inputData.getFilePath());
-		
-			Metadata meta = new Metadata();
-//			meta.filterCount = metainfoservice.getFileAttributeCount(track, TrackVocab.FilterCount.asNode());
-//			meta.sampleCount = metainfoservice.getFileAttributeCount(track, TrackVocab.SampleCount.asNode());
-//			meta.readCount = metainfoservice.getFileAttributeCount(track, TrackVocab.ReadCount.asNode());
-//			meta.sumFilterCount = meta.filterCount;
-//			meta.sumSampleCount = meta.sampleCount;
-//			meta.sumReadCount = meta.readCount;
-//			track.setEntryCount(metainfoservice.getFileAttributeCount(track, TrackVocab.EntryCount.asNode()));
-//			track.setFeatureCount(metainfoservice.getFileAttributeCount(track, TrackVocab.FeatureCount.asNode()));
-//			track.setTripleCount(metainfoservice.getFileAttributeCount(track, TrackVocab.TripleCount.asNode()));
-//			trackRepository.save(track);
+			Counter attributeCounter = new Counter(0);
+			List<Triple> metaData = new LinkedList<>();
+			List<Node> types = new LinkedList<>();
+			for (RawDataFile inputData: track.getRawDataFiles()) {
 			
-			// data needed: featureType for the track; referencemapping for the track
-//			meta.fileType = track.getFileType();
-//			meta.date = (new Date()).toString();
-//			meta.fileName = inputFile.getName();
-//			meta.file = inputFile.toString();
-//			meta.sumFeatureCount= track.getFeatureCount();
-//			meta.sumEntryCount = track.getEntryCount();
-//			meta.organismMapping = track.getSpecies().replace(" ","_").toLowerCase() +"/"+ track.getAssembly() +"/";
-//			meta.prefixLength = (track.getContigPrefix()==null)? 0:track.getContigPrefix().length();
-			if("bed".equalsIgnoreCase(track.getFileType())){
-				meta.mainType= NodeFactory.createURI(mainType);
-				meta.typeList.add(meta.mainType);
-				if (null != subType){
-					meta.subType = NodeFactory.createURI(subType);
-					meta.typeList.add(meta.subType);
+				if (inputData.getStatus() == RawDataFile.STATUS_COMPLETE) {
+					continue;
 				}
-			}
-			Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, track.getReferenceMap(), meta);
-			TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
-			inputData.setStatus(RawDataFile.STATUS_LOADING);
-			track.setStatus(Track.STATUS_PROCESSING);
-			trackRepository.save(track);
-			
-			while (!interrupted && tripleIterator.hasNext()) {
-				uploader.triple(tripleIterator.next());
-//				meta.tripleCount++;
-			}
-			if (interrupted) throw new Exception("Triple conversion was interrupted by user");
-			uploader.finish();
-//			meta.featureCount=meta.sumFeatureCount-track.getFeatureCount();
-//			meta.entryCount=meta.sumEntryCount-track.getEntryCount();
-//			String metagraph = track.getDatasource().getMetaGraphName();
-//			String endpoint = track.getDatasource().getEndpointUpdateUrl();
-//			List<Triple> metadata =tripleconverter.createMetadata(meta,track.getGraphName());
-//			metadataGraphService.updateFileConversion(endpoint, metagraph, metadata);
-
-//			track.setEntryCount(metainfoservice.getFileAttributeCount(track, TrackVocab.EntryCount.asNode()));
-//			track.setFeatureCount(metainfoservice.getFileAttributeCount(track, TrackVocab.FeatureCount.asNode()));
-//			track.setTripleCount(metainfoservice.getFileAttributeCount(track, TrackVocab.TripleCount.asNode()));
-//			metainfoservice.getSupportedFeatureTypes(track);
-			inputData.setStatus(RawDataFile.STATUS_COMPLETE);
-			rawDataFileRepository.save(inputData);
-			
-			if (otherFilesReady()) {
-				GraphTemplate template = templateBuilder.fromBed(mainType, subType, track.getAssembly());
-				template.setGraphIri(track.getGraphName());
-				template = graphTemplateRepository.save(template);
-				track.setGraphTemplate(template);
-				track.setStatus(Track.STATUS_DONE);
+				File inputFile = new File(inputData.getFilePath());
+				Metadata meta = new Metadata();
+				meta.entryCount = 0;
+				meta.featureCount = 0;
+				meta.tripleCount = 0;
+				meta.fileType = track.getFileType();
+				meta.date = (new Date()).toString();
+				meta.fileName = inputFile.getName();
+				meta.file = inputFile.toString();
+				//			meta.organismMapping = track.getSpecies().replace(" ","_").toLowerCase() +"/"+ track.getAssembly() +"/";
+				meta.prefixLength = (track.getContigPrefix()==null)? 0:track.getContigPrefix().length();
+				if("bed".equalsIgnoreCase(track.getFileType())){
+					meta.mainType= NodeFactory.createURI(mainType);
+					meta.typeList.add(meta.mainType);
+					if (null != subType){
+						meta.subType = NodeFactory.createURI(subType);
+						meta.typeList.add(meta.subType);
+					}
+				}
+				Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, track.getReferenceMap(), meta);
+				TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
+				inputData.setStatus(RawDataFile.STATUS_LOADING);
+				rawDataFileRepository.save(inputData);
+				track.setStatus(Track.STATUS_PROCESSING);
 				trackRepository.save(track);
+
+				while (!interrupted && tripleIterator.hasNext()) {
+					uploader.triple(tripleIterator.next());
+					meta.tripleCount++;
+				}
+				if (interrupted) {
+					inputData.setStatus(RawDataFile.STATUS_ERROR);
+					throw new Exception("Triple conversion was interrupted by user while processing " + inputData.getFilePath());
+				}
+				uploader.finish();
+				types.addAll(meta.typeList);
+				metaData.addAll(metaTripleBuilder.createMetadata(inputFile.toString(), meta, track.getGraphName(), attributeCounter));
+				track.setEntryCount(track.getEntryCount() + meta.entryCount);
+				track.setFeatureCount(track.getFeatureCount() + meta.featureCount);
+				track.setTripleCount(track.getTripleCount() + meta.tripleCount);
+				//			metainfoservice.getSupportedFeatureTypes(track);
+				inputData.setStatus(RawDataFile.STATUS_COMPLETE);
+				rawDataFileRepository.save(inputData);
 			}
+			metaData.addAll(metaTripleBuilder.createGeneralMetadata(track, types, track.getGraphName(), attributeCounter));
+			String metagraph = track.getDatasource().getMetaGraphName();
+			String endpoint = track.getDatasource().getEndpointUpdateUrl();
+			TripleUploader uploader = tripleUploadService.getUploader(endpoint, metagraph);
+			for (Triple meta: metaData) {
+				uploader.triple(meta);
+			}
+			uploader.finish();
+			GraphTemplate template = templateBuilder.fromBed(mainType, subType, track.getAssembly());
+			template.setGraphIri(track.getGraphName());
+			template = graphTemplateRepository.save(template);
+			track.setGraphTemplate(template);
+			track.setStatus(Track.STATUS_DONE);
+			trackRepository.save(track);
 		} catch (Exception e) {
 			setStatus(JOB_STATUS_ERROR);
-			inputData.setStatus(RawDataFile.STATUS_ERROR);
-			rawDataFileRepository.save(inputData);
-			inputData.getTrack().setStatus(Track.STATUS_ERROR);
-			// TODO: on track error, show rawdata status
-			trackRepository.save(inputData.getTrack());
+			track.setStatus(Track.STATUS_ERROR);
+			trackRepository.save(track);
 			this.errorDescription = e.getMessage();
 			log.error(errorDescription);
 		}
 	}
 	
 	
-	private Boolean otherFilesReady() {
-		Set<RawDataFile> otherFilesNotReady = inputData.getTrack().getRawDataFiles().stream().filter(el -> {return (!el.equals(inputData) && el.getStatus()!=RawDataFile.STATUS_COMPLETE); }).collect(Collectors.toSet());
-		return otherFilesNotReady.isEmpty();
-	}
+	
+
+	
 	
 	@Override
 	public void kill() {
@@ -228,26 +220,21 @@ public class TripleConversion implements AsynchronousJob {
 	public static class Metadata{
 		public int prefixLength;
 		public long tripleCount;
-		public long entryCount;
 		public long featureCount;
+		public long entryCount;
 		public long filterCount;
 		public long sampleCount;
 		public long readCount;
-		public long sumFeatureCount;
-		public long sumEntryCount;
-		public long sumFilterCount;
-		public long sumSampleCount;
-		public long sumReadCount;
 		public Node mainType;
 		public Node subType;
 		public String date = new String();
 		public String user = new String();
 		public String fileType = new String();
-		public String fileName = new String();
 		public String file = new String();
+		public String fileName = new String();
 		public String organismMapping = new String();
-		public List<String> gffHeader = new ArrayList<String>();
-		public List<String> bedHeader = new ArrayList<String>();
+		public List<String> gffHeader = new LinkedList<>();
+		public List<String> bedHeader = new LinkedList<>();
 		public List<Node> typeList = new ArrayList<Node>();
 		public Map<String,Node>featureIDmap = new HashMap<>();
 		public Map<String,Node> filterMap = new HashMap<>();
@@ -257,7 +244,7 @@ public class TripleConversion implements AsynchronousJob {
 		public Map<String,String> formatMap = new HashMap<>();
 		public VCFHeader vcfHeader = new VCFHeader();
 		public SAMFileHeader samHeader = new SAMFileHeader();
-		
+		public Boolean initialize = true;
 	}
 
 	@Override

@@ -1,13 +1,12 @@
 package com.genohm.boinq.web.rest;
 
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-
-import static org.junit.Assert.*;
 
 import javax.inject.Inject;
 
@@ -32,7 +31,6 @@ import com.genohm.boinq.Application;
 import com.genohm.boinq.domain.query.QueryDefinition;
 import com.genohm.boinq.repository.QueryDefinitionRepository;
 import com.genohm.boinq.service.QueryDefinitionTestData;
-import com.genohm.boinq.web.rest.dto.GraphTemplateDTO;
 import com.genohm.boinq.web.rest.dto.QueryDefinitionDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)

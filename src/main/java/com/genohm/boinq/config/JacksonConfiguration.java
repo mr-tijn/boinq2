@@ -5,11 +5,11 @@ import org.joda.time.LocalDate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.genohm.boinq.domain.util.CustomDateTimeDeserializer;
 import com.genohm.boinq.domain.util.CustomDateTimeSerializer;
 import com.genohm.boinq.domain.util.CustomLocalDateSerializer;
 import com.genohm.boinq.domain.util.ISO8601LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 @Configuration
 public class JacksonConfiguration {

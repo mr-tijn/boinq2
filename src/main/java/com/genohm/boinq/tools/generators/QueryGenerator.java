@@ -1,10 +1,10 @@
 package com.genohm.boinq.tools.generators;
 
 import com.genohm.boinq.domain.GenomicRegion;
+import com.genohm.boinq.domain.match.Connect;
 import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.domain.match.FeatureSelect;
 import com.genohm.boinq.domain.match.FeatureTypeCriterion;
-import com.genohm.boinq.domain.match.Connect;
 import com.genohm.boinq.domain.match.LocationCriterion;
 import com.genohm.boinq.domain.match.LocationOverlap;
 import com.genohm.boinq.domain.match.MatchDecimalCriterion;

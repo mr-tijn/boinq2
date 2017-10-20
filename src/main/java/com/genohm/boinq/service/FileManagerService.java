@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.genohm.boinq.domain.RawDataFile;
-import com.genohm.boinq.web.rest.FileUploadController;
 
 @Service
 public class FileManagerService implements EnvironmentAware {

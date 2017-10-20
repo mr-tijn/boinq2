@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -24,13 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.domain.User;
 import com.genohm.boinq.domain.jobs.TripleConversion;
 import com.genohm.boinq.repository.DatasourceRepository;
 import com.genohm.boinq.repository.RawDataFileRepository;
 import com.genohm.boinq.repository.TrackRepository;
 import com.genohm.boinq.repository.UserRepository;
-import com.genohm.boinq.security.AuthoritiesConstants;
 import com.genohm.boinq.service.FileManagerService;
 
 @RestController

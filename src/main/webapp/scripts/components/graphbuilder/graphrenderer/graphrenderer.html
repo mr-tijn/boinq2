@@ -59,7 +59,10 @@
 			class="bnq_node active" ng-class="nodeSelected(queryNode)?'selected':''" ng-show="queryNode.selected"
 			ng-mousedown="fromNodeMouseDown($event, queryNode)"></circle>
 			<path ng-attr-d="M {{inBridgeX(incomingBridge)}},{{inBridgeY(incomingBridge)}} l -10,10 20,0 10,-10 -10,-10 -20,0z" fill="#686868" ng-mousedown="fromBridgeMouseDown($event,incomingBridge)" ng-repeat="incomingBridge in toBridges(queryGraph)"></path>
+			<text ng-repeat="incomingBridge in toBridges(queryGraph)" ng-attr-x="{{inBridgeX(incomingBridge) + 10}}px" ng-attr-y="{{inBridgeY(incomingBridge) + 10}}px">{{inBridgeName(incomingBridge)}}</text>
 			<path ng-attr-d="M {{outBridgeX(outgoingBridge)}},{{outBridgeY(outgoingBridge)}} l -10,10 20,0 10,-10 -10,-10 -20,0z" fill="#686868" ng-mousedown="toBridgeMouseDown($event.outgoingBridge)" ng-repeat="outgoingBridge in fromBridges(queryGraph)"></path>
+			<text ng-repeat="incomingBridge in toBridges(queryGraph)" ng-attr-x="{{inBridgeX(incomingBridge) + 10}}px" ng-attr-y="{{inBridgeY(incomingBridge) + 10}}px">{{outBridgeName(incomingBridge)}}</text>
+			
  	</svg>
 </div>
 <div class="row well">

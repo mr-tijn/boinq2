@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
 
 import javax.inject.Inject;
+
+import org.apache.jena.graph.Triple;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,8 +23,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.genohm.boinq.Application;
 import com.genohm.boinq.domain.RawSPARQLResultSet;
 import com.genohm.boinq.domain.jobs.TripleConversion;
-import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
-import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.init.TripleStoreInitializer;
 import com.genohm.boinq.service.FusekiMgmtService;
 import com.genohm.boinq.service.LocalGraphService;
@@ -34,8 +30,6 @@ import com.genohm.boinq.service.SPARQLClientService;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 import com.genohm.boinq.tools.queries.Prefixes;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Triple;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)

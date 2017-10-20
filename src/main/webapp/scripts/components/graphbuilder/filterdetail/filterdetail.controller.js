@@ -11,8 +11,6 @@ angular.module('boinqApp').controller("NodeFilterController",['$scope','TermTool
 	$scope.termPicked = function(terms) {
 		
 	};
-	
-	
 
 	$scope.isText = function(template) {
 		return (template.nodeType == NodeConstants.TYPE_LITERAL && TT.isText(template.literalXsdType));

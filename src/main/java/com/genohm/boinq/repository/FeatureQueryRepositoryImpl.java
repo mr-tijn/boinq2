@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import com.genohm.boinq.domain.Datasource;
-import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.domain.match.FeatureSelect;
 import com.genohm.boinq.service.MetaInfoService;

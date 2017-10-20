@@ -165,4 +165,9 @@ class LongRunningJob implements AsynchronousJob {
 		this.kill = true;
 	}
 
+	@Override
+	public Long getDuration() {
+		return null;
+	}
+
 }

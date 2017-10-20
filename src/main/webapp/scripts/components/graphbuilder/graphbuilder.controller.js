@@ -63,12 +63,12 @@ angular.module('boinqApp').controller("GraphBuilderController",['$scope','draggi
 		});
 	};
 	$scope.updatequery = function() {
-		QueryManagement.savequery($scope.queryDefinition.id, $scope.queryDefinition.sparqlQuery).then(function () {
+		QueryManagement.updatequery($scope.queryDefinition.id, $scope.queryDefinition.sparqlQuery).then(function () {
 			$scope.refresh();
 		});
 	};
 	$scope.refresh = function() {
-		QueryDefinition.query({id:$scope.queryDefinition.id}).$promise.then(
+		QueryDefinition.get({id:$scope.queryDefinition.id}).$promise.then(
 				function(successResponse) {
 					$scope.queryDefinition = successResponse;
 				});

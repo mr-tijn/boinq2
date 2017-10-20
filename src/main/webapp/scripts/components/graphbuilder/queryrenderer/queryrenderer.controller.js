@@ -63,7 +63,8 @@ angular.module('boinqApp').controller("QueryRendererController",["$scope", "drag
 	// what to do when a graphtemplate is dropped on the canvas
 	$scope.dropped = function(event,element,trackId) {
 		var track = findTrack(trackId);
-		var graph = new QueryDefinitionObjects.QueryGraph(track.graphTemplateId, event.offsetX, event.offsetY, track.name, graphIdx++);
+		var graphName = track.name + "_" + graphIdx;
+		var graph = new QueryDefinitionObjects.QueryGraph(track.graphTemplateId, event.offsetX, event.offsetY, graphName, graphIdx++);
 		$scope.queryDefinition.queryGraphs.push(graph);
 		$scope.selection.mode = 'graph';
 		$scope.selection.graph = graph;

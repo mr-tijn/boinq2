@@ -7,12 +7,12 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 import org.springframework.stereotype.Service;
 
 import com.genohm.boinq.domain.jobs.TripleConversion.Metadata;
-
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Triple;
+import com.genohm.boinq.service.TripleGeneratorService;
 
 @Service
 public class TripleIteratorFactory {
@@ -23,22 +23,22 @@ public class TripleIteratorFactory {
 	private static final String SAM_EXTENSIONS[] = {"SAM", "BAM"};
 
 	@Inject
-	TripleConverter tripleConverter;
+	TripleGeneratorService tripleGenerator;
 	
 	public Iterator<Triple> getIterator(File inputFile, Map<Node, Node> referenceMap, Metadata meta) throws Exception {
 		String extension = FilenameUtils.getExtension(inputFile.getName());
 		meta.fileType = extension;
 		for (String ext: GFF3_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new GFF3TripleIterator(tripleConverter, inputFile, referenceMap, meta);
+			if (ext.equals(extension.toUpperCase())) return new GFF3TripleIterator(tripleGenerator, inputFile, referenceMap, meta);
 		}
 		for (String ext: BED_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new BedTripleIterator(tripleConverter, inputFile, referenceMap, meta);
+			if (ext.equals(extension.toUpperCase())) return new BedTripleIterator(tripleGenerator, inputFile, referenceMap, meta);
 		}
 		for (String ext: VCF_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new VCFTripleIterator(tripleConverter, inputFile, referenceMap, meta);
+			if (ext.equals(extension.toUpperCase())) return new VCFTripleIterator(tripleGenerator, inputFile, referenceMap, meta);
 		}
 		for (String ext: SAM_EXTENSIONS) {
-			if (ext.equals(extension.toUpperCase())) return new SAMTripleIterator(tripleConverter, inputFile, referenceMap, meta);
+			if (ext.equals(extension.toUpperCase())) return new SAMTripleIterator(tripleGenerator, inputFile, referenceMap, meta);
 		}
 		throw new Exception("No triple iterator available for extension " + extension);
 	}

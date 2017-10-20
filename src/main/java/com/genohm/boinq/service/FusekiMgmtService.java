@@ -1,6 +1,7 @@
 package com.genohm.boinq.service;
 
 import javax.annotation.PostConstruct;
+
 //import org.apache.jena.fuseki.server.SPARQLServer;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.stereotype.Service;

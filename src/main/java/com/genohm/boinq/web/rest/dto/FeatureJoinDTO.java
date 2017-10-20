@@ -1,7 +1,5 @@
 package com.genohm.boinq.web.rest.dto;
 
-import com.genohm.boinq.domain.match.FeatureConnector;
-
 public class FeatureJoinDTO {
 	
 	public static final String JOIN_TYPE_OVERLAP = "LocationOverlap";

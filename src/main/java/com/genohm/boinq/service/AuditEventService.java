@@ -1,15 +1,17 @@
 package com.genohm.boinq.service;
 
-import com.genohm.boinq.config.audit.AuditEventConverter;
-import com.genohm.boinq.domain.PersistentAuditEvent;
-import com.genohm.boinq.repository.PersistenceAuditEventRepository;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.joda.time.LocalDateTime;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import java.util.List;
+import com.genohm.boinq.config.audit.AuditEventConverter;
+import com.genohm.boinq.domain.PersistentAuditEvent;
+import com.genohm.boinq.repository.PersistenceAuditEventRepository;
 
 /**
  * Service for managing audit events.

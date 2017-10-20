@@ -2,7 +2,6 @@ package com.genohm.boinq.web.rest;
 
 import java.security.Principal;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

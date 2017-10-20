@@ -39,6 +39,13 @@ public class EdgeTemplate implements Serializable {
     @Column(name="label", length = 255, nullable = true)
     private String label;
     
+	public EdgeTemplate(NodeTemplate from, NodeTemplate to, String term, String label) {
+		super();
+		this.from = from;
+		this.to = to;
+		this.term = term;
+		this.label = label;
+	}
 	public EdgeTemplate(NodeTemplate from, NodeTemplate to, String term) {
 		super();
 		this.from = from;

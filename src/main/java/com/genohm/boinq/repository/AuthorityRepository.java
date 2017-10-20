@@ -1,7 +1,8 @@
 package com.genohm.boinq.repository;
 
-import com.genohm.boinq.domain.Authority;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.genohm.boinq.domain.Authority;
 
 /**
  * Spring Data JPA repository for the Authority entity.

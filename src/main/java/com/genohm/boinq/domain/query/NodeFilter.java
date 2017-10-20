@@ -2,7 +2,6 @@ package com.genohm.boinq.domain.query;
 
 import java.beans.Transient;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

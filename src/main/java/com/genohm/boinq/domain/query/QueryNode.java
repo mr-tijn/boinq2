@@ -1,7 +1,6 @@
 package com.genohm.boinq.domain.query;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,8 +23,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.genohm.boinq.web.rest.dto.QueryNodeDTO;
 
 @Entity
 @Table(name = "T_QUERYNODE")

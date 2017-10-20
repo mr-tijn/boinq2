@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.websocket.server.ServerEndpoint;
 
 import org.springframework.stereotype.Service;
 

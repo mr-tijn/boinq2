@@ -60,7 +60,6 @@ import com.genohm.boinq.domain.query.QueryEdge;
 import com.genohm.boinq.domain.query.QueryGraph;
 import com.genohm.boinq.domain.query.QueryNode;
 import com.genohm.boinq.generated.vocabularies.FaldoVocab;
-import com.genohm.boinq.web.rest.dto.NodeTemplateDTO;
 
 @Service
 public class GenerateQueryService {
@@ -68,6 +67,7 @@ public class GenerateQueryService {
 	private static final Map<String, Long> idCounters = new HashMap<String, Long>();
 	
 	//TODO: ignore selected edges that are not selected for retrieve and do not contain filtered nodes or bridges
+	//TODO: join queries on same graph
 	
 	@Value(value="{querybuilder.prefix}")
 	private String prefix;
@@ -106,22 +106,54 @@ public class GenerateQueryService {
 	
 	private Element buildSelect(QueryDefinition qd, Map<QueryGraph, ElementTriplesBlock> triplesByGraph, Map<QueryGraph, Map<QueryNode, List<ElementFilter>>> filtersByNodeByGraph, List<ElementFilter> globalFilters) {
 		ElementGroup mainSelect = new ElementGroup();
+		// new
+		Map<GraphTemplate, List<QueryGraph>> graphsByTemplate = new HashMap<>();
 		for (QueryGraph graph: qd.getQueryGraphs()) {
+			if (graphsByTemplate.containsKey(graph.getTemplate())) {
+				graphsByTemplate.get(graph.getTemplate()).add(graph);
+			} else {
+				List<QueryGraph> newList = new LinkedList<>();
+				newList.add(graph);
+				graphsByTemplate.put(graph.getTemplate(), newList);
+			}
+		}
+		for (GraphTemplate gt: graphsByTemplate.keySet()) {
 			ElementGroup element = new ElementGroup();
-			element.addElement(triplesByGraph.get(graph));
-			Map<QueryNode, List<ElementFilter>> filtersByNode = filtersByNodeByGraph.get(graph);
-			for (QueryNode node: filtersByNode.keySet()) {
-				for (ElementFilter filter: filtersByNode.get(node)) {
-					element.addElement(filter);
+			for (QueryGraph graph: graphsByTemplate.get(gt)) {
+				element.addElement(triplesByGraph.get(graph));
+				Map<QueryNode, List<ElementFilter>> filtersByNode = filtersByNodeByGraph.get(graph);
+				for (QueryNode node: filtersByNode.keySet()) {
+					for (ElementFilter filter: filtersByNode.get(node)) {
+						element.addElement(filter);
+					}
 				}
 			}
-			ElementNamedGraph graphElement = new ElementNamedGraph(NodeFactory.createURI(graph.getTemplate().getGraphIri()), element);
-			if (graph.getTemplate().getType() == GraphTemplate.GRAPH_TYPE_REMOTE) {
-				mainSelect.addElement(new ElementService(graph.getTemplate().getEndpointUrl(), graphElement));
+			ElementNamedGraph graphElement = new ElementNamedGraph(NodeFactory.createURI(gt.getGraphIri()), element);
+			if (gt.getType() == GraphTemplate.GRAPH_TYPE_REMOTE) {
+				mainSelect.addElement(new ElementService(gt.getEndpointUrl(), graphElement));
 			} else {
 				mainSelect.addElement(graphElement);
 			}
 		}
+		// end new
+		// old
+//		for (QueryGraph graph: qd.getQueryGraphs()) {
+//			ElementGroup element = new ElementGroup();
+//			element.addElement(triplesByGraph.get(graph));
+//			Map<QueryNode, List<ElementFilter>> filtersByNode = filtersByNodeByGraph.get(graph);
+//			for (QueryNode node: filtersByNode.keySet()) {
+//				for (ElementFilter filter: filtersByNode.get(node)) {
+//					element.addElement(filter);
+//				}
+//			}
+//			ElementNamedGraph graphElement = new ElementNamedGraph(NodeFactory.createURI(graph.getTemplate().getGraphIri()), element);
+//			if (graph.getTemplate().getType() == GraphTemplate.GRAPH_TYPE_REMOTE) {
+//				mainSelect.addElement(new ElementService(graph.getTemplate().getEndpointUrl(), graphElement));
+//			} else {
+//				mainSelect.addElement(graphElement);
+//			}
+//		}
+		// end old
 		for (ElementFilter filter: globalFilters) {
 			mainSelect.addElement(filter);
 		}
@@ -159,16 +191,17 @@ public class GenerateQueryService {
 		}
 		// name all other unnamed nodes 
 		for (QueryGraph graph: query.getQueryGraphs()) {
+			String graphName = graph.getName().replace(" ", "_");
 			for (QueryEdge edge: graph.getQueryEdges()) {
 				//TODO: handle valued entities (typical for type): should not have a variable but a constant
 				if (!variableNames.containsKey(edge.getFrom()) && NodeTemplate.SOURCE_FIXED != edge.getFrom().getTemplate().getValueSource()) {
 					String varPrefix = edge.getFrom().getTemplate().getVariablePrefix();
-					if (varPrefix == null) varPrefix = "entity";
+					if (varPrefix == null) varPrefix = graphName + "_entity";
 					variableNames.put(edge.getFrom(), nextId(varPrefix));
 				}
 				if (!variableNames.containsKey(edge.getTo()) && NodeTemplate.SOURCE_FIXED != edge.getTo().getTemplate().getValueSource()) {
 					String varPrefix = edge.getTo().getTemplate().getVariablePrefix();
-					if (varPrefix == null) varPrefix = "entity";
+					if (varPrefix == null) varPrefix = graphName + "_entity";
 					variableNames.put(edge.getTo(), nextId(varPrefix));
 				}
 			}
@@ -484,7 +517,7 @@ public class GenerateQueryService {
 					result.add(new ElementFilter(new E_SameTerm(fromStrand, toStrand)));
 				}
 			} else {
-				// already handled by variable name selection
+				// entity to entity already handled by variable name selection
 			}
 		}
 		return result;
@@ -502,6 +535,12 @@ public class GenerateQueryService {
 		for (QueryGraph graph: query.getQueryGraphs()) {
 			for (QueryEdge edge: graph.getQueryEdges().stream().filter(QueryEdge::getRetrieve).collect(Collectors.toSet())) {
 				triples.add(new Triple(NodeFactory.createVariable(targetNames.get(edge.getFrom())), NodeFactory.createURI(edge.getTemplate().getTerm()), NodeFactory.createVariable(targetNames.get(edge.getTo()))));
+				if (QueryNode.NODETYPE_FALDOLOCATION == edge.getFrom().getTemplate().getNodeType()) {
+					triples.addAll(faldoTriples(targetNames.get(edge.getFrom()), Optional.empty()));
+				}
+				if (QueryNode.NODETYPE_FALDOLOCATION == edge.getTo().getTemplate().getNodeType()) {
+					triples.addAll(faldoTriples(targetNames.get(edge.getTo()), Optional.empty()));
+				}
 			}
 		}
 		// WILL NOT ALLOW RETRIEVING GRAPHS CROSSING LITERAL TO LITERAL BRIDGES FOR NOW

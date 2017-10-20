@@ -11,7 +11,6 @@ import org.apache.jena.graph.Node;
 
 import com.genohm.boinq.domain.RawDataFile;
 import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.domain.query.GraphTemplate;
 
 public class TrackDTO {
 

@@ -288,6 +288,18 @@ angular.module('boinqApp').controller("GraphRendererController",["$scope", "$doc
 		return Math.max(20,Math.min.apply(Math,$scope.graphTemplate.nodeTemplates.map(function(n) {return n.x})) - 50);
 	};
 
+	$scope.inBridgeName = function(bridge) {
+		var fromGraph = $scope.queryDefinition.queryGraphs.filter(function(queryGraph) {return bridge.fromGraphIdx == queryGraph.idx})[0];
+		var fromNodeTemplate = $scope.sourceNodeTemplate(bridge);
+		return fromGraph.name + ":" + fromNodeTemplate.name;
+	};
+	
+	$scope.outBridgeName = function(bridge) {
+		var toGraph = $scope.queryDefinition.queryGraphs.filter(function(queryGraph) {return bridge.toGraphIdx == queryGraph.idx})[0];
+		var toNodeTemplate = $scope.targetNodeTemplate(bridge);
+		return toGraph.name + ":" + toNodeTemplate.name;
+	};
+	
 	$scope.inBridgeY = function(bridge) {
 		return 20 + 50 * $scope.toBridges($scope.queryGraph).indexOf(bridge); 
 	};

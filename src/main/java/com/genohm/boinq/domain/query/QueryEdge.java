@@ -15,12 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.jena.graph.Node;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.genohm.boinq.web.rest.dto.QueryEdgeDTO;
-import com.genohm.boinq.web.rest.dto.QueryNodeDTO;
 
 @Entity
 @Table(name = "T_QUERYEDGE")

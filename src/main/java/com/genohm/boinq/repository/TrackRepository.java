@@ -1,11 +1,11 @@
 package com.genohm.boinq.repository;
 
-import com.genohm.boinq.domain.Track;
-
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.genohm.boinq.domain.Track;
 
 /**
  * Spring Data JPA repository for the Track entity.

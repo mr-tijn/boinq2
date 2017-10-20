@@ -50,7 +50,7 @@
         <springfox.version>2.0.3</springfox.version>
         <usertype-core.version>4.0.0.GA</usertype-core.version>
     	<jannovar.version>0.16</jannovar.version>
-    	<htsjdk.version>2.1.0</htsjdk.version>
+    	<htsjdk.version>2.11.0</htsjdk.version>
     	<jgrapht.version>0.9.2</jgrapht.version>
     	<autovalue.version>1.2</autovalue.version>
     </properties>

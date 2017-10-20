@@ -1,10 +1,11 @@
 package com.genohm.boinq;
 
-import com.genohm.boinq.config.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+
+import com.genohm.boinq.config.Constants;
 
 /**
  * This is a helper Java class that provides an alternative to creating a web.xml.

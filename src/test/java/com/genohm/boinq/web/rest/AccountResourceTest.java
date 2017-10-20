@@ -1,14 +1,25 @@
 package com.genohm.boinq.web.rest;
 
-import com.genohm.boinq.Application;
-import com.genohm.boinq.domain.Authority;
-import com.genohm.boinq.domain.User;
-import com.genohm.boinq.repository.AuthorityRepository;
-import com.genohm.boinq.repository.UserRepository;
-import com.genohm.boinq.security.AuthoritiesConstants;
-import com.genohm.boinq.service.MailService;
-import com.genohm.boinq.service.UserService;
-import com.genohm.boinq.web.rest.dto.UserDTO;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.StrictAssertions.assertThat;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,21 +34,15 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.genohm.boinq.Application;
+import com.genohm.boinq.domain.Authority;
+import com.genohm.boinq.domain.User;
+import com.genohm.boinq.repository.AuthorityRepository;
+import com.genohm.boinq.repository.UserRepository;
+import com.genohm.boinq.security.AuthoritiesConstants;
+import com.genohm.boinq.service.MailService;
+import com.genohm.boinq.service.UserService;
+import com.genohm.boinq.web.rest.dto.UserDTO;
 
 /**
  * Test class for the AccountResource REST controller.

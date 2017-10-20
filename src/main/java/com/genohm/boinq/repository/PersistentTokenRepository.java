@@ -1,11 +1,12 @@
 package com.genohm.boinq.repository;
 
-import com.genohm.boinq.domain.PersistentToken;
-import com.genohm.boinq.domain.User;
+import java.util.List;
+
 import org.joda.time.LocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import com.genohm.boinq.domain.PersistentToken;
+import com.genohm.boinq.domain.User;
 
 /**
  * Spring Data JPA repository for the PersistentToken entity.

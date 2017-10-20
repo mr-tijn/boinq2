@@ -1,6 +1,6 @@
 package com.genohm.boinq.web.rest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -26,10 +26,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.genohm.boinq.Application;
+import com.genohm.boinq.config.Constants;
 import com.genohm.boinq.repository.GraphTemplateRepository;
 import com.genohm.boinq.service.GraphTemplateRepositoryTestData;
 import com.genohm.boinq.web.rest.dto.GraphTemplateDTO;
-import com.genohm.boinq.config.Constants;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)

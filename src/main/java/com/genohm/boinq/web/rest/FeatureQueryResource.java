@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.metrics.annotation.Timed;
-import com.genohm.boinq.domain.jobs.analysis.GenomeAnalysis;
 import com.genohm.boinq.domain.jobs.analysis.SlidingWindowFeatureSelection;
 import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.domain.match.FeatureQueryFactory;

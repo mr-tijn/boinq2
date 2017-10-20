@@ -1,12 +1,12 @@
 package com.genohm.boinq.service;
 
-import com.genohm.boinq.domain.Authority;
-import com.genohm.boinq.domain.User;
-import com.genohm.boinq.repository.AuthorityRepository;
-import com.genohm.boinq.repository.PersistentTokenRepository;
-import com.genohm.boinq.repository.UserRepository;
-import com.genohm.boinq.security.SecurityUtils;
-import com.genohm.boinq.service.util.RandomUtil;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -16,11 +16,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import com.genohm.boinq.domain.Authority;
+import com.genohm.boinq.domain.User;
+import com.genohm.boinq.repository.AuthorityRepository;
+import com.genohm.boinq.repository.PersistentTokenRepository;
+import com.genohm.boinq.repository.UserRepository;
+import com.genohm.boinq.security.SecurityUtils;
+import com.genohm.boinq.service.util.RandomUtil;
 
 /**
  * Service class for managing users.

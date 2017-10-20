@@ -1,22 +1,17 @@
 package com.genohm.boinq.service;
 
-import org.apache.jena.riot.system.PrefixMap;
-import org.apache.jena.riot.system.PrefixMapStd;
-import org.springframework.stereotype.Service;
+import static org.apache.jena.sparql.path.PathFactory.pathLink;
+import static org.apache.jena.sparql.path.PathFactory.pathSeq;
+import static org.apache.jena.sparql.path.PathFactory.pathZeroOrMore1;
+import static org.apache.jena.sparql.path.PathFactory.pathZeroOrOne;
 
-import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.generated.vocabularies.FaldoVocab;
-import com.genohm.boinq.generated.vocabularies.GfvoVocab;
-import com.genohm.boinq.generated.vocabularies.TrackVocab;
-import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
-
-import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.iri.impl.Parser;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.Syntax;
+import org.apache.jena.riot.system.PrefixMap;
+import org.apache.jena.riot.system.PrefixMapStd;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.shared.impl.PrefixMappingImpl;
 import org.apache.jena.sparql.core.TriplePath;
@@ -33,12 +28,10 @@ import org.apache.jena.sparql.expr.E_Str;
 import org.apache.jena.sparql.expr.ExprList;
 import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueNode;
-import org.apache.jena.sparql.graph.GraphFactory;
 import org.apache.jena.sparql.modify.request.QuadDataAcc;
 import org.apache.jena.sparql.modify.request.UpdateDataInsert;
 import org.apache.jena.sparql.path.P_Link;
 import org.apache.jena.sparql.path.P_ZeroOrMore1;
-import org.apache.jena.sparql.path.PathFactory;
 import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementGroup;
@@ -52,7 +45,12 @@ import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
-import static org.apache.jena.sparql.path.PathFactory.*;
+import org.springframework.stereotype.Service;
+
+import com.genohm.boinq.domain.Track;
+import com.genohm.boinq.generated.vocabularies.FaldoVocab;
+import com.genohm.boinq.generated.vocabularies.TrackVocab;
+import com.genohm.boinq.tools.vocabularies.CommonVocabulary;
 
 @Service
 public class QueryBuilderService {

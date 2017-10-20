@@ -122,8 +122,8 @@ public class QueryBridge implements Serializable {
 		if (QueryNode.NODETYPE_FALDOLOCATION == fromNode.getNodeType() && 
 				QueryNode.NODETYPE_FALDOLOCATION == toNode.getNodeType()) {
 			return BRIDGE_TYPE_LOCATION;
-		} else if (QueryNode.NODETYPE_GENERICENTITY == fromNode.getNodeType() && 
-				QueryNode.NODETYPE_GENERICENTITY == toNode.getNodeType()) {
+		} else if ((QueryNode.NODETYPE_GENERICENTITY == fromNode.getNodeType() || QueryNode.NODETYPE_TYPEDENTITY == fromNode.getNodeType()) && 
+				(QueryNode.NODETYPE_GENERICENTITY == toNode.getNodeType() || QueryNode.NODETYPE_TYPEDENTITY == toNode.getNodeType())) {
 			return BRIDGE_TYPE_ENTITY_TO_ENTITY;
 		}
 		else if (QueryNode.NODETYPE_GENERICLITERAL == fromNode.getNodeType() && 

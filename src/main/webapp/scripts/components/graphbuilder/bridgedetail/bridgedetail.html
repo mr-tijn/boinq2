@@ -1,12 +1,12 @@
 <div ng-controller='BridgeDetailController'>
 <div class="form-group" ng-show="stringToEntity()">
 	<label>String to entity template</label> <input type="text" class="form-control" name="stringToEntityTemplate"
-		ng-model="queryBridge.stringToEntityTemplate" ng-minlength=1 ng-maxlength=250 >
+		ng-model="selection.bridge.stringToEntityTemplate" ng-minlength=1 ng-maxlength=250 >
 </div>
 <div class="form-group" ng-show="literalToLiteral()">
 	<label>Literal Match Type</label> <div class="form-group" >
 	<label>Node Type</label> <select class="form-control" ng-required="true"
-		ng-model="nodeTemplate.literalToLiteralMatchType" 
+		ng-model="selection.bridge.literalToLiteralMatchType" 
 		ng-options="idx as types[idx] for idx in types">
 		<option value="">-- Please select Literal Match Type --</option>
 	</select>
@@ -14,7 +14,7 @@
 </div>
 <div class="input-group" ng-show="location()">
 	<div class="checkbox">
-		<label> <input type="checkbox" ng-model="queryBridge.matchStrand">
+		<label> <input type="checkbox" ng-model="selection.bridge.matchStrand">
 			Match Strand
 		</label>
 	</div>

@@ -1,16 +1,11 @@
 package com.genohm.boinq.domain.match;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.apache.http.protocol.HTTP;
 
 import com.genohm.boinq.web.rest.dto.FeatureConnectorDTO;
 

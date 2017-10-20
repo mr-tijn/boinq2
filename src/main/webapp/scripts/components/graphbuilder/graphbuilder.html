@@ -47,7 +47,7 @@
 				
 				<div class="row" ng-repeat="ds in datasources">
 					<div>Datasource {{ds.name}} :</div>
-					<div class="btn btn-primary"  ng-repeat="track in ds.tracks"
+					<div class="btn btn-primary btn-sm"  ng-repeat="track in ds.tracks"
 						draggable dragdata="track.id">{{track.name}}</div>
 				</div>
 				
@@ -72,7 +72,7 @@
 		</div>
 
 		<div class="row">
-			<button type="submit" class="btn btn-default" ng-show="true"
+			<button type="submit" class="btn btn-primary btn-sm" ng-show="true"
 				ng-click="save()">
 				<span class="glyphicon glyphicon-save"></span> Save
 			</button>
@@ -98,16 +98,16 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-primary" ng-click="generatequery()">
-						<span class="glyphicon glyphicon-save"></span> Reset
+					<button type="submit" class="btn btn-primary btn-sm" ng-click="generatequery()">
+						<span class="glyphicon glyphicon-cloud-download"></span> Generate
 					</button>
-					<button type="submit" class="btn btn-primary" ng-click="updatequery()">
+					<button type="submit" class="btn btn-primary btn-sm" ng-click="updatequery()">
 						<span class="glyphicon glyphicon-save"></span> Save
 					</button>
-					<button type="submit" class="btn btn-primary" ng-click="emptyquery()">
-						<span class="glyphicon glyphicon-save"></span> Clear
+					<button type="submit" class="btn btn-primary btn-sm" ng-click="emptyquery()">
+						<span class="glyphicon glyphicon-remove"></span> Clear
 					</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal"
+					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal"
 						ng-click="clear()">
 						<span class="glyphicon glyphicon-ban-circle"></span> Close
 					</button>

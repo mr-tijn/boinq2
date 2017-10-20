@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -286,12 +285,15 @@ public class TrackResource {
 			Optional<Track> findTrack = datasource.getTracks().stream().filter(test -> test.getId() == track_id).findFirst();
 			if (findTrack.isPresent()) {
 				Track track = findTrack.get();
-				for (RawDataFile file : track.getRawDataFiles()) {
-					if (file.getStatus() != RawDataFile.STATUS_COMPLETE && file.getStatus() != RawDataFile.STATUS_LOADING) {
-						jobService.add(new TripleConversion(file, mainType, subType));
-					} 
+				if (track.getStatus() != Track.STATUS_DONE) {
+					jobService.add(new TripleConversion(track, mainType, subType));
 				}
-				trackRepository.save(track);
+//				for (RawDataFile file : track.getRawDataFiles()) {
+//					if (file.getStatus() != RawDataFile.STATUS_COMPLETE && file.getStatus() != RawDataFile.STATUS_LOADING) {
+//						jobService.add(new TripleConversion(file, mainType, subType));
+//					} 
+//				}
+//				trackRepository.save(track);
 			}
 		} catch (Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

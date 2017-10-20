@@ -1,8 +1,9 @@
 package com.genohm.boinq.security;
 
-import com.genohm.boinq.config.Constants;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
+
+import com.genohm.boinq.config.Constants;
 
 /**
  * Implementation of AuditorAware based on Spring Security.

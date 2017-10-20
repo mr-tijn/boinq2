@@ -1,7 +1,6 @@
 package com.genohm.boinq.domain.jobs.analysis;
 
 import java.util.Date;
-import java.util.HashMap;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;

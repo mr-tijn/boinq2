@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,7 @@ import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.faldo.FaldoFeature;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
-import com.genohm.boinq.tools.fileformats.TripleConverter;
-import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.graph.Triple;
+import com.genohm.boinq.tools.fileformats.FaldoBuilder;
 
 @Service
 public class FaldoService {
@@ -30,7 +30,7 @@ public class FaldoService {
 	@Inject
 	QueryBuilderService queryBuilderService;
 	@Inject
-	TripleConverter converter;
+	FaldoBuilder faldoBuilder;
 	
 	public List<FaldoFeature> getFeatures(Track track, String refseqName, Long start, Long end, Boolean strand) throws Exception {
 		List<FaldoFeature> features = new LinkedList<FaldoFeature>();
@@ -77,10 +77,12 @@ public class FaldoService {
 
 	private void writeFeature(TripleUploader uploader, FaldoFeature feature) {
 		// when writing features ourselves: always use global reference
-		List<Triple> triples = converter.convert(feature);
+		List<Triple> triples = faldoBuilder.convert(feature);
 		for (Triple triple: triples) {
 			uploader.triple(triple);
 		}
 	}
+	
+	
 	
 }

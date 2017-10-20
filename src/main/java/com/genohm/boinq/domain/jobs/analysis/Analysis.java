@@ -1,7 +1,5 @@
 package com.genohm.boinq.domain.jobs.analysis;
 
-import java.util.HashMap;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;

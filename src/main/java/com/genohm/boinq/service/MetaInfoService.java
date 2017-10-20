@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import com.genohm.boinq.domain.SPARQLResultSet;
 import com.genohm.boinq.domain.Track;
 import com.genohm.boinq.domain.match.FeatureConnector;
-import com.genohm.boinq.tools.generators.SPARQLQueryGenerator;
 
 
 @Service

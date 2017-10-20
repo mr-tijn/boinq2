@@ -1,11 +1,12 @@
 package com.genohm.boinq.repository;
 
-import com.genohm.boinq.domain.User;
+import java.util.List;
+import java.util.Optional;
 
 import org.joda.time.DateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
-import java.util.Optional;
+
+import com.genohm.boinq.domain.User;
 
 /**
  * Spring Data JPA repository for the User entity.

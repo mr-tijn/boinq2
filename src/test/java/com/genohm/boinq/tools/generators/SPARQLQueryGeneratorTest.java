@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import com.genohm.boinq.domain.Datasource;
 import com.genohm.boinq.domain.GenomicRegion;
 import com.genohm.boinq.domain.Track;
-import com.genohm.boinq.domain.match.FeatureJoin;
 import com.genohm.boinq.domain.match.FeatureQuery;
 import com.genohm.boinq.domain.match.FeatureSelect;
 import com.genohm.boinq.domain.match.FeatureTypeCriterion;
@@ -28,7 +27,6 @@ import com.genohm.boinq.domain.match.MatchDecimalCriterion;
 import com.genohm.boinq.domain.match.MatchStringCriterion;
 import com.genohm.boinq.domain.match.MatchTermCriterion;
 import com.genohm.boinq.generated.vocabularies.SoVocab;
-import com.genohm.boinq.generated.vocabularies.TrackVocab;
 import com.genohm.boinq.service.TripleUploadService;
 import com.genohm.boinq.service.TripleUploadService.TripleUploader;
 

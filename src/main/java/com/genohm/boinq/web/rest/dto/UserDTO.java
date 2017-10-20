@@ -1,11 +1,12 @@
 package com.genohm.boinq.web.rest.dto;
 
-import org.hibernate.validator.constraints.Email;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.List;
+
+import org.hibernate.validator.constraints.Email;
 
 public class UserDTO {
 
