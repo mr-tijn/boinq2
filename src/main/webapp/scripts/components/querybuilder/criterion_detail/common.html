@@ -1,8 +1,0 @@
-<div ng-show="criterion">
-<div class="input-group">
-	<span class="input-group-addon">Filter type</span> <select
-		class="form-control" ng-model="criterion.filter" ng-change="computeUrl(criterion)" ng-options="filter as filter.filterName for filter in supportedFilters">
-	</select>
-</div>
-<div ng-include="detailUrl"></div>
-</div>
