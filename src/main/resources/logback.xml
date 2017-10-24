@@ -27,7 +27,7 @@
     </appender>
 -->
 
-    <logger name="com.genohm.boinq" level="${logback.loglevel}"/>
+    <logger name="org.boinq" level="${logback.loglevel}"/>
 
     <logger name="javax.activation" level="WARN"/>
     <logger name="javax.mail" level="WARN"/>

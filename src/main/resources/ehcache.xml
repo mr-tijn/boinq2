@@ -17,23 +17,23 @@
             overflowToDisk="false"
             />
 
-    <cache name="com.genohm.boinq.domain.User"
+    <cache name="org.boinq.domain.User"
            timeToLiveSeconds="3600">
     </cache>
 
-    <cache name="com.genohm.boinq.domain.Authority"
+    <cache name="org.boinq.domain.Authority"
            timeToLiveSeconds="3600">
     </cache>
 
-    <cache name="com.genohm.boinq.domain.User.authorities"
+    <cache name="org.boinq.domain.User.authorities"
            timeToLiveSeconds="3600">
     </cache>
 
-    <cache name="com.genohm.boinq.domain.PersistentToken"
+    <cache name="org.boinq.domain.PersistentToken"
            timeToLiveSeconds="3600">
     </cache>
 
-    <cache name="com.genohm.boinq.domain.User.persistentTokens"
+    <cache name="org.boinq.domain.User.persistentTokens"
            timeToLiveSeconds="3600">
     </cache>
 </ehcache>

@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.genohm.boinq</groupId>
+    <groupId>org.boinq</groupId>
     <artifactId>boinq</artifactId>
     <version>0.9-SNAPSHOT</version>
     <packaging>war</packaging>
@@ -810,7 +810,7 @@
                     <defaultSchemaName></defaultSchemaName>
                     <username></username>
                     <password></password>
-                    <referenceUrl>hibernate:spring:com.genohm.boinq.domain?dialect=</referenceUrl>
+                    <referenceUrl>hibernate:spring:org.boinq.domain?dialect=</referenceUrl>
                     <verbose>true</verbose>
                     <logging>debug</logging>
                 </configuration>
@@ -857,7 +857,7 @@
 					<fileOptions>
 						<source>
 							<input>default</input>
-							<package-name>com.genohm.boinq.generated.vocabularies</package-name>
+							<package-name>org.boinq.generated.vocabularies</package-name>
 							<class-name-suffix>Vocab</class-name-suffix>
 						</source>
 						<source>
@@ -1017,7 +1017,7 @@
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <configuration>
-                        	<mainClass>com.genohm.boinq.Application</mainClass>
+                        	<mainClass>org.boinq.Application</mainClass>
                             <arguments>
                                 <argument>--spring.profiles.active=prod</argument>
                             </arguments>
