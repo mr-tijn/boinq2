@@ -30,3 +30,10 @@ angular.module('boinqApp').factory('TrackConversion', ['$resource', function($re
 		'start' : {method: 'PUT'}
 	});
 }]);
+
+angular.module('boinqApp').factory('ServerDataFile', ['$resource', function($resource) {
+    console.info('Registering resource ServerDataFile');
+	return $resource('app/rest/datasources/:ds_id/tracks/:track_id/rawdatafiles', {}, {
+		'add' : {method: 'POST'}
+	});
+}]);

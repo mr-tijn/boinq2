@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.boinq.Application;
 import org.boinq.domain.query.QueryDefinition;
 import org.boinq.repository.QueryDefinitionRepository;
+import org.boinq.repository.UserRepository;
 import org.boinq.service.QueryDefinitionTestData;
 import org.boinq.web.rest.QueryDefinitionResource;
 import org.boinq.web.rest.dto.QueryDefinitionDTO;
@@ -44,6 +45,8 @@ public class QueryDefinitionResourceTest {
 
 	@Inject
 	private QueryDefinitionRepository queryDefinitionRepository;
+    @Inject
+    private UserRepository userRepository;
 	
 	private QueryDefinition savedData;
 	private QueryDefinitionTestData testData;
@@ -52,12 +55,12 @@ public class QueryDefinitionResourceTest {
 	
     @Inject
     private MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter;
-    
 	
 	@Before
 	public void setUp() throws Exception {
 		testData = new QueryDefinitionTestData();
-		savedData = queryDefinitionRepository.save(testData.qd);
+		testData.locationOverlapQuery.setOwner(userRepository.findOneByLogin("admin").get());
+		savedData = queryDefinitionRepository.deepsave(testData.locationOverlapQuery);
 		QueryDefinitionResource qdResource = new QueryDefinitionResource();
 		ReflectionTestUtils.setField(qdResource, "queryDefinitionRepository", queryDefinitionRepository);
 		queryDefinitionMockMvc = MockMvcBuilders.standaloneSetup(qdResource).build();
@@ -66,7 +69,7 @@ public class QueryDefinitionResourceTest {
 	@Test
 	public void testSerialization() throws Exception {
 		assertTrue(mappingJackson2HttpMessageConverter.canWrite(QueryDefinitionDTO.class, MediaType.APPLICATION_JSON));
-		QueryDefinitionDTO original = QueryDefinitionDTO.create(testData.qd);
+		QueryDefinitionDTO original = QueryDefinitionDTO.create(testData.locationOverlapQuery);
 		StringWriter writer = new StringWriter();
 		mappingJackson2HttpMessageConverter.getObjectMapper().writeValue(writer, original);
 		String serialized = writer.toString();

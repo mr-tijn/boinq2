@@ -1,0 +1,27 @@
+version: '2'
+services:
+  boinq-webapp:
+    build: ./boinq/build
+    ports:
+      - "80:9000"
+    volumes:
+      - "./boinq/files:/opt/boinq/files"
+    mem_limit: "8G"
+  fuseki:
+    build: ./fuseki/build
+    ports:
+      - "3030:3030"
+    volumes:
+      - "/mnt/graphs/"
+  mysql:
+    image: "mariadb"
+    environment:
+      - MYSQL_ROOT_PASSWORD=weurtel
+    ports: 
+      - "3306:3306"
+    volumes:
+      - "/var/lib/mysql"
+      - "./mysql/config:/etc/mysql/conf.d"
+#  rserve:
+#    image: ""
+#    ports: "6311:6311"

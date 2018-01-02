@@ -1,6 +1,9 @@
 package org.boinq.tools.fileformats;
 
+import java.net.URI;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.Node;
@@ -9,12 +12,12 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.vocabulary.RDF;
 import org.boinq.domain.jobs.TripleConversion.Metadata;
 import org.boinq.service.TripleGeneratorService;
-
+import org.springframework.stereotype.Service;
 import org.boinq.generated.vocabularies.FaldoVocab;
 import org.boinq.generated.vocabularies.GfvoVocab;
 import org.boinq.generated.vocabularies.SoVocab;
 
-
+@Service
 public class TripleBuilder {
 	public static final String ENTRYBASEURI = "/resource/entry#";
 	public static final String LOCATIONBASEURI = "/resource/";
@@ -23,7 +26,7 @@ public class TripleBuilder {
 	public static final String REFERENCEBASEURI = "/resource/reference#";
 	public static final String ASSEMBLYBASEURI = "/resource/Assembly:";
 
-	
+	@Inject
 	protected TripleGeneratorService tripleGenerator;
 
 	protected TripleBuilder() {}
@@ -32,6 +35,30 @@ public class TripleBuilder {
 		this.tripleGenerator = tripleGenerator;
 	}
 
+	private String contigName(String contig, Metadata meta) {
+		return LOCATIONBASEURI + meta.organismMapping + contig;
+	}
+	
+	protected Node ensemblURI(String contig) {
+		URI base = null;
+		try {
+			base = new URI("http://rdf.ebi.ac.uk");
+		} catch (Exception e) {
+			// should not go wrong
+		}
+		URI uri = base.resolve(contig);
+		return NodeFactory.createURI(uri.toString());
+	}
+	
+	protected String locationName(String contig, Long biologicalStartPosBase1 , Long biologicalEndPosBase1, Boolean forwardStrand, Metadata meta) {
+		String locationName = contigName(contig, meta) + ":" + biologicalStartPosBase1 + "-" + biologicalEndPosBase1;
+		if (forwardStrand != null) {
+			String add = (forwardStrand) ? ":1" : ":-1";
+			locationName += add;
+		}
+		return locationName;
+	}
+	
 	protected void addFaldoTriples(Node feature, Long biologicalStartPosBase1, Long biologicalEndPosBase1, String contig,
 			Boolean forwardStrand, List<Triple> triples, Metadata meta) {
 		if (meta.fileType.equalsIgnoreCase("BED") || meta.fileType.equalsIgnoreCase("BAM")) {
@@ -39,17 +66,16 @@ public class TripleBuilder {
 		}
 		// TODO Introduce Assembly
 		contig = contig.substring(meta.prefixLength);
-		String contigName = LOCATIONBASEURI + meta.organismMapping + contig;
-		Node reference = tripleGenerator.generateURI(contigName);
-		String featureLocationName = contigName + ":" + biologicalStartPosBase1 + "-" + biologicalEndPosBase1;
+		String contigName = contigName(contig, meta);
+		Node reference = ensemblURI(contigName);
+		String featureLocationName = locationName(contig, biologicalStartPosBase1, biologicalEndPosBase1, forwardStrand, meta);
 		String featureBeginName = contigName + ":" + biologicalStartPosBase1;
 		String featureEndName = contigName + ":" + biologicalEndPosBase1;
 		if (forwardStrand != null) {
 			String add = (forwardStrand) ? ":1" : ":-1";
-			featureLocationName += add;
 			featureBeginName += add;
 			featureEndName += add;
-		}
+		} 
 		Node featureLocation = tripleGenerator.generateURI(featureLocationName);
 		Node featureBegin = tripleGenerator.generateURI(featureBeginName);
 		Node featureEnd = tripleGenerator.generateURI(featureEndName);
@@ -70,7 +96,7 @@ public class TripleBuilder {
 					? FaldoVocab.ForwardStrandPosition.asNode() : FaldoVocab.ReverseStrandPosition.asNode())));
 			triples.add(new Triple(featureEnd, RDF.type.asNode(), (forwardStrand
 					? FaldoVocab.ForwardStrandPosition.asNode() : FaldoVocab.ReverseStrandPosition.asNode())));
-		}
+		} 
 	
 	}
 	

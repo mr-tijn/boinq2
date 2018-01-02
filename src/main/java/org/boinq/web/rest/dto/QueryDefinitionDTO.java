@@ -1,5 +1,6 @@
 package org.boinq.web.rest.dto;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,8 +17,8 @@ import com.google.auto.value.AutoValue;
 public abstract class QueryDefinitionDTO {
 	
 	public static QueryDefinitionDTO create(QueryDefinition definition) {
-		List<QueryBridgeDTO> bridges = definition.getQueryBridges().stream().map(bridge -> QueryBridgeDTO.create(bridge)).collect(Collectors.toList());
-		List<QueryGraphDTO> graphs = definition.getQueryGraphs().stream().map(graph -> QueryGraphDTO.create(graph)).collect(Collectors.toList());
+		List<QueryBridgeDTO> bridges = new LinkedList<>(definition.getQueryBridges().stream().map(bridge -> QueryBridgeDTO.create(bridge)).collect(Collectors.toSet()));
+		List<QueryGraphDTO> graphs = new LinkedList<>(definition.getQueryGraphs().stream().map(graph -> QueryGraphDTO.create(graph)).collect(Collectors.toSet()));
 		return create(definition.getId(), definition.getStatus(), definition.getName(), definition.getDescription(), definition.getSpecies(), definition.getAssembly(), definition.getOwner().getLogin(), definition.getResultAsTable(), bridges, graphs, definition.getTargetGraph(), definition.getTargetFile(), definition.getSparqlQuery());
 	}
 	
@@ -46,9 +47,9 @@ public abstract class QueryDefinitionDTO {
 	@JsonProperty("species") @Nullable 		public abstract String species();
 	@JsonProperty("assembly") @Nullable 	public abstract String assembly();
 	@JsonProperty("owner") @Nullable		public abstract String owner();
-	@JsonProperty("resultAsTable")	public abstract Boolean resultAsTable();
-	@JsonProperty("queryBridges")	public abstract List<QueryBridgeDTO> queryBridges();
-	@JsonProperty("queryGraphs")	public abstract List<QueryGraphDTO> queryGraphs();
+	@JsonProperty("resultAsTable")			public abstract Boolean resultAsTable();
+	@JsonProperty("queryBridges")			public abstract List<QueryBridgeDTO> queryBridges();
+	@JsonProperty("queryGraphs")			public abstract List<QueryGraphDTO> queryGraphs();
 	@JsonProperty("targetGraph") @Nullable	public abstract String targetGraph();
 	@JsonProperty("targetFile")	@Nullable	public abstract String targetFile();
 	@JsonProperty("sparqlQuery") @Nullable	public abstract String sparqlQuery();

@@ -14,6 +14,10 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
+import org.apache.jena.update.Update;
+import org.apache.jena.update.UpdateExecutionFactory;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateRequest;
 import org.boinq.domain.RawSPARQLResultSet;
 import org.boinq.domain.SPARQLResultSet;
 import org.slf4j.Logger;
@@ -79,6 +83,12 @@ public class SPARQLClientService {
 		srs.setRecords(resultList);
 		srs.setVariableNames(varList);
 		return srs;		
+	}
+	
+	
+	public void queryUpdate(String serviceURL, String queryString) {
+		UpdateRequest request = UpdateFactory.create(queryString);
+		UpdateExecutionFactory.createRemote(request, serviceURL).execute();
 	}
 	
 	public SPARQLResultSet querySelect(String serviceURL, String graphURL, String queryString, Boolean subClassReasoning, Boolean subPropertyReasoning) throws Exception {

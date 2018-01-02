@@ -5,6 +5,7 @@ import static org.boinq.domain.query.TemplateFactory.typeEdgeTemplate;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.jena.vocabulary.SKOS;
 import org.boinq.domain.query.EdgeTemplate;
@@ -12,6 +13,7 @@ import org.boinq.domain.query.GraphTemplate;
 import org.boinq.domain.query.NodeTemplate;
 
 import org.boinq.generated.vocabularies.SioVocab;
+import org.boinq.tools.Counter;
 
 public class GraphTemplateRepositoryTestData {
 	
@@ -49,6 +51,10 @@ public class GraphTemplateRepositoryTestData {
 		edges.add(typeEdgeTemplate(pathway, ncit("C20633")));
 		NodeTemplate pathwayId = entityNode("pathway ID", true);
 		edges.add(new EdgeTemplate(pathway, pathwayId, SKOS.exactMatch.toString()));
+		Counter nodeIdx = new Counter(0);
+		Set<NodeTemplate> nodes = edges.stream().map(EdgeTemplate::getFrom).collect(Collectors.toSet());
+		nodes.addAll(edges.stream().map(EdgeTemplate::getTo).collect(Collectors.toSet()));
+		nodes.stream().forEach(n -> n.setIdx(nodeIdx.next()));
 		disGeNet.setEdgeTemplates(edges);
 		disGeNet.setEndpointUrl("http://disgenet");
 		disGeNet.setGraphIri("brol");

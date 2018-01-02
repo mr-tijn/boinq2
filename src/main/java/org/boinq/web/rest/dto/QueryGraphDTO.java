@@ -1,6 +1,8 @@
 package org.boinq.web.rest.dto;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -16,9 +18,10 @@ import com.google.auto.value.AutoValue;
 public abstract class QueryGraphDTO {
 
 	public static QueryGraphDTO create(QueryGraph query) {
-		List<QueryEdgeDTO> queryEdges = query.getQueryEdges().stream().map(edge -> QueryEdgeDTO.create(edge)).collect(Collectors.toList());
-		List<QueryNodeDTO> queryNodes = query.getQueryEdges().stream().map(edge -> edge.getFrom()).map(node -> QueryNodeDTO.create(node)).collect(Collectors.toList());
-		queryNodes.addAll(query.getQueryEdges().stream().map(edge -> edge.getTo()).map(node -> QueryNodeDTO.create(node)).collect(Collectors.toList()));
+		List<QueryEdgeDTO> queryEdges = new LinkedList<>(query.getQueryEdges().stream().map(edge -> QueryEdgeDTO.create(edge)).collect(Collectors.toSet()));
+		Set<QueryNodeDTO> queryNodeSet = query.getQueryEdges().stream().map(edge -> edge.getFrom()).map(node -> QueryNodeDTO.create(node)).collect(Collectors.toSet());
+		queryNodeSet.addAll(query.getQueryEdges().stream().map(edge -> edge.getTo()).map(node -> QueryNodeDTO.create(node)).collect(Collectors.toSet()));
+		List<QueryNodeDTO> queryNodes = new LinkedList<>(queryNodeSet);
 		return create(query.getId(), query.getIdx(), query.getX(), query.getY(), query.getName(), query.getTemplate().getId(), queryEdges, queryNodes);
 	}
 	

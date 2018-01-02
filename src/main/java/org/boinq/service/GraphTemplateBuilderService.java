@@ -213,9 +213,15 @@ public class GraphTemplateBuilderService {
 		
 		// attributes
 		List<NodeTemplate> attributes = new LinkedList<>();
-		attributes.add(attributeNode("name", RDFS.label.getURI(), XSD.xstring.getURI()));
-		attributes.add(attributeNode("alias", SKOS.altLabel.getURI(), XSD.xstring.getURI()));
-		attributes.add(attributeNode("note", RDFS.comment.getURI(), XSD.xstring.getURI()));
+		NodeTemplate label = literalNode("label", XSD.xstring.asNode());
+		attributes.add(label);
+		edgeTemplates.add(new EdgeTemplate(gffFeature, label, RDFS.label.getURI()));
+		NodeTemplate alias = literalNode("alias", XSD.xstring.asNode());
+		attributes.add(alias);
+		edgeTemplates.add(new EdgeTemplate(gffFeature, alias, SKOS.altLabel.getURI()));
+		NodeTemplate note = literalNode("note", XSD.xstring.asNode());
+		attributes.add(note);
+		edgeTemplates.add(new EdgeTemplate(gffFeature, alias, RDFS.comment.getURI()));
 		pen = ref;
 		double angle = -30;
 		pen.angle(50, angle);
@@ -280,7 +286,13 @@ public class GraphTemplateBuilderService {
 		edgeTemplates.add(new EdgeTemplate(alignment, sourceFeature, GfvoVocab.has_source.getURI()));
 		edgeTemplates.add(new EdgeTemplate(alignment, targetFeature, GfvoVocab.has_input.getURI()));
 		
-		pen.down(50);
+		pen.up(50);
+		NodeTemplate alignmentlocation = locationNode(assembly);
+		alignmentlocation.setX(pen.x);
+		alignmentlocation.setY(pen.y);
+		edgeTemplates.add(new EdgeTemplate(alignment, alignmentlocation, FaldoVocab.location.getURI()));
+		
+		pen.down(100);
 		NodeTemplate element = entityNode("element", false);
 		element.setIdx(idx.next());
 		element.setX(pen.x);

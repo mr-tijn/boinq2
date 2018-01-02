@@ -84,5 +84,8 @@ public class EdgeTemplate implements Serializable {
 		this.label = label;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return from + "--" + (label != null?label:term) + "-->" + to;
+	}
 }

@@ -12,7 +12,6 @@ import org.boinq.domain.query.NodeTemplate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.boinq.web.rest.dto.AutoValue_GraphTemplateDTO;
 import com.google.auto.value.AutoValue;
 
 @AutoValue
@@ -24,7 +23,7 @@ public abstract class GraphTemplateDTO {
 		nodes.addAll(template.getEdgeTemplates().stream().map(edge -> edge.getFrom()).collect(Collectors.toSet()));
 		nodes.addAll(template.getEdgeTemplates().stream().map(edge -> edge.getTo()).collect(Collectors.toSet()));
 		List<NodeTemplateDTO> nodeTemplates = nodes.stream().map(node -> NodeTemplateDTO.create(node)).collect(Collectors.toList());
-		return new AutoValue_GraphTemplateDTO(template.getId(), template.getType(), template.getName(), template.getEndpointUrl(), template.getGraphIri(), edgeTemplates, nodeTemplates);
+		return create(template.getId(), template.getType(), template.getName(), template.getEndpointUrl(), template.getGraphIri(), edgeTemplates, nodeTemplates);
 	}
 	
 	@JsonCreator public static GraphTemplateDTO create(

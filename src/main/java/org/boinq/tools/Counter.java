@@ -11,4 +11,7 @@ public class Counter {
 	public Integer next() {
 		return current++;
 	}
+	public Integer current() {
+		return current;
+	}
 }

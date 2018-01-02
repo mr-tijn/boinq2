@@ -18,6 +18,7 @@ public class TrackDTO {
 	private String graphName;
 	private String fileType;
 	private String name;
+	private String description;
 	private String type;
 	private String species;
 	private String assembly;
@@ -96,6 +97,14 @@ public class TrackDTO {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getType() {
@@ -195,6 +204,7 @@ public class TrackDTO {
 		this.featureCount = track.getFeatureCount();
 		this.tripleCount = track.getTripleCount();
 		this.name = track.getName();
+		this.description = track.getDescription();
 		this.graphName = track.getGraphName();
 		this.fileType = track.getFileType();
 		this.type = track.getType();

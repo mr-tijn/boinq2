@@ -1,12 +1,15 @@
-'use strict';
+	'use strict';
 
-angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileUploader', 'Track', 'resolvedTrack', 'resolvedDatasource', 'TrackDatafile', 'TrackConversion', 'SPARQLConstants', 'DatasourceConstants', 'DataFileConstants', 'GlobalConstants', 'TrackConstants', 'QueryBuilderService','callEndpoint','$cookies', 
-	function ($scope, FileUploader, Track, resolvedTrack, resolvedDatasource, TrackDatafile, TrackConversion, SPARQLConstants, DatasourceConstants, DataFileConstants, GlobalConstants, TrackConstants, QueryBuilderService, callEndpoint, $cookies) {
+angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileUploader', 'Track', 'resolvedTrack', 'resolvedDatasource', 'TrackDatafile', 'ServerDataFile', 'TrackConversion', 'SPARQLConstants', 'DatasourceConstants', 'DataFileConstants', 'GlobalConstants', 'TrackConstants', 'QueryBuilderService','callEndpoint','$cookies', 
+	function ($scope, FileUploader, Track, resolvedTrack, resolvedDatasource, TrackDatafile, ServerDataFile, TrackConversion, SPARQLConstants, DatasourceConstants, DataFileConstants, GlobalConstants, TrackConstants, QueryBuilderService, callEndpoint, $cookies) {
 
 	console.log("Loading TrackDetailController");
 	$scope.sourceEndpoint = "/local/sparql"
 	$scope.sourceGraph = "http://www.boinq.org/iri/graph/meta/"
 
+	$scope.mainType = "";
+	$scope.subType = "";
+	
 
 	$scope.track = resolvedTrack;
 	$scope.datasource = resolvedDatasource;
@@ -41,6 +44,20 @@ angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileU
 		return (rawDataFile.status==DataFileConstants.STATUS_ERROR);
 	};
 
+	
+	// directly on server
+	$scope.addServerFile = function() {
+		$scope.newServerFilePath = "full path to file on server";
+		$('#addServerFile').modal('show');
+	};
+	
+	$scope.saveServerFile = function() {
+		$('#addServerFile').modal('hide');
+		ServerDataFile.add({ds_id: $scope.datasource.id, track_id:$scope.track.id},$scope.newServerFilePath,function(successResponse) {
+			refresh();
+		});
+	};
+	
 	$scope.showFileError = function(message) {
 		$scope.fileError = message;
 		$('#fileError').modal('show');
@@ -113,7 +130,9 @@ angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileU
 		var ds_id = $scope.datasource.id;
 		TrackDatafile.remove({ds_id:$scope.datasource.id, track_id:$scope.track.id, data_id:rawdatafile_id},
 				function () {
-			$scope.track = Track.get({ds_id:$scope.datasource.id, track_id:ds_id});
+			Track.get({ds_id:$scope.datasource.id, track_id:$scope.track.id}, function(result) {
+				$scope.track = result;
+			});
 		});
 	};
 
@@ -134,7 +153,11 @@ angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileU
 		var flatten = function(string) {
 			return string.toLowerCase().replace(/ /g,"_");
 		}
-		return "http://www.boinq.org/resource/" + flatten($scope.track.species) + "/" + flatten($scope.track.assembly) +"/1";
+		if ($scope.track && $scope.track.species && $scope.track.assembly) {
+			return "http://www.boinq.org/resource/" + flatten($scope.track.species) + "/" + flatten($scope.track.assembly) +"/1";
+		} else {
+			return "http://www.boinq.org/resource/UNKNOWN";
+		}
 	}
 
 	$scope.termsPicked = function(terms) {
@@ -189,9 +212,9 @@ angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileU
 
 	// CALLBACKS
 	var refresh = function() {
-		console.log($scope.track);
-		$scope.track = Track.get({ds_id: $scope.datasource.id, track_id: $scope.track.id});
-		console.log($scope.track);
+		Track.get({ds_id: $scope.datasource.id, track_id: $scope.track.id},function(result) {
+			$scope.track = result;
+		});
 	}
 	uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {};
 	uploader.onAfterAddingFile = function(fileItem) {};

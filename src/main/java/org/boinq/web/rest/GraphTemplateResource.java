@@ -85,16 +85,16 @@ public class GraphTemplateResource {
     		NodeTemplate ft = new NodeTemplate();
     		NodeTemplate tt = new NodeTemplate();
     		if (edge.id() != null) {
-    			Optional<EdgeTemplate> edgeOpt = gt.getEdgeTemplates().stream().filter(e -> e.getId() == edge.id()).findFirst();
+    			Optional<EdgeTemplate> edgeOpt = gt.getEdgeTemplates().stream().filter(e -> e.getId().equals(edge.id())).findFirst();
     			if (edgeOpt.isPresent()) {
     				et = edgeOpt.get();
     			}
     		}
     		et.setLabel(edge.label());
     		et.setTerm(edge.term());
-    		NodeTemplateDTO fromNode = template.nodeTemplates().stream().filter(n -> n.idx() == edge.fromIdx()).findFirst().get();
+    		NodeTemplateDTO fromNode = template.nodeTemplates().stream().filter(n -> n.idx().equals(edge.fromIdx())).findFirst().get();
     		if (fromNode.id() != null) {
-    			Optional<NodeTemplate> nodeOpt = nodeTemplates.stream().filter(n -> n.getId() == fromNode.id()).findFirst();
+    			Optional<NodeTemplate> nodeOpt = nodeTemplates.stream().filter(n -> n.getId().equals(fromNode.id())).findFirst();
     			if (nodeOpt.isPresent()) {
     				ft = nodeOpt.get();
     			}
@@ -114,11 +114,12 @@ public class GraphTemplateResource {
     		ft.setValueSource(fromNode.valueSource());
     		ft.setValuesRootTerm(fromNode.valuesRootTerm());
     		ft.setVariablePrefix(fromNode.variablePrefix());
+    		ft.setValuesTermList(fromNode.valuesTermList());
     		ft.setX(fromNode.x());
     		ft.setY(fromNode.y());
-    		NodeTemplateDTO toNode = template.nodeTemplates().stream().filter(n -> n.idx() == edge.toIdx()).findFirst().get();
+    		NodeTemplateDTO toNode = template.nodeTemplates().stream().filter(n -> n.idx().equals(edge.toIdx())).findFirst().get();
     		if (toNode.id() != null) {
-    			Optional<NodeTemplate> nodeOpt = nodeTemplates.stream().filter(n -> n.getId() == toNode.id()).findFirst();
+    			Optional<NodeTemplate> nodeOpt = nodeTemplates.stream().filter(n -> n.getId().equals(toNode.id())).findFirst();
     			if (nodeOpt.isPresent()) {
     				tt = nodeOpt.get();
     			}
@@ -138,6 +139,7 @@ public class GraphTemplateResource {
     		tt.setValueSource(toNode.valueSource());
     		tt.setValuesRootTerm(toNode.valuesRootTerm());
     		tt.setVariablePrefix(toNode.variablePrefix());
+    		tt.setValuesTermList(toNode.valuesTermList());
     		tt.setX(toNode.x());
     		tt.setY(toNode.y());
     		et.setFrom(ft);

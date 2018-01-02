@@ -60,9 +60,9 @@
 </div>
 
 <div class="form-group" ng-show="islistentity()">
-	<label>Values Term List</label> <input type="text" class="form-control"
+	<label>Values Term List (separated by ; )</label> <input type="text" class="form-control"
 		name="valuesTermList" ng-model="nodeTemplate.valuesTermList" ng-minlength=1
-		ng-maxlength=250 ng-required="true" >
+		ng-maxlength=250 ng-required="true" ng-list=";" >
 </div>
 <div class="form-group" ng-show="isendpointentity()">
 	<label>Values Endpoint</label> <input type="text" class="form-control"

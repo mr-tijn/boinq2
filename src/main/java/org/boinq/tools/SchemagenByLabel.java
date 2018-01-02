@@ -14,6 +14,10 @@ import org.apache.jena.vocabulary.RDFS;
 
 public class SchemagenByLabel extends jena.schemagen {
 	
+	// adapted schemagen for having meaningful names in code
+	// use with caution
+	// still needs manual check
+	
 	public static void main( String... args ) {
 		try {
 			new SchemagenByLabel().go( args );
@@ -59,6 +63,7 @@ public class SchemagenByLabel extends jena.schemagen {
 	        setGlobalReplacements();
 
 	        processHeader();
+ 	       addMapIncludes();
 	        writeClassDeclaration();
 	        writeInitialDeclarations();
 	        writeProperties();
@@ -68,6 +73,11 @@ public class SchemagenByLabel extends jena.schemagen {
 	        writeClassClose();
 	        processFooter();
 	        closeOutput();
+	}
+	
+	protected void addMapIncludes() {
+		writeln( 0, "import java.util.Map;" );
+		writeln( 0, "import java.util.HashMap;" );	
 	}
 
 	@Override
@@ -183,6 +193,52 @@ public class SchemagenByLabel extends jena.schemagen {
         for (Iterator<? extends RDFNode> i = sorted( m_source.listClasses() ); i.hasNext(); ) {
             writeValueByLabel( (Resource) i.next(), template, "OntClass", "createClass", "_CLASS" );
         }
+        
+		writeln(1, substitute("public static Map<String, OntClass> OntClassesByLabel = new HashMap<String, OntClass>();"));
+        int initializers = 1;
+        int entries = 1;
+        // need to split static initializer to avoid the 65 Kb limit
+        writeStaticMapPre(initializers++);
+        for (Iterator<? extends RDFNode> i = sorted( m_source.listClasses() ); i.hasNext(); ) {
+            initializers += writeMapEntry( (Resource) i.next(), template, "OntClass", "createClass", "_CLASS", entries++, initializers );
+        }
+        writeStaticMapPost();
+        writeInit(initializers);
+	}
+	
+	protected void writeStaticMapPre(int i) {
+		writeln(1, "protected static void init" + i + "() {");
+	}
+	
+	protected void writeStaticMapPost() {
+		writeln(1,"}");
+	}
+
+	protected void writeInit(int initializers) {
+		writeln(1, "static {");
+		for (int i = 1; i < initializers; i++) {
+			writeln(2, "init" + i + "();");
+		}
+		writeln(1, "}");
+	}
+	
+	protected int writeMapEntry(Resource r, String template, String valueClass, String creator, String disambiguator, int entrycount, int initializers) {
+		if (!filter(r)) {
+			String valName = asLegalJavaID(r.getProperty(RDFS.label).getObject().asLiteral().getString(), false);
+	        if (valName.equals("true") || valName.equals("false")) {
+	        	valName = valName+"_";
+	        }
+	        addReplacementPattern( "valname", valName);
+	        addReplacementPattern( "uppervalname", valName.toUpperCase());
+			writeln(2, substitute("OntClassesByLabel.put(\"%uppervalname%\", %valname%);"));
+	        pop(2);
+        	if (entrycount % 500 == 0) {
+                writeStaticMapPost();
+                writeStaticMapPre(initializers);
+                return 1;
+        	}
+		}
+		return 0;
 	}
 
 	protected void writeValueByLabel(Resource r, String template, String valueClass,

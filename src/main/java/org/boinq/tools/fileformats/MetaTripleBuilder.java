@@ -36,8 +36,6 @@ import htsjdk.variant.vcf.VCFInfoHeaderLine;
 @Service
 public class MetaTripleBuilder extends TripleBuilder {
 
-	@Inject
-	TripleGeneratorService tripleGenerator;
 	
 	private MetaTripleBuilder() {}
 	

@@ -13,5 +13,6 @@ public interface TrackRepository extends JpaRepository<Track, Long>, TrackReposi
  
 	Optional<Track> findOneById(Long id);
 	Optional<List<Track>> findByDatasourceId(Long ds_id);
+	Optional<Track> findOneByGraphTemplateId(Long gt_id);
 	
 }

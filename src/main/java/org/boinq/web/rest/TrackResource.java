@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import org.boinq.domain.Datasource;
 import org.boinq.domain.RawDataFile;
@@ -18,14 +19,17 @@ import org.boinq.domain.jobs.TripleConversion;
 import org.boinq.domain.query.GraphTemplate;
 import org.boinq.repository.DatasourceRepository;
 import org.boinq.repository.GraphTemplateRepository;
+import org.boinq.repository.RawDataFileRepository;
 import org.boinq.repository.TrackRepository;
 import org.boinq.security.AuthoritiesConstants;
 import org.boinq.service.AsynchronousJobService;
 import org.boinq.service.FileManagerService;
 import org.boinq.service.LocalGraphService;
+import org.boinq.web.rest.dto.RawDataFileDTO;
 import org.boinq.web.rest.dto.TrackDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,19 +62,22 @@ public class TrackResource {
 	private FileManagerService fileService;
 	@Inject
 	private LocalGraphService localGraphService;
+	@Inject
+	private RawDataFileRepository rawDataFileRepository;
 
 	/**
 	 * POST /rest/tracks -> Create a new track.
 	 */
 	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks", method = RequestMethod.POST, produces = "application/json")
 	@Timed
-	public void create(Principal principal, @PathVariable Long ds_id, @RequestBody TrackDTO trackDTO) {
+	public ResponseEntity<TrackDTO>  create(Principal principal, @PathVariable Long ds_id, @RequestBody TrackDTO trackDTO) {
 		log.debug("REST request to save Track : {}", trackDTO);
 		try {
-			Datasource datasource = datasourceRepository.findOne(ds_id);
-			if (datasource == null) {
+			Optional<Datasource> ds = datasourceRepository.findOneById(ds_id);
+			if (!ds.isPresent()) {
 				throw new Exception("No datasource found");
 			}
+			Datasource datasource = ds.get();
 			verifyModifyPermission(principal.getName(), datasource);
 			Optional<Track> result = trackRepository.findOneWithMeta(trackDTO.getId());
 			Track track;
@@ -83,6 +90,7 @@ public class TrackResource {
 			track.setDatasource(datasource);
 			track.setGraphName(trackDTO.getGraphName());
 			track.setName(trackDTO.getName());
+			track.setDescription(trackDTO.getDescription());
 			track.setStatus(trackDTO.getStatus());
 			track.setType(trackDTO.getType());
 			track.setFileType(trackDTO.getFileType());
@@ -106,18 +114,21 @@ public class TrackResource {
 					track.setGraphTemplate(gt);
 				}
 			}
-			Track savedTrack = trackRepository.save(track);
+			track = trackRepository.save(track);
 			datasource.getTracks().add(track);
 			datasourceRepository.save(datasource);
+			//TODO: check if still needed when using @Transactional
 			datasourceRepository.flush();
 			trackRepository.flush();
 			if (datasource.getType() == Datasource.TYPE_LOCAL_FALDO) {
 				String graphName = localGraphService.createLocalGraph(datasource.getId()+"_"+track.getId().toString());
-				savedTrack.setGraphName(graphName);
-				trackRepository.save(savedTrack);
+				track.setGraphName(graphName);
+				trackRepository.save(track);
 			}
+			return new ResponseEntity<TrackDTO>(new TrackDTO(track), HttpStatus.OK);
 		} catch (Exception e) {
 			log.error("Could not save Track {}", trackDTO, e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -192,7 +203,7 @@ public class TrackResource {
 				throw new Exception("No datasource found");
 			}
 			for (Track track : datasource.getTracks()) {
-				if (track.getId() == id) {
+				if (track.getId().equals(id)) {
 					return new ResponseEntity<TrackDTO>(new TrackDTO(track), HttpStatus.OK);
 				}
 			}
@@ -231,7 +242,7 @@ public class TrackResource {
 			if (datasource == null) {
 				throw new Exception("No datasource found");
 			}
-			Optional<Track> trackOpt = datasource.getTracks().stream().filter(track -> (id == track.getId())).findFirst();
+			Optional<Track> trackOpt = datasource.getTracks().stream().filter(track -> (id.equals(track.getId()))).findFirst();
 			if (trackOpt.isPresent()) {
 				Track found = trackOpt.get();
 				datasource.getTracks().remove(found);
@@ -246,10 +257,10 @@ public class TrackResource {
 		}
 	}
 
-	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{id}/empty", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{track_id}/empty", method = RequestMethod.GET, produces = "application/json")
 	@Timed
 	@RolesAllowed(AuthoritiesConstants.ADMIN)
-	public Track emptyTrack(Principal principal, @PathVariable Long ds_id, @PathVariable Long track_id) {
+	public ResponseEntity<TrackDTO> emptyTrack(Principal principal, @PathVariable Long ds_id, @PathVariable Long track_id) {
 		log.debug("REST request to empty Track : {}", track_id);
 		try {
 			Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
@@ -257,7 +268,7 @@ public class TrackResource {
 				throw new Exception("Could not find datasource " + ds_id);
 			Datasource datasource = result.get();
 			verifyModifyPermission(principal.getName(), datasource);
-			Optional<Track> found = datasource.getTracks().stream().filter(track -> track.getId() == track_id).findFirst();
+			Optional<Track> found = datasource.getTracks().stream().filter(track -> track.getId().equals(track_id)).findFirst();
 			if (!found.isPresent()) {
 				throw new Exception("Could not find track " + track_id);
 			}
@@ -265,10 +276,10 @@ public class TrackResource {
 			trackRepository.deleteFiles(track);
 			trackRepository.empty(track);
 			trackRepository.save(track);
-			return track;
+			return new ResponseEntity<TrackDTO>(new TrackDTO(track), HttpStatus.OK);
 		} catch (Exception e) {
 			log.error("could not empty track", e);
-			return null;
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -276,24 +287,19 @@ public class TrackResource {
 	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{track_id}/startconversion", method = RequestMethod.PUT)
 	public ResponseEntity<String> startTripleConversion(Principal principal, @PathVariable Long ds_id,
 			@PathVariable Long track_id, @RequestParam String mainType, @RequestParam String subType) {
+		log.debug("REST request to start triple conversion on Track " + track_id);
 		try {
 			Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
 			if (!result.isPresent())
 				throw new Exception("Could not find datasource " + ds_id);
 			Datasource datasource = result.get();
 			verifyModifyPermission(principal.getName(), datasource);
-			Optional<Track> findTrack = datasource.getTracks().stream().filter(test -> test.getId() == track_id).findFirst();
+			Optional<Track> findTrack = datasource.getTracks().stream().filter(test -> test.getId().equals(track_id)).findFirst();
 			if (findTrack.isPresent()) {
 				Track track = findTrack.get();
 				if (track.getStatus() != Track.STATUS_DONE) {
 					jobService.add(new TripleConversion(track, mainType, subType));
 				}
-//				for (RawDataFile file : track.getRawDataFiles()) {
-//					if (file.getStatus() != RawDataFile.STATUS_COMPLETE && file.getStatus() != RawDataFile.STATUS_LOADING) {
-//						jobService.add(new TripleConversion(file, mainType, subType));
-//					} 
-//				}
-//				trackRepository.save(track);
 			}
 		} catch (Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -301,9 +307,43 @@ public class TrackResource {
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{id}/rawdatafiles/{data_id}", method = RequestMethod.DELETE)
+	
+	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{track_id}/rawdatafiles", method = RequestMethod.POST,  produces = "application/json")
+	@Transactional
+	public ResponseEntity<RawDataFileDTO> add(Principal principal, @PathVariable Long ds_id, @PathVariable Long track_id, @RequestBody String filePath) {
+		log.debug("REST request to add server file on Track " + track_id);
+		try {
+			Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
+			if (!result.isPresent()) {
+				throw new Exception("Could not find datasource " + ds_id);
+			}
+			Datasource datasource = result.get();
+			verifyModifyPermission(principal.getName(), datasource);
+			Optional<Track> findTrack = datasource.getTracks().stream().filter(test -> test.getId().equals(track_id)).findFirst();
+			if (!findTrack.isPresent()) {
+				throw new Exception("Could not find track " + track_id);
+			}
+			Track track = findTrack.get();
+			if (track.getStatus() == Track.STATUS_DONE) {
+				throw new Exception("Cannot add files to converted tracks.");
+			}
+			RawDataFile dataFile = new RawDataFile(filePath);
+			dataFile.setTrack(track);
+			dataFile.setStatus(RawDataFile.STATUS_WAITING);
+			rawDataFileRepository.save(dataFile);
+			track.getRawDataFiles().add(dataFile);
+			trackRepository.save(track);
+			return new ResponseEntity<>(new RawDataFileDTO(dataFile),HttpStatus.OK);
+		} catch (Exception e) {
+			log.error("could not empty track", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{track_id}/rawdatafiles/{data_id}", method = RequestMethod.DELETE)
 	@RolesAllowed(AuthoritiesConstants.ADMIN)
-	public ResponseEntity<String> deleteDirect(Principal principal, @PathVariable Long ds_id, @PathVariable Long id,
+	public ResponseEntity<String> deleteDirect(Principal principal, @PathVariable Long ds_id, @PathVariable Long track_id,
 			@PathVariable Long data_id) {
 		try {
 			Optional<Datasource> result = datasourceRepository.findOneById(ds_id);
@@ -313,7 +353,7 @@ public class TrackResource {
 			verifyModifyPermission(principal.getName(), datasource);
 			Track foundTrack = null;
 			for (Track track : datasource.getTracks()) {
-				if (track.getId() == id) {
+				if (track.getId().equals(track_id)) {
 					foundTrack = track;
 					break;
 				}
@@ -321,7 +361,7 @@ public class TrackResource {
 			if (foundTrack != null) {
 				RawDataFile toRemove = null;
 				for (RawDataFile data : foundTrack.getRawDataFiles()) {
-					if (data_id == data.getId()) {
+					if (data_id.equals(data.getId())) {
 						toRemove = data;
 						break;
 					}
@@ -348,7 +388,7 @@ public class TrackResource {
 			Track track = result.get();
 			RawDataFile toRemove = null;
 			for (RawDataFile data : track.getRawDataFiles()) {
-				if (data_id == data.getId()) {
+				if (data_id.equals(data.getId())) {
 					toRemove = data;
 					break;
 				}

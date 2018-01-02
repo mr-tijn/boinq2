@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	<changeSet author="martijn" id="add reference map">
+		<createTable tableName="T_REFERENCEMAPENTRY">
+			<column autoIncrement="true" name="id" type="BIGINT"  startWith="99">
+				<constraints primaryKey="true"/>
+            </column>
+			<column name="graphtemplate_id" type="BIGINT"/>
+			<column name="boinq_reference_iri" type="VARCHAR(255)"/>
+			<column name="remote_reference_iri" type="VARCHAR(255)"/>
+		</createTable>
+		<addForeignKeyConstraint baseTableName="T_REFERENCEMAPENTRY" baseColumnNames="graphtemplate_id"  constraintName="fk_referencemapentry_graphtemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="T_GRAPHTEMPLATE"/>
+	</changeSet>
+</databaseChangeLog>

@@ -81,7 +81,7 @@ public class QueryDefinitionResource {
 		if (owner.isPresent()) {
 			queryDefinition.setOwner(owner.get());
 		}
-		return QueryDefinitionDTO.create(queryDefinitionRepository.save(queryDefinition));
+		return QueryDefinitionDTO.create(queryDefinitionRepository.deepsave(queryDefinition));
 	}
 	
 	

@@ -25,15 +25,15 @@ public class QueryGraphRepositoryImpl implements QueryGraphRepositoryExtensions 
 	
 	
 	private QueryNodeDTO findIdx(List<QueryNodeDTO> nodes, Integer idx) {
-		return nodes.stream().filter(node -> node.idx() == idx).findFirst().orElse(null);
+		return nodes.stream().filter(node -> node.idx().equals(idx)).findFirst().orElse(null);
 	}
 	
 	private EdgeTemplate findEdge(Set<EdgeTemplate> edges, Long id) {
-		return edges.stream().filter(edge -> edge.getId() == id).findFirst().orElse(null);
+		return edges.stream().filter(edge -> edge.getId().equals(id)).findFirst().orElse(null);
 	}
 	
 	private NodeTemplate findNode(Set<NodeTemplate> nodes, Long id) {
-		return nodes.stream().filter(node -> node.getId() == id).findFirst().orElse(null);
+		return nodes.stream().filter(node -> node.getId().equals(id)).findFirst().orElse(null);
 	}
 	
 	@Override

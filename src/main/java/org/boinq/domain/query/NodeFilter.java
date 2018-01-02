@@ -169,10 +169,10 @@ public class NodeFilter implements Serializable {
 		this.stringValue = stringValue;
 	}
 	public List<String> getTermValues() {
-		return (termValues != null ? Arrays.asList(termValues.split("|")): new LinkedList<>());
+		return (termValues != null ? Arrays.asList(termValues.split(" ")): new LinkedList<>());
 	}
 	public void setTermValues(List<String> termValues) {
-		this.termValues = termValues.stream().collect(Collectors.joining("|"));
+		this.termValues = termValues.stream().collect(Collectors.joining(" "));
 	}
 	public String getContig() {
 		return contig;

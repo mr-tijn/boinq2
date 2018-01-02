@@ -4,10 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -19,6 +21,7 @@ import org.boinq.domain.Datasource;
 import org.boinq.domain.RawDataFile;
 import org.boinq.domain.Track;
 import org.boinq.domain.query.GraphTemplate;
+import org.boinq.generated.vocabularies.SoVocab;
 import org.boinq.repository.GraphTemplateRepository;
 import org.boinq.repository.RawDataFileRepository;
 import org.boinq.repository.TrackRepository;
@@ -151,9 +154,13 @@ public class TripleConversion implements AsynchronousJob {
 				//			meta.organismMapping = track.getSpecies().replace(" ","_").toLowerCase() +"/"+ track.getAssembly() +"/";
 				meta.prefixLength = (track.getContigPrefix()==null)? 0:track.getContigPrefix().length();
 				if("bed".equalsIgnoreCase(track.getFileType())){
-					meta.mainType= NodeFactory.createURI(mainType);
+					if (null == mainType || mainType.length() == 0) {
+						meta.mainType = SoVocab.region.asNode();
+					} else {
+						meta.mainType= NodeFactory.createURI(mainType);
+					}
 					meta.typeList.add(meta.mainType);
-					if (null != subType){
+					if (null != subType && subType.length() > 0){
 						meta.subType = NodeFactory.createURI(subType);
 						meta.typeList.add(meta.subType);
 					}
@@ -234,7 +241,7 @@ public class TripleConversion implements AsynchronousJob {
 		public String organismMapping = new String();
 		public List<String> gffHeader = new LinkedList<>();
 		public List<String> bedHeader = new LinkedList<>();
-		public List<Node> typeList = new ArrayList<Node>();
+		public Set<Node> typeList = new HashSet<>();
 		public Map<String,Node>featureIDmap = new HashMap<>();
 		public Map<String,Node> filterMap = new HashMap<>();
 		public Map<String,Node> sampleMap = new HashMap<>();

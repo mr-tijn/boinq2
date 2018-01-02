@@ -6,10 +6,10 @@
 <entry key="com.bigdata.rdf.sail.isolatableIndices">false</entry>
 <entry key="com.bigdata.rdf.sail.truthMaintenance">false</entry>
 <entry key="com.bigdata.rdf.store.AbstractTripleStore.justify">false</entry>
-<entry key="com.bigdata.rdf.sail.namespace">boinq</entry>
+<entry key="com.bigdata.rdf.sail.namespace">test</entry>
 <entry key="com.bigdata.rdf.store.AbstractTripleStore.quads">true</entry>
-<entry key="com.bigdata.namespace.boinq.spo.com.bigdata.btree.BTree.branchingFactor">1024</entry>
-<entry key="com.bigdata.namespace.boinq.lex.com.bigdata.btree.BTree.branchingFactor">400</entry>
+<entry key="com.bigdata.namespace.test.spo.com.bigdata.btree.BTree.branchingFactor">1024</entry>
+<entry key="com.bigdata.namespace.test.lex.com.bigdata.btree.BTree.branchingFactor">400</entry>
 <entry key="com.bigdata.journal.Journal.collectPlatformStatistics">true</entry>
 <entry key="com.bigdata.rdf.store.AbstractTripleStore.geoSpatial">false</entry>
 <entry key="com.bigdata.rdf.store.AbstractTripleStore.statementIdentifiers">false</entry>

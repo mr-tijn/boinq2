@@ -31,8 +31,9 @@ public class RClientServiceTest {
 
 	@Inject
 	RClientService rClient;
-	
-	@Test
+
+//	currently unused
+//	@Test
 	public void testVersion() {
 		String verString = null;
 		Integer ver = 0;
@@ -44,8 +45,9 @@ public class RClientServiceTest {
 		}
 		assertThat(ver).isGreaterThanOrEqualTo(3);
 	}
-	
-	@Test
+
+//	currently unused
+//	@Test
 	public void testSourceExternal() {
 		File scriptFile = new File("/tmp/testScript.R");
 		FileWriter fw = null;
@@ -69,7 +71,8 @@ public class RClientServiceTest {
 		assertThat(response).isEqualTo("hello tester");
 	}
 
-	@Test
+//	currently unused
+//	@Test
 	public void testSourceInternal() {
 		File scriptFile = new File("/tmp/testScript.R");
 		FileWriter fw = null;
@@ -97,8 +100,9 @@ public class RClientServiceTest {
 		}
 		assertThat(response).isEqualTo("hello tester");
 	}
-	
-	@Test
+
+//	currently unused
+//	@Test
 	public void testgetFile() {
 		try {
 			rClient.eval("sink('output.txt')");

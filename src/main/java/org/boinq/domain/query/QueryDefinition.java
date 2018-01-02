@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -28,6 +29,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class QueryDefinition implements Serializable {
 	
+	private static final long serialVersionUID = 5459190309097224153L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,6 +52,7 @@ public class QueryDefinition implements Serializable {
 
 	@Column(name="result_as_table")
 	private Boolean resultAsTable;
+	@Lob
 	@Column(name="sparql_query")
 	private String sparqlQuery;
 	
@@ -145,6 +149,8 @@ public class QueryDefinition implements Serializable {
 	public void setSparqlQuery(String sparqlQuery) {
 		this.sparqlQuery = sparqlQuery;
 	}
+	
+	@Transient
 	public Set<Set<QueryEdge>> findClusters() {
 		Set<QueryEdge> allEdges = new HashSet<>();
 		Set<Set<QueryEdge>> clusters = new HashSet<>();

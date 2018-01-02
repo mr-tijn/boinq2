@@ -197,6 +197,12 @@ public class NodeTemplate implements Serializable {
 		this.idx = idx;
 	}
 	
+	
+	@Override
+	public String toString() {
+		return "(" + id + "|" + (name != null?name:variablePrefix) + ")";
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

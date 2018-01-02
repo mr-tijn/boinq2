@@ -1,11 +1,10 @@
 package org.boinq.service;
 
-import static org.boinq.domain.query.TemplateFactory.entityNode;
-import static org.boinq.domain.query.TemplateFactory.literalNode;
-import static org.boinq.domain.query.TemplateFactory.typeEdgeTemplate;
+import static org.boinq.domain.query.TemplateFactory.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +15,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
 import org.apache.jena.vocabulary.XSD;
+import org.boinq.domain.User;
 import org.boinq.domain.query.EdgeTemplate;
 import org.boinq.domain.query.GraphTemplate;
 import org.boinq.domain.query.NodeFilter;
@@ -25,12 +25,13 @@ import org.boinq.domain.query.QueryDefinition;
 import org.boinq.domain.query.QueryEdge;
 import org.boinq.domain.query.QueryGraph;
 import org.boinq.domain.query.QueryNode;
-
+import org.boinq.domain.query.ReferenceMapEntry;
 import org.boinq.generated.vocabularies.FaldoVocab;
 import org.boinq.generated.vocabularies.FormatVocab;
 import org.boinq.generated.vocabularies.GfvoVocab;
 import org.boinq.generated.vocabularies.SioVocab;
 import org.boinq.generated.vocabularies.SoVocab;
+import org.boinq.web.rest.dto.QueryDefinitionDTO;
 
 public class QueryDefinitionTestData {
 	
@@ -38,11 +39,61 @@ public class QueryDefinitionTestData {
 	GraphTemplate vcf = new GraphTemplate();
 	GraphTemplate bed = new GraphTemplate();
 	GraphTemplate disGeNet = new GraphTemplate();
-	public QueryDefinition qd;
+	public QueryDefinition locationOverlapQuery;
 	
-	private EdgeTemplate featureLocation;
-	private EdgeTemplate featureHasType;
 	
+//	private List<String> localReferences = Arrays.asList(
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/1",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/2",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/3",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/4",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/5",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/6",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/7",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/8",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/9",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/10",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/11",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/12",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/13",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/14",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/15",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/16",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/17",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/18",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/19",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/20",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/21",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/22",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/X",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/Y");
+
+//	private List<String> ensemblReferences = Arrays.asList(
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/1",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/2",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/3",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/4",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/5",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/6",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/7",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/8",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/9",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/10",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/11",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/12",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/13",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/14",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/15",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/16",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/17",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/18",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/19",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/20",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/21",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/22",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/X",
+//			"http://rdf.ebi.ac.uk/resource/homo_sapiens/GRCh38/Y");
+			
 	private String ncit(String id) {
 		return "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#"+ id;
 	}
@@ -74,12 +125,18 @@ public class QueryDefinitionTestData {
 		
 	}
 	
+	private EdgeTemplate featureLocation;
+	private EdgeTemplate featureHasType;
 	
 	private void buildVcf() {
 		Set<EdgeTemplate> edges = new HashSet<>();
 		NodeTemplate feature = entityNode("Feature", false);
 		NodeTemplate featureType = entityNode("FeatureType", true);
-		featureType.setValuesTermList(Arrays.asList(SoVocab.indel.toString(), SoVocab.insertion.toString(), SoVocab.MNP.toString()));
+		List<String> valuesTermList = new LinkedList<>();
+		valuesTermList.add(SoVocab.indel.toString());
+		valuesTermList.add(SoVocab.insertion.toString());
+		valuesTermList.add(SoVocab.MNP.toString());
+		featureType.setValuesTermList(valuesTermList);
 		featureHasType = new EdgeTemplate(feature, featureType, RDF.type.toString());
 		edges.add(featureHasType);
 		NodeTemplate id = entityNode("ID", false);
@@ -109,11 +166,7 @@ public class QueryDefinitionTestData {
 		NodeTemplate attributeValue = new NodeTemplate();
 		attributeValue.setNodeType(QueryNode.NODETYPE_ATTRIBUTE);
 		edges.add(new EdgeTemplate(attribute, attributeValue, RDF.value.toString()));
-		NodeTemplate location = new NodeTemplate();
-		location.setFilterable(true);
-		location.setName("Location");
-		location.setNodeType(QueryNode.NODETYPE_FALDOLOCATION);
-		featureLocation = new EdgeTemplate(feature, location, FaldoVocab.location.toString());
+		featureLocation = faldo(feature);
 		edges.add(featureLocation);
 		NodeTemplate entry = entityNode("Entry", false);
 		NodeTemplate entryLabel = literalNode("Label", XSD.xstring.toString());
@@ -138,34 +191,37 @@ public class QueryDefinitionTestData {
 	}
 	
 	private EdgeTemplate faldo(NodeTemplate node) {
-		NodeTemplate faldo = entityNode("location", true);
+		NodeTemplate faldo = entityNode(node.getName() + "_location", true);
 		faldo.setNodeType(QueryNode.NODETYPE_FALDOLOCATION);
 		faldo.setColor("yellow");
 		return new EdgeTemplate(node, faldo, FaldoVocab.location.toString());
 	}
 	
-	private EdgeTemplate exonType;
+//	private EdgeTemplate exonType;
 	private EdgeTemplate exonLocation;
 	private EdgeTemplate refersTo;
 	private EdgeTemplate hasRank;
 	
 	private void buildEnsemblTemplate() {
 		Set<EdgeTemplate> edges = new HashSet<>();
-		NodeTemplate transcript = entityNode("Transcript", false);
-		edges.add(typeEdgeTemplate(transcript, SoVocab.transcript.toString()));
+		//NodeTemplate transcript = entityNode("Transcript", false);
+		//edges.add(typeEdgeTemplate(transcript, SoVocab.transcript.toString()));
+		NodeTemplate transcript = typedEntityNode("Transcript", SoVocab.transcript.toString(), false);		
 		edges.add(identifier(transcript));
 		edges.add(description(transcript));
 		edges.add(faldo(transcript));
-		NodeTemplate exon = entityNode("Exon", false);
-		exonType = typeEdgeTemplate(exon, SoVocab.exon.toString()); 
-		edges.add(exonType);
-		edges.add(new EdgeTemplate(transcript, exon, SoVocab.has_part.toString()));
+//		NodeTemplate exon = entityNode("Exon", false);
+//		exonType = typeEdgeTemplate(exon, SoVocab.exon.toString());
+		NodeTemplate exon = typedEntityNode("Exon", SoVocab.exon.toString(), false);
+//		edges.add(exonType);
+		EdgeTemplate transcriptExon = new EdgeTemplate(transcript, exon, SoVocab.has_part.toString());
+		edges.add(transcriptExon);
 		edges.add(identifier(exon));
 		edges.add(description(exon));
 		exonLocation = faldo(exon);
 		edges.add(exonLocation);
-		NodeTemplate orderedPart = entityNode("Ordered Part", false);
-		edges.add(typeEdgeTemplate(orderedPart, SioVocab.ordered_list_item.toString()));
+		NodeTemplate orderedPart = typedEntityNode("Ordered Part", SioVocab.ordered_list_item.toString(), false);
+//		edges.add(typeEdgeTemplate(orderedPart, SioVocab.ordered_list_item.toString()));
 		refersTo = new EdgeTemplate(orderedPart, exon, SioVocab.refers_to.toString()); 
 		edges.add(refersTo);
 		edges.add(new EdgeTemplate(transcript, orderedPart, SioVocab.has_ordered_part.toString()));
@@ -179,8 +235,9 @@ public class QueryDefinitionTestData {
 		edges.add(faldo(translation));
 		NodeTemplate proteinFeature = entityNode("Protein feature", false);
 		edges.add(new EdgeTemplate(translation, proteinFeature, RDFS.seeAlso.toString()));
-		NodeTemplate gene = entityNode("Gene", false);
-		edges.add(typeEdgeTemplate(gene, SoVocab.gene.toString()));
+//		NodeTemplate gene = entityNode("Gene", false);
+//		edges.add(typeEdgeTemplate(gene, SoVocab.gene.toString()));
+		NodeTemplate gene = entityNode("Gene", SoVocab.gene.toString(), false);
 		edges.add(new EdgeTemplate(transcript, gene, SoVocab.transcribed_from.toString()));
 		edges.add(identifier(gene));
 		edges.add(description(gene));
@@ -190,37 +247,53 @@ public class QueryDefinitionTestData {
 		ensembl.setEdgeTemplates(edges);
 		ensembl.setEndpointUrl("http://localhost");
 		ensembl.setGraphIri("http://ensembl");
+//		Set<ReferenceMapEntry> referenceMap = new HashSet<>();
+//		Iterator<String> remoteRef = ensemblReferences.iterator();
+//		for (String boinqReference: localReferences) {
+//			referenceMap.add(new ReferenceMapEntry(boinqReference, remoteRef.next()));
+//		}
+//		ensembl.setReferenceMap(referenceMap);
 		ensembl.setType(GraphTemplate.GRAPH_TYPE_REMOTE);
 	}
 	
 	public QueryDefinitionTestData() {
+		Long id = 0L;
 		buildEnsemblTemplate();
 		buildVcf();
-		qd = new QueryDefinition();
+		locationOverlapQuery = new QueryDefinition();
+		
 		// retrieve first exons overlapping with indels and retrieve both with location
 		Set<QueryBridge> bridges = new HashSet<>();
 		Set<QueryGraph> graphs = new HashSet<>();
 		QueryGraph myEnsembl = new QueryGraph();
 		myEnsembl.setTemplate(ensembl);
 		myEnsembl.setIdx(0);
+		myEnsembl.setId(id++);
+		myEnsembl.setName("ensembl1");
 		Set<QueryEdge> myEnsemblEdges = new HashSet<>();
+		
+//		QueryNode myExon = new QueryNode();
+//		myExon.setIdx(0);
+//		myExon.setId(id++);
+//		myExon.setTemplate(exonType.getFrom());
+//		QueryNode myType = new QueryNode();
+//		myType.setIdx(1);
+//		myType.setId(id++);
+//		myType.setTemplate(exonType.getTo());
+//		QueryEdge myExonType = new QueryEdge();
+//		myExonType.setTemplate(this.exonType);
+//		myExonType.setRetrieve(true);
+//		myExonType.setFrom(myExon);
+//		myExonType.setTo(myType);
+//		myEnsemblEdges.add(myExonType);
 		
 		QueryNode myExon = new QueryNode();
 		myExon.setIdx(0);
-		myExon.setTemplate(exonType.getFrom());
-		QueryNode myType = new QueryNode();
-		myType.setIdx(1);
-		myType.setTemplate(exonType.getTo());
-		QueryEdge myExonType = new QueryEdge();
-		myExonType.setTemplate(this.exonType);
-		myExonType.setRetrieve(true);
-		myExonType.setFrom(myExon);
-		myExonType.setTo(myType);
-		myEnsemblEdges.add(myExonType);
-		
-		
+		myExon.setId(id++);
+		myExon.setTemplate(exonLocation.getFrom());
 		QueryNode myExonLocation = new QueryNode();
 		myExonLocation.setIdx(2);
+		myExonLocation.setId(id++);
 		myExonLocation.setTemplate(exonLocation.getTo());
 		QueryEdge myExonHasLocation = new QueryEdge();
 		myExonHasLocation.setTemplate(exonLocation);
@@ -231,6 +304,7 @@ public class QueryDefinitionTestData {
 		
 		QueryNode myOrderedPart = new QueryNode();
 		myOrderedPart.setIdx(3);
+		myOrderedPart.setId(id++);
 		myOrderedPart.setTemplate(hasRank.getFrom());
 		QueryEdge myRefersTo = new QueryEdge();
 		myRefersTo.setTemplate(refersTo);
@@ -240,6 +314,7 @@ public class QueryDefinitionTestData {
 		
 		QueryNode myRank = new QueryNode();
 		myRank.setIdx(4);
+		myRank.setId(id++);
 		myRank.setTemplate(hasRank.getTo());
 		myRank.setNodeFilters(new HashSet<>());
 		QueryEdge myHasRank = new QueryEdge();
@@ -258,17 +333,24 @@ public class QueryDefinitionTestData {
 		QueryGraph myVcf = new QueryGraph();
 		myVcf.setTemplate(vcf);
 		myVcf.setIdx(2);
+		myVcf.setId(id++);
+		myVcf.setName("vcf1");
 		Set<QueryEdge> myVcfEdges = new HashSet<>();
 		
 		QueryNode myFeature = new QueryNode();
 		myFeature.setIdx(0);
+		myFeature.setId(id++);
 		myFeature.setTemplate(featureLocation.getFrom());
 		QueryNode myFeatureType = new QueryNode();
 		myFeatureType.setIdx(1);
+		myFeatureType.setId(id++);
 		myFeatureType.setTemplate(featureHasType.getTo());
 		NodeFilter filter = new NodeFilter();
 		filter.setType(NodeFilter.FILTER_TYPE_GENERIC_VALUES);
-		filter.setTermValues(Arrays.asList(SoVocab.insertion.toString()));
+//		List<String> termValues = new LinkedList<>();
+//		termValues.add(SoVocab.insertion.toString());
+//		filter.setTermValues(termValues);
+//		filter.setTermValues(Arrays.asList(SoVocab.insertion.toString()));
 		myFeatureType.getNodeFilters().add(filter);
 		QueryEdge myFeatureHasType = new QueryEdge();
 		myFeatureHasType.setFrom(myFeature);
@@ -279,6 +361,7 @@ public class QueryDefinitionTestData {
 		
 		QueryNode myLocation = new QueryNode();
 		myLocation.setIdx(2);
+		myLocation.setId(id++);
 		myLocation.setTemplate(featureLocation.getTo());
 		QueryEdge myFeatureLocation = new QueryEdge();
 		myFeatureLocation.setFrom(myFeature);
@@ -297,13 +380,22 @@ public class QueryDefinitionTestData {
 		locationOverlap.setToNode(myLocation);
 		
 		bridges.add(locationOverlap);
-		qd.setQueryBridges(bridges);
-		qd.setQueryGraphs(graphs);
-		qd.setResultAsTable(false);
-		qd.setTargetGraph("test");
+		
+		
+		User owner = new User();
+		owner.setLogin("admin");
+		locationOverlapQuery.setOwner(owner);
+		locationOverlapQuery.setDescription("test query");
+		locationOverlapQuery.setStatus(0);
+		locationOverlapQuery.setQueryBridges(bridges);
+		locationOverlapQuery.setQueryGraphs(graphs);
+		locationOverlapQuery.setResultAsTable(false);
+		locationOverlapQuery.setTargetGraph("test");
 		
 	}
 
+	
+	
 	
 
 }

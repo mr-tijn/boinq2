@@ -24,7 +24,8 @@ import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
 import org.boinq.domain.jobs.TripleConversion.Metadata;
 import org.boinq.service.TripleGeneratorService;
-
+import org.boinq.tools.Counter;
+import org.boinq.generated.vocabularies.FaldoVocab;
 import org.boinq.generated.vocabularies.FormatVocab;
 import org.boinq.generated.vocabularies.GfvoVocab;
 import org.boinq.generated.vocabularies.SioVocab;
@@ -42,56 +43,30 @@ import htsjdk.tribble.readers.AsciiLineReader;
 import htsjdk.tribble.readers.AsciiLineReaderIterator;
 
 public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple> {
-
+	
+	public static final String ALIGNMENTBASEURI = "/resource/alignment#";
+	public static final String ALIGNMENTTARGETBASEURI = "/resource/target#";
+	
 	private List<Triple> currentTriples = new LinkedList<Triple>();
-	private Map<Node, Node> referenceMap;
 	private Metadata meta;
 	private GFFParser gffParser;
 	private AsciiLineReaderIterator lineIterator;
 	private GFFVersion version;
-	private File file;
-	private Map<String, Node> featureTypeNodes;
 	private Map<String, Node> gff3AttributeTypes;
 	private Map<String, XSDDatatype> gff3AttributeValueTypes;
+	private Counter alignmentIdx = new Counter(0);
 
 	public GFF3TripleIterator(TripleGeneratorService tripleGenerator, File file, Map<Node, Node> referenceMap, Metadata meta)
 			throws FileNotFoundException, IOException {
 		super(tripleGenerator);
 		this.version = new GFFVersion(3);
-		this.referenceMap = referenceMap;
 		lineIterator = new AsciiLineReaderIterator(AsciiLineReader.from(new FileInputStream(file)));
 		this.gffParser = new GFFParser(file.getPath(), version, false);
 		this.meta = meta;
-		this.file = file;
 		initData();
 	}
 
 	private void initData() {
-		featureTypeNodes = new HashMap<String, Node>();
-		featureTypeNodes.put("CDS", SoVocab.CDS.asNode());
-		featureTypeNodes.put("GENE", SoVocab.gene.asNode());
-		featureTypeNodes.put("MRNA", SoVocab.mRNA.asNode());
-		featureTypeNodes.put("OPERON", SoVocab.operon.asNode());
-		featureTypeNodes.put("EXON", SoVocab.exon.asNode());
-		featureTypeNodes.put("TF_BINDING_SITE", SoVocab.TF_binding_site.asNode());
-		featureTypeNodes.put("INTRON", SoVocab.intron.asNode());
-		featureTypeNodes.put("EST_MATCH", SoVocab.EST_match.asNode());
-		featureTypeNodes.put("TRANSLATED_NUCLEOTIDE_MATCH", SoVocab.translated_nucleotide_match.asNode());
-		featureTypeNodes.put("THREE_PRIME_UTR", SoVocab.three_prime_UTR.asNode());
-		featureTypeNodes.put("FIVE_PRIME_UTR", SoVocab.five_prime_UTR.asNode());
-		featureTypeNodes.put("CDNA_MATCH", SoVocab.cDNA_match.asNode());
-		featureTypeNodes.put("MATCH_PART", SoVocab.match_part.asNode());
-		featureTypeNodes.put("POLYPEPTIDE", SoVocab.polypeptide.asNode());
-		featureTypeNodes.put("INTEIN", SoVocab.intein.asNode());
-		featureTypeNodes.put("PRIMARY_TRANSCRIPT", SoVocab.primary_transcript.asNode());
-		featureTypeNodes.put("STOP_CODON", SoVocab.stop_codon.asNode());
-		featureTypeNodes.put("NCRNA", SoVocab.ncRNA.asNode());
-		featureTypeNodes.put("REGION", SoVocab.region.asNode());
-		featureTypeNodes.put("RRNA", SoVocab.rRNA.asNode());
-		featureTypeNodes.put("START_CODON", SoVocab.start_codon.asNode());
-		featureTypeNodes.put("TRANSCRIPT", SoVocab.transcript.asNode());
-		featureTypeNodes.put("TRNA", SoVocab.tRNA.asNode());
-	
 		gff3AttributeTypes = new HashMap<>();
 		gff3AttributeTypes.put("Name", RDFS.label.asNode());
 		gff3AttributeTypes.put("Alias", SKOS.altLabel.asNode());
@@ -121,23 +96,30 @@ public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple
 				this.meta.gffHeader.add(nextLine.substring(2));
 				nextLine = lineIterator.next();
 			}
+			while (nextLine.length() == 0 || nextLine.startsWith("#")) {
+				nextLine = lineIterator.next();
+			}
 			Feature entry = null;
+			String rawType = null;
 			try {
 				entry = gffParser.parseFeature(nextLine);
 			} catch (FeatureFormatException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	
-			List<Triple> triples = convert(entry,  meta);
+			// current htsjdk implementation only recognizes limited set of types
+			// so we need to pass the raw type string
+			rawType = nextLine.split("\t")[2];
+			List<Triple> triples = convert(entry,  meta, rawType);
 			currentTriples.addAll(triples);
+	
 		}
 		return currentTriples.remove(0);
 
 	}
 
 	
-	public List<Triple> convert(Feature entry, Metadata meta) {
+	public List<Triple> convert(Feature entry, Metadata meta, String rawType) {
 		int attributeCount = 1;
 
 		List<Triple> triples = new LinkedList<Triple>();
@@ -170,9 +152,10 @@ public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple
 			generateAttribute(triples, feature, featureURI, String.valueOf(entry.getPhase() + 1), XSDint,
 					SoVocab.reading_frame.asNode(), attributeCount++);
 		}
-		if (entry.getType() != null) {
-			triples.add(new Triple(feature, RDF.type.asNode(), getType(entry.getType())));
-			meta.typeList.add(featureTypeNodes.get(entry.getType().toString()));
+		if (rawType != null) {
+			Node featureType = getType(rawType);
+			triples.add(new Triple(feature, RDF.type.asNode(), featureType));
+			meta.typeList.add(featureType);
 		}
 		
 		
@@ -182,15 +165,20 @@ public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple
 		// LOCATION
 		addFaldoTriples(feature, Long.valueOf(entry.getStart()), Long.valueOf(entry.getEnd()), entry.getSequenceID(),
 				entry.getStrand(), triples, meta);
+		
+		// in case of alignments, we need to point the src to a single location
+		if (entry.getAttributes().containsKey("Target")) {
+			triples.add(new Triple(tripleGenerator.generateURI(ALIGNMENTBASEURI + alignmentIdx.current()),FaldoVocab.location.asNode(),tripleGenerator.generateURI(locationName(entry.getSequenceID(), Long.valueOf(entry.getStart()), Long.valueOf(entry.getEnd()), entry.getStrand(), meta))));
+		}
 
 		return triples;
 	}
 
 	
-	public Node getType(FeatureType featureType) {
-		String typeID = featureType.toString().toUpperCase();
-		if (featureTypeNodes.containsKey(typeID)) {
-			return featureTypeNodes.get(typeID);
+	public Node getType(String featureType) {
+		String typeID = featureType.toUpperCase();
+		if (SoVocab.OntClassesByLabel.containsKey(typeID)) {
+			return SoVocab.OntClassesByLabel.get(typeID).asNode();
 		} else {
 			return SoVocab.sequence_feature.asNode();
 		}
@@ -200,13 +188,13 @@ public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple
 	private int processAttributes(List<Triple> triples, Node entry, String entryName, Map<String, String> keyValues,
 			int attributeCount, Node feature, String featureName, Metadata meta) {
 		for (String key : keyValues.keySet()) {
-			// TODO: should it not be the feature having the quality ?
 			if (gff3AttributeTypes.get(key) != null) {
-				String attributeFeatureName = entryName + "/attribute_" + attributeCount++;
-				Node attributeFeature = tripleGenerator.generateURI(attributeFeatureName);
-				triples.add(new Triple(entry, SoVocab.has_quality.asNode(), attributeFeature));
-				triples.add(new Triple(attributeFeature, RDF.type.asNode(), gff3AttributeTypes.get(key)));
-				triples.add(new Triple(attributeFeature, RDF.value.asNode(), NodeFactory.createLiteral(keyValues.get(key), gff3AttributeValueTypes.get(key))));
+//				String attributeFeatureName = entryName + "/attribute_" + attributeCount++;
+//				Node attributeFeature = tripleGenerator.generateURI(attributeFeatureName);
+//				triples.add(new Triple(entry, SoVocab.has_quality.asNode(), attributeFeature));
+//				triples.add(new Triple(attributeFeature, RDF.type.asNode(), gff3AttributeTypes.get(key)));
+//				triples.add(new Triple(attributeFeature, RDF.value.asNode(), NodeFactory.createLiteral(keyValues.get(key), gff3AttributeValueTypes.get(key))));
+				triples.add(new Triple(feature, gff3AttributeTypes.get(key), NodeFactory.createLiteral(keyValues.get(key), gff3AttributeValueTypes.get(key))));
 			} else if (key.equalsIgnoreCase("Target")) {
 				// can a feature contain multiple alignment targets ? don't think so
 				generateGap(triples, feature, keyValues.get("Gap"), keyValues.get("Target"), meta);
@@ -214,10 +202,12 @@ public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple
 				String[] parents = keyValues.get(key).split(",");
 				for (String parentId: parents) {
 					String parentURI = FEATUREBASEURI + parentId;
-					triples.add(new Triple(feature, SoVocab.part_of.asNode(), NodeFactory.createURI(parentURI)));
-					triples.add(new Triple(NodeFactory.createURI(parentURI), SoVocab.has_part.asNode(), feature));
+					triples.add(new Triple(feature, SoVocab.part_of.asNode(), tripleGenerator.generateURI(parentURI)));
+					triples.add(new Triple(tripleGenerator.generateURI(parentURI), SoVocab.has_part.asNode(), feature));
 				}
-			}  else if (key.equalsIgnoreCase("ID")) {
+			} else if (key.equalsIgnoreCase("Name")) {
+				triples.add(new Triple(feature, RDFS.label.asNode(), NodeFactory.createLiteral(keyValues.get(key), XSDstring)));
+			} else if (key.equalsIgnoreCase("ID")) {
 				triples.add(new Triple(feature, DCTerms.identifier.asNode(), NodeFactory.createLiteral(keyValues.get(key), XSDstring)));
 				//TODO: remove featureIDMap
 				//meta.featureIDmap.put(keyValues.get(key), feature);
@@ -267,10 +257,10 @@ public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple
 			if (target.length == 4) {
 				strand = target[3].equals("+");
 			}
-			Node targetFeature = NodeFactory.createURI(feature.getURI() + "_target");
+			Node targetFeature = tripleGenerator.generateURI(ALIGNMENTTARGETBASEURI + alignmentIdx.next());
 			triples.add(new Triple(targetFeature, RDF.type.asNode(), SoVocab.sequence_feature.asNode()));
 			addFaldoTriples(targetFeature, start, end, targetId, strand, triples, meta);
-			Node alignment = NodeFactory.createURI(feature.getURI() + "_alignment");
+			Node alignment = tripleGenerator.generateURI(ALIGNMENTBASEURI + alignmentIdx.current());
 			triples.add(new Triple(alignment, RDF.type.asNode(), GfvoVocab.Sequence_Alignment.asNode()));
 			triples.add(new Triple(alignment, RDF.type.asNode(), SoVocab.match_set.asNode()));
 			// very weird, see GFVO docs

@@ -13,15 +13,15 @@ angular.module('boinqApp').controller("GraphBuilderController",['$scope','draggi
 			bridge: null
 	};
 	
-	$scope.save = function() {
-		var result =JSON.parse(JSON.stringify($scope.queryDefinition));
+	var cleanup = function(queryDefinition) {
+		var result =JSON.parse(JSON.stringify(queryDefinition));
 		for (var i = 0; i < result.queryGraphs.length; i++) {
 			// drop non selected
 			// compute filter type
 			var drop = [];
 			for (var j = 0; j < result.queryGraphs[i].queryEdges.length; j++) {
 				var queryEdge = result.queryGraphs[i].queryEdges[j];
-				if (!queryEdge.selected) {
+				if (queryEdge.hasOwnProperty('selected') && !queryEdge.selected) {
 					drop.push(j);
 				}
 			}
@@ -31,7 +31,7 @@ angular.module('boinqApp').controller("GraphBuilderController",['$scope','draggi
 			drop = [];
 			for (var j = 0; j < result.queryGraphs[i].queryNodes.length; j++) {
 				var queryNode = result.queryGraphs[i].queryNodes[j];
-				if (!queryNode.selected) {
+				if (queryEdge.hasOwnProperty('selected') && !queryNode.selected) {
 					drop.push(j);
 				} 
 			}
@@ -40,9 +40,14 @@ angular.module('boinqApp').controller("GraphBuilderController",['$scope','draggi
 			}
 			
 		}
-		QueryDefinition.save({},result, function(success) {
+		return result;
+	};
+	
+	
+	$scope.save = function() {
+		QueryDefinition.save({},cleanup($scope.queryDefinition), function(result) {
 			console.log("Saved QueryDefinition" + result);
-			$state.go("querydefinition");
+			$scope.queryDefinition = result;
 		}, function(error) {
 			console.log(error);
 		});
@@ -53,10 +58,15 @@ angular.module('boinqApp').controller("GraphBuilderController",['$scope','draggi
 	};
 	
 	$scope.generatequery = function() {
-		QueryManagement.generatequery($scope.queryDefinition.id).then(function(successResponse) {
-			$scope.queryDefinition.sparqlQuery = successResponse;
+		QueryDefinition.save({},cleanup($scope.queryDefinition), function(result) {
+			console.log("Saved QueryDefinition" + result);
+			$scope.queryDefinition = result;
+			QueryManagement.generatequery($scope.queryDefinition.id).then(function(successResponse) {
+				$scope.queryDefinition.sparqlQuery = successResponse;
+			});
 		});
-	};
+	}
+	
 	$scope.emptyquery = function() {
 		QueryManagement.emptyquery($scope.queryDefinition.id).then(function () {
 			$scope.refresh();

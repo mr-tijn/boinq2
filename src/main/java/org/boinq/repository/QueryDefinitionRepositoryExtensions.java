@@ -5,4 +5,5 @@ import org.boinq.web.rest.dto.QueryDefinitionDTO;
 
 public interface QueryDefinitionRepositoryExtensions {
 	public QueryDefinition create(QueryDefinitionDTO definitionDTO);
+	public QueryDefinition deepsave(QueryDefinition definition);
 }

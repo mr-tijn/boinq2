@@ -1,11 +1,18 @@
 package org.boinq.repository;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
+import org.boinq.domain.User;
 import org.boinq.domain.query.EdgeTemplate;
 import org.boinq.domain.query.GraphTemplate;
 import org.boinq.domain.query.NodeFilter;
@@ -38,6 +45,8 @@ public class QueryDefinitionRepositoryImpl implements QueryDefinitionRepositoryE
 	QueryBridgeRepository queryBridgeRepository;
 	@Inject
 	NodeFilterRepository nodeFilterRepository;
+	@Inject
+	UserRepository userRepository;
 	
 	private QueryNode findNodeByIdx(Set<QueryNode> nodes, Integer idx) {
 		return nodes.stream().filter(node -> idx.equals(node.getIdx())).findFirst().orElse(null);
@@ -182,11 +191,67 @@ public class QueryDefinitionRepositoryImpl implements QueryDefinitionRepositoryE
 		queryDefinition.setTargetGraph(definitionDTO.targetGraph());
 		queryDefinition.setTargetFile(definitionDTO.targetFile());
 		queryDefinition.setSparqlQuery(definitionDTO.sparqlQuery());
+		Optional<User> user = userRepository.findOneByLogin(definitionDTO.owner());
+		if (user.isPresent()) {
+			queryDefinition.setOwner(user.get());
+		}
 		Set<QueryGraph> queryGraphs = definitionDTO.queryGraphs().stream().map(graphDTO -> create(graphDTO)).collect(Collectors.toSet());
 		Set<QueryBridge> queryBridges = definitionDTO.queryBridges().stream().map(bridgeDTO -> create(bridgeDTO, queryGraphs)).collect(Collectors.toSet());
 		queryDefinition.setQueryGraphs(queryGraphs);
 		queryDefinition.setQueryBridges(queryBridges);
 		return queryDefinition;
+	}
+
+	@Override
+	@Transactional
+	public QueryDefinition deepsave(QueryDefinition definition) {
+		Map<QueryNode, QueryNode> savedNodeMap = new HashMap<>();
+		Set<QueryGraph> savedGraphs = definition.getQueryGraphs().stream().map(graph -> save(graph, savedNodeMap)).collect(Collectors.toSet());
+		Set<QueryBridge> savedBridges = definition.getQueryBridges().stream().map(bridge -> save(bridge, savedNodeMap, savedGraphs)).collect(Collectors.toSet());
+		definition.setQueryGraphs(savedGraphs);
+		definition.setQueryBridges(savedBridges);
+		return queryDefinitionRepository.save(definition);
+	}
+	
+	@Transactional
+	private QueryBridge save(QueryBridge bridge, Map<QueryNode, QueryNode> savedNodes, Set<QueryGraph> savedGraphs) {
+		bridge.setFromGraph(savedGraphs.stream().filter(graph -> bridge.getFromGraph().getIdx().equals(graph.getIdx())).findFirst().get());
+		bridge.setToGraph(savedGraphs.stream().filter(graph -> bridge.getToGraph().getIdx().equals(graph.getIdx())).findFirst().get());
+		bridge.setFromNode(save(bridge.getFromNode(), savedNodes));
+		bridge.setToNode(save(bridge.getToNode(), savedNodes));
+		return queryBridgeRepository.save(bridge);
+	}
+	
+	@Transactional
+	private QueryGraph save(QueryGraph graph, Map<QueryNode, QueryNode> savedNodes) {
+		Set<QueryEdge> savedEdges = graph.getQueryEdges().stream().map(edge -> save(edge, savedNodes)).collect(Collectors.toSet());
+		graph.setQueryEdges(savedEdges);
+		QueryGraph savedGraph = queryGraphRepository.save(graph);
+		return savedGraph;
+	}
+	
+	@Transactional
+	private QueryEdge save(QueryEdge edge, Map<QueryNode, QueryNode> savedNodes) {
+		edge.setFrom(save(edge.getFrom(), savedNodes));
+		edge.setTo(save(edge.getTo(), savedNodes));
+		return queryEdgeRepository.save(edge);
+	}
+	
+	@Transactional
+	private QueryNode save(QueryNode node, Map<QueryNode, QueryNode> savedNodes) {
+		if (savedNodes.containsKey(node)) {
+			return savedNodes.get(node);
+		} else {
+			node.setNodeFilters(node.getNodeFilters().stream().map(filter -> save(filter)).collect(Collectors.toSet()));
+			QueryNode savedNode = queryNodeRepository.save(node);
+			savedNodes.put(node, savedNode);
+			return savedNode;
+		}
+	}
+	
+	@Transactional
+	private NodeFilter save(NodeFilter filter) {
+		return nodeFilterRepository.save(filter);
 	}
 
 }

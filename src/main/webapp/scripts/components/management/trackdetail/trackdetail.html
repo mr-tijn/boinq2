@@ -34,6 +34,10 @@
 						ng-maxlength=200>
 				</div>
 
+				<div class="form-group">
+					<label>Description</label> 
+					<textarea class="form-control" rows=4 ng-model="track.description"></textarea>
+				</div>
 
 				<div class="form-group" >
 					<label>Type</label> <select name="type"
@@ -112,10 +116,15 @@
 
 		<div class="panel-body">
 
-			<span width="50%" class="btn btn-primary btn-sm btn-file"> <span
-				class="glyphicon glyphicon-file"></span> Add files... <input
-				type="file" nv-file-select uploader="uploader" multiple>
+			<span width="50%" class="btn btn-primary btn-sm btn-file" onclick="document.querySelector('#local-file-upload').click()"> 
+				<span class="glyphicon glyphicon-file"></span> Upload a file from your computer... <input
+				type="file" id="local-file-upload" nv-file-select uploader="uploader" multiple style="display: none" >
 			</span>
+
+			<div class="btn btn-primary btn-sm"
+				ng-click="addServerFile()">
+				<span class="glyphicon glyphicon-file"></span> Add existing server file...
+			</div>
 
 			<table class="table">
 				<thead>
@@ -367,6 +376,38 @@
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal"
 					ng-click="clear()">
+					<span class="glyphicon glyphicon-ban-circle"></span> Close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade ng-scope" id="addServerFile" tabindex="-1"
+	role="dialog" aria-labelledby="addServerFileLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Add file path</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+				
+					<div class="form-group">
+						<label>Server file path</label> <input type="text" class="form-control"
+						name="tripleCount" ng-model="newServerFilePath">
+					</div>
+
+					<button type="submit" 
+						class="btn btn-primary" ng-click="saveServerFile()">
+						<span class="glyphicon glyphicon-save"></span> Save
+					</button>
+				
+				</form>
+			
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">
 					<span class="glyphicon glyphicon-ban-circle"></span> Close
 				</button>
 			</div>

@@ -34,7 +34,7 @@ public class Datasource implements Serializable {
 
 	
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Size(min = 1, max = 200)

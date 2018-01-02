@@ -19,6 +19,7 @@
 # Eclipse
 ######################
 *.pydevproject
+.springBeans
 .project
 .metadata
 /bin/**

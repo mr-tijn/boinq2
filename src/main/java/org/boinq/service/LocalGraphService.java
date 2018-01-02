@@ -68,6 +68,10 @@ MetadataGraphService metadataGraphService;
 		processor.execute();
 	}
 	
+	public void deleteLocalGraph(String id) {
+		deleteGraph(graphNameFromId(id));
+	}
+	
 	public String createLocalGraph(String id) {
 		if (id == null || id.length() == 0) {
 			return createLocalGraph();

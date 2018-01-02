@@ -183,6 +183,7 @@ angular.module('boinqApp').controller("GraphTemplateController",["$scope", "$doc
 	};
 	
 	$scope.save = function() {
+		
 		GraphTemplate.save({id:$scope.graphTemplate.id}, $scope.graphTemplate, 
 				function(successResponse) {
 					getGraphTemplate($scope.graphTemplateId);

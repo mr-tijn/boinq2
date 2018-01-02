@@ -1,6 +1,7 @@
 package org.boinq.domain.query;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -43,7 +45,11 @@ public class GraphTemplate implements Serializable {
     @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER)
     @JoinColumn(name="graphtemplate_id")
 	private Set<EdgeTemplate> edgeTemplates;
-
+    
+    @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER) 
+    @JoinColumn(name="graphtemplate_id")
+    private Set<ReferenceMapEntry> referenceMap;
+    
     public GraphTemplate() {}
     public Long getId() {
         return id;
@@ -81,6 +87,24 @@ public class GraphTemplate implements Serializable {
 	public void setEdgeTemplates(Set<EdgeTemplate> edgeTemplates) {
 		this.edgeTemplates = edgeTemplates;
 	}
+	public Set<ReferenceMapEntry> getReferenceMap() {
+		return referenceMap;
+	}
+	public void setReferenceMap(Set<ReferenceMapEntry> referenceMap) {
+		this.referenceMap = referenceMap;
+	}
 	
+	@Transient
+	public Optional	<String> getRemoteReference(String localReference) {
+		return referenceMap.stream().filter(entry -> entry.getBoinqReferenceURI().equals(localReference)).map(ReferenceMapEntry::getRemoteReferenceURI).findFirst();
+	}
+	@Transient
+	public Optional<String> getBoinqReference(String remoteReference) {
+		return referenceMap.stream().filter(entry -> entry.getRemoteReferenceURI().equals(remoteReference)).map(ReferenceMapEntry::getBoinqReferenceURI).findFirst();
+	}
+	@Transient
+	public Boolean hasReferenceMap() {
+		return referenceMap != null && referenceMap.size() > 0;
+	}
 	
 }

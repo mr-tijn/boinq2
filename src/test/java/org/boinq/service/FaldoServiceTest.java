@@ -52,14 +52,13 @@ public class FaldoServiceTest {
 	@Before
 	public void init() {
 		
-		
         RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "spring.");
 
 		ds = new Datasource();
-		ds.setEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.external"));
-		ds.setEndpointUpdateUrl(propertyResolver.getProperty("triplestore.endpoint.update"));
+		ds.setEndpointUpdateUrl(propertyResolver.getProperty("triplestore.endpoint.data.update"));
+		ds.setEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.data.query"));
 		ds.setMetaGraphName("http://www.boinq.org/META/");
-		ds.setMetaEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.meta"));
+		ds.setMetaEndpointUrl(propertyResolver.getProperty("triplestore.endpoint.meta.update"));
 		
 		track = new Track();
 		track.setDatasource(ds);

@@ -2,7 +2,18 @@ package org.boinq.tools.queries;
 
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.shared.impl.PrefixMappingImpl;
+import org.apache.jena.sparql.vocabulary.FOAF;
+import org.apache.jena.vocabulary.DC;
+import org.apache.jena.vocabulary.DCTerms;
+import org.apache.jena.vocabulary.SKOS;
+import org.apache.jena.vocabulary.XSD;
+import org.boinq.generated.vocabularies.FaldoVocab;
+import org.boinq.generated.vocabularies.GfvoVocab;
+import org.boinq.generated.vocabularies.SioVocab;
+import org.boinq.generated.vocabularies.SoVocab;
 import org.boinq.tools.vocabularies.CommonVocabulary;
+
+import net.sf.saxon.regex.Operation.OpBOL;
 
 public class Prefixes {
 
@@ -15,8 +26,17 @@ public class Prefixes {
 			commonPrefixes.setNsPrefix("rdfs", CommonVocabulary.rdfsBaseURI);
 //			commonPrefixes.setNsPrefix("track", TrackVocabulary.baseURI);
 			commonPrefixes.setNsPrefix("obo", CommonVocabulary.oboBaseURI);
-			commonPrefixes.setNsPrefix("xsd", CommonVocabulary.xmlSchemaURI);
 			commonPrefixes.setNsPrefix("owl", CommonVocabulary.owlBaseURI);
+			commonPrefixes.setNsPrefix("dc", DC.NS);
+			commonPrefixes.setNsPrefix("dcterms", DCTerms.NS);
+			commonPrefixes.setNsPrefix("skos", SKOS.NAMESPACE.getURI());
+			commonPrefixes.setNsPrefix("faldo", FaldoVocab.NS);
+			commonPrefixes.setNsPrefix("foaf", FOAF.NS);
+			commonPrefixes.setNsPrefix("xsd", XSD.NS);
+			commonPrefixes.setNsPrefix("gfvo", GfvoVocab.NS);
+			commonPrefixes.setNsPrefix("sio", "http://semanticscience.org/resource/");
+			commonPrefixes.setNsPrefix("ensembl", "http://rdf.ebi.ac.uk/resource/");
+			
 		}
 		return commonPrefixes;
 	}

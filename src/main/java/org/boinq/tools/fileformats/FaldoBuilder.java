@@ -40,8 +40,8 @@ public class FaldoBuilder extends TripleBuilder {
 
 		Node ref = NodeFactory.createURI(faldoFeature.assembly);
 
-		Node featureBegin = NodeFactory.createURI(LOCATIONBASEURI + faldoFeature.id);
-		Node featureEnd = NodeFactory.createURI(LOCATIONBASEURI + faldoFeature.id);
+		Node featureBegin = NodeFactory.createURI(LOCATIONBASEURI + "begin/" + faldoFeature.id);
+		Node featureEnd = NodeFactory.createURI(LOCATIONBASEURI + "end/" + faldoFeature.id);
 		result.add(new Triple(feature, RDFS.label.asNode(), NodeFactory.createLiteral(faldoFeature.id)));
 		result.add(new Triple(feature, FaldoVocab.begin.asNode(), featureBegin));
 		result.add(new Triple(feature, FaldoVocab.end.asNode(), featureEnd));

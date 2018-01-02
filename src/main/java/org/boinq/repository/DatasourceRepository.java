@@ -10,4 +10,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface DatasourceRepository extends JpaRepository<Datasource, Long>, DatasourceRepositoryExtensions {
 	Optional<Datasource> findOneById(Long id);
+	Optional<Datasource> findOneByTracksId(Long id);
 }

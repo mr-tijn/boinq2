@@ -1,5 +1,6 @@
 package org.boinq.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -15,6 +16,10 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.engine.binding.BindingFactory;
+import org.apache.jena.sparql.engine.binding.BindingMap;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_GreaterThan;
 import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
@@ -56,10 +61,10 @@ import org.boinq.domain.query.QueryDefinition;
 import org.boinq.domain.query.QueryEdge;
 import org.boinq.domain.query.QueryGraph;
 import org.boinq.domain.query.QueryNode;
+import org.boinq.generated.vocabularies.FaldoVocab;
+import org.boinq.tools.queries.Prefixes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import org.boinq.generated.vocabularies.FaldoVocab;
 
 @Service
 public class GenerateQueryService {
@@ -87,19 +92,21 @@ public class GenerateQueryService {
 			for (String varName: getReturnVariableNames(query, variableNames)) {
 				selectQuery.addResultVar(NodeFactory.createVariable(varName));
 			}
+//			addValuesTable(selectQuery, variableNames, query);
+			selectQuery.setPrefixMapping(Prefixes.getCommonPrefixes());
 			return selectQuery.toString(Syntax.syntaxSPARQL_11);
 		} else {
 			// make new graph
 			UpdateModify updateQuery = new UpdateModify();
 			Set<Triple> insertTriples = buildInsertTriples(variableNames, query);
 			updateQuery.setElement(mainSelect);
+			// TODO: check how binding works
 			for (Triple triple: insertTriples) {
 				updateQuery.getInsertAcc().addQuad(new Quad(NodeFactory.createURI(query.getTargetGraph()), triple));
 			}
-			buildGraphTemplate(variableNames, query);
-			
+//			buildGraphTemplate(query);
 			// TODO: add prefix map
-			return updateQuery.toString();
+			return updateQuery.toString(Prefixes.getCommonPrefixes());
 		}
 	}
 	
@@ -137,7 +144,7 @@ public class GenerateQueryService {
 		}
 		// end new
 		// old
-//		for (QueryGraph graph: qd.getQueryGraphs()) {
+//		for (QueryGraph graph: locationOverlapQuery.getQueryGraphs()) {
 //			ElementGroup element = new ElementGroup();
 //			element.addElement(triplesByGraph.get(graph));
 //			Map<QueryNode, List<ElementFilter>> filtersByNode = filtersByNodeByGraph.get(graph);
@@ -171,10 +178,6 @@ public class GenerateQueryService {
 		return result;
 	}
 
-	private Node localUri(String postfix) {
-		return NodeFactory.createURI(prefix + postfix);
-	}
-	
 	private Map<QueryNode, String> generateVariableNames(QueryDefinition query) {
 		Map<QueryNode, String> variableNames = new HashMap<>();	
 		// find all interconnected entity bridges and use one name for all nodes in each set
@@ -191,7 +194,12 @@ public class GenerateQueryService {
 		}
 		// name all other unnamed nodes 
 		for (QueryGraph graph: query.getQueryGraphs()) {
-			String graphName = graph.getName().replace(" ", "_");
+			String graphName;
+			if (graph.getName() == null) {
+				graphName = nextId("graph");
+			} else {
+				graphName = graph.getName().replace(" ", "_");
+			}
 			for (QueryEdge edge: graph.getQueryEdges()) {
 				//TODO: handle valued entities (typical for type): should not have a variable but a constant
 				if (!variableNames.containsKey(edge.getFrom()) && NodeTemplate.SOURCE_FIXED != edge.getFrom().getTemplate().getValueSource()) {
@@ -209,37 +217,36 @@ public class GenerateQueryService {
 		return variableNames;
 	}
 	
+	
+	private Node nodeFromQueryNode(QueryNode node, Map<QueryNode, String> variableNames) {
+		if (NodeTemplate.SOURCE_FIXED == node.getTemplate().getValueSource()) {
+			return NodeFactory.createURI(node.getTemplate().getFixedValue());
+		} else {
+			return NodeFactory.createVariable(variableNames.get(node));
+		}
+	}
+	
 	private Map<QueryGraph, ElementTriplesBlock> buildGraphTriples(Map<QueryNode, String> variableNames, QueryDefinition qd) {
 		Map<QueryGraph, ElementTriplesBlock> resultMap = new HashMap<>();
 		for (QueryGraph graph: qd.getQueryGraphs()) {
 			ElementTriplesBlock triples = new ElementTriplesBlock();
 			for (QueryEdge edge: graph.getQueryEdges()) {
-				//TODO: handle valued entities (typical for type): should not have a variable but a constant
-				Node fromNode;
-				Node toNode;
-				if (NodeTemplate.SOURCE_FIXED == edge.getFrom().getTemplate().getValueSource()) {
-					fromNode = NodeFactory.createURI(edge.getFrom().getTemplate().getFixedValue());
-				} else {
-					fromNode = NodeFactory.createVariable(variableNames.get(edge.getFrom()));
-				}
-				if (NodeTemplate.SOURCE_FIXED == edge.getTo().getTemplate().getValueSource()) {
-					toNode = NodeFactory.createURI(edge.getTo().getTemplate().getFixedValue());
-				} else {
-					toNode = NodeFactory.createVariable(variableNames.get(edge.getTo()));
-				}
+				Node fromNode = nodeFromQueryNode(edge.getFrom(), variableNames);
+				Node toNode = nodeFromQueryNode(edge.getTo(), variableNames);;
 				triples.addTriple(new Triple(fromNode, NodeFactory.createURI(edge.getTemplate().getTerm()), toNode));
-				if (QueryNode.NODETYPE_FALDOLOCATION == edge.getFrom().getNodeType()) {
+			}
+			Set<QueryNode> nodes = graph.getQueryEdges().stream().map(QueryEdge::getTo).collect(Collectors.toSet());
+			nodes.addAll(graph.getQueryEdges().stream().map(QueryEdge::getFrom).collect(Collectors.toSet()));
+			for (QueryNode node: nodes) {
+				if (QueryNode.NODETYPE_FALDOLOCATION == node.getNodeType()) {
 					// allow only one faldo filter in editor
-					Optional<NodeFilter> faldoFilter = edge.getFrom().getNodeFilters().stream().filter(nodeFilter -> NodeFilter.FILTER_TYPE_FALDOLOCATION == nodeFilter.getType()).findFirst();
-					for (Triple triple: faldoTriples(variableNames.get(edge.getFrom()), faldoFilter)) {
+					Optional<NodeFilter> faldoFilter = node.getNodeFilters().stream().filter(nodeFilter -> NodeFilter.FILTER_TYPE_FALDOLOCATION == nodeFilter.getType()).findFirst();
+					for (Triple triple: faldoTriples(variableNames.get(node), faldoFilter)) {
 						triples.addTriple(triple);
 					}
 				}
-				if (QueryNode.NODETYPE_FALDOLOCATION == edge.getTo().getNodeType()) {
-					Optional<NodeFilter> faldoFilter = edge.getTo().getNodeFilters().stream().filter(nodeFilter -> NodeFilter.FILTER_TYPE_FALDOLOCATION == nodeFilter.getType()).findFirst();
-					for (Triple triple: faldoTriples(variableNames.get(edge.getTo()), faldoFilter)) {
-						triples.addTriple(triple);
-					}
+				if (QueryNode.NODETYPE_TYPEDENTITY == node.getTemplate().getNodeType()) {
+					triples.addTriple(new Triple(nodeFromQueryNode(node, variableNames),RDF.type.asNode(),NodeFactory.createURI(node.getTemplate().getFixedType())));
 				}
 			}
 			resultMap.put(graph, triples);
@@ -247,12 +254,12 @@ public class GenerateQueryService {
 		return resultMap;
 	}
 	
-	private Node beginVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_Begin");}
-	private Node endVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_End");}
-	private Node beginPosVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_BeginPos");}
-	private Node endPosVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_EndPos");}
-	private Node referenceVar(String featureVarName) {return NodeFactory.createVariable(featureVarName+"_Reference");}
-	private Node positionType(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_PositionType");}
+	private Node beginVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_begin");}
+	private Node endVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_end");}
+	private Node beginPosVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_beginpos");}
+	private Node endPosVar(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_endpos");}
+	private Node referenceVar(String featureVarName) {return NodeFactory.createVariable(featureVarName+"_reference");}
+	private Node positionType(String featureVarName) {return NodeFactory.createVariable(featureVarName + "_positiontype");}
 	
 	private List<Triple> faldoTriples(String locationVariableName, Optional<NodeFilter> maybeFilter) {
 		List<Triple> triples = new LinkedList<Triple>();
@@ -260,12 +267,10 @@ public class GenerateQueryService {
 		Node featureBegin = beginVar(locationVariableName);
 		Node featureBeginPos = beginPosVar(locationVariableName);
 		Node featureReference = referenceVar(locationVariableName);
-		Node featureReferenceName = NodeFactory.createVariable(locationVariableName+ "_ReferenceName");
 		Node featurePositionType = positionType(locationVariableName);
 		triples.add(new Triple(featureLocation, FaldoVocab.begin.asNode(), featureBegin));
 		triples.add(new Triple(featureBegin, FaldoVocab.position.asNode(), featureBeginPos));
 		triples.add(new Triple(featureBegin, FaldoVocab.reference.asNode(), featureReference));
-		triples.add(new Triple(featureReference, RDFS.label.asNode(), featureReferenceName));
 		Node featureEnd = endVar(locationVariableName);
 		Node featureEndPos = endPosVar(locationVariableName);
 		triples.add(new Triple(featureLocation, FaldoVocab.end.asNode(), featureEnd));
@@ -365,19 +370,19 @@ public class GenerateQueryService {
 						
 				// compute type (a bit redundant; need to fix)
 				
-				if (filter.getExactMatch()) {
-					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_EQUALS);
-				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_FALDOLOCATION) {
-					filter.setType(NodeFilter.FILTER_TYPE_FALDOLOCATION);
-				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_GENERICLITERAL) {
-					if (NodeFilter.isString(node.getTemplate().getLiteralXsdType())) {
-						filter.setType(NodeFilter.FILTER_TYPE_GENERIC_CONTAINS);
-					} else {
-						filter.setType(NodeFilter.FILTER_TYPE_GENERIC_BETWEEN);
-					}
-				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_GENERICENTITY || node.getTemplate().getNodeType() == QueryNode.NODETYPE_TYPEDENTITY) {
-					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_VALUES);
-				}
+//				if (filter.getExactMatch()) {
+//					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_EQUALS);
+//				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_FALDOLOCATION) {
+//					filter.setType(NodeFilter.FILTER_TYPE_FALDOLOCATION);
+//				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_GENERICLITERAL) {
+//					if (NodeFilter.isString(node.getTemplate().getLiteralXsdType())) {
+//						filter.setType(NodeFilter.FILTER_TYPE_GENERIC_CONTAINS);
+//					} else {
+//						filter.setType(NodeFilter.FILTER_TYPE_GENERIC_BETWEEN);
+//					}
+//				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_GENERICENTITY || node.getTemplate().getNodeType() == QueryNode.NODETYPE_TYPEDENTITY) {
+//					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_VALUES);
+//				}
 				
 				// end need to fix
 				
@@ -512,6 +517,7 @@ public class GenerateQueryService {
 				ExprVar toStrand = new ExprVar(positionType(toVarName));
 				result.add(new ElementFilter(new E_LessThanOrEqual(fromBeginPos, toEndPos)));
 				result.add(new ElementFilter(new E_LessThanOrEqual(toBeginPos, fromEndPos)));
+				// TODO: remove when we use value table for reference mapping
 				result.add(new ElementFilter(new E_SameTerm(fromRef, toRef)));
 				if (bridge.getMatchStrand()) {
 					result.add(new ElementFilter(new E_SameTerm(fromStrand, toStrand)));
@@ -522,6 +528,83 @@ public class GenerateQueryService {
 		}
 		return result;
 	}
+	
+//	private List<String> localReferences = Arrays.asList(
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/1",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/2",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/3",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/4",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/5",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/6",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/7",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/8",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/9",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/10",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/11",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/12",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/13",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/14",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/15",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/16",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/17",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/18",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/19",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/20",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/21",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/22",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/X",
+//			"http://www.boinq.org/resource/homo_sapiens/GRCh38/Y");
+//
+//	
+//	private void addValuesTable(Query query, Map<QueryNode, String> variableNames, QueryDefinition qd) {
+//	
+//// 		NOT YET USED: needs refactoring of the resultAsGraph queries, as SPARQL UPDATE does not support
+////		value tables
+//	
+//		List<String> boinqReferences = localReferences;
+//		List<Var> valuesVariables = new LinkedList<>();
+//		Var boinqReferenceVar = Var.alloc("boinqReference");
+//		valuesVariables.add(boinqReferenceVar);
+//		List<Binding> valuesData = new LinkedList<>();
+//		List<QueryBridge> locationBridges = qd.getQueryBridges().stream().filter(bridge -> bridge.getType() == QueryBridge.BRIDGE_TYPE_LOCATION).collect(Collectors.toList());
+//		for (String boinqReference: boinqReferences) {
+//			BindingMap binding = BindingFactory.create();
+//			binding.add(boinqReferenceVar, NodeFactory.createURI(boinqReference));
+//			for (QueryBridge locationBridge: locationBridges) {
+//				String fromVarName = variableNames.get(locationBridge.getFromNode());
+//				Var fromReferenceVar = Var.alloc(referenceVar(fromVarName));
+//				if (!valuesVariables.contains(fromReferenceVar)) {
+//					valuesVariables.add(fromReferenceVar);
+//				}
+//				GraphTemplate fromTemplate = locationBridge.getFromGraph().getTemplate();
+//				if (fromTemplate.hasReferenceMap()) {
+//					Optional<String> fromReference = fromTemplate.getRemoteReference(boinqReference);
+//					if (fromReference.isPresent()) {
+//						binding.add(fromReferenceVar, NodeFactory.createURI(fromReference.get()));
+//					}
+//				} else {
+//					binding.add(fromReferenceVar, NodeFactory.createURI(boinqReference));
+//				}
+//
+//				String toVarName = variableNames.get(locationBridge.getToNode());
+//				Var toReferenceVar = Var.alloc(referenceVar(toVarName));
+//				if (!valuesVariables.contains(toReferenceVar)) {
+//					valuesVariables.add(toReferenceVar);
+//				}
+//				GraphTemplate toTemplate = locationBridge.getToGraph().getTemplate();
+//				if (toTemplate.hasReferenceMap()) {
+//					Optional<String> toReference = toTemplate.getRemoteReference(boinqReference);
+//					if (toReference.isPresent()) {
+//						binding.add(toReferenceVar, NodeFactory.createURI(toReference.get()));
+//					}
+//				} else {
+//					binding.add(toReferenceVar, NodeFactory.createURI(boinqReference));
+//				}
+//			}
+//			valuesData.add(binding);
+//		}
+//		query.setValuesDataBlock(valuesVariables, valuesData);
+//	}
 	
 	
 	
@@ -541,6 +624,12 @@ public class GenerateQueryService {
 				if (QueryNode.NODETYPE_FALDOLOCATION == edge.getTo().getTemplate().getNodeType()) {
 					triples.addAll(faldoTriples(targetNames.get(edge.getTo()), Optional.empty()));
 				}
+				if (QueryNode.NODETYPE_TYPEDENTITY == edge.getFrom().getTemplate().getNodeType()) {
+					triples.add(new Triple(NodeFactory.createVariable(targetNames.get(edge.getFrom())),RDF.type.asNode(),NodeFactory.createURI(edge.getFrom().getTemplate().getFixedType())));
+				}
+				if (QueryNode.NODETYPE_TYPEDENTITY == edge.getTo().getTemplate().getNodeType()) {
+					triples.add(new Triple(NodeFactory.createVariable(targetNames.get(edge.getTo())),RDF.type.asNode(),NodeFactory.createURI(edge.getTo().getTemplate().getFixedType())));
+				}
 			}
 		}
 		// WILL NOT ALLOW RETRIEVING GRAPHS CROSSING LITERAL TO LITERAL BRIDGES FOR NOW
@@ -559,7 +648,8 @@ public class GenerateQueryService {
 	}
 	
 	
-	private GraphTemplate buildGraphTemplate(Map<QueryNode, String> variableNames, QueryDefinition query) {
+	public GraphTemplate buildGraphTemplate(QueryDefinition query) {
+		Map<QueryNode, String> variableNames = 	generateVariableNames(query);
 		GraphTemplate result = new GraphTemplate();
 		result.setGraphIri(query.getTargetGraph());
 		result.setEdgeTemplates(new HashSet<>());

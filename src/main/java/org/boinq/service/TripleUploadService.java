@@ -61,7 +61,7 @@ public class TripleUploadService {
 	public static class TripleUploader extends StreamRDFBase {
 		
 		//FIXME: prefixes currently unused - check if there is benefit beyond more readable queries
-		private static int BATCHSIZE = 1000;
+		private static int BATCHSIZE = 5000;
 		private Node graph;
 		private String endpoint;
 		private PrefixMapping prefixes;
