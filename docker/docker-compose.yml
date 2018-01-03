@@ -7,10 +7,10 @@ services:
     volumes:
       - "./boinq/files:/opt/boinq/files"
     mem_limit: "8G"
-  bigdata:
-    build: ./blazegraph/build
+  fuseki:
+    build: ./fuseki/build
     ports:
-      - "9999:9999"
+      - "3030:3030"
     volumes:
       - "/mnt/graphs/"
   mysql:

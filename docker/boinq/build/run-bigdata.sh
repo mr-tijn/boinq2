@@ -14,9 +14,9 @@ until nc -w30 mysql 3306 < /dev/null; do
     sleep 1
 done
 
-# hang on until fuseki is up
+# hang on until bigdata is up
 echo 'waiting for triplestore'
-until $(curl --output /dev/null --silent --head --fail http://fuseki:3030); do
+until $(curl --output /dev/null --silent --head --fail http://bigdata:9999); do
     printf '.'
     sleep 1
 done
