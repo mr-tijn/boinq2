@@ -14,7 +14,6 @@ import org.boinq.domain.RawDataFile;
 import org.boinq.repository.RawDataFileRepository;
 import org.boinq.web.rest.RawDataFileResource;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.SpringApplicationConfiguration;

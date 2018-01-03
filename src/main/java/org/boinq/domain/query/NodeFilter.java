@@ -28,6 +28,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "T_NODEFILTER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class NodeFilter implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5482918562348397479L;
 	public static final int FILTER_TYPE_GENERIC_EQUALS = 0;
 	public static final int FILTER_TYPE_GENERIC_BETWEEN = 1;
 	public static final int FILTER_TYPE_GENERIC_STARTSWITH = 2;

@@ -23,6 +23,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class NodeTemplate implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5693255674095768036L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

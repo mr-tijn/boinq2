@@ -21,10 +21,10 @@ until $(curl --output /dev/null --silent --head --fail http://bigdata:9999); do
     sleep 1
 done
 
-# create namespaces
+# create bigdata namespaces
 
-curl -v --connect-timeout 30 -X POST --data-binary @/createBoinq.xml --header 'Content-Type:application/xml' http://bigdata:9999/bigdata/namespace
-curl -v -X POST --data-binary @/createBoinqStatic.xml --header 'Content-Type:application/xml' http://bigdata:9999/bigdata/namespace
-curl -v -X POST --data-binary @/createTest.xml --header 'Content-Type:application/xml' http://bigdata:9999/bigdata/namespace
+#curl -v --connect-timeout 30 -X POST --data-binary @/createBoinq.xml --header 'Content-Type:application/xml' http://bigdata:9999/bigdata/namespace
+#curl -v -X POST --data-binary @/createBoinqStatic.xml --header 'Content-Type:application/xml' http://bigdata:9999/bigdata/namespace
+#curl -v -X POST --data-binary @/createTest.xml --header 'Content-Type:application/xml' http://bigdata:9999/bigdata/namespace
 
 java -server -Xmx$heap -XX:MaxDirectMemorySize=$writebuff -Djava.security.egd=file:/dev/./urandom -jar /boinq.war --spring.profiles.active=docker

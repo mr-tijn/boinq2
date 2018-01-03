@@ -23,6 +23,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class QueryBridge implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1114467592306586293L;
 	public static final int BRIDGE_TYPE_LITERAL_TO_LITERAL = 0;
 	public static final int BRIDGE_TYPE_LITERAL_TO_ENTITY = 1;
 	public static final int BRIDGE_TYPE_ENTITY_TO_LITERAL = 2;

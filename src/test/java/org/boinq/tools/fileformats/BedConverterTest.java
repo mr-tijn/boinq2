@@ -14,7 +14,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.jena.graph.Node;
-import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.RDFNode;
 import org.boinq.Application;

@@ -1,13 +1,10 @@
 package org.boinq.web.rest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -20,17 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.security.Principal;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
-
-import javax.inject.Inject;
 
 import org.boinq.Application;
 import org.boinq.domain.Datasource;
 import org.boinq.domain.Track;
 import org.boinq.domain.User;
 import org.boinq.domain.jobs.AsynchronousJob;
-import org.boinq.domain.jobs.TripleConversion;
 import org.boinq.domain.query.GraphTemplate;
 import org.boinq.repository.DatasourceRepository;
 import org.boinq.repository.GraphTemplateRepository;
@@ -38,9 +31,6 @@ import org.boinq.repository.TrackRepository;
 import org.boinq.service.AsynchronousJobService;
 import org.boinq.service.LocalGraphService;
 import org.boinq.web.rest.TrackResource;
-import org.boinq.web.rest.dto.EdgeTemplateDTO;
-import org.boinq.web.rest.dto.GraphTemplateDTO;
-import org.boinq.web.rest.dto.NodeTemplateDTO;
 import org.boinq.web.rest.dto.TrackDTO;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +38,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;

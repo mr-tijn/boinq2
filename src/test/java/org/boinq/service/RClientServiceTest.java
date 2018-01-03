@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.boinq.Application;
 import org.boinq.service.RClientService;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.springframework.boot.test.SpringApplicationConfiguration;

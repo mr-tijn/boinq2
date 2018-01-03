@@ -4,23 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.boinq.Application;
-import org.boinq.domain.query.GraphTemplate;
 import org.boinq.domain.query.QueryDefinition;
-import org.boinq.domain.query.QueryGraph;
-import org.boinq.repository.GraphTemplateRepository;
 import org.boinq.repository.QueryDefinitionRepository;
-import org.boinq.repository.QueryGraphRepository;
 import org.boinq.repository.UserRepository;
-import org.boinq.web.rest.dto.QueryDefinitionDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

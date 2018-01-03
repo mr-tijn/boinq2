@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
 
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -37,6 +36,7 @@ import htsjdk.variant.vcf.VCFInfoHeaderLine;
 public class MetaTripleBuilder extends TripleBuilder {
 
 	
+	@SuppressWarnings("unused")
 	private MetaTripleBuilder() {}
 	
 	public MetaTripleBuilder(TripleGeneratorService tripleGenerator) {

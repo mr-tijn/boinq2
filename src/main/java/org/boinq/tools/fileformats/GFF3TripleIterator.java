@@ -33,7 +33,6 @@ import org.boinq.generated.vocabularies.SoVocab;
 
 import de.charite.compbio.jannovar.impl.parse.gff.Feature;
 import de.charite.compbio.jannovar.impl.parse.gff.FeatureFormatException;
-import de.charite.compbio.jannovar.impl.parse.gff.FeatureType;
 import de.charite.compbio.jannovar.impl.parse.gff.GFFParser;
 import de.charite.compbio.jannovar.impl.parse.gff.GFFVersion;
 import htsjdk.samtools.Cigar;

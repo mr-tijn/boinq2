@@ -29,6 +29,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class QueryNode implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4428096373676038965L;
 	public static final int NODETYPE_GENERICENTITY = 0;
 	public static final int NODETYPE_GENERICLITERAL = 1;
 	public static final int NODETYPE_TYPEDENTITY = 4;

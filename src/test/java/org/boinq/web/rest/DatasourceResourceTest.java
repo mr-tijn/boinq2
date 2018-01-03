@@ -8,18 +8,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.security.Principal;
-import java.util.Optional;
-
 import javax.inject.Inject;
 
 import org.boinq.Application;
 import org.boinq.domain.Datasource;
-import org.boinq.domain.User;
 import org.boinq.repository.DatasourceRepository;
 import org.boinq.repository.UserRepository;
 import org.boinq.service.LocalGraphService;
 import org.boinq.web.rest.DatasourceResource;
-import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

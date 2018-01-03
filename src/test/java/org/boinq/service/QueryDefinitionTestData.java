@@ -2,9 +2,7 @@ package org.boinq.service;
 
 import static org.boinq.domain.query.TemplateFactory.*;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -25,13 +23,11 @@ import org.boinq.domain.query.QueryDefinition;
 import org.boinq.domain.query.QueryEdge;
 import org.boinq.domain.query.QueryGraph;
 import org.boinq.domain.query.QueryNode;
-import org.boinq.domain.query.ReferenceMapEntry;
 import org.boinq.generated.vocabularies.FaldoVocab;
 import org.boinq.generated.vocabularies.FormatVocab;
 import org.boinq.generated.vocabularies.GfvoVocab;
 import org.boinq.generated.vocabularies.SioVocab;
 import org.boinq.generated.vocabularies.SoVocab;
-import org.boinq.web.rest.dto.QueryDefinitionDTO;
 
 public class QueryDefinitionTestData {
 	

@@ -16,13 +16,11 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.RDFNode;
 import org.boinq.Application;
 import org.boinq.domain.RawSPARQLResultSet;
 import org.boinq.domain.jobs.TripleConversion;
-import org.boinq.generated.vocabularies.FaldoVocab;
 import org.boinq.generated.vocabularies.SoVocab;
 import org.boinq.init.TripleStoreInitializer;
 import org.boinq.service.FusekiMgmtService;

@@ -9,11 +9,8 @@ import org.apache.jena.vocabulary.SKOS;
 import org.apache.jena.vocabulary.XSD;
 import org.boinq.generated.vocabularies.FaldoVocab;
 import org.boinq.generated.vocabularies.GfvoVocab;
-import org.boinq.generated.vocabularies.SioVocab;
-import org.boinq.generated.vocabularies.SoVocab;
 import org.boinq.tools.vocabularies.CommonVocabulary;
 
-import net.sf.saxon.regex.Operation.OpBOL;
 
 public class Prefixes {
 

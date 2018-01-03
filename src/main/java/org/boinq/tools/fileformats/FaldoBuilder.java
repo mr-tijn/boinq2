@@ -24,6 +24,7 @@ public class FaldoBuilder extends TripleBuilder {
 	@Inject
 	TripleGeneratorService tripleGenerator;
 
+	@SuppressWarnings("unused")
 	private FaldoBuilder() {}
 	
 	public FaldoBuilder(TripleGeneratorService tripleGenerator) {

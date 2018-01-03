@@ -21,6 +21,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class EdgeTemplate implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8424982718080681976L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

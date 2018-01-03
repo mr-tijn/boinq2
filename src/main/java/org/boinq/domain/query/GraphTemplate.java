@@ -23,6 +23,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "T_GRAPHTEMPLATE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class GraphTemplate implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5705676850739067668L;
+	
 	public static final int GRAPH_TYPE_LOCAL = 0;
 	public static final int GRAPH_TYPE_REMOTE = 1;
 	

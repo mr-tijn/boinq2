@@ -23,6 +23,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class QueryGraph implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -995238547962683258L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
