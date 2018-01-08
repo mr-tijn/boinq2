@@ -25,6 +25,7 @@ import org.apache.jena.sparql.expr.E_LogicalAnd;
 import org.apache.jena.sparql.expr.E_LogicalNot;
 import org.apache.jena.sparql.expr.E_NotEquals;
 import org.apache.jena.sparql.expr.E_OneOf;
+import org.apache.jena.sparql.expr.E_Regex;
 import org.apache.jena.sparql.expr.E_SameTerm;
 import org.apache.jena.sparql.expr.E_Str;
 import org.apache.jena.sparql.expr.E_StrAfter;
@@ -56,6 +57,7 @@ import org.boinq.domain.query.QueryEdge;
 import org.boinq.domain.query.QueryGraph;
 import org.boinq.domain.query.QueryNode;
 import org.boinq.generated.vocabularies.FaldoVocab;
+import org.boinq.generated.vocabularies.SioVocab;
 import org.boinq.tools.queries.Prefixes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -66,7 +68,6 @@ public class GenerateQueryService {
 	private static final Map<String, Long> idCounters = new HashMap<String, Long>();
 	
 	//TODO: ignore selected edges that are not selected for retrieve and do not contain filtered nodes or bridges
-	//TODO: join queries on same graph
 	
 	@Value(value="{querybuilder.prefix}")
 	private String prefix;
@@ -136,25 +137,6 @@ public class GenerateQueryService {
 				mainSelect.addElement(graphElement);
 			}
 		}
-		// end new
-		// old
-//		for (QueryGraph graph: locationOverlapQuery.getQueryGraphs()) {
-//			ElementGroup element = new ElementGroup();
-//			element.addElement(triplesByGraph.get(graph));
-//			Map<QueryNode, List<ElementFilter>> filtersByNode = filtersByNodeByGraph.get(graph);
-//			for (QueryNode node: filtersByNode.keySet()) {
-//				for (ElementFilter filter: filtersByNode.get(node)) {
-//					element.addElement(filter);
-//				}
-//			}
-//			ElementNamedGraph graphElement = new ElementNamedGraph(NodeFactory.createURI(graph.getTemplate().getGraphIri()), element);
-//			if (graph.getTemplate().getType() == GraphTemplate.GRAPH_TYPE_REMOTE) {
-//				mainSelect.addElement(new ElementService(graph.getTemplate().getEndpointUrl(), graphElement));
-//			} else {
-//				mainSelect.addElement(graphElement);
-//			}
-//		}
-		// end old
 		for (ElementFilter filter: globalFilters) {
 			mainSelect.addElement(filter);
 		}
@@ -220,6 +202,10 @@ public class GenerateQueryService {
 		}
 	}
 	
+	private String valueName(QueryNode node, Map<QueryNode, String> variableNames) {
+		return variableNames.get(node) + "_value";
+	}
+	
 	private Map<QueryGraph, ElementTriplesBlock> buildGraphTriples(Map<QueryNode, String> variableNames, QueryDefinition qd) {
 		Map<QueryGraph, ElementTriplesBlock> resultMap = new HashMap<>();
 		for (QueryGraph graph: qd.getQueryGraphs()) {
@@ -241,6 +227,10 @@ public class GenerateQueryService {
 				}
 				if (QueryNode.NODETYPE_TYPEDENTITY == node.getTemplate().getNodeType()) {
 					triples.addTriple(new Triple(nodeFromQueryNode(node, variableNames),RDF.type.asNode(),NodeFactory.createURI(node.getTemplate().getFixedType())));
+				}
+				if (QueryNode.NODETYPE_ATTRIBUTE == node.getTemplate().getNodeType()) {
+					triples.addTriple(new Triple(nodeFromQueryNode(node, variableNames),RDF.type.asNode(),NodeFactory.createURI(node.getTemplate().getFixedType())));
+					triples.addTriple(new Triple(nodeFromQueryNode(node, variableNames), SioVocab.has_value.asNode(), NodeFactory.createVariable(valueName(node, variableNames))));
 				}
 			}
 			resultMap.put(graph, triples);
@@ -318,11 +308,11 @@ public class GenerateQueryService {
 			for (QueryEdge edge: graph.getQueryEdges()) {
 				QueryNode node = edge.getFrom();
 				if (!filterMap.containsKey(node)) {
-					filterMap.put(node, generateFilters(node, variableNames.get(node)));
+					filterMap.put(node, generateFilters(node, variableNames));
 				}
 				node = edge.getTo();
 				if (!filterMap.containsKey(node)) {
-					filterMap.put(node, generateFilters(node, variableNames.get(node)));
+					filterMap.put(node, generateFilters(node, variableNames));
 				}
 
 			}
@@ -342,41 +332,47 @@ public class GenerateQueryService {
 	}
 	
 
-	private List<ElementFilter> generateFilters(QueryNode node, String variableName) {
+	private List<ElementFilter> generateFilters(QueryNode node, Map<QueryNode, String> variableNames) {
 		List<ElementFilter> result = new LinkedList<>();
+		String variableName;
+		if (QueryNode.NODETYPE_ATTRIBUTE == node.getNodeType()) {
+			variableName = valueName(node, variableNames);
+		} else {
+			variableName = variableNames.get(node);
+		}
 		ExprVar variable = new ExprVar(variableName);
 		if (QueryNode.NODETYPE_GENERICENTITY == node.getNodeType()) {
 			for (NodeFilter filter: node.getNodeFilters()) {
-				if (NodeFilter.FILTER_TYPE_GENERIC_VALUES == filter.getType()) {
+				switch (node.getTemplate().getNodeType()) {
+				case NodeTemplate.SOURCE_ENDPOINT:
 					ExprList targetExpressions = new ExprList();
 					for (String term: filter.getTermValues()) {
 						targetExpressions.add(new NodeValueString(term));
 					}
-					E_OneOf targetMatch = new E_OneOf(new E_IRI(new ExprVar(variableName)), targetExpressions);
+					E_OneOf targetMatch = new E_OneOf(new E_IRI(variable), targetExpressions);
 					result.add(new ElementFilter(targetMatch));
-				}
+					break;
+				case NodeTemplate.SOURCE_FIXED:
+					// should never come here: fixed value filters are irrelevant
+					break;
+				case NodeTemplate.SOURCE_LIST:
+					result.add(new ElementFilter(new E_SameTerm(variable, new NodeValueString(filter.getStringValue()))));
+				} 
 			}
-		} else if (QueryNode.NODETYPE_GENERICLITERAL == node.getNodeType()) {
+		} else if (QueryNode.NODETYPE_ATTRIBUTE == node.getNodeType() || QueryNode.NODETYPE_GENERICLITERAL == node.getNodeType()) {
 			for (NodeFilter filter: node.getNodeFilters()) {
 				
 				Expr expr = null;
-				
-						
+
 				// compute type (a bit redundant; need to fix)
 				
-//				if (filter.getExactMatch()) {
-//					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_EQUALS);
-//				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_FALDOLOCATION) {
-//					filter.setType(NodeFilter.FILTER_TYPE_FALDOLOCATION);
-//				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_GENERICLITERAL) {
-//					if (NodeFilter.isString(node.getTemplate().getLiteralXsdType())) {
-//						filter.setType(NodeFilter.FILTER_TYPE_GENERIC_CONTAINS);
-//					} else {
-//						filter.setType(NodeFilter.FILTER_TYPE_GENERIC_BETWEEN);
-//					}
-//				} else if (node.getTemplate().getNodeType() == QueryNode.NODETYPE_GENERICENTITY || node.getTemplate().getNodeType() == QueryNode.NODETYPE_TYPEDENTITY) {
-//					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_VALUES);
-//				}
+				if (filter.getExactMatch() != null && filter.getExactMatch()) {
+					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_EQUALS);
+				} else if (NodeFilter.isString(node.getTemplate().getLiteralXsdType())) {
+					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_CONTAINS);
+				} else {
+					filter.setType(NodeFilter.FILTER_TYPE_GENERIC_BETWEEN);
+				}
 				
 				// end need to fix
 				
@@ -430,6 +426,8 @@ public class GenerateQueryService {
 					} else {
 						expr = new E_StrContains(new E_Str(variable), value);	
 					}
+					//TODO: we assume all is case insensitive for now
+					expr = new E_Regex(new E_Str(variable), filter.getStringValue(), "i");
 					if (filter.getNot()) {
 						expr = new E_LogicalNot(expr);
 					}
@@ -439,8 +437,10 @@ public class GenerateQueryService {
 					if (filter.getCaseInsensitive()) {
 						expr = new E_StrStartsWith(new E_StrUpperCase(new E_Str(variable)), new E_StrUpperCase(value));
 					} else {
-						expr = new E_StrContains(new E_Str(variable), value);	
+						expr = new E_StrStartsWith(new E_Str(variable), value);	
 					}
+					// TODO: modify editor to accept caseinsensitive; now we will assume everything is case sensitive
+					expr = new E_Regex(new E_Str(variable), "^"+filter.getStringValue(), "i");
 					if (filter.getNot()) {
 						expr = new E_LogicalNot(expr);
 					}

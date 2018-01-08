@@ -161,8 +161,17 @@ angular.module('boinqApp').controller("GraphTemplateController",["$scope", "$doc
 		if (nodes && nodes.length) {return nodes[0];}
 	}
 	
+	var maxIdx = function(array) {
+		if (array && array.length) {
+			var max = Math.max.apply(Math,array.map(function(o){return o.idx;}));
+			return Math.max(max, array.length);
+		} else {
+			return 0;
+		}
+	}
+	
 	$scope.addNode = function() {
-		var idx = $scope.graphTemplate.nodeTemplates.length + 1;
+		var idx = maxIdx($scope.graphTemplate.nodeTemplates) + 1;
 		var newNode = new QueryDefinitionObjects.NodeTemplate(idx);
 		newNode.x = event.offsetX;
 		newNode.y = event.offsetY;

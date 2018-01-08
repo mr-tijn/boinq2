@@ -5,7 +5,7 @@
 		ng-mousemove="mouseMove($event)"
 		ng-mouseenter="mouseEnter($event)"> 
 			 	<defs>
-			    <marker id='arrow' orient='auto' markerWidth='18' markerHeight='12' markerUnits="userSpaceOnUse" refX='23' refY='6' >
+			    <marker id='greyarrow' orient='auto' markerWidth='18' markerHeight='12' markerUnits="userSpaceOnUse" refX='23' refY='6' >
 			      <path d='M0,0 L0,12 L18,6 z' fill="#686868"/>
 			    </marker>
 			    <marker id='greenarrow' orient='auto' markerWidth='18' markerHeight='12' markerUnits="userSpaceOnUse" refX='23' refY='6' >
@@ -18,11 +18,11 @@
 			ng-attr-y1="{{fromNode(edgeTemplate).y}}px"
 			ng-attr-x2="{{toNode(edgeTemplate).x}}px"
 			ng-attr-y2="{{toNode(edgeTemplate).y}}px" 
-			marker-end="url(#arrow)"
+			marker-end="url(#greyarrow)"
 			class="bnq_link inactive"
 			ng-click="select(edgeTemplate)" ng-mouseenter="$parent.showTooltip($event, edgeTemplate)" ng-mouseleave="$parent.hideTooltip()"/>
-			<text ng-repeat="edgeTemplate in graphTemplate.edgeTemplates" ng-attr-x="{{(fromNode(edgeTemplate).x + toNode(edgeTemplate).x)/2 +10}}px" ng-attr-y="{{(fromNode(edgeTemplate).y + toNode(edgeTemplate).y)/2 + 10}}px">{{edgeTemplate.label}}</text>
-			<line ng-repeat="queryEdge in queryGraph.queryEdges"
+				<text ng-repeat="edgeTemplate in graphTemplate.edgeTemplates" ng-attr-x="{{(fromNode(edgeTemplate).x + toNode(edgeTemplate).x)/2 +10}}px" ng-attr-y="{{(fromNode(edgeTemplate).y + toNode(edgeTemplate).y)/2 + 10}}px">{{edgeTemplate.label}}</text>
+				<line ng-repeat="queryEdge in queryGraph.queryEdges"
 			ng-attr-x1="{{fromNode(findById(queryEdge.template, graphTemplate.edgeTemplates)).x}}px"
 			ng-attr-y1="{{fromNode(findById(queryEdge.template, graphTemplate.edgeTemplates)).y}}px"
 			ng-attr-x2="{{toNode(findById(queryEdge.template, graphTemplate.edgeTemplates)).x}}px"

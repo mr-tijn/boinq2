@@ -1,7 +1,8 @@
-angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeConstants','GraphTemplate',function($scope,NodeConstants,GraphTemplate) {
+angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeConstants','BridgeConstants','GraphTemplate',function($scope,NodeConstants,BridgeConstants,GraphTemplate) {
 	console.log('Registering controller BridgeDetailController');
 	
 	$scope.graphTemplates={};
+	$scope.matchTypes = BridgeConstants.MATCH_ITEMS;
 	
 //	getTemplate = function(templateId) {
 //		if ($scope.graphTemplates[templateId] == null) {
@@ -11,7 +12,7 @@ angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeCo
 //	}
 	
 	
-	$scope.$watch('selection.bridge',function() {
+	$scope.$watch('selection.bridge',function() {		
 		$scope.fromTemplate = GraphTemplate.get({id: getFromGraph().template});
 		$scope.toTemplate = GraphTemplate.get({id: getToGraph().template});
 	});

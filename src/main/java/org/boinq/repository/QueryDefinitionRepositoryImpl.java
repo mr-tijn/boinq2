@@ -153,6 +153,7 @@ public class QueryDefinitionRepositoryImpl implements QueryDefinitionRepositoryE
 		}
 		filter.setId(filterDTO.id());
 		filter.setType(filterDTO.type());
+		filter.setExactMatch(filterDTO.exactMatch());
 		filter.setMinInteger(filterDTO.minInteger());
 		filter.setMaxInteger(filterDTO.maxInteger());
 		filter.setIntegerValue(filterDTO.integerValue());

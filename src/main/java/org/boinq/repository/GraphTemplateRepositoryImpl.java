@@ -2,18 +2,22 @@ package org.boinq.repository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.boinq.domain.Datasource;
+import org.boinq.domain.Track;
 import org.boinq.domain.query.EdgeTemplate;
 import org.boinq.domain.query.GraphTemplate;
 import org.boinq.domain.query.NodeTemplate;
 import org.boinq.web.rest.dto.EdgeTemplateDTO;
 import org.boinq.web.rest.dto.GraphTemplateDTO;
 import org.boinq.web.rest.dto.NodeTemplateDTO;
+
 
 public class GraphTemplateRepositoryImpl implements GraphTemplateRepositoryExtensions {
 	
@@ -23,6 +27,10 @@ public class GraphTemplateRepositoryImpl implements GraphTemplateRepositoryExten
 	EdgeTemplateRepository edgeTemplateRepository;
 	@Inject
 	GraphTemplateRepository graphTemplateRepository;
+	@Inject
+	DatasourceRepository datasourceRepository;
+	@Inject
+	TrackRepository trackRepository;
 	
 	private NodeTemplate findByIdx(Set<NodeTemplate> nodes, Integer idx) {
 		return nodes.stream().filter(node -> node.getIdx().equals(idx)).findFirst().orElse(null);
@@ -30,6 +38,12 @@ public class GraphTemplateRepositoryImpl implements GraphTemplateRepositoryExten
 	
 	private EdgeTemplate create(EdgeTemplateDTO edgeDTO, NodeTemplate from, NodeTemplate to) {
 		EdgeTemplate result = new EdgeTemplate();
+		if (edgeDTO.id() != null) {
+			Optional<EdgeTemplate> et = edgeTemplateRepository.findOneById(edgeDTO.id());
+			if (et.isPresent()) {
+				result = et.get();
+			}
+		}
 		result.setLabel(edgeDTO.label());
 		result.setTerm(edgeDTO.term());
 		result.setFrom(from);
@@ -39,11 +53,18 @@ public class GraphTemplateRepositoryImpl implements GraphTemplateRepositoryExten
 	
 	private NodeTemplate create(NodeTemplateDTO nodeDTO) {
 		NodeTemplate result = new NodeTemplate();
+		if (nodeDTO.id() != null) {
+			Optional<NodeTemplate> nt = nodeTemplateRepository.findOneById(nodeDTO.id());
+			if (nt.isPresent()) {
+				result = nt.get();
+			}
+		}
 		result.setAssembly(nodeDTO.assembly());
 		result.setColor(nodeDTO.color());
 		result.setDescription(nodeDTO.description());
 		result.setFilterable(nodeDTO.filterable());
 		result.setFixedValue(nodeDTO.fixedValue());
+		result.setFixedType(nodeDTO.fixedType());
 		result.setIdx(nodeDTO.idx());
 		result.setLiteralXsdType(nodeDTO.literalXsdType());
 		result.setName(nodeDTO.name());
@@ -62,10 +83,33 @@ public class GraphTemplateRepositoryImpl implements GraphTemplateRepositoryExten
 	@Override
 	public GraphTemplate create(GraphTemplateDTO templateDTO) {
 		GraphTemplate result = new GraphTemplate();
+		if (templateDTO.id() != null) {
+			Optional<GraphTemplate> gt = graphTemplateRepository.findOneById(templateDTO.id());
+			if (gt.isPresent()) {
+				result = gt.get();
+			}
+		}
 		result.setEndpointUrl(templateDTO.endpointUrl());
 		result.setGraphIri(templateDTO.graphIri());
-		result.setName(templateDTO.name());
 		result.setType(templateDTO.type());
+		result.setName(templateDTO.name());
+		// TODO: type, endpoint and graph IRI is currently saved in track and datasource: change in editor
+		Optional<Track> trackOpt = trackRepository.findOneByGraphTemplateId(templateDTO.id());
+		if (trackOpt.isPresent()) {
+			Optional<Datasource> dsOpt = datasourceRepository.findOneByTracksId(trackOpt.get().getId());
+			if (dsOpt.isPresent()) {
+				switch (dsOpt.get().getType()) {
+				case Datasource.TYPE_LOCAL_FALDO:
+				case Datasource.TYPE_LOCAL_SPARQL:
+					result.setType(GraphTemplate.GRAPH_TYPE_LOCAL);
+					break;
+				default:
+					result.setType(GraphTemplate.GRAPH_TYPE_REMOTE);
+				}
+				result.setEndpointUrl(dsOpt.get().getEndpointUrl());
+				result.setGraphIri(trackOpt.get().getGraphName());
+			}
+		}
 		Set<NodeTemplate> nodeTemplates = templateDTO.nodeTemplates().stream().map(nodeDTO -> create(nodeDTO)).collect(Collectors.toSet());
 		Set<EdgeTemplate> edgeTemplates =  templateDTO.edgeTemplates().stream().map(edgeDTO -> create(edgeDTO, findByIdx(nodeTemplates, edgeDTO.fromIdx()), findByIdx(nodeTemplates, edgeDTO.toIdx()))).collect(Collectors.toSet());
 		result.setEdgeTemplates(edgeTemplates);

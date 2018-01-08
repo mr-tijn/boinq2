@@ -108,6 +108,37 @@ angular.module('boinqApp').constant('JobConstants',{
 	
 });
 
+angular.module('boinqApp').constant('BridgeConstants',{
+	
+	TYPE_LITERAL_TO_LITERAL : 0,
+	TYPE_LITERAL_TO_ENTITY : 1,
+	TYPE_ENTITY_TO_LITERAL : 2,
+	TYPE_ENTITY_TO_ENTITY : 3,
+	TYPE_LOCATION : 4,
+
+	MATCH_LESSOREQUAL : 0,
+	MATCH_LESS : 1,
+	MATCH_MOREOREQUAL : 2,
+	MATCH_MORE : 3,
+	MATCH_EQUAL : 4,
+	
+	MATCH_CONTAINS : 5,
+	MATCH_ISCONTAINEDIN : 6,
+	MATCH_STREQUAL : 7,
+
+	MATCH_ITEMS :  [
+		{value:'0' , label:'Less than or equal'},
+		{value:'1' , label: 'Less than'},
+		{value:'2' , label: 'More than or equal'},
+		{value:'3' , label: 'More than'},
+		{value:'4' , label: 'Equal'},
+		{value:'5' , label: 'Contains'},
+		{value:'6' , label: 'Is contained in'},
+		{value:'7' , label: 'Equal'}
+	]
+	
+});
+
 angular.module('boinqApp').constant('FilterConstants',{
 	TYPE_GENERIC_EQUALS : 0,
 	TYPE_GENERIC_BETWEEN : 1,

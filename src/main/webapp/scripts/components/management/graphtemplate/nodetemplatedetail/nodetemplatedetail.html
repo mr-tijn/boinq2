@@ -28,7 +28,7 @@
 		<option value="">-- Please select Node Type --</option>
 	</select>
 </div>
-<div class="form-group" ng-show="isliteral()">
+<div class="form-group" ng-show="isliteral() || isattribute()">
 	<label>XSD Type</label> <select class="form-control" ng-required="true"
 		ng-model="nodeTemplate.literalXsdType" 
 		ng-options="type.term as type.label for type in TermTools.XSDTypes">
@@ -79,7 +79,7 @@
 		name="variablePrefix" ng-model="nodeTemplate.valuesGraph" ng-minlength=1
 		ng-maxlength=250 ng-required="true" >
 </div>
-<div class="form-group" ng-show="istypedentity()">
+<div class="form-group" ng-show="istypedentity() || isattribute()">
 	<label>Fixed Type</label> <input type="text" class="form-control"
 		name="fixedType" ng-model="nodeTemplate.fixedType" ng-minlength=1
 		ng-maxlength=250 ng-required="false" >

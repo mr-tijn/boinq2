@@ -33,7 +33,9 @@ public class Prefixes {
 			commonPrefixes.setNsPrefix("gfvo", GfvoVocab.NS);
 			commonPrefixes.setNsPrefix("sio", "http://semanticscience.org/resource/");
 			commonPrefixes.setNsPrefix("ensembl", "http://rdf.ebi.ac.uk/resource/");
-			
+			commonPrefixes.setNsPrefix("ncit", "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#");
+			commonPrefixes.setNsPrefix("mesh", "http://id.nlm.nih.gov/mesh/");
+			commonPrefixes.setNsPrefix("meshv", "http://id.nlm.nih.gov/mesh/vocab#");
 		}
 		return commonPrefixes;
 	}

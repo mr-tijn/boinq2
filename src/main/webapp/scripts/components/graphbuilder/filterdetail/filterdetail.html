@@ -14,7 +14,7 @@
 		</div>
 	</div>
 	<div ng-show="isInteger(template)">
-		<div>Expression: {{filter.exactMatch?(filter.integerValue?"=
+		<div>Expression: {{filter.exactMatch?(filter.integerValue?"Value=
 			"+filter.integerValue:""):(filter.minInteger?filter.minInteger+(filter.includeMin?"&lt;=
 			":"&lt;
 			"):"")+"Value"+(filter.maxInteger?(filter.includeMax?"&lt;=":"&lt;")+filter.maxInteger:"")}}
@@ -77,18 +77,22 @@
 			</span>
 		</div>
 	</div>
-	<div ng-show="isTerm(template)">
-		<term-tree-picker modal-id="{{filter}}_modal"
+	<div ng-show="isEndpoint(template)">
+		<term-tree-picker modal-id="{{template.id}}_modal"
 			select-handler="termPicked"
 			source-endpoint="{{template.valuesEndpoint}}"
 			source-graph="{{template.valuesGraph}}"
-			search-filter="searchFilter" multi-valued='false'
+			search-filter="searchFilter" multi-valued='true'
 			form-field-name="term" ng-model="filter.termValues">
 		</term-tree-picker>
+	</div>
+	<div ng-show="isTermList(template)">
 		<div class="input-group">
-			<span class="input-group-addon">Label</span> <input type="text"
-				class="form-control" name="name"
-				ng-model="filter.term" ng-disabled="true">
+			<span class="input-group-addon">Term</span> <select
+				class="form-control" ng-model="filter.stringValue">
+				<option
+					ng-repeat="term in template.valuesTermList">term</option>
+			</select>
 		</div>
 	</div>
 	<div ng-show="isLocation(template)">

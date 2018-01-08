@@ -47,7 +47,7 @@ angular.module('boinqApp').factory('TermTools', ['NodeConstants', function (Node
 	addType(NodeConstants.TYPE_LITERAL);
 	addType(NodeConstants.TYPE_TYPEDENTITY);
 	addType(NodeConstants.TYPE_FALDOENTITY);
-	//addType(NodeConstants.TYPE_ATTRIBUTE);
+	addType(NodeConstants.TYPE_ATTRIBUTE);
 	var valueSources = [];
 	var addSource = function(source) {
 		valueSources.push({value:source, label:NodeConstants.SOURCE_ITEMS[source]});

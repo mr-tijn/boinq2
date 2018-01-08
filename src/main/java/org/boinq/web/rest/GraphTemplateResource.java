@@ -44,10 +44,6 @@ public class GraphTemplateResource {
     	} else {
     		throw new RuntimeException("Cannot get graphtemplate "+gtId);
     	}
-//     	return graphTemplateRepository
-//    			.findOneById(gtId)
-//    			.map(GraphTemplateDTO::create)
-//    			.orElseThrow(() -> new RuntimeException("Cannot get graphtemplate "+gtId));
     }
     
     
@@ -64,89 +60,7 @@ public class GraphTemplateResource {
     		method = RequestMethod.POST,
     		produces = MediaType.APPLICATION_JSON_VALUE)
     public GraphTemplate save(Principal principal, @RequestBody GraphTemplateDTO template) throws Exception {
-    	GraphTemplate gt = new GraphTemplate();
-    	if (template.id() != null) {
-    		Optional<GraphTemplate> templateOpt = graphTemplateRepository.findOneById(template.id());
-    		if (templateOpt.isPresent()) {
-    			gt = templateOpt.get();
-    		}
-    	} 
-    	// general
-    	gt.setEndpointUrl(template.endpointUrl());
-    	gt.setGraphIri(template.graphIri());
-    	gt.setName(template.name());
-    	gt.setType(template.type());
-   		// edges
-    	Set<EdgeTemplate> edgeTemplates = new HashSet<EdgeTemplate>();
-		List<NodeTemplate> nodeTemplates = gt.getEdgeTemplates().stream().map(EdgeTemplate::getFrom).collect(Collectors.toList());
-		nodeTemplates.addAll(gt.getEdgeTemplates().stream().map(EdgeTemplate::getTo).collect(Collectors.toList()));
-    	for (EdgeTemplateDTO edge: template.edgeTemplates()) {
-    		EdgeTemplate et = new EdgeTemplate();
-    		NodeTemplate ft = new NodeTemplate();
-    		NodeTemplate tt = new NodeTemplate();
-    		if (edge.id() != null) {
-    			Optional<EdgeTemplate> edgeOpt = gt.getEdgeTemplates().stream().filter(e -> e.getId().equals(edge.id())).findFirst();
-    			if (edgeOpt.isPresent()) {
-    				et = edgeOpt.get();
-    			}
-    		}
-    		et.setLabel(edge.label());
-    		et.setTerm(edge.term());
-    		NodeTemplateDTO fromNode = template.nodeTemplates().stream().filter(n -> n.idx().equals(edge.fromIdx())).findFirst().get();
-    		if (fromNode.id() != null) {
-    			Optional<NodeTemplate> nodeOpt = nodeTemplates.stream().filter(n -> n.getId().equals(fromNode.id())).findFirst();
-    			if (nodeOpt.isPresent()) {
-    				ft = nodeOpt.get();
-    			}
-    		}
-    		ft.setAssembly(fromNode.assembly());
-    		ft.setColor(fromNode.color());
-    		ft.setDescription(fromNode.description());
-    		ft.setFilterable(fromNode.filterable());
-    		ft.setFixedType(fromNode.fixedType());
-    		ft.setFixedValue(fromNode.fixedValue());
-    		ft.setIdx(fromNode.idx());
-    		ft.setLiteralXsdType(fromNode.literalXsdType());
-    		ft.setName(fromNode.name());
-    		ft.setNodeType(fromNode.nodeType());
-    		ft.setValuesEndpoint(fromNode.valuesEndpoint());
-    		ft.setValuesGraph(fromNode.valuesGraph());
-    		ft.setValueSource(fromNode.valueSource());
-    		ft.setValuesRootTerm(fromNode.valuesRootTerm());
-    		ft.setVariablePrefix(fromNode.variablePrefix());
-    		ft.setValuesTermList(fromNode.valuesTermList());
-    		ft.setX(fromNode.x());
-    		ft.setY(fromNode.y());
-    		NodeTemplateDTO toNode = template.nodeTemplates().stream().filter(n -> n.idx().equals(edge.toIdx())).findFirst().get();
-    		if (toNode.id() != null) {
-    			Optional<NodeTemplate> nodeOpt = nodeTemplates.stream().filter(n -> n.getId().equals(toNode.id())).findFirst();
-    			if (nodeOpt.isPresent()) {
-    				tt = nodeOpt.get();
-    			}
-    		}
-    		tt.setAssembly(toNode.assembly());
-    		tt.setColor(toNode.color());
-    		tt.setDescription(toNode.description());
-    		tt.setFilterable(toNode.filterable());
-    		tt.setFixedType(toNode.fixedType());
-    		tt.setFixedValue(toNode.fixedValue());
-    		tt.setIdx(toNode.idx());
-    		tt.setLiteralXsdType(toNode.literalXsdType());
-    		tt.setName(toNode.name());
-    		tt.setNodeType(toNode.nodeType());
-    		tt.setValuesEndpoint(toNode.valuesEndpoint());
-    		tt.setValuesGraph(toNode.valuesGraph());
-    		tt.setValueSource(toNode.valueSource());
-    		tt.setValuesRootTerm(toNode.valuesRootTerm());
-    		tt.setVariablePrefix(toNode.variablePrefix());
-    		tt.setValuesTermList(toNode.valuesTermList());
-    		tt.setX(toNode.x());
-    		tt.setY(toNode.y());
-    		et.setFrom(ft);
-    		et.setTo(tt);
-    		edgeTemplates.add(et);
-    	}
-    	gt.setEdgeTemplates(edgeTemplates);
-    	return graphTemplateRepository.save(gt);
+    	GraphTemplate gt = graphTemplateRepository.create(template);
+    	return graphTemplateRepository.deepsave(gt);
     }
 }

@@ -1,6 +1,10 @@
 angular.module('boinqApp').controller('NodeTemplateDetailController',['$scope','NodeConstants','TermTools',function($scope,NodeConstants,TermTools) {
 	console.log("Registering controller NodeTemplateDetailController");
 	$scope.TermTools = TermTools;
+	$scope.isattribute = function() {
+		if ($scope.nodeTemplate == null) return false;
+		return $scope.nodeTemplate.nodeType == NodeConstants.TYPE_ATTRIBUTE;
+	};
 	$scope.isliteral = function() {
 		if ($scope.nodeTemplate == null) return false;
 		return $scope.nodeTemplate.nodeType == NodeConstants.TYPE_LITERAL;
