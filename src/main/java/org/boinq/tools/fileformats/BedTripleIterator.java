@@ -114,7 +114,11 @@ public class BedTripleIterator extends TripleBuilder implements Iterator<Triple>
 		}
 		Float score = entry.getScore();
 		if (score != null) {
-			generateAttribute(triples, feature, featureURI, score.toString(), XSDdouble, SoVocab.score.asNode(),
+			Node scoreAttributeType = SoVocab.score.asNode();
+			if (meta.scoreType != null && meta.scoreType.isURI()) {
+				scoreAttributeType = meta.scoreType;
+			}
+			generateAttribute(triples, feature, featureURI, score.toString(), XSDdouble, scoreAttributeType,
 					attributeCount++);
 		}
 

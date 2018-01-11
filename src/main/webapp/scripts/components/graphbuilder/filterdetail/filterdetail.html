@@ -82,6 +82,7 @@
 			select-handler="termPicked"
 			source-endpoint="{{template.valuesEndpoint}}"
 			source-graph="{{template.valuesGraph}}"
+			root-nodes-query="{{rootNodeQuery(template)}}"
 			search-filter="searchFilter" multi-valued='true'
 			form-field-name="term" ng-model="filter.termValues">
 		</term-tree-picker>

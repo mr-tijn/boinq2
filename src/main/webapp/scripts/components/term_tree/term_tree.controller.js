@@ -7,6 +7,7 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	
 	$scope.selectedTerms = [];
 	$scope.selectedTerm = {};
+	$scope.waiting = false;
 	
 //	$scope.$watch('ngModel', function(){
 //		$scope.getngModel();
@@ -22,7 +23,7 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 //			$scope.getFilteredTree(value);
 //		}
 //	});
-
+	
 	$scope.searchFilterKeyPress = function(event) {
 		console.info(event);
 		if (event.which === 13) {
@@ -34,13 +35,24 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 		$scope.sparqlError = true;
 		$scope.sparqlErrorText = errorResponse.data;
 		console.log(errorResponse);
+		stopWaiting();
 	};
+	
+	var stopWaiting = function() {
+		$scope.waiting = false;
+	}
+	
+	var startWaiting = function() {
+		$scope.waiting = true;
+	}
 	
 	$scope.getRootTerms = function() {
 		if ($scope.rootNodesQuery != null) {
 			console.log('Getting query from query builder');
+			startWaiting();
 			callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, $scope.rootNodesQuery).then(
 					function(successResponse) {
+						stopWaiting();
 						$scope.rootTerms = successResponse.data.results.bindings;
 					},
 					processError);			
@@ -49,8 +61,10 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 				console.log('Fetching root terms');
 				var query = response.query;
 				$scope.rootNodesQuery = query;
+				startWaiting();
 				callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
 						function(successResponse) {
+							stopWaiting();
 							if (successResponse && successResponse.data && successResponse.data.results) {
 								$scope.rootTerms = successResponse.data.results.bindings;
 							} else {
@@ -67,19 +81,17 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 		QueryBuilderService.childNodesQuery(parentTerm.uri.value).then(function(response) {
 			console.log('Fetching child terms for ' + parentTerm.label.value);
 			var query = response.query;
+			startWaiting();
 			callEndpoint($scope.sourceEndpoint,$scope.sourceGraph,query).then(
 					function(successResponse) {
+						stopWaiting();
 						if (successResponse && successResponse.data && successResponse.data.results) {
 							parentTerm.subTerms = successResponse.data.results.bindings;
 						} else {
 							parentTerm.subTerms = null;
 						}
 					},
-					function(errorResponse) {
-						$scope.sparqlError = true;
-						$scope.sparqlErrorText = errorResponse.data;
-						console.log(errorResponse);
-					});
+					processError);
 		});
 
 	};
@@ -109,11 +121,13 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 			QueryBuilderService.filteredTreeQuery(filter).then(function(response) {
 				var query = response.query;
 				console.log("Fetching matching tree");
+				startWaiting();
 				callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, query).then(
 						function (successResponse) {
+							stopWaiting();
 							$scope.terms = successResponse.data.results.bindings;
 							$scope.rootTerms = $scope.makeTree($scope.terms);
-						});
+						}, processError);
 			});
 		} else {
 			$scope.getRootTerms();

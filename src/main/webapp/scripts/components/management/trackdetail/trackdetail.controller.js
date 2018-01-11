@@ -7,9 +7,9 @@ angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileU
 	$scope.sourceEndpoint = "/local/sparql"
 	$scope.sourceGraph = "http://www.boinq.org/iri/graph/meta/"
 
-	$scope.mainType = "";
-	$scope.subType = "";
-	
+	$scope.mainType = null;
+	$scope.subType = null;
+	$scope.attributeType = null;
 
 	$scope.track = resolvedTrack;
 	$scope.datasource = resolvedDatasource;
@@ -101,8 +101,8 @@ angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileU
 			function () {
 				$scope.datasource.tracks = Track.query({ds_id: $scope.datasource.id},
 						function(successResponse){
-							console.log({ds_id:$scope.datasource.id, track_id:$scope.track.id, mainType:$scope.mainType, subType:$scope.subType});
-							TrackConversion.start({ds_id:$scope.datasource.id, track_id:$scope.track.id, mainType:$scope.mainType, subType:$scope.subType}, [],
+							console.log({ds_id:$scope.datasource.id, track_id:$scope.track.id, mainType:$scope.mainType, subType:$scope.subType, attributeType:$scope.attributeType});
+							TrackConversion.start({ds_id:$scope.datasource.id, track_id:$scope.track.id, mainType:$scope.mainType, subType:$scope.subType, attributeType:$scope.attributeType}, [],
 									function(successResponse){
 										$('#confirmConversion').modal('hide');
 									},function(errorResponse){
@@ -138,15 +138,17 @@ angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileU
 
 
 	$scope.mainTypePicker = function(terms) {
-		console.log("main picker")
 		$scope.mainType = terms.uri.value;
 	};
 
 	$scope.subTypePicker = function(terms) {
-		console.log("sub picker")
 		$scope.subType = terms.uri.value;
-
-	}
+	};
+	
+	$scope.attributeTypePicker = function(terms) {
+		$scope.attributeType = terms.uri.value;
+	};
+	
 
 	
 	$scope.getMapping = function() {

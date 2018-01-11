@@ -70,6 +70,7 @@ public class TripleConversion implements AsynchronousJob {
 	private String errorDescription = "";
 	private String mainType = "";
 	private String subType = "";
+	private String attributeType = "";
 	private Date startDate = null;
 	private Date endDate = null;
 	
@@ -79,7 +80,7 @@ public class TripleConversion implements AsynchronousJob {
 	
 	private static Logger log = LoggerFactory.getLogger(TripleConversion.class);
 	
-	public TripleConversion(Track track, String mainType, String subType) {
+	public TripleConversion(Track track, String mainType, String subType, String attributeType) {
 		// only use setters !
 		// some stuff is initialized upon job launch
 		this.track = track;
@@ -88,6 +89,7 @@ public class TripleConversion implements AsynchronousJob {
 		this.name = this.description;
 		this.mainType = mainType;
 		this.subType = subType;
+		this.attributeType = attributeType;
 	}
 
 	@Override
@@ -163,6 +165,11 @@ public class TripleConversion implements AsynchronousJob {
 						meta.subType = NodeFactory.createURI(subType);
 						meta.typeList.add(meta.subType);
 					}
+					if (null == attributeType || attributeType.length() == 0) {
+						meta.scoreType = NodeFactory.createURI(attributeType);
+					} else {
+						meta.scoreType = SoVocab.score.asNode();
+					}
 				}
 				Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, track.getReferenceMap(), meta);
 				TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
@@ -232,6 +239,7 @@ public class TripleConversion implements AsynchronousJob {
 		public long readCount;
 		public Node mainType;
 		public Node subType;
+		public Node scoreType;
 		public String date = new String();
 		public String user = new String();
 		public String fileType = new String();

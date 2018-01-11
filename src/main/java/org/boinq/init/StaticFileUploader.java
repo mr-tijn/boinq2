@@ -34,6 +34,7 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 
 	private static final String SO_URI = "http://purl.obolibrary.org/obo/so-xp.obo";
 	private static final String GO_URI = "http://purl.obolibrary.org/obo/go.owl";
+	private static final String SIO_URI = "http://purl.bioontology.org/ontology/SIO";
 
 	private static final String GRAPH_VARIABLE_NAME = "graph";
 
@@ -81,6 +82,8 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 		checkSO(graphs);
 		// insert gene ontology
 		checkGO(graphs);
+		// insert semanticscience integrated ontology
+		checkSIO(graphs);
 	}
 
 	private void checkSO(List<String> graphs) {
@@ -120,6 +123,24 @@ public class StaticFileUploader implements ApplicationListener<ContextRefreshedE
 		}
 	}
 
+	private void checkSIO(List<String> graphs) {
+		for (String graph: graphs) {
+			if (SIO_URI.equals(graph)) return;
+		}
+		log.info("Uploading sio.owl into static endpoint");
+		UpdateCreate create = new UpdateCreate(NodeFactory.createURI(SIO_URI));
+		UpdateExecutionFactory.createRemote(create, staticUpdateEndpoint).execute();
+		
+		InputStream sio = this.getClass().getClassLoader().getResourceAsStream("ontologies/sio.owl");
+		if (null == sio) return;
+		TripleUploader uploader = tripleUploadService.getUploader(staticUpdateEndpoint, SIO_URI);
+		RDFDataMgr.parse(uploader, sio, Lang.RDFXML);
+		try {
+			sio.close();
+		} catch (IOException io) {
+			log.error("Could not close sio.owl");
+		}
+	}
 	
 	
 }

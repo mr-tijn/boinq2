@@ -343,7 +343,7 @@ public class GenerateQueryService {
 		ExprVar variable = new ExprVar(variableName);
 		if (QueryNode.NODETYPE_GENERICENTITY == node.getNodeType()) {
 			for (NodeFilter filter: node.getNodeFilters()) {
-				switch (node.getTemplate().getNodeType()) {
+				switch (node.getTemplate().getValueSource()) {
 				case NodeTemplate.SOURCE_ENDPOINT:
 					ExprList targetExpressions = new ExprList();
 					for (String term: filter.getTermValues()) {

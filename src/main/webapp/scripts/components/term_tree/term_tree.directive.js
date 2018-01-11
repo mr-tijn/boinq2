@@ -50,7 +50,7 @@ angular.module('boinqApp').directive('termTreeNode', function(RecursionHelper) {
 		templateUrl: 'scripts/components/term_tree/term_tree_node.html',
 		compile: function(element) {
 			return RecursionHelper.compile(element);
-	    },
+	    }
 	};
 });
 

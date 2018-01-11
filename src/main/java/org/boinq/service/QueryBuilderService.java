@@ -189,7 +189,9 @@ public class QueryBuilderService {
 		union.addElement(orphans);
 
 		query.setQueryPattern(union);
+		query.setDistinct(true);
 		query.addOrderBy(label, 0);
+		query.setLimit(1000L);
 
 		return query.toString(Syntax.syntaxSPARQL_11);
 	}
@@ -206,6 +208,7 @@ public class QueryBuilderService {
 		pattern.addElement(labelPattern(uri, label));
 		pattern.addElement(childOf);
 		query.setQueryPattern(pattern);
+		query.setDistinct(true);
 		return query.toString(Syntax.syntaxSPARQL_11);
 	}
 

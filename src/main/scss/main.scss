@@ -225,3 +225,17 @@ ul#strength {
 }
 .bnq_spacer5 { margin-top:5px; }
 .bnq_spacer15 { margin-top:15px; }
+
+@keyframes bnq_spin {
+  to {transform: rotate(360deg);}
+}
+
+.bnq_spinner {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(0,119,221,.3);
+  border-radius: 50%;
+  border-top-color: #07d;
+  animation: bnq_spin 0.8s ease-in-out infinite;
+}

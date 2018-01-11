@@ -8,6 +8,14 @@ angular.module('boinqApp').controller("NodeFilterController",['$scope','TermTool
 		return terms.map(function(term) {return term.label;}).join();
 	}
 	
+	$scope.rootNodeQuery = function(template) {
+		if (template && template.valuesRootTerm && template.valuesRootTerm.length) {
+			return "select distinct ?uri ?label where { ?uri <http://www.w3.org/2000/01/rdf-schema#label> ?label. values ?uri {<" + template.valuesRootTerm + ">} }";
+		} else {
+			return null;
+		}
+	}
+	
 	$scope.termPicked = function(terms) {
 		$scope.filter.termValues = [];
 		for (var i=0; i<terms.length; i++) {

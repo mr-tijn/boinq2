@@ -258,9 +258,8 @@
 						<b>Feature Types Options</b>
 					</h4>
 					<hr>
-
 					<div class="form-group">
-						<label>Type</label>
+						<label>Type of the features</label>
 						<term-tree-picker modal-id="mainTypePicker"
 							select-handler="mainTypePicker"
 							source-endpoint="{{staticEndpoint}}"
@@ -269,8 +268,8 @@
 							form-field-name="mainType" ng-model="mainType">
 						</term-tree-picker>
 					</div>
-					<div class="form-group" ng-show="mainType!=null">
-						<label>SubType</label>
+ 					<div class="form-group" ng-show="terms.mainType!=null">
+						<label>Type of the subfeature</label>
 						<term-tree-picker ng-show="mainType!=null"
 							modal-id="subTypePicker" select-handler="subTypePicker"
 							source-endpoint="{{staticEndpoint}}"
@@ -279,7 +278,16 @@
 							form-field-name="mainType" ng-model="subType">
 						</term-tree-picker>
 					</div>
-
+ 					<div class="form-group">
+						<label>Type of the score attribute</label>
+						<term-tree-picker
+							modal-id="attributeTypePicker" select-handler="attributeTypePicker"
+							source-endpoint="{{staticEndpoint}}"
+							source-graph="http://purl.bioontology.org/ontology/SIO"
+							search-filter="searchFilter" multi-valued='false'
+							form-field-name="attributeType" ng-model="attributeType">
+						</term-tree-picker>
+					</div>
 				</div>
 
 

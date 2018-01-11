@@ -2,7 +2,9 @@
 
 	<div class="input-group">
 		<input type="text" class="form-control" name="{{formFieldName}}"
-			ng-model="ngModel" ng-minlength=1 ng-maxlength=500 ng-disabled="true" ng-list=";">
+			ng-model="$parent.ngModel" ng-minlength=1 ng-maxlength=500 ng-list=";" ng-show="multiValued">
+		<input type="text" class="form-control" name="{{formFieldName}}"
+			ng-model="$parent.ngModel" ng-minlength=1 ng-maxlength=500 ng-show="!multiValued">
 		<span class="input-group-btn">
 			<button class="btn btn-default" type="button" ng-click="pickTerm()">
 				<span class="glyphicon glyphicon-flash"></span>Select
@@ -18,8 +20,13 @@
 						aria-hidden="true">×</button>
 					<h4 class="modal-title">Select term</h4>
 				</div>
+				
+				
+				
 				<div class="modal-body" style="max-height: 100%; max-width: 100%; overflow-y: scroll; overflow-x: scroll">
-
+					
+					<div class="bnq_spinner" ng-show="waiting"></div>
+					
 					<div class="form-group">
 						<label>Search labels</label>
 						
