@@ -1,13 +1,10 @@
 package org.boinq.web.rest.dto;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jena.graph.Node;
 import org.boinq.domain.RawDataFile;
 import org.boinq.domain.Track;
 
@@ -215,39 +212,6 @@ public class TrackDTO {
 		this.graphTemplateId = (track.getGraphTemplate()!= null?track.getGraphTemplate().getId():0);
 		for (RawDataFile dataFile: track.getRawDataFiles()) {
 			rawDataFiles.add(new RawDataFileDTO(dataFile));
-		}
-		// is it necessary to do this ?
-		if (track.getSupportedFilters() != null) {
-			this.supportedFilters = new LinkedList<>();
-			for (Map<String,String> operator: track.getSupportedFilters()) {
-				Map<String, String> newOp = new HashMap<>();
-				for (String parameter: operator.keySet()) {
-					newOp.put(parameter, operator.get(parameter));
-				}
-				supportedFilters.add(newOp);
-			}
-		}
-		if (track.getSupportedConnectors() != null) {
-			this.supportedConnectors = new LinkedList<>();
-			for (Map<String, String> connector: track.getSupportedConnectors()) {
-				Map<String,String> newCon = new HashMap<>();
-				for (String parameter: connector.keySet()) {
-					newCon.put(parameter, connector.get(parameter));
-				}
-				supportedConnectors.add(newCon);
-			}
-		}
-		if (track.getSupportedFeatureTypes() != null) {
-			this.supportedFeatureTypes = new HashMap<>();
-			for (String typeName: track.getSupportedFeatureTypes().keySet()) {
-				this.supportedFeatureTypes.put(typeName, track.getSupportedFeatureTypes().get(typeName));
-			}
-		}
-		if (track.getReferenceMap() != null) {
-			this.referenceMap = new HashMap<>();
-			for (Node ref: track.getReferenceMap().keySet()) {
-				this.referenceMap.put(ref.getURI(), track.getReferenceMap().get(ref).getURI());
-			}
 		}
 	}
 }

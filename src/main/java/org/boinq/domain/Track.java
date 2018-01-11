@@ -1,7 +1,6 @@
 package org.boinq.domain;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,14 +41,6 @@ public class Track implements Serializable {
 	public static final String TYPE_GENERIC = "generic";
 	public static final String TYPE_FEATURE = "feature";
 
-	
-	//meta info
-	@Transient
-	private List<Map<String,String>> supportedFilters;
-	@Transient
-	private List<Map<String, String>> supportedConnectors;
-	@Transient
-	private Map<String,String> supportedFeatureTypes;
 	@Transient
 	private Map<Node, Node> referenceMap;
 	
@@ -238,30 +229,6 @@ public class Track implements Serializable {
 		this.status = status;
 	}
 	
-	public void setSupportedFilters(List<Map<String, String>> supportedFilters) {
-		this.supportedFilters = supportedFilters;
-	}
-	
-	public List<Map<String,String>> getSupportedFilters() {
-		return supportedFilters;
-	}
-
-	public Map<String,String> getSupportedFeatureTypes() {
-		return supportedFeatureTypes;
-	}
-
-	public void setSupportedFeatureTypes(Map<String,String> supportedFeatureTypes) {
-		this.supportedFeatureTypes = supportedFeatureTypes;
-	}
-
-	public Map<Node, Node> getReferenceMap() {
-		return referenceMap;
-	}
-
-	public void setReferenceMap(Map<Node, Node> referenceMap) {
-		this.referenceMap = referenceMap;
-	}
-
 	@Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -302,16 +269,7 @@ public class Track implements Serializable {
                 ", assembly='" + assembly + "'" +
                 ", contigPrefix=" + contigPrefix + "'" +
                 ", rawDataFiles = [" + rawDataFilesString + "]" +
-                ", supportedFilters = [" + supportedFilters + "]" +
-                ", supportedConnectors = [" + supportedConnectors + "]" +
                 '}';
     }
 
-    public List<Map<String, String>> getSupportedConnectors() {
-    	return this.supportedConnectors;
-    }
-    
-	public void setSupportedConnectors(List<Map<String, String>> connectors) {
-		this.supportedConnectors = connectors;
-	}
 }

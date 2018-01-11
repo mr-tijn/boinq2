@@ -76,6 +76,7 @@ public class Datasource implements Serializable {
     private int type;
         
     @OneToMany(fetch=FetchType.EAGER, orphanRemoval=true)
+    @JoinColumn(name="datasource_id")
     private Set<Track> tracks;
     
     public Long getId() {

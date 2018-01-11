@@ -107,7 +107,7 @@ public class BedConverterTest {
 	public void testBedConversion() throws Exception {
 		String filePath = getClass().getResource("/inputfiles/ucsc_human_GRCh38_repeatmasker_chr9.bed").getFile();
 		TripleConversion.Metadata meta = new TripleConversion.Metadata();
-		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), null, meta);
+		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), meta);
 		String graphName = localGraphService.createLocalGraph(TESTGRAPH);
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {

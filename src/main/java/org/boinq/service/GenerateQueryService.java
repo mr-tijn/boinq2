@@ -347,7 +347,7 @@ public class GenerateQueryService {
 				case NodeTemplate.SOURCE_ENDPOINT:
 					ExprList targetExpressions = new ExprList();
 					for (String term: filter.getTermValues()) {
-						targetExpressions.add(new NodeValueString(term));
+						targetExpressions.add(new NodeValueNode(NodeFactory.createURI(term))); 
 					}
 					E_OneOf targetMatch = new E_OneOf(new E_IRI(variable), targetExpressions);
 					result.add(new ElementFilter(targetMatch));

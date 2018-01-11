@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
@@ -37,13 +35,11 @@ public class BedTripleIterator extends TripleBuilder implements Iterator<Triple>
 	private List<Triple> currentTriples = new LinkedList<Triple>();
 	private AsciiLineReaderIterator lineIterator;
 	private BEDCodec codec = new BEDCodec();
-	private Map<Node, Node> referenceMap;
 	private Metadata meta;
 	private File file;
 	
-	public BedTripleIterator(TripleGeneratorService tripleGenerator, File file, Map<Node, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException{
+	public BedTripleIterator(TripleGeneratorService tripleGenerator, File file, Metadata meta) throws FileNotFoundException, IOException{
 		super(tripleGenerator);
-		this.referenceMap = referenceMap;
 		lineIterator = new AsciiLineReaderIterator(AsciiLineReader.from(new FileInputStream(file)));
 		this.meta = meta;
 		this.file = file;

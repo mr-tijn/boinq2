@@ -58,7 +58,7 @@ public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>
 	private VCFCodec codec = new VCFCodec();
 	private Metadata meta;
 	
-	public VCFTripleIterator(TripleGeneratorService tripleGenerator, File file, Map<Node, Node> referenceMap, Metadata meta) throws FileNotFoundException, IOException {
+	public VCFTripleIterator(TripleGeneratorService tripleGenerator, File file, Metadata meta) throws FileNotFoundException, IOException {
 		super(tripleGenerator);
 		initData();
 		lineIterator = new AsciiLineReaderIterator(AsciiLineReader.from(new FileInputStream(file)));

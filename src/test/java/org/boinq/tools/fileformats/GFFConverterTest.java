@@ -102,7 +102,7 @@ public class GFFConverterTest {
 		// known problem: htsjdk parser does not understand unknown strands; and only supports limited feature types
 		String filePath = getClass().getResource("/inputfiles/test.gff3").getFile();
 		TripleConversion.Metadata meta = new TripleConversion.Metadata();
-		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), null, meta);
+		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), meta);
 		String graphName = localGraphService.createLocalGraph(TESTGRAPH);
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {

@@ -59,7 +59,7 @@ public class DatasourceResource {
     @Timed
     public @ResponseBody ResponseEntity<DatasourceDTO> create(Principal principal, @RequestBody DatasourceDTO datasourceDTO) {
         log.debug("REST request to save Datasource : {}", datasourceDTO);
-        Optional<Datasource> find = datasourceRepository.findOneWithMeta(datasourceDTO.getId());
+        Optional<Datasource> find = datasourceRepository.findOneById(datasourceDTO.getId());
         Datasource datasource;
         if (find.isPresent()) {
         	datasource = find.get();
@@ -94,7 +94,7 @@ public class DatasourceResource {
     public List<DatasourceDTO> getAll() {
         log.debug("REST request to get all Datasources");
         List<DatasourceDTO> allDTO = new LinkedList<DatasourceDTO>();
-        for (Datasource ds: datasourceRepository.findAllWithMeta()) {
+        for (Datasource ds: datasourceRepository.findAll()) {
         	allDTO.add(new DatasourceDTO(ds));
         }
         return allDTO;
@@ -109,7 +109,7 @@ public class DatasourceResource {
     @Timed
     public ResponseEntity<DatasourceDTO> get(@PathVariable Long id, HttpServletResponse response) {
         log.debug("REST request to get Datasource : {}", id);
-        Optional<Datasource> result = datasourceRepository.findOneWithMeta(id);
+        Optional<Datasource> result = datasourceRepository.findOneById(id);
         if (result.isPresent()) {
             DatasourceDTO datasourceDTO = new DatasourceDTO(result.get());
             return new ResponseEntity<>(datasourceDTO, HttpStatus.OK);

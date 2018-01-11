@@ -8,8 +8,6 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
@@ -36,7 +34,7 @@ public class SAMTripleIterator extends TripleBuilder implements Iterator<Triple>
 	private SamReader samReader;
 	
 
-	public SAMTripleIterator(TripleGeneratorService tripleGenerator, File file, Map<Node, Node> referenceMap, Metadata meta) {
+	public SAMTripleIterator(TripleGeneratorService tripleGenerator, File file, Metadata meta) {
 		super(tripleGenerator);
 		SamReaderFactory factory =SamReaderFactory.makeDefault();
 		this.samReader = factory.open(new File(file.getPath()));

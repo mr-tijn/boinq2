@@ -78,7 +78,7 @@ public class TrackResource {
 			}
 			Datasource datasource = ds.get();
 			verifyModifyPermission(principal.getName(), datasource);
-			Optional<Track> result = trackRepository.findOneWithMeta(trackDTO.getId());
+			Optional<Track> result = trackRepository.findOneById(trackDTO.getId());
 			Track track;
 			if (result.isPresent()) {
 				track = result.get();

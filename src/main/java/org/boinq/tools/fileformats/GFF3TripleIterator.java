@@ -55,7 +55,7 @@ public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple
 	private Map<String, XSDDatatype> gff3AttributeValueTypes;
 	private Counter alignmentIdx = new Counter(0);
 
-	public GFF3TripleIterator(TripleGeneratorService tripleGenerator, File file, Map<Node, Node> referenceMap, Metadata meta)
+	public GFF3TripleIterator(TripleGeneratorService tripleGenerator, File file, Metadata meta)
 			throws FileNotFoundException, IOException {
 		super(tripleGenerator);
 		this.version = new GFFVersion(3);

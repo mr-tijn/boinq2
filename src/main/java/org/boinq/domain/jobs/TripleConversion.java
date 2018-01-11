@@ -171,7 +171,7 @@ public class TripleConversion implements AsynchronousJob {
 						meta.scoreType = SoVocab.score.asNode();
 					}
 				}
-				Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, track.getReferenceMap(), meta);
+				Iterator<Triple> tripleIterator = tripleIteratorFactory.getIterator(inputFile, meta);
 				TripleUploader uploader = tripleUploadService.getUploader(track, Prefixes.getCommonPrefixes());
 				inputData.setStatus(RawDataFile.STATUS_LOADING);
 				rawDataFileRepository.save(inputData);

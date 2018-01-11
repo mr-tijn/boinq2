@@ -1,21 +1,13 @@
 package org.boinq.web.rest;
 
 import java.security.Principal;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 
-import org.boinq.domain.query.EdgeTemplate;
 import org.boinq.domain.query.GraphTemplate;
-import org.boinq.domain.query.NodeTemplate;
 import org.boinq.repository.GraphTemplateRepository;
-import org.boinq.web.rest.dto.EdgeTemplateDTO;
 import org.boinq.web.rest.dto.GraphTemplateDTO;
-import org.boinq.web.rest.dto.NodeTemplateDTO;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

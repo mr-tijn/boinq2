@@ -89,7 +89,7 @@ public class VCFConverterTest {
 	public void testBedConversion() throws Exception {
 		String filePath = getClass().getResource("/inputfiles/testVCF.vcf").getFile();
 		TripleConversion.Metadata meta = new TripleConversion.Metadata();
-		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), null, null);
+		Iterator<Triple> iterator = tripleIteratorFactory.getIterator(new File(filePath), null);
 		String graphName = localGraphService.createLocalGraph("testGraph");
 		TripleUploader uploader = tripleUploadService.getUploader(localGraphService.getUpdateEndpoint(), graphName, Prefixes.getCommonPrefixes());
 		while (iterator.hasNext()) {

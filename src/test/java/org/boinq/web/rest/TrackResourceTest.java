@@ -115,7 +115,7 @@ public class TrackResourceTest {
         when(mockDatasourceRepository.findOneById(1L)).thenReturn(Optional.of(datasource));
 		when(mockLocalGraphService.createLocalGraph(any(String.class))).thenReturn("http://graphName");
         when(mockGraphTemplateRepository.findOneById(1L)).thenReturn(Optional.of(new GraphTemplate()));
-        when(mockTrackRepository.findOneWithMeta(1L)).thenReturn(Optional.of(track));
+        when(mockTrackRepository.findOneById(1L)).thenReturn(Optional.of(track));
         when(mockTrackRepository.save(any(Track.class))).thenReturn(track);
 
         this.restTrackMockMvc = MockMvcBuilders.standaloneSetup(trackResource).build();
@@ -130,7 +130,7 @@ public class TrackResourceTest {
     	TrackDTO trackdto = new TrackDTO(track);
     	trackdto.setGraphTemplateId(1L);
     	
-        when(mockTrackRepository.findOneWithMeta(DEFAULT_ID)).thenReturn(Optional.empty());
+        when(mockTrackRepository.findOneById(DEFAULT_ID)).thenReturn(Optional.empty());
     	// Create Track
     	restTrackMockMvc.perform(post("/app/rest/datasources/1/tracks")
     			.principal(mockAdmin)
@@ -139,7 +139,7 @@ public class TrackResourceTest {
                 .andExpect(status().isOk());
     	verify(mockTrackRepository, atLeastOnce()).save(any(Track.class));
     	// from now on assume saved with DEFAULT_ID 
-        when(mockTrackRepository.findOneWithMeta(DEFAULT_ID)).thenReturn(Optional.of(track));
+        when(mockTrackRepository.findOneById(DEFAULT_ID)).thenReturn(Optional.of(track));
     	// Read Track
     	restTrackMockMvc.perform(get("/app/rest/datasources/1/tracks/{id}", DEFAULT_ID))
                 .andExpect(status().isOk())
@@ -174,14 +174,14 @@ public class TrackResourceTest {
     	verify(mockTrackRepository, atLeastOnce()).delete(any(Track.class));
     	assertTrue(datasource.getTracks().size() == 0);
     	
-        when(mockTrackRepository.findOneWithMeta(DEFAULT_ID)).thenReturn(Optional.empty());
+        when(mockTrackRepository.findOneById(DEFAULT_ID)).thenReturn(Optional.empty());
     	// Read nonexisting Track
     	restTrackMockMvc.perform(get("/app/rest/datasources/1/tracks/{id}", DEFAULT_ID)
                 .accept(TestUtil.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
 
     	datasource.getTracks().add(track);
-        when(mockTrackRepository.findOneWithMeta(DEFAULT_ID)).thenReturn(Optional.of(track));
+        when(mockTrackRepository.findOneById(DEFAULT_ID)).thenReturn(Optional.of(track));
         restTrackMockMvc.perform(get("/app/rest/datasources/1/tracks/{id}/empty", DEFAULT_ID)
         		.principal(mockAdmin))
         		.andExpect(status().isOk());
