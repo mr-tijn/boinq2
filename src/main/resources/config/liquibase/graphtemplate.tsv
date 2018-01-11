@@ -1,0 +1,5 @@
+id	type	name	endpoint_url	graph_iri
+1	1	NULL	https://www.ebi.ac.uk/rdf/services/sparql	http://rdf.ebi.ac.uk/dataset/homo_sapiens
+2	1	NULL	https://id.nlm.nih.gov/mesh/sparql	http://id.nlm.nih.gov/mesh
+3	1	NULL	http://rdf.disgenet.org/sparql/	http://rdf.disgenet.org
+4	1	NULL	https://www.ebi.ac.uk/rdf/services/sparql	http://rdf.ebi.ac.uk/dataset/expressionatlas

@@ -1,0 +1,42 @@
+id	type	name	description	variable_prefix	value_source_type	values_endpoint	values_graph	values_root_term	fixed_value	fixed_type	literal_xsd_type	assembly	filterable	color	x	y	idx
+1	4	Transcript		transcript	0					http://purl.obolibrary.org/obo/SO_0000234			1		227	160	2
+2	4	Gene		gene	0					http://purl.obolibrary.org/obo/SO_0001217			1		225	44	1
+3	2	gene_location	Location of the Gene	gene_location	0					NULL			1		374	43	3
+4	2	transcript_location	Location of the Transcript	transcript_location	0					NULL			1		366	162	4
+5	4	Exon		exon	0					http://purl.obolibrary.org/obo/SO_0000147			1		226	314	5
+6	4	Ordered part		ordered_part	0					http://semanticscience.org/resource/SIO_001261			0		159	239	6
+7	1	Rank	Rank of the Exon in the Transcript	rank	0					NULL	http://www.w3.org/2001/XMLSchema#integer		1		100	313	7
+8	2	exon_location	Location of the Exon	exon_location	0					NULL			1		338	312	8
+9	1	Synonym		synonym	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		323	107	9
+10	0	Translation		translation	1					NULL			0		109	161	10
+11	1	Id	Gene Identifier	gene_id	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		303	18	11
+12	1	Id	Transcript identifier	transcript_id	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		282	126	12
+13	1	Id	Exon Identifier	exon_id	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		283	278	13
+14	1	Id	Translation Identifier	translation_id	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		23	161	14
+15	0	Xref	Cross reference to other identifiers	alternativeId	1					NULL			0		116	48	15
+16	4	Term	MeSH Term	term	0					http://id.nlm.nih.gov/mesh/vocab#Term			0		343	286	2
+17	4	Concept	MeSH Concept	concept	0					http://id.nlm.nih.gov/mesh/vocab#Concept			0		213	240	1
+18	4	Topic	Topical Descriptor	topic	0					http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor			0		104	169	3
+19	4	TreeNumber	MeSH Tree Number, hierarchical	treeNumber	0					http://id.nlm.nih.gov/mesh/vocab#TreeNumber			0		208	86	4
+20	1	label	Term Label	termLabel	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		343	361	6
+21	1	label	Concept label	conceptLabel	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		187	332	5
+22	1	label	Topic label	topicLabel	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		74	286	7
+23	4	Parent	Parent Tree Number (use in separate graph for recursion)	parentTreeNumber	0					http://id.nlm.nih.gov/mesh/vocab#TreeNumber			0		361	159	8
+24	4	GDA	Gene Disease Association	gda	0					http://semanticscience.org/resource/SIO_001121			0		274	158	1
+25	4	Gene	Gene	gene	0					http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C16612			0		144	149	2
+26	4	DiseaseClass	Disease Class	diseaseClass	0					http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C7057			0		346	223	3
+27	1	Id	Disease id	diseaseId	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		383	308	4
+28	0	Id	Gene Id	geneId	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		144	229	5
+30	0	Mesh	MeSH Topical Descriptor	meshTerm	1	http://id.nlm.nih.gov/mesh/sparql	MeSH	http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor		NULL			1		434	200	6
+32	1	Id	Phenotype Id	phenotypeId	0					NULL	http://www.w3.org/2001/XMLSchema#string		1		438	21	8
+33	4	Phenotype	Phenotype	phenotype	0					http://semanticscience.org/resource/SIO_010056			0		364	76	7
+34	0	HPO	Human Phenotype Ontology term	hpo	1	http://fuseki:3030/static/sparql	http://purl.bioontology.org/ontology/HP			NULL			1		435	132	9
+35	3	Score	Score of the association	score	0					http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25338	http://www.w3.org/2001/XMLSchema#double		1		236	74	10
+36	1	Fold Change	Fold Change	foldChange	0					NULL	http://www.w3.org/2001/XMLSchema#double		1		670	60	3
+37	1	P Value	P Value	pValue	0					NULL	http://www.w3.org/2001/XMLSchema#double		1		735	132	4
+38	0	DE Analysis	Differential Expression Analysis	analysis	0					http://rdf.ebi.ac.uk/terms/expressionatlas/differentialExpressionAnalysis			0		379	130	1
+39	0	Factor	Experimental Factor	factor	1	https://www.ebi.ac.uk/rdf/services/sparql	http://rdf.ebi.ac.uk/dataset/efo	http://www.ebi.ac.uk/efo/EFO_0000001		NULL			0		312	228	6
+40	4	Gene	Gene	gene	0					http://purl.obolibrary.org/obo/SO_0001217			0		538	34	5
+41	0	DE Ratio	Value	value	0					http://rdf.ebi.ac.uk/terms/expressionatlas/differentialExpressionRatio			0		547	131	2
+44	0	FactorType	Experimental Factor	factorType	1	https://www.ebi.ac.uk/rdf/services/sparql	http://rdf.ebi.ac.uk/dataset/efo	http://www.ebi.ac.uk/efo/EFO_0000001		NULL			1		181	162	7
+45	0	DEType	Differential Expression Type	deType	0					NULL			0		603	225	8

@@ -154,25 +154,31 @@
  -->		<loadUpdateData tableName="T_TRACK" primaryKey="id" encoding="UTF-8" file="config/liquibase/tracks_update01.csv" separator="|"/>
  	</changeSet>
    	<changeSet author="martijn" id="import graphengine data" >
-
         <loadData encoding="UTF-8"
                   file="config/liquibase/graphtemplate.csv"
                   separator="|"
                   tableName="t_graphtemplate">
        </loadData>
-
        <loadData encoding="UTF-8"
                   file="config/liquibase/nodetemplate.csv"
                   separator="|"
                   tableName="t_nodetemplate">
        	<column name="filterable" type="BOOLEAN" />
        </loadData>
-
        <loadData encoding="UTF-8"
                   file="config/liquibase/edgetemplate.csv"
                   separator="|"
                   tableName="t_edgetemplate"/>
-
-
 	</changeSet> 
+	<changeSet id="update example data" author="martijn">
+		<loadUpdateData tableName="t_datasource" primaryKey="id" file="config/liquibase/datasource.tsv" separator="\t">
+			<column name="is_public" type="BOOLEAN" />
+		</loadUpdateData>
+		<loadUpdateData tableName="t_graphtemplate" primaryKey="id" file="config/liquibase/graphtemplate.tsv" separator="\t"/>
+		<loadUpdateData tableName="t_track" primaryKey="id" file="config/liquibase/track.tsv" separator="\t"/>
+		<loadUpdateData tableName="t_nodetemplate" primaryKey="id" file="config/liquibase/nodetemplate.tsv" separator="\t">
+			<column name="filterable" type="BOOLEAN" />
+		</loadUpdateData>
+		<loadUpdateData tableName="t_edgetemplate" primaryKey="id" file="config/liquibase/edgetemplate.tsv" separator="\t"/>
+	</changeSet>
 </databaseChangeLog>

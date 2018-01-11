@@ -1,0 +1,6 @@
+id	graph_name	status	datasource_id	name	type	file_type	species	assembly	contig_prefix	entry_count	feature_count	triple_count	graphtemplate_id	description
+1	http://www.boinq.org/data/graph/1bc44707-ad1b-4781-8413-0834a2ed6844	0	1	Example Track	http://purl.obolibrary.org/obo/SO_0001410	NULL	Homo sapiens	GRCh38	NULL	0	0	0	NULL	An example track
+2	http://rdf.ebi.ac.uk/dataset/homo_sapiens	0	2	Ensembl Human Genes, Transcripts and Exons	generic	NULL	Homo sapiens	GRCh38	NULL	0	0	0	1	Genes, Transcripts and Exons from ENSEMBL Human endpoint
+3	http://id.nlm.nih.gov/mesh/	0	3	MeSH Core	generic	NULL	NULL	NULL	NULL	0	0	0	2	Core concepts of the Medical Subject Headings ontology
+4	http://rdf.disgenet.org	0	4	Simplified GDA	generic	NULL	NULL	NULL	NULL	0	0	0	3	Gene Disease Associations from DisGeNet, limited to the most simple form: linking genes and diseases/phenotypes by ID.
+5	http://rdf.ebi.ac.uk/dataset/expressionatlas	0	2	ExpressionAtlas DGE Data	generic	NULL	NULL	NULL	NULL	0	0	0	4	NULL
