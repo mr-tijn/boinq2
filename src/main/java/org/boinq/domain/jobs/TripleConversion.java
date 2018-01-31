@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
@@ -231,11 +232,12 @@ public class TripleConversion implements AsynchronousJob {
 	
 	public static class Metadata{
 		public int prefixLength;
-		public long tripleCount;
-		public long featureCount;
-		public long entryCount;
-		public long filterCount;
-		public long sampleCount;
+		public long tripleCount = 0L;
+		public long featureCount = 0L;
+		public long entryCount = 0L;
+		public long filterCount = 0L;
+		public long sampleCount = 0L;
+		public long genotypeCount = 0L;
 		public long readCount;
 		public Node mainType;
 		public Node subType;
@@ -252,9 +254,12 @@ public class TripleConversion implements AsynchronousJob {
 		public Map<String,Node>featureIDmap = new HashMap<>();
 		public Map<String,Node> filterMap = new HashMap<>();
 		public Map<String,Node> sampleMap = new HashMap<>();
+		public Map<String, XSDDatatype> genotypeTypeMap = new HashMap<>();
+		public Map<String, Node> genotypeMap = new HashMap<>();
+		public Map<String, Node> infoMap = new HashMap<>();
+		public Map<String, XSDDatatype> infoTypeMap = new HashMap<>();
 		public Map<String,Node> readMap = new HashMap<>();
 		public Map<String,Node> referenceMap = new HashMap<>();
-		public Map<String,String> formatMap = new HashMap<>();
 		public VCFHeader vcfHeader = new VCFHeader();
 		public SAMFileHeader samHeader = new SAMFileHeader();
 		public Boolean initialize = true;
