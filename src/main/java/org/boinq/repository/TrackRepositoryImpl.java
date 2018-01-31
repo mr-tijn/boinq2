@@ -6,7 +6,6 @@ import org.boinq.domain.RawDataFile;
 import org.boinq.domain.Track;
 import org.boinq.service.FileManagerService;
 import org.boinq.service.LocalGraphService;
-import org.boinq.service.MetaInfoService;
 
 public class TrackRepositoryImpl implements TrackRepositoryExtensions {
 	
@@ -14,8 +13,6 @@ public class TrackRepositoryImpl implements TrackRepositoryExtensions {
 	private TrackRepository trackRepository;
 	@Inject
 	private FileManagerService fileManager;
-	@Inject
-	private MetaInfoService metaInfoService;
 	@Inject
 	private LocalGraphService localGraphService;
 	
