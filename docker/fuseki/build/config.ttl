@@ -1,0 +1,60 @@
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ja:      <http://jena.hpl.hp.com/2005/11/Assembler#> .
+@prefix rdf:	 <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix fuseki:  <http://jena.apache.org/fuseki#>
+@prefix tdb:     <http://jena.hpl.hp.com/2008/tdb#>
+
+<#boinq> rdf:type fuseki:Service ;
+    fuseki:name                       "boinq" ;       # http://host:port/ds
+    fuseki:serviceQuery               "sparql" ;   # SPARQL query service
+    fuseki:serviceQuery               "query" ;    # SPARQL query service (alt name)
+    fuseki:serviceUpdate              "update" ;   # SPARQL update service
+    fuseki:serviceUpload              "upload" ;   # Non-SPARQL upload service
+    fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol (read and write)
+    # A separate read-only graph store endpoint:
+    fuseki:serviceReadGraphStore      "get" ;      # SPARQL Graph store protocol (read only)
+    fuseki:dataset                   <#boinqData> ;
+    .
+<#static> rdf:type fuseki:Service ;
+    fuseki:name                       "static" ;       # http://host:port/ds
+    fuseki:serviceQuery               "sparql" ;   # SPARQL query service
+    fuseki:serviceQuery               "query" ;    # SPARQL query service (alt name)
+    fuseki:serviceUpdate              "update" ;   # SPARQL update service
+    fuseki:serviceUpload              "upload" ;   # Non-SPARQL upload service
+    fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol (read and write)
+    # A separate read-only graph store endpoint:
+    fuseki:serviceReadGraphStore      "get" ;      # SPARQL Graph store protocol (read only)
+    fuseki:dataset                   <#staticData> ;
+    .
+<#test> rdf:type fuseki:Service ;
+    fuseki:name                       "test" ;       # http://host:port/ds
+    fuseki:serviceQuery               "sparql" ;   # SPARQL query service
+    fuseki:serviceQuery               "query" ;    # SPARQL query service (alt name)
+    fuseki:serviceUpdate              "update" ;   # SPARQL update service
+    fuseki:serviceUpload              "upload" ;   # Non-SPARQL upload service
+    fuseki:serviceReadWriteGraphStore "data" ;     # SPARQL Graph store protocol (read and write)
+    # A separate read-only graph store endpoint:
+    fuseki:serviceReadGraphStore      "get" ;      # SPARQL Graph store protocol (read only)
+    fuseki:dataset                   <#testData> ;
+    .
+<#boinqData> rdf:type      tdb:DatasetTDB ;
+    tdb:location "/mnt/graphs/boinqTDB" ;
+    # Query timeout on this dataset (1s, 100 seconds)
+    ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "100000" ] ;
+    # Make the default graph be the union of all named graphs.
+    ## tdb:unionDefaultGraph true ;
+     .
+<#staticData> rdf:type      tdb:DatasetTDB ;
+    tdb:location "/mnt/graphs/staticTDB" ;
+    # Query timeout on this dataset (1s, 100 seconds)
+    ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "100000" ] ;
+    # Make the default graph be the union of all named graphs.
+    ## tdb:unionDefaultGraph true ;
+     .
+<#testData> rdf:type      tdb:DatasetTDB ;
+    tdb:location "/mnt/graphs/testTDB" ;
+    # Query timeout on this dataset (1s, 100 seconds)
+    ja:context [ ja:cxtName "arq:queryTimeout" ;  ja:cxtValue "100000" ] ;
+    # Make the default graph be the union of all named graphs.
+    ## tdb:unionDefaultGraph true ;
+     .
