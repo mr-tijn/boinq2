@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet author="martijn (generated)" id="1515504503967-1">
+        <createTable tableName="hibernate_sequences">
+            <column name="sequence_name" type="VARCHAR(255)"/>
+            <column name="sequence_next_hi_value" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-2">
+        <createTable tableName="jhi_authority">
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-3">
+        <createTable tableName="jhi_persistent_audit_event">
+            <column autoIncrement="true" name="event_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="principal" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_date" type="TIMESTAMP"/>
+            <column name="event_type" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-4">
+        <createTable tableName="jhi_persistent_audit_evt_data">
+            <column name="event_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-5">
+        <createTable tableName="jhi_persistent_token">
+            <column name="series" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+            <column name="token_value" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token_date" type="date"/>
+            <column name="ip_address" type="VARCHAR(39)"/>
+            <column name="user_agent" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-6">
+        <createTable tableName="jhi_user">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="login" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PASSWORD" type="VARCHAR(60)"/>
+            <column name="first_name" type="VARCHAR(50)"/>
+            <column name="last_name" type="VARCHAR(50)"/>
+            <column name="email" type="VARCHAR(100)"/>
+            <column name="activated" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lang_key" type="VARCHAR(5)"/>
+            <column name="activation_key" type="VARCHAR(20)"/>
+            <column name="reset_key" type="VARCHAR(20)"/>
+            <column name="created_by" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reset_date" type="TIMESTAMP"/>
+            <column name="last_modified_by" type="VARCHAR(50)"/>
+            <column name="last_modified_date" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-7">
+        <createTable tableName="jhi_user_authority">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authority_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-8">
+        <createTable tableName="t_analysis">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="status" type="INT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="description" type="TEXT"/>
+            <column name="error_description" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-9">
+        <createTable tableName="t_datasource">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="endpoint_url" type="VARCHAR(255)"/>
+            <column name="type" type="INT"/>
+            <column name="is_public" type="BIT(1)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="owner_id" type="BIGINT"/>
+            <column name="endpoint_update_url" type="VARCHAR(255)"/>
+            <column name="meta_graph_name" type="VARCHAR(255)"/>
+            <column name="meta_endpoint_url" type="VARCHAR(255)"/>
+            <column name="iri" type="VARCHAR(255)"/>
+            <column name="META_ENDPOINT_UPDATE_URL" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-10">
+        <createTable tableName="t_datasource_t_track">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="T_DATASOURCE_id" type="BIGINT"/>
+            <column name="tracks_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-11">
+        <createTable tableName="t_edgetemplate">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="from_nodetemplate_id" type="BIGINT"/>
+            <column name="to_nodetemplate_id" type="BIGINT"/>
+            <column name="term" type="VARCHAR(255)"/>
+            <column name="label" type="VARCHAR(255)"/>
+            <column name="graphtemplate_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-12">
+        <createTable tableName="t_featureconnector">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="path_expression" type="VARCHAR(255)"/>
+            <column name="type" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-13">
+        <createTable tableName="t_featurejoin">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="source_select_id" type="BIGINT"/>
+            <column name="target_select_id" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="feature_query_id" type="BIGINT"/>
+            <column name="same_strand" type="BIT(1)"/>
+            <column name="source_connector_id" type="BIGINT"/>
+            <column name="target_connector_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-14">
+        <createTable tableName="t_featurequery">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="owner_id" type="BIGINT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="target_graph" type="VARCHAR(255)"/>
+            <column name="reference_assembly_uri" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-15">
+        <createTable tableName="t_featureselect">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="track_id" type="BIGINT"/>
+            <column name="retrieve_feature_data" type="BIT(1)"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="feature_query_id" type="BIGINT"/>
+            <column name="view_x" type="INT"/>
+            <column name="view_y" type="INT"/>
+            <column name="idx" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-16">
+        <createTable tableName="t_featureselectcriterion">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="start" type="BIGINT"/>
+            <column name="end" type="BIGINT"/>
+            <column name="contig" type="VARCHAR(255)"/>
+            <column name="strand" type="BIT(1)"/>
+            <column name="feature_select_id" type="BIGINT"/>
+            <column name="feature_type_uri" type="VARCHAR(255)"/>
+            <column name="feature_type_label" type="VARCHAR(255)"/>
+            <column name="match_name" type="VARCHAR(255)"/>
+            <column name="path_expression" type="VARCHAR(255)"/>
+            <column name="exact_match" type="BIT(1)"/>
+            <column name="min_double" type="DOUBLE(22)"/>
+            <column name="max_double" type="DOUBLE(22)"/>
+            <column name="match_double" type="DOUBLE(22)"/>
+            <column name="min_long" type="BIGINT"/>
+            <column name="max_long" type="BIGINT"/>
+            <column name="match_long" type="BIGINT"/>
+            <column name="match_string" type="VARCHAR(255)"/>
+            <column name="term_uri" type="VARCHAR(255)"/>
+            <column name="term_label" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-17">
+        <createTable tableName="t_graphtemplate">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="type" type="INT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="endpoint_url" type="VARCHAR(255)"/>
+            <column name="graph_iri" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-18">
+        <createTable tableName="t_nodefilter">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="type" type="INT"/>
+            <column name="case_insensitive" type="BIT(1)"/>
+            <column name="negate" type="BIT(1)"/>
+            <column name="exact_match" type="BIT(1)"/>
+            <column name="min_integer" type="BIGINT"/>
+            <column name="max_integer" type="BIGINT"/>
+            <column name="integer_value" type="BIGINT"/>
+            <column name="min_double" type="DOUBLE(22)"/>
+            <column name="max_double" type="DOUBLE(22)"/>
+            <column name="double_value" type="DOUBLE(22)"/>
+            <column name="include_min" type="BIT(1)"/>
+            <column name="include_max" type="BIT(1)"/>
+            <column name="string_value" type="VARCHAR(255)"/>
+            <column name="term_values" type="TEXT"/>
+            <column name="contig" type="VARCHAR(255)"/>
+            <column name="strand" type="BIT(1)"/>
+            <column name="querynode_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-19">
+        <createTable tableName="t_nodetemplate">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="type" type="INT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="variable_prefix" type="VARCHAR(255)"/>
+            <column name="value_source_type" type="INT"/>
+            <column name="values_endpoint" type="VARCHAR(255)"/>
+            <column name="values_graph" type="VARCHAR(255)"/>
+            <column name="values_root_term" type="VARCHAR(255)"/>
+            <column name="fixed_value" type="VARCHAR(255)"/>
+            <column name="fixed_type" type="VARCHAR(255)"/>
+            <column name="literal_xsd_type" type="VARCHAR(255)"/>
+            <column name="assembly" type="VARCHAR(255)"/>
+            <column name="filterable" type="BIT(1)"/>
+            <column name="color" type="VARCHAR(255)"/>
+            <column name="x" type="INT"/>
+            <column name="y" type="INT"/>
+            <column name="idx" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-20">
+        <createTable tableName="t_progress">
+            <column name="analysis_id" type="BIGINT"/>
+            <column name="reference" type="VARCHAR(255)"/>
+            <column name="percentage" type="FLOAT(12)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-21">
+        <createTable tableName="t_project">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="owner_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-22">
+        <createTable tableName="t_project_t_track">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="T_PROJECT_id" type="BIGINT"/>
+            <column name="tracks_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-23">
+        <createTable tableName="t_querybridge">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="from_node_id" type="BIGINT"/>
+            <column name="from_graph_id" type="BIGINT"/>
+            <column name="to_node_id" type="BIGINT"/>
+            <column name="to_graph_id" type="BIGINT"/>
+            <column name="string_to_entity_template" type="VARCHAR(255)"/>
+            <column name="literal_to_literal_match_type" type="INT"/>
+            <column name="match_strand" type="BIT(1)"/>
+            <column name="querydefinition_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-24">
+        <createTable tableName="t_querydefinition">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="status" type="INT"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="species" type="VARCHAR(255)"/>
+            <column name="assembly" type="VARCHAR(255)"/>
+            <column name="owner_id" type="BIGINT"/>
+            <column name="target_graph" type="VARCHAR(255)"/>
+            <column name="target_file" type="VARCHAR(255)"/>
+            <column name="result_as_table" type="BIT(1)"/>
+            <column name="sparql_query" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-25">
+        <createTable tableName="t_queryedge">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="edgetemplate_id" type="BIGINT"/>
+            <column name="from_querynode_id" type="BIGINT"/>
+            <column name="to_querynode_id" type="BIGINT"/>
+            <column name="retrieve" type="BIT(1)"/>
+            <column name="querygraph_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-26">
+        <createTable tableName="t_querygraph">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="idx" type="INT"/>
+            <column name="x" type="INT"/>
+            <column name="y" type="INT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="querydefinition_id" type="BIGINT"/>
+            <column name="graphtemplate_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-27">
+        <createTable tableName="t_querynode">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="nodetemplate_id" type="BIGINT"/>
+            <column name="entity_values" type="TEXT"/>
+            <column name="idx" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-28">
+        <createTable tableName="t_rawdatafile">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="file_path" type="VARCHAR(255)"/>
+            <column name="status" type="INT"/>
+            <column name="track_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-29">
+        <createTable tableName="t_referencemapentry">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="graphtemplate_id" type="BIGINT"/>
+            <column name="boinq_reference_iri" type="VARCHAR(255)"/>
+            <column name="remote_reference_iri" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-30">
+        <createTable tableName="t_regionofinterest">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="sample_date_attribute" type="date"/>
+            <column name="sample_text_attribute" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-31">
+        <createTable tableName="t_stringcollections">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="nodetemplate_id" type="BIGINT"/>
+            <column name="value" type="VARCHAR(255)"/>
+            <column name="idx" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-32">
+        <createTable tableName="t_track">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="graph_name" type="VARCHAR(255)"/>
+            <column name="status" type="INT"/>
+            <column name="datasource_id" type="BIGINT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="file_type" type="VARCHAR(255)"/>
+            <column name="species" type="VARCHAR(255)"/>
+            <column name="assembly" type="VARCHAR(255)"/>
+            <column name="contig_prefix" type="VARCHAR(255)"/>
+            <column name="entry_count" type="BIGINT"/>
+            <column name="feature_count" type="BIGINT"/>
+            <column name="triple_count" type="BIGINT"/>
+            <column name="graphtemplate_id" type="BIGINT"/>
+            <column name="description" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-33">
+        <createTable tableName="t_track_t_rawdatafile">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="T_TRACK_id" type="BIGINT"/>
+            <column name="rawDataFiles_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-34">
+        <addPrimaryKey columnNames="name" constraintName="PRIMARY" tableName="jhi_authority"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-35">
+        <addPrimaryKey columnNames="event_id, name" constraintName="PRIMARY" tableName="jhi_persistent_audit_evt_data"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-36">
+        <addPrimaryKey columnNames="series" constraintName="PRIMARY" tableName="jhi_persistent_token"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-37">
+        <addPrimaryKey columnNames="user_id, authority_name" constraintName="PRIMARY" tableName="jhi_user_authority"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-38">
+        <addUniqueConstraint columnNames="tracks_id" constraintName="UC_T_DATASOURCE_T_TRACK_TRACKS_ID" deferrable="false" disabled="false" initiallyDeferred="false" tableName="t_datasource_t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-39">
+        <addUniqueConstraint columnNames="rawDataFiles_id" constraintName="UC_T_TRACK_T_RAWDATAFILE_RAWDATAFILES_ID" deferrable="false" disabled="false" initiallyDeferred="false" tableName="t_track_t_rawdatafile"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-40">
+        <addUniqueConstraint columnNames="email" constraintName="email" deferrable="false" disabled="false" initiallyDeferred="false" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-41">
+        <addUniqueConstraint columnNames="email" constraintName="idx_user_email" deferrable="false" disabled="false" initiallyDeferred="false" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-42">
+        <addUniqueConstraint columnNames="login" constraintName="idx_user_login" deferrable="false" disabled="false" initiallyDeferred="false" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-43">
+        <addUniqueConstraint columnNames="login" constraintName="login" deferrable="false" disabled="false" initiallyDeferred="false" tableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-44">
+        <addForeignKeyConstraint baseColumnNames="track_id" baseTableName="t_rawdatafile" constraintName="fk_1sr430mljt676vgn8mc98gvf4" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-45">
+        <addForeignKeyConstraint baseColumnNames="rawDataFiles_id" baseTableName="t_track_t_rawdatafile" constraintName="fk_436vll7708q8p6oqjt16a0ah" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_rawdatafile"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-46">
+        <addForeignKeyConstraint baseColumnNames="datasource_id" baseTableName="t_track" constraintName="fk_79ifc99gxvpn74rs90bl9oroj" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_datasource"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-47">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_project" constraintName="fk_a0kdmtvfioekufbkj7t3161qe" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-48">
+        <addForeignKeyConstraint baseColumnNames="authority_name" baseTableName="jhi_user_authority" constraintName="fk_authority_name" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="name" referencedTableName="jhi_authority"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-49">
+        <addForeignKeyConstraint baseColumnNames="feature_select_id" baseTableName="t_featureselectcriterion" constraintName="fk_criterionToSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featureselect"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-50">
+        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableName="t_datasource_t_track" constraintName="fk_cyex7yx8vb80gi2vq2eswyu4q" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-51">
+        <addForeignKeyConstraint baseColumnNames="from_nodetemplate_id" baseTableName="t_edgetemplate" constraintName="fk_edge_fromNode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_nodetemplate"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-52">
+        <addForeignKeyConstraint baseColumnNames="graphtemplate_id" baseTableName="t_edgetemplate" constraintName="fk_edge_graphtemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_graphtemplate"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-53">
+        <addForeignKeyConstraint baseColumnNames="to_nodetemplate_id" baseTableName="t_edgetemplate" constraintName="fk_edge_tomNode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_nodetemplate"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-54">
+        <addForeignKeyConstraint baseColumnNames="event_id" baseTableName="jhi_persistent_audit_evt_data" constraintName="fk_evt_pers_audit_evt_data" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="event_id" referencedTableName="jhi_persistent_audit_event"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-55">
+        <addForeignKeyConstraint baseColumnNames="source_connector_id" baseTableName="t_featurejoin" constraintName="fk_featureJoinToSourceConnector" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featureconnector"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-56">
+        <addForeignKeyConstraint baseColumnNames="target_connector_id" baseTableName="t_featurejoin" constraintName="fk_featureJoinToTargetConnector" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featureconnector"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-57">
+        <addForeignKeyConstraint baseColumnNames="T_PROJECT_id" baseTableName="t_project_t_track" constraintName="fk_gxlx7clnpyr5voo4qxyyrn3kh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_project"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-58">
+        <addForeignKeyConstraint baseColumnNames="feature_query_id" baseTableName="t_featurejoin" constraintName="fk_joinToQuery" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featurequery"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-59">
+        <addForeignKeyConstraint baseColumnNames="source_select_id" baseTableName="t_featurejoin" constraintName="fk_joinToSourceSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featureselect"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-60">
+        <addForeignKeyConstraint baseColumnNames="target_select_id" baseTableName="t_featurejoin" constraintName="fk_joinToTargetSelect" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featureselect"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-61">
+        <addForeignKeyConstraint baseColumnNames="T_TRACK_id" baseTableName="t_track_t_rawdatafile" constraintName="fk_jrfqf4yqyf2c8v7khfbk9ar8a" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-62">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_datasource" constraintName="fk_nacyl39t0jqfg2i80af976s6b" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-63">
+        <addForeignKeyConstraint baseColumnNames="querynode_id" baseTableName="t_nodefilter" constraintName="fk_nodefilter_querynode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querynode"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-64">
+        <addForeignKeyConstraint baseColumnNames="analysis_id" baseTableName="t_progress" constraintName="fk_progressToAnalysis" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_analysis"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-65">
+        <addForeignKeyConstraint baseColumnNames="T_DATASOURCE_id" baseTableName="t_datasource_t_track" constraintName="fk_qahly5cqvghitfeqekbgeqk1t" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_datasource"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-66">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_featurequery" constraintName="fk_queryToUser" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-67">
+        <addForeignKeyConstraint baseColumnNames="from_graph_id" baseTableName="t_querybridge" constraintName="fk_querybridge_fromGraph" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querygraph"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-68">
+        <addForeignKeyConstraint baseColumnNames="from_node_id" baseTableName="t_querybridge" constraintName="fk_querybridge_fromNode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querynode"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-69">
+        <addForeignKeyConstraint baseColumnNames="querydefinition_id" baseTableName="t_querybridge" constraintName="fk_querybridge_querydefinition" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querydefinition"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-70">
+        <addForeignKeyConstraint baseColumnNames="to_graph_id" baseTableName="t_querybridge" constraintName="fk_querybridge_toGraph" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querygraph"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-71">
+        <addForeignKeyConstraint baseColumnNames="to_node_id" baseTableName="t_querybridge" constraintName="fk_querybridge_toNode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querynode"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-72">
+        <addForeignKeyConstraint baseColumnNames="owner_id" baseTableName="t_querydefinition" constraintName="fk_querydefinition_user" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-73">
+        <addForeignKeyConstraint baseColumnNames="edgetemplate_id" baseTableName="t_queryedge" constraintName="fk_queryedge_edgetemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_edgetemplate"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-74">
+        <addForeignKeyConstraint baseColumnNames="from_querynode_id" baseTableName="t_queryedge" constraintName="fk_queryedge_from_querynode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querynode"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-75">
+        <addForeignKeyConstraint baseColumnNames="querygraph_id" baseTableName="t_queryedge" constraintName="fk_queryedge_querygraph" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querygraph"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-76">
+        <addForeignKeyConstraint baseColumnNames="to_querynode_id" baseTableName="t_queryedge" constraintName="fk_queryedge_to_querynode" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querynode"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-77">
+        <addForeignKeyConstraint baseColumnNames="graphtemplate_id" baseTableName="t_querygraph" constraintName="fk_querygraph_graphtemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_graphtemplate"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-78">
+        <addForeignKeyConstraint baseColumnNames="querydefinition_id" baseTableName="t_querygraph" constraintName="fk_querygraph_querydefinition" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_querydefinition"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-79">
+        <addForeignKeyConstraint baseColumnNames="nodetemplate_id" baseTableName="t_querynode" constraintName="fk_querynode_nodetemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_nodetemplate"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-80">
+        <addForeignKeyConstraint baseColumnNames="graphtemplate_id" baseTableName="t_referencemapentry" constraintName="fk_referencemapentry_graphtemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_graphtemplate"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-81">
+        <addForeignKeyConstraint baseColumnNames="feature_query_id" baseTableName="t_featureselect" constraintName="fk_selectToQuery" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_featurequery"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-82">
+        <addForeignKeyConstraint baseColumnNames="track_id" baseTableName="t_featureselect" constraintName="fk_selectToTrack" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-83">
+        <addForeignKeyConstraint baseColumnNames="tracks_id" baseTableName="t_project_t_track" constraintName="fk_sjplolmoi7krxotu85hr3mr24" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_track"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-84">
+        <addForeignKeyConstraint baseColumnNames="nodetemplate_id" baseTableName="t_stringcollections" constraintName="fk_stringcollections_nodetemplate" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="t_nodetemplate"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-85">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="jhi_user_authority" constraintName="fk_user_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-86">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="jhi_persistent_token" constraintName="fk_user_persistent_token" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="jhi_user"/>
+    </changeSet>
+    <changeSet author="martijn (generated)" id="1515504503967-87">
+        <createIndex indexName="idx_persistent_audit_event" tableName="jhi_persistent_audit_event" unique="false">
+            <column name="principal"/>
+            <column name="event_date"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
