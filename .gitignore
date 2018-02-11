@@ -138,7 +138,6 @@ external_dependencies/*
 !external_dependencies/download_and_build.sh
 !external_dependencies/lib
 external_dependencies/lib*
-fuseki
 !files
 files/*
 reference_tools
