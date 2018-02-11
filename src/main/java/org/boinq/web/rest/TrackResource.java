@@ -285,7 +285,7 @@ public class TrackResource {
 	
 	@RequestMapping(value = "/rest/datasources/{ds_id}/tracks/{track_id}/startconversion", method = RequestMethod.PUT)
 	public ResponseEntity<String> startTripleConversion(Principal principal, @PathVariable Long ds_id,
-			@PathVariable Long track_id, @RequestParam String mainType, @RequestParam String subType, @RequestParam(defaultValue="") String attributeType) {
+			@PathVariable Long track_id, @RequestParam(defaultValue="") String mainType, @RequestParam(defaultValue="") String subType, @RequestParam(defaultValue="") String attributeType) {
 		log.debug("REST request to start triple conversion on Track " + track_id);
 		try {
 			Optional<Datasource> result = datasourceRepository.findOneById(ds_id);

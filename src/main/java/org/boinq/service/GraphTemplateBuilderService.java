@@ -2,10 +2,10 @@ package org.boinq.service;
 
 import static org.boinq.domain.query.TemplateFactory.attributeNode;
 import static org.boinq.domain.query.TemplateFactory.entityNode;
+import static org.boinq.domain.query.TemplateFactory.link;
 import static org.boinq.domain.query.TemplateFactory.literalNode;
 import static org.boinq.domain.query.TemplateFactory.locationNode;
 import static org.boinq.domain.query.TemplateFactory.typedEntityNode;
-import static org.boinq.domain.query.TemplateFactory.link;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -13,40 +13,43 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
-import org.apache.jena.datatypes.xsd.impl.XSDBaseStringType;
 import org.apache.jena.graph.Node;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDF.Nodes;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.jena.vocabulary.SKOS;
 import org.apache.jena.vocabulary.XSD;
+import org.boinq.domain.Track;
+import org.boinq.domain.jobs.TripleConversion.Metadata;
 import org.boinq.domain.query.EdgeTemplate;
 import org.boinq.domain.query.GraphTemplate;
 import org.boinq.domain.query.NodeTemplate;
-import org.boinq.domain.query.QueryNode;
 import org.boinq.domain.query.TemplateFactory.Increment;
 import org.boinq.domain.query.TemplateFactory.Position;
-import org.boinq.repository.GraphTemplateRepository;
-import org.boinq.tools.fileformats.VCFTripleIterator;
-import org.springframework.stereotype.Service;
-
 import org.boinq.generated.vocabularies.FaldoVocab;
 import org.boinq.generated.vocabularies.FormatVocab;
 import org.boinq.generated.vocabularies.GfvoVocab;
 import org.boinq.generated.vocabularies.SoVocab;
+import org.boinq.tools.fileformats.VCFTripleIterator;
+import org.springframework.stereotype.Service;
 
 
 @Service
-public class GraphTemplateBuilderService {
+public class GraphTemplateBuilderService {	
 	
-	private static final long BED_TEMPLATE_ID = 1L;
-	
-	@Inject
-	private GraphTemplateRepository graphTemplateRepo;
-	
+	public GraphTemplate fromFile(Metadata meta, Track track) {
+		if (track.getType().equals(Track.TYPE_FEATURE)) {
+			switch (track.getFileType().toUpperCase()) {
+			case "BED":
+				return fromBed(meta.mainType.getURI(), meta.subType.getURI(), track.getAssembly());
+			case "GFF":
+				return fromGff(meta.typeList.stream().map(Node::getURI).collect(Collectors.toList()), track.getAssembly());
+			case "VCF":
+				return fromVCF(track.getAssembly());
+			}
+		}
+		return null;
+	}
 	
 	public GraphTemplate fromGff(List<String> validTypes, String assembly) {
 		GraphTemplate gffTemplate = new GraphTemplate();
@@ -74,7 +77,7 @@ public class GraphTemplateBuilderService {
 		pen = main;
 		pen.down(50);
 		pen.right(50);
-		NodeTemplate mainLocation = locationNode(assembly);
+		NodeTemplate mainLocation = locationNode(assembly, pen, idx);
 		mainLocation.setX(pen.x);
 		mainLocation.setY(pen.y);
 		mainLocation.setIdx(idx.next());
@@ -177,7 +180,7 @@ public class GraphTemplateBuilderService {
 		edgeTemplates.add(link(alignment, targetFeature, GfvoVocab.has_input.getURI()));
 		
 		pen.up(50);
-		NodeTemplate alignmentlocation = locationNode(assembly);
+		NodeTemplate alignmentlocation = locationNode(assembly, pen, idx);
 		alignmentlocation.setIdx(idx.next());
 		alignmentlocation.setX(pen.x);
 		alignmentlocation.setY(pen.y);
@@ -262,7 +265,7 @@ public class GraphTemplateBuilderService {
 		
 		pen.right(100);
 		pen.up(150);
-		NodeTemplate mainLocation = locationNode(assembly);
+		NodeTemplate mainLocation = locationNode(assembly, pen, idx);
 		mainLocation.setIdx(idx.next());
 		mainLocation.setName("Location");
 		mainLocation.setVariablePrefix("mainLocation");
@@ -359,7 +362,7 @@ public class GraphTemplateBuilderService {
 		pen = main;
 		pen.down(50);
 		pen.right(50);
-		NodeTemplate location = locationNode(assembly);
+		NodeTemplate location = locationNode(assembly, pen, idx);
 		edges.add(link(mainFeature, location, FaldoVocab.location.toString()));
 
 		int step = 105/(1+VCFTripleIterator.infoAttributeTypes.size());
@@ -450,6 +453,8 @@ public class GraphTemplateBuilderService {
 		dp.setVariablePrefix("genotypeCoverage");
 		edges.add(link(gtVariant, dp, GfvoVocab.has_attribute.getURI()));
 		
+		
+		vcfTemplate.setEdgeTemplates(edges);
 		return vcfTemplate;
 	}
 	

@@ -120,7 +120,7 @@ public class TemplateFactory {
 		return entityNode;
 	}
 	
-	public static NodeTemplate locationNode(String assembly) {
+	public static NodeTemplate locationNode(String assembly, Position pos, Increment inc) {
 		NodeTemplate locationNode = new NodeTemplate();
 		locationNode.setNodeType(QueryNode.NODETYPE_FALDOLOCATION);
 		locationNode.setName("Faldo Location");
@@ -128,6 +128,9 @@ public class TemplateFactory {
 		locationNode.setAssembly(assembly);
 		locationNode.setColor("green");
 		locationNode.setFilterable(true);
+		locationNode.setIdx(inc.next());
+		locationNode.setX(pos.x);
+		locationNode.setY(pos.y);
 		return locationNode;
 	}
 	

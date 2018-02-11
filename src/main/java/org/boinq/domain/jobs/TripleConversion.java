@@ -137,18 +137,15 @@ public class TripleConversion implements AsynchronousJob {
 				throw new Exception("Datasource should be of type local faldo in order to support upload");
 			}
 			Counter attributeCounter = new Counter(0);
-			List<Triple> metaData = new LinkedList<>();
+			List<Triple> metaTriples = new LinkedList<>();
 			List<Node> types = new LinkedList<>();
+			Metadata meta = new Metadata();
 			for (RawDataFile inputData: track.getRawDataFiles()) {
 			
 				if (inputData.getStatus() == RawDataFile.STATUS_COMPLETE) {
 					continue;
 				}
 				File inputFile = new File(inputData.getFilePath());
-				Metadata meta = new Metadata();
-				meta.entryCount = 0;
-				meta.featureCount = 0;
-				meta.tripleCount = 0;
 				meta.fileType = track.getFileType();
 				meta.date = (new Date()).toString();
 				meta.fileName = inputFile.getName();
@@ -189,7 +186,7 @@ public class TripleConversion implements AsynchronousJob {
 				}
 				uploader.finish();
 				types.addAll(meta.typeList);
-				metaData.addAll(metaTripleBuilder.createMetadata(inputFile.toString(), meta, track.getGraphName(), attributeCounter));
+				metaTriples.addAll(metaTripleBuilder.createMetadata(inputFile.toString(), meta, track.getGraphName(), attributeCounter));
 				track.setEntryCount(track.getEntryCount() + meta.entryCount);
 				track.setFeatureCount(track.getFeatureCount() + meta.featureCount);
 				track.setTripleCount(track.getTripleCount() + meta.tripleCount);
@@ -197,15 +194,15 @@ public class TripleConversion implements AsynchronousJob {
 				inputData.setStatus(RawDataFile.STATUS_COMPLETE);
 				rawDataFileRepository.save(inputData);
 			}
-			metaData.addAll(metaTripleBuilder.createGeneralMetadata(track, types, track.getGraphName(), attributeCounter));
+			metaTriples.addAll(metaTripleBuilder.createGeneralMetadata(track, types, track.getGraphName(), attributeCounter));
 			String metagraph = track.getDatasource().getMetaGraphName();
 			String endpoint = track.getDatasource().getEndpointUpdateUrl();
 			TripleUploader uploader = tripleUploadService.getUploader(endpoint, metagraph);
-			for (Triple meta: metaData) {
-				uploader.triple(meta);
+			for (Triple triple: metaTriples) {
+				uploader.triple(triple);
 			}
 			uploader.finish();
-			GraphTemplate template = templateBuilder.fromBed(mainType, subType, track.getAssembly());
+			GraphTemplate template = templateBuilder.fromFile(meta, track);
 			template.setGraphIri(track.getGraphName());
 			template = graphTemplateRepository.save(template);
 			track.setGraphTemplate(template);

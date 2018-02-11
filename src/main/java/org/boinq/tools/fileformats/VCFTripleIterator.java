@@ -5,13 +5,11 @@ import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDdouble;
 import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDfloat;
 import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDint;
 import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDstring;
-import static org.junit.Assert.assertNotEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,29 +23,24 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.apache.jena.vocabulary.XSD;
 import org.boinq.domain.jobs.TripleConversion.Metadata;
-import org.boinq.service.TripleGeneratorService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.boinq.generated.vocabularies.BoinqVocab;
 import org.boinq.generated.vocabularies.FormatVocab;
 import org.boinq.generated.vocabularies.GfvoVocab;
 import org.boinq.generated.vocabularies.SoVocab;
+import org.boinq.service.TripleGeneratorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import htsjdk.tribble.FeatureCodecHeader;
 import htsjdk.tribble.readers.AsciiLineReader;
 import htsjdk.tribble.readers.AsciiLineReaderIterator;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.Genotype;
-import htsjdk.variant.variantcontext.GenotypeLikelihoods;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFCodec;
 import htsjdk.variant.vcf.VCFFilterHeaderLine;
 import htsjdk.variant.vcf.VCFFormatHeaderLine;
 import htsjdk.variant.vcf.VCFHeader;
-import htsjdk.variant.vcf.VCFHeaderLine;
 import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>  {
@@ -68,7 +61,6 @@ public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>
 	
 	public VCFTripleIterator(TripleGeneratorService tripleGenerator, File file, Metadata meta) throws FileNotFoundException, IOException {
 		super(tripleGenerator);
-		initData();
 		lineIterator = new AsciiLineReaderIterator(AsciiLineReader.from(new FileInputStream(file)));
 		try {
 			initializeVCFMetadata(currentTriples, meta);
@@ -78,7 +70,7 @@ public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>
        this.meta = meta;
 	}
 
-	private void initData() {
+	static {
 		
 		//common info fields from specification
 		infoAttributeTypes = new HashMap<>();
