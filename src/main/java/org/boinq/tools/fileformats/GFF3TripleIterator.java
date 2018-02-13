@@ -236,6 +236,7 @@ public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple
 				String attributeFeatureName = entryName + "/attribute_" + attributeCount++;
 				Node attributeFeature = tripleGenerator.generateURI(attributeFeatureName);
 				triples.add(new Triple(entry, SoVocab.has_quality.asNode(), attributeFeature));
+				triples.add(new Triple(entry, SioVocab.has_attribute.asNode(), attributeFeature));
 				Node attributeType = NodeFactory.createBlankNode();
 				triples.add(new Triple(attributeFeature, RDF.type.asNode(), attributeType));
 				triples.add(new Triple(attributeType, RDFS.label.asNode(), NodeFactory.createLiteral(key, XSDstring)));
@@ -272,7 +273,8 @@ public class GFF3TripleIterator extends TripleBuilder implements Iterator<Triple
 			for (CigarElement el: cigar.getCigarElements()) {
 				Node alignmentElement = NodeFactory.createURI(alignment.getURI() + "_el" + matchIdx++);
 				Node span = NodeFactory.createURI(alignment.getURI() + "_span");
-				triples.add(new Triple(alignmentElement, GfvoVocab.has_attribute.asNode(), span));
+				triples.add(new Triple(alignmentElement, SioVocab.has_attribute.asNode(), span));
+				triples.add(new Triple(alignmentElement, SoVocab.has_quality.asNode(), span));
 				triples.add(new Triple(span, RDF.type.asNode(), GfvoVocab.Span.asNode()));
 				triples.add(new Triple(span, RDF.value.asNode(), NodeFactory.createLiteral(String.valueOf(el.getLength()), XSDint)));
 				switch(el.getOperator()) {
