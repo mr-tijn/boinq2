@@ -74,7 +74,7 @@ public class GraphTemplateBuilderService {
 		mainType.setDescription("Type of the main feature");
 		edgeTemplates.add(link(gffFeature, mainType, RDF.type.getURI(), "type"));
 
-		pen = main;
+		pen.to(main);
 		pen.down(50);
 		pen.right(50);
 		NodeTemplate mainLocation = locationNode(assembly, pen, idx);
@@ -83,7 +83,7 @@ public class GraphTemplateBuilderService {
 		mainLocation.setIdx(idx.next());
 		edgeTemplates.add(link(gffFeature,mainLocation,FaldoVocab.location.getURI(), "location"));
 		
-		pen = main;
+		pen.to(main);
 		pen.down(100);
 		pen.left(50);
 		NodeTemplate parentFeature = entityNode("Feature", "containingFeature", false, pen, idx);
@@ -96,7 +96,7 @@ public class GraphTemplateBuilderService {
 		edgeTemplates.add(link(gffFeature, originFeature, SoVocab.derives_from.getURI(), "derives from"));
 		
 		
-		pen = main;
+		pen.to(main);
 		pen.down(50);
 		pen.left(50);
 		NodeTemplate id = literalNode("id", XSD.xstring.getURI(), pen, idx);
@@ -137,18 +137,18 @@ public class GraphTemplateBuilderService {
 		NodeTemplate note = literalNode("note", XSD.xstring.asNode(), pen, idx);
 		attributes.add(note);
 		edgeTemplates.add(link(gffFeature, note, RDFS.comment.getURI()));
-		pen = main;
+		pen.to(main);
 		double angle = 30;
 		pen.angle(50, angle);
 		for (NodeTemplate attribute: attributes) {
 			attribute.setX(pen.x);
 			attribute.setY(pen.y);
-			pen = main;
+			pen.to(main);
 			angle += 15;
 			pen.angle(50, angle);
 		}
 		
-		pen = main;
+		pen.to(main);
 		pen.right(100);
 		NodeTemplate customAttribute = entityNode("Custom Attribute", "customAttribute", false, pen, idx);
 		edgeTemplates.add(link(gffFeature, customAttribute, GfvoVocab.has_attribute.getURI()));
@@ -233,7 +233,7 @@ public class GraphTemplateBuilderService {
 		edges.add(addAttribute(bedEntry, FormatVocab.RGBblue.getURI(), XSD.integer.getURI(), "RGB blue", idx, pen.x, pen.y));
 
 		
-		pen = entry;
+		pen.to(entry);
 		pen.right(150);
 		Position main = pen.copy();
 		NodeTemplate mainFeature = entityNode("Main feature", "mainFeature", false, pen, idx);
@@ -245,7 +245,7 @@ public class GraphTemplateBuilderService {
 		subFeature.setDescription("Subfeature. For filtering, link to main feature on other graph node.");
 		edges.add(link(mainFeature, subFeature, SoVocab.has_part.getURI()));
 		
-		pen = main;
+		pen.to(main);
 		pen.down(100);
 		NodeTemplate mainId = literalNode("Identifier", XSD.xstring.asNode(), pen, idx);
 		mainId.setVariablePrefix("mainId");
@@ -332,7 +332,7 @@ public class GraphTemplateBuilderService {
 		filterLabel.setVariablePrefix("filterDescription");
 		edges.add(link(filter, filterDescription, RDFS.comment.getURI()));
 		
-		pen = main;
+		pen.to(main);
 		pen.down(100);
 		pen.left(50);
 		NodeTemplate reference = attributeNode("RefSequence", GfvoVocab.Reference_Sequence.getURI(), XSD.xstring.getURI(), pen, idx);
@@ -352,6 +352,7 @@ public class GraphTemplateBuilderService {
 		edges.add(link(mainFeature, variantType, RDF.type.getURI()));
 
 		pen.right(50);
+		Position var = pen.copy();
 		NodeTemplate variant = attributeNode("Variant", GfvoVocab.Sequence_Variant.getURI(), XSD.xstring.getURI(), pen, idx);
 		edges.add(link(mainFeature, variant, GfvoVocab.has_attribute.getURI()));
 		
@@ -359,7 +360,7 @@ public class GraphTemplateBuilderService {
 		NodeTemplate variantScore = attributeNode("Phred Score", GfvoVocab.Phred_Score.getURI(), XSD.xdouble.getURI(), pen, idx);
 		edges.add(link(variant, variantScore, GfvoVocab.has_attribute.getURI()));
 		
-		pen = main;
+		pen.to(main);
 		pen.down(50);
 		pen.right(50);
 		NodeTemplate location = locationNode(assembly, pen, idx);
@@ -369,14 +370,14 @@ public class GraphTemplateBuilderService {
 		int angle = 30;
 		int off = -1;
 		for (String attr : VCFTripleIterator.infoAttributeTypes.keySet()) {
-			pen = main;
+			pen.to(var);
 			pen.angle(100 + 25*off, angle);
 			NodeTemplate attribute = attributeNode(attr, VCFTripleIterator.infoAttributeTypes.get(attr).getURI(), VCFTripleIterator.infoAttributeValueTypes.get(attr).getURI(), pen, idx);
 			edges.add(link(variant, attribute, GfvoVocab.has_attribute.getURI()));
 			angle += step;
 			off *= -1;
 		}
-		pen = main;
+		pen.to(var);
 		pen.angle(105 + 25*off, angle);
 		NodeTemplate freeAttribute = entityNode("Attribute", "otherAttribute", false, pen, idx);
 		edges.add(link(variant, freeAttribute, GfvoVocab.has_attribute.getURI()));
@@ -388,19 +389,19 @@ public class GraphTemplateBuilderService {
 		NodeTemplate attributeTypeLabel = literalNode("Label", XSD.xstring.asNode(), pen, idx);
 		attributeTypeLabel.setVariablePrefix("attributeTypeLabel");
 		edges.add(link(attributeType, attributeTypeLabel, RDFS.label.getURI()));
-		pen = ref;
+		pen.to(ref);
 		pen.angle(50, angle - 20);
 		NodeTemplate attributeValue = literalNode("Value", XSD.xstring.asNode(), pen, idx); 
 		attributeValue.setVariablePrefix("otherAttributeValue");
 		edges.add(link(freeAttribute, attributeValue, RDF.value.getURI()));
 				
-		pen = main;
+		pen.to(main);
 		pen.right(150);
 		Position ev = pen.copy();
 		NodeTemplate evidence = entityNode("Evidence", "evidence", false, pen, idx);
 		edges.add(link(mainFeature, evidence, GfvoVocab.has_evidence.getURI()));
 		
-		pen = ev;
+		pen.to(ev);
 		pen.up(50);
 		NodeTemplate sample = entityNode("Sample", "sample", false, pen, idx);
 		edges.add(link(evidence, sample, GfvoVocab.has_source.getURI()));
@@ -413,13 +414,13 @@ public class GraphTemplateBuilderService {
 		zygosity.setValueSource(NodeTemplate.SOURCE_LIST);
 		edges.add(link(evidence, zygosity, GfvoVocab.has_quality.getURI()));
 		
-		pen = ev;
+		pen.to(ev);
 		pen.right(150);
 		Position gt = pen.copy();
 		NodeTemplate genotype = typedEntityNode("Genotype", GfvoVocab.Genotype.getURI(), false, pen, idx);
 		edges.add(link(evidence, genotype, GfvoVocab.has_attribute.getURI()));
 		
-		pen = gt;
+		pen.to(gt);
 		pen.down(100);
 		pen.left(50);
 		NodeTemplate gtReference = attributeNode("Reference", GfvoVocab.Reference_Sequence.getURI(), XSD.xstring.getURI(), pen, idx);
@@ -441,7 +442,7 @@ public class GraphTemplateBuilderService {
 		gtFilterLabel.setVariablePrefix("genotypeFilterLabel");
 		edges.add(link(gtFilter, gtFilterLabel, RDFS.label.getURI()));
 		
-		pen = gt;
+		pen.to(gt);
 		pen.left(50);
 		pen.up(50);
 		NodeTemplate gq = attributeNode("Phred score", GfvoVocab.Conditional_Genotype_Quality.getURI(), XSD.xstring.getURI(), pen, idx);

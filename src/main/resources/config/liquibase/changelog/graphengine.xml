@@ -181,4 +181,12 @@
 		</loadUpdateData>
 		<loadUpdateData tableName="t_edgetemplate" primaryKey="id" file="config/liquibase/edgetemplate.tsv" separator="\t"/>
 	</changeSet>
+	<changeSet id="add fields to save bridge positions" author="martijn">
+		<addColumn tableName="t_querybridge">
+			<column name="from_x" type="INT" />
+			<column name="from_y" type="INT" />
+			<column name="to_x" type="INT" />
+			<column name="to_y" type="INT" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

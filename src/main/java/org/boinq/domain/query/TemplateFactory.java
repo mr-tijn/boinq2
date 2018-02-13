@@ -29,11 +29,11 @@ public class TemplateFactory {
 			this.y = y;
 		}
 		private int cartesianX(double r, double theta) {
-			return (int) Math.round(r*Math.cos(2*Math.PI*theta/360.));
+			return (int) Math.round(r*Math.cos(Math.PI*theta/180.));
 		}
 		
 		private int cartesianY(double r, double theta) {
-			return (int) Math.round(r*Math.sin(2*Math.PI*theta/360.));
+			return (int) Math.round(r*Math.sin(Math.PI*theta/180.));
 		}
 		public void up(int offset) { y -= offset; }
 		public void down(int offset) { y += offset; }
@@ -44,6 +44,7 @@ public class TemplateFactory {
 			y += cartesianY(offset, theta);
 		}
 		public void move(int x, int y) { this.x = x; this.y = y; }
+		public void to(Position to) { this.x = to.x; this.y = to.y; }
 		public Position copy() { return new Position(this.x, this.y); }
 	}
 

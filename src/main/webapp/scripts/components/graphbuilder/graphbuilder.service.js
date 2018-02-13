@@ -1,7 +1,6 @@
 angular.module('boinqApp').factory('TermTools', ['NodeConstants', function (NodeConstants) {
 	console.info("Registering TermTools");
 	var XSD = "http://www.w3.org/2001/XMLSchema#"
-	var FALDO = "http://biohackathon.org/resource/faldo#";
 	var getType = function(term) {
 		if (term && (typeof term) == "string") {
 			return term.substring(term.indexOf('#')+1);
@@ -19,22 +18,12 @@ angular.module('boinqApp').factory('TermTools', ['NodeConstants', function (Node
 		var type = getType(term);
 		return "string" == type ;
 	}
-	var isTerm = function(term) {
-		var type = getType(term);
-		return "anyURI" == type  || "QName" == type ;
-	}
-	var isLocation = function(term) {
-		var type = getType(term);
-		return "Region" == type  ; 
-	}
 	
 	var XSDDouble = XSD + "double";
 	var XSDInteger = XSD + "integer";
-	var XSDanyURI = XSD + "anyURI";
 	var XSDString = XSD + "string";
-	var FALDORegion = FALDO + "Region";
-	var typeTerms = [XSDDouble, XSDInteger, XSDanyURI, XSDString, FALDORegion];
-	var typeLabels = ["Decimal number", "Integer number", "Term", "String", "FALDO Region"];
+	var typeTerms = [XSDDouble, XSDInteger, XSDString];
+	var typeLabels = ["Decimal number", "Integer number", "String"];
 	var XSDTypes = [];
 	for (var i = 0; i < typeTerms.length; i++) {
 		XSDTypes.push({term:typeTerms[i], label:typeLabels[i]});
@@ -62,8 +51,6 @@ angular.module('boinqApp').factory('TermTools', ['NodeConstants', function (Node
 			return isInteger(term) || isFloat(term);
 		},
 		isText: isText,
-		isTerm: isTerm,
-		isLocation: isLocation,
 		XSDTypes: XSDTypes,
 		nodeTypes: nodeTypes,
 		valueSources: valueSources
@@ -197,6 +184,10 @@ angular.module('boinqApp').factory('QueryDefinitionObjects', [function () {
 			this.toGraphIdx = toGraph.idx;
 			this.fromNodeIdx = 0;
 			this.toNodeIdx = 0;
+			this.fromX = 20;
+			this.fromY = 20;
+			this.toX = 100;
+			this.toY = 20;
 			this.stringToEntityTemplate = "";
 			this.literalToLiteralMatchType = 0;
 			this.matchStrand = false;

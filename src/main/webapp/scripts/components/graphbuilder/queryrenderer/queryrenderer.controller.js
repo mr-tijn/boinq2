@@ -193,7 +193,18 @@ angular.module('boinqApp').controller("QueryRendererController",["$scope", "drag
 		        dragEnded: function() {
 		        	$scope.selectLine = undefined;
 		        	if ($scope.overGraph != null && $scope.overGraph != graph) {
-		        		var bridge = new QueryDefinitionObjects.QueryBridge(graph, $scope.overGraph);
+		        		var fromGraph = graph;
+		        		var toGraph = $scope.overGraph;
+		        		var bridge = new QueryDefinitionObjects.QueryBridge(fromGraph,toGraph);
+		        		
+		        		var fromGraphOutBridges =  $scope.queryDefinition.queryBridges.filter(function(b) {return b.fromGraphIdx == fromGraph.idx;});
+		        		var toGraphInBridges = $scope.queryDefinition.queryBridges.filter(function(b) {return b.toGraphIdx == toGraph.idx;});
+		        		
+		        		bridge.fromX = Math.max.apply(Math,fromGraph.nodeTemplates.map(function(n) {return n.x})) + 50;
+		        		bridge.fromY = 20 + 50 * fromGraphOutBridges.length;
+		        		bridge.toX = Math.max(20,Math.min.apply(Math,toGraph.nodeTemplates.map(function(n) {return n.x})) - 50);
+		        		bridge.toY = 20 + 50 * toGraphInBridges.length;
+		        		
 		        		$scope.queryDefinition.queryBridges.push(bridge);
 		        		
 		        		$scope.selection.mode = 'bridge';

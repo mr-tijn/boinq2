@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('boinqApp').controller("GraphRendererController",["$scope", "$document", "dragging","QueryDefinitionObjects","GraphTemplate","mouseCapture",function($scope,$document,dragging,QueryDefinitionObjects,GraphTemplate, mouseCapture ) {
+angular.module('boinqApp').controller("GraphRendererController",["$scope", "$document", "dragging","QueryDefinitionObjects","GraphTemplate","mouseCapture","NodeConstants",function($scope,$document,dragging,QueryDefinitionObjects,GraphTemplate,mouseCapture,NodeConstants) {
 	var nodeIdx = 0;
 
 	var maxIdx = function(array) {
@@ -178,6 +178,30 @@ angular.module('boinqApp').controller("GraphRendererController",["$scope", "$doc
 		if (nodes && nodes.length) {return nodes[0];}
 	}
 
+	var isLiteral = function(node) {
+		if (node.hasOwnProperty('template')) {
+			return $scope.findById(node.template, $scope.graphTemplate.nodeTemplates).nodeType == NodeConstants.TYPE_LITERAL;
+		} else {
+			return node.nodeType == NodeConstants.TYPE_LITERAL;
+		}
+	};
+
+	$scope.typeClass = function(node) {
+		if (node.hasOwnProperty('template')) {
+			return $scope.typeClass($scope.findById(node.template));
+		} else {
+			return 'bnq_' + NodeConstants.TYPE_ITEMS[node.nodeType];
+		}
+	};
+	
+	$scope.literals = function(nodes) {
+		return nodes.filter(function(n) {return isLiteral(n);});
+	};
+	
+	$scope.entities = function(nodes) {
+		return nodes.filter(function(n) {return !isLiteral(n);});
+	};
+	
 	$scope.select = function(edgeTemplate) {
 		var queryEdge = edgeForTemplate(edgeTemplate.id);
 		if (queryEdge) {
@@ -247,6 +271,46 @@ angular.module('boinqApp').controller("GraphRendererController",["$scope", "$doc
 		});
 	}
 	
+	
+	$scope.dragIncomingBridge = function(event, bridge) {
+		var lastMouseCoords;
+		dragging.startDrag(event, {
+			dragStarted: function(x, y) {
+				lastMouseCoords = {x:x, y:y};
+			},
+			dragging: function(x, y) {
+	            var curCoords = {x:x, y:y};
+	            var deltaX = curCoords.x - lastMouseCoords.x;
+	            var deltaY = curCoords.y - lastMouseCoords.y;
+	            bridge.toX += deltaX;
+	            bridge.toY += deltaY;
+	            lastMouseCoords = curCoords;
+			},
+			dragEnded : function() {
+			}
+		});
+	};
+	
+
+	$scope.dragOutgoingBridge = function(event, bridge) {
+		var lastMouseCoords;
+		dragging.startDrag(event, {
+			dragStarted: function(x, y) {
+				lastMouseCoords = {x:x, y:y};
+			},
+			dragging: function(x, y) {
+	            var curCoords = {x:x, y:y};
+	            var deltaX = curCoords.x - lastMouseCoords.x;
+	            var deltaY = curCoords.y - lastMouseCoords.y;
+	            bridge.fromX += deltaX;
+	            bridge.fromY += deltaY;
+	            lastMouseCoords = curCoords;
+			},
+			dragEnded : function() {
+			}
+		});
+	};
+	
 	$scope.fromNodeMouseDown = function(event, node) {
 		var lastMouseCoords;
 		dragging.startDrag(event, {
@@ -284,10 +348,6 @@ angular.module('boinqApp').controller("GraphRendererController",["$scope", "$doc
 		return $scope.selection.node == node;
 	}
 	
-	$scope.inBridgeX = function(bridge) {
-		return Math.max(20,Math.min.apply(Math,$scope.graphTemplate.nodeTemplates.map(function(n) {return n.x})) - 50);
-	};
-
 	$scope.inBridgeName = function(bridge) {
 		var fromGraph = $scope.queryDefinition.queryGraphs.filter(function(queryGraph) {return bridge.fromGraphIdx == queryGraph.idx})[0];
 		var fromNodeTemplate = $scope.sourceNodeTemplate(bridge);
@@ -300,18 +360,6 @@ angular.module('boinqApp').controller("GraphRendererController",["$scope", "$doc
 		return toGraph.name + ":" + toNodeTemplate.name;
 	};
 	
-	$scope.inBridgeY = function(bridge) {
-		return 20 + 50 * $scope.toBridges($scope.queryGraph).indexOf(bridge); 
-	};
-
-	$scope.outBridgeX = function(bridge) {
-		return Math.max.apply(Math,$scope.graphTemplate.nodeTemplates.map(function(n) {return n.x})) + 50;
-	};
-	
-	$scope.outBridgeY = function(bridge) {
-		return 20 + 50 * $scope.fromBridges($scope.queryGraph).indexOf(bridge); 
-	};
-
 	$scope.horizontalSize = function(templates) {
 		return Math.max.apply(Math,templates.map(function(o){return o.x;})) + 100;
 	};

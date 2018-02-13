@@ -32,36 +32,49 @@
 			ng-click="deselect(queryEdge)" 
 			ng-show="queryEdge.selected" />
  				<line ng-repeat="incomingBridge in toBridges(queryGraph)" 
-			ng-attr-x1 = "{{inBridgeX(incomingBridge)}}px"
-			ng-attr-y1 = "{{inBridgeY(incomingBridge)}}px"
+			ng-attr-x1 = "{{incomingBridge.toX}}px"
+			ng-attr-y1 = "{{incomingBridge.toY}}px"
 			ng-attr-x2 = "{{targetNodeTemplate(incomingBridge).x}}px"
 			ng-attr-y2 = "{{targetNodeTemplate(incomingBridge).y}}px" 
 			class="bnq_link active"/>
 				<line ng-repeat="outgoingBridge in fromBridges(queryGraph)" 
 			ng-attr-x1 = "{{sourceNodeTemplate(outgoingBridge).x}}px"
 			ng-attr-y1 = "{{sourceNodeTemplate(outgoingBridge).y}}px" 
-			ng-attr-x2 = "{{outBridgeX(outgoingBridge)}}px"
-			ng-attr-y2 = "{{outBridgeY(outgoingBridge)}}px"
+			ng-attr-x2 = "{{outgoingBridge.fromX}}px"
+			ng-attr-y2 = "{{outgoingBridge.fromY}}px"
 			class="bnq_link active"/>
 			 	<line ng-model="selectLine" ng-attr-x1="{{selectLine.x1}}"
 			ng-attr-y1="{{selectLine.y1}}" ng-attr-x2="{{selectLine.x2}}"
 			ng-attr-y2="{{selectLine.y2}}" class="bnq_drag_line" />
  				<circle 
-			ng-repeat="nodeTemplate in graphTemplate.nodeTemplates" 
+			ng-repeat="nodeTemplate in entities(graphTemplate.nodeTemplates)" 
 			ng-attr-cx="{{nodeTemplate.x}}px"
 			ng-attr-cy="{{nodeTemplate.y}}px" r="10"
-			class="bnq_node inactive"></circle>
+			class="bnq_node" ng-class="typeClass(nodeTemplate)"></circle>
+				<rect 
+			ng-repeat="nodeTemplate in literals(graphTemplate.nodeTemplates)" 
+			ng-attr-x="{{nodeTemplate.x - 10}}px"
+			ng-attr-y="{{nodeTemplate.y - 10}}px" width="20" height="20"
+			class="bnq_node" ng-class="typeClass(nodeTemplate)"></rect>
 			<text ng-repeat="nodeTemplate in graphTemplate.nodeTemplates" ng-attr-x="{{nodeTemplate.x +10}}px" ng-attr-y="{{nodeTemplate.y + 10}}px">{{nodeTemplate.name}}</text>
 				<circle ng-click="selectNode(queryNode)"
-			ng-repeat="queryNode in queryGraph.queryNodes" 
+			ng-repeat="queryNode in entities(queryGraph.queryNodes)" 
 			ng-attr-cx="{{findX(queryNode)}}px"
 			ng-attr-cy="{{findY(queryNode)}}px" r="10"
 			class="bnq_node active" ng-class="nodeSelected(queryNode)?'selected':''" ng-show="queryNode.selected"
 			ng-mousedown="fromNodeMouseDown($event, queryNode)"></circle>
-			<path ng-attr-d="M {{inBridgeX(incomingBridge)}},{{inBridgeY(incomingBridge)}} l -10,10 20,0 10,-10 -10,-10 -20,0z" fill="#686868" ng-mousedown="fromBridgeMouseDown($event,incomingBridge)" ng-repeat="incomingBridge in toBridges(queryGraph)"></path>
-			<text ng-repeat="incomingBridge in toBridges(queryGraph)" ng-attr-x="{{inBridgeX(incomingBridge) + 10}}px" ng-attr-y="{{inBridgeY(incomingBridge) + 10}}px">{{inBridgeName(incomingBridge)}}</text>
-			<path ng-attr-d="M {{outBridgeX(outgoingBridge)}},{{outBridgeY(outgoingBridge)}} l -10,10 20,0 10,-10 -10,-10 -20,0z" fill="#686868" ng-mousedown="toBridgeMouseDown($event.outgoingBridge)" ng-repeat="outgoingBridge in fromBridges(queryGraph)"></path>
-			<text ng-repeat="incomingBridge in toBridges(queryGraph)" ng-attr-x="{{inBridgeX(incomingBridge) + 10}}px" ng-attr-y="{{inBridgeY(incomingBridge) + 10}}px">{{outBridgeName(incomingBridge)}}</text>
+				<rect ng-click="selectNode(queryNode)"
+			ng-repeat="queryNode in literals(queryGraph.queryNodes)" 
+			ng-attr-x="{{findX(queryNode) - 10}}px"
+			ng-attr-y="{{findY(queryNode) - 10}}px" width="20" height="20"
+			class="bnq_node active" ng-class="nodeSelected(queryNode)?'selected':''" ng-show="queryNode.selected"
+			ng-mousedown="fromNodeMouseDown($event, queryNode)"></rect>
+			<path ng-attr-d="M {{incomingBridge.toX}},{{incomingBridge.toY}} l -10,10 20,0 10,-10 -10,-10 -20,0z" fill="#00F000" ng-mousedown="fromBridgeMouseDown($event,incomingBridge)" ng-repeat="incomingBridge in toBridges(queryGraph)"></path>
+			<path ng-attr-d="M {{incomingBridge.toX}},{{incomingBridge.toY}} l -10,10 15,0 0,-20 -15,0z" fill="#686868" ng-mousedown="dragIncomingBridge($event,incomingBridge)" ng-repeat="incomingBridge in toBridges(queryGraph)"></path>
+			<text ng-repeat="incomingBridge in toBridges(queryGraph)" ng-attr-x="{{incomingBridge.toX + 10}}px" ng-attr-y="{{incomingBridge.toY + 10}}px">{{inBridgeName(incomingBridge)}}</text>
+			<path ng-attr-d="M {{outgoingBridge.fromX}},{{outgoingBridge.fromY}} l -10,10 20,0 10,-10 -10,-10 -20,0z" fill="#00F000" ng-mousedown="toBridgeMouseDown($event,outgoingBridge)" ng-repeat="outgoingBridge in fromBridges(queryGraph)"></path>
+			<path ng-attr-d="M {{outgoingBridge.fromX + 5}},{{outgoingBridge.fromY}} l 0,10 5,0 10,-10 -10,-10 -5,0z" fill="#686868" ng-mousedown="dragOutgoingBridge($event,outgoingBridge)" ng-repeat="outgoingBridge in fromBridges(queryGraph)"></path>
+			<text ng-repeat="outgoingBridge in fromBridges(queryGraph)" ng-attr-x="{{outgoingBridge.fromX + 10}}px" ng-attr-y="{{outgoingBridge.fromY + 10}}px">{{outBridgeName(outgoingBridge)}}</text>
 			
  	</svg>
 </div>

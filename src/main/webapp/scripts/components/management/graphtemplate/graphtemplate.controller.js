@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('boinqApp').controller("GraphTemplateController",["$scope", "$document", "$stateParams", "dragging","mouseCapture","GraphTemplate","QueryDefinitionObjects","overElement","boinqOneTimeFetch",function($scope,$document,$stateParams,dragging,mouseCapture,GraphTemplate,QueryDefinitionObjects,overElement,oneTime) {
+angular.module('boinqApp').controller("GraphTemplateController",["$scope", "$document", "$stateParams", "dragging","mouseCapture","GraphTemplate","QueryDefinitionObjects","overElement","boinqOneTimeFetch","NodeConstants",function($scope,$document,$stateParams,dragging,mouseCapture,GraphTemplate,QueryDefinitionObjects,overElement,oneTime,NodeConstants) {
 
 	var drag = null;
 	$scope.globals = oneTime;
@@ -145,6 +145,22 @@ angular.module('boinqApp').controller("GraphTemplateController",["$scope", "$doc
 		    });
 		
 	};	
+
+	$scope.typeClass = function(nodeTemplate) {
+		return 'bnq_' + NodeConstants.TYPE_ITEMS[nodeTemplate.nodeType];
+	};
+	
+	var isLiteral = function(nodeTemplate) {
+		return nodeTemplate.nodeType == NodeConstants.TYPE_LITERAL;
+	};
+
+	$scope.literals = function(nodeTemplates) {
+		return nodeTemplates.filter(function(nt) {return isLiteral(nt);});
+	};
+	
+	$scope.entities = function(nodeTemplates) {
+		return nodeTemplates.filter(function(nt) {return !isLiteral(nt);});
+	};
 	
 	$scope.mouseMove = function (evt) {
 		$scope.overNode = overElement(evt,'nodeTemplate');

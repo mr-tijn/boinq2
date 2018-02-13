@@ -15,6 +15,7 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_GreaterThan;
 import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
@@ -39,6 +40,7 @@ import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueNode;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueString;
 import org.apache.jena.sparql.modify.request.UpdateModify;
+import org.apache.jena.sparql.path.PathFactory;
 import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementGroup;
@@ -58,9 +60,12 @@ import org.boinq.domain.query.QueryGraph;
 import org.boinq.domain.query.QueryNode;
 import org.boinq.generated.vocabularies.FaldoVocab;
 import org.boinq.generated.vocabularies.SioVocab;
+import org.boinq.generated.vocabularies.SoVocab;
 import org.boinq.tools.queries.Prefixes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import static org.apache.jena.sparql.path.PathFactory.*;
 
 @Service
 public class GenerateQueryService {
@@ -231,6 +236,11 @@ public class GenerateQueryService {
 				if (QueryNode.NODETYPE_ATTRIBUTE == node.getTemplate().getNodeType()) {
 					triples.addTriple(new Triple(nodeFromQueryNode(node, variableNames),RDF.type.asNode(),NodeFactory.createURI(node.getTemplate().getFixedType())));
 					triples.addTriple(new Triple(nodeFromQueryNode(node, variableNames), SioVocab.has_value.asNode(), NodeFactory.createVariable(valueName(node, variableNames))));
+					triples.addTriplePath(new TriplePath(nodeFromQueryNode(node, variableNames), 
+														 pathAlt(pathLink(SioVocab.has_value.asNode()), 
+																 pathAlt(pathLink(SoVocab.has_quality.asNode()), 
+																		 pathLink(RDF.value.asNode()))), 
+														 NodeFactory.createVariable(valueName(node, variableNames))));
 				}
 			}
 			resultMap.put(graph, triples);

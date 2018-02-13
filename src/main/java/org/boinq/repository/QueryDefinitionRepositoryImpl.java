@@ -91,6 +91,10 @@ public class QueryDefinitionRepositoryImpl implements QueryDefinitionRepositoryE
 			}
 		}
 		bridge.setId(bridgeDTO.id());
+		bridge.setFromX(bridgeDTO.fromX());
+		bridge.setFromY(bridgeDTO.fromY());
+		bridge.setToX(bridgeDTO.toX());
+		bridge.setToY(bridgeDTO.toY());
 		bridge.setLiteralToLiteralMatchType(bridgeDTO.literalToLiteralMatchType());
 		bridge.setStringToEntityTemplate(bridgeDTO.stringToEntityTemplate());
 		bridge.setMatchStrand(bridgeDTO.matchStrand());

@@ -213,6 +213,21 @@ ul#strength {
 .bnq_node.delete {
 	fill: rgb(255,0,0);
 }
+.bnq_Entity {
+	fill: rgb(70, 116, 193);
+}
+.bnq_Literal {
+	fill: rgb(70, 116, 193);
+}
+.bnq_Location {
+	fill: rgb(114, 172, 77)
+}
+.bnq_Attribute {
+	fill: rgb(219, 219, 219);
+}
+.bnq_TypedEntity {
+	fill: rgb(253, 191, 45);
+}
 .bnq_drag_line {
 	stroke: rgb(137,221,36);
 	stroke-width:2

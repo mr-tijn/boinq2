@@ -34,17 +34,29 @@
 			ng-attr-y1="{{selectLine.y1}}" ng-attr-x2="{{selectLine.x2}}"
 			ng-attr-y2="{{selectLine.y2}}" class="bnq_drag_line" />
  			 	<circle ng-mousedown="ringMouseDown($event, nodeTemplate)"
-			ng-repeat="nodeTemplate in graphTemplate.nodeTemplates" 
+			ng-repeat="nodeTemplate in entities(graphTemplate.nodeTemplates)" 
 			ng-attr-cx="{{nodeTemplate.x}}px"
 			ng-attr-cy="{{nodeTemplate.y}}px" r="20"
-			class="bnq_ds_ring"></circle>
+			class="bnq_ds_ring" ng-class="typeClass(nodeTemplate)"></circle>
+				<rect ng-mousedown="ringMouseDown($event, nodeTemplate)"
+			ng-repeat="nodeTemplate in literals(graphTemplate.nodeTemplates)" 
+			ng-attr-x="{{nodeTemplate.x - 20}}px"
+			ng-attr-y="{{nodeTemplate.y - 20}}px" width="40" height="40"
+			class="bnq_ds_ring" ng-class="typeClass(nodeTemplate)"></rect>
 				<circle 
-			ng-repeat="nodeTemplate in graphTemplate.nodeTemplates" 
+			ng-repeat="nodeTemplate in entities(graphTemplate.nodeTemplates)" 
 			ng-attr-cx="{{nodeTemplate.x}}px"
 			ng-attr-cy="{{nodeTemplate.y}}px" r="10"
 			class="bnq_node"
 			ng-class="nodeClass(nodeTemplate)"
 			ng-mousedown="nodeMouseDown($event, nodeTemplate)"></circle>
+				<rect 
+			ng-repeat="nodeTemplate in literals(graphTemplate.nodeTemplates)" 
+			ng-attr-x="{{nodeTemplate.x - 10}}px"
+			ng-attr-y="{{nodeTemplate.y - 10}}px" width="20" height="20"
+			class="bnq_node"
+			ng-class="nodeClass(nodeTemplate)"
+			ng-mousedown="nodeMouseDown($event, nodeTemplate)"></rect>
 				<text pointer-events="none" ng-attr-x="{{nodeTemplate.x+20}}px" ng-attr-y="{{nodeTemplate.y+20}}px" ng-repeat="nodeTemplate in graphTemplate.nodeTemplates">{{nodeTemplate.name}}</text>
  	</svg>
 </div>

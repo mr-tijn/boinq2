@@ -61,6 +61,16 @@ public class QueryBridge implements Serializable {
 	@JoinColumn(name = "to_node_id")
 	private QueryNode toNode;
 	
+	//positions in graph to draw
+	@Column(name="from_x")
+	private Integer fromX;
+	@Column(name="from_y")
+	private Integer fromY;
+	@Column(name="to_x")
+	private Integer toX;
+	@Column(name="to_y")
+	private Integer toY;
+	
 	@Column(name="string_to_entity_template")
 	private String stringToEntityTemplate;
 	@Column(name="literal_to_literal_match_type")
@@ -100,6 +110,32 @@ public class QueryBridge implements Serializable {
 	public void setToNode(QueryNode toNode) {
 		this.toNode = toNode;
 	}
+	
+	public Integer getFromX() {
+		return fromX;
+	}
+	public void setFromX(Integer fromX) {
+		this.fromX = fromX;
+	}
+	public Integer getFromY() {
+		return fromY;
+	}
+	public void setFromY(Integer fromY) {
+		this.fromY = fromY;
+	}
+	public Integer getToX() {
+		return toX;
+	}
+	public void setToX(Integer toX) {
+		this.toX = toX;
+	}
+	public Integer getToY() {
+		return toY;
+	}
+	public void setToY(Integer toY) {
+		this.toY = toY;
+	}
+	
 	public String getStringToEntityTemplate() {
 		return stringToEntityTemplate;
 	}
