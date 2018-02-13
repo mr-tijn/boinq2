@@ -43,6 +43,11 @@ angular.module('boinqApp').controller('DatasourceController', ['$scope', 'resolv
         	return true;
         };
         
+        $scope.isLocal = function(datasource) {
+        	if (datasource == null || datasource.type == null) return true;
+        	return datasource.type == DatasourceConstants.TYPE_LOCAL;
+        };
+        
         console.info('Loaded controller_datasources');
         
     }]);

@@ -133,8 +133,8 @@ public class TripleConversion implements AsynchronousJob {
 			if (datasource == null) {
 				throw new Exception("Datasource is null");				
 			}
-			if (Datasource.TYPE_LOCAL_FALDO != datasource.getType()) {
-				throw new Exception("Datasource should be of type local faldo in order to support upload");
+			if (Datasource.TYPE_LOCAL != datasource.getType()) {
+				throw new Exception("Datasource should be of type local in order to support upload");
 			}
 			Counter attributeCounter = new Counter(0);
 			List<Triple> metaTriples = new LinkedList<>();

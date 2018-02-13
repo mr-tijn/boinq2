@@ -66,12 +66,10 @@ public class QueryExecution extends Analysis {
 			if (findDS.isPresent()) {
 				Datasource datasource = findDS.get();
 				switch (datasource.getType()) {
-				case Datasource.TYPE_LOCAL_FALDO:
-				case Datasource.TYPE_LOCAL_SPARQL:
+				case Datasource.TYPE_LOCAL:
 					template.setType(GraphTemplate.GRAPH_TYPE_LOCAL);
 					break;
-				case Datasource.TYPE_REMOTE_FALDO:
-				case Datasource.TYPE_REMOTE_SPARQL:
+				case Datasource.TYPE_REMOTE:
 					template.setType(GraphTemplate.GRAPH_TYPE_REMOTE);
 				}
 				template.setEndpointUrl(datasource.getEndpointUrl());

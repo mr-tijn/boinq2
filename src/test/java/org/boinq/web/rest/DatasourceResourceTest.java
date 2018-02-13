@@ -108,7 +108,7 @@ public class DatasourceResourceTest {
     			.andExpect(jsonPath("$.endpointUrl").value(DEFAULT_ENDPOINT_URL));
 
     	// Update Datasource
-    	datasource.setType(Datasource.TYPE_LOCAL_SPARQL); //need to change type or endpoint gets reset to default
+    	datasource.setType(Datasource.TYPE_LOCAL); //need to change type or endpoint gets reset to default
     	datasource.setEndpointUrl(UPD_ENDPOINT_URL);
   
     	restDatasourceMockMvc.perform(post("/app/rest/datasources")

@@ -112,9 +112,9 @@ public class FileUploadController {
 	}
 
 	private void verifyUploadPermission(String login, Datasource datasource) throws Exception {
-		if (datasource.getType() != Datasource.TYPE_LOCAL_FALDO) {
-			log.error("Only possible for local faldo datasources");
-			throw new Exception("Only possible for local faldo datasources");
+		if (datasource.getType() != Datasource.TYPE_LOCAL) {
+			log.error("Only possible for local datasources");
+			throw new Exception("Only possible for local datasources");
 		}
 		if (datasource.getOwner() != userRepository.findOneByLogin(login).get()) {
 			log.error("Only possible for your own datasources");

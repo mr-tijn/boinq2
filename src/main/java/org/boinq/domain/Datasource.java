@@ -27,10 +27,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 public class Datasource implements Serializable {
 
 	private static final long serialVersionUID = -8065826415415661663L;
-	public static final int TYPE_LOCAL_FALDO = 0;
-	public static final int TYPE_REMOTE_FALDO = 1;
-	public static final int TYPE_LOCAL_SPARQL = 2;
-	public static final int TYPE_REMOTE_SPARQL = 3;
+	public static final int TYPE_LOCAL = 0;
+	public static final int TYPE_REMOTE = 1;
 
 	
     @Id

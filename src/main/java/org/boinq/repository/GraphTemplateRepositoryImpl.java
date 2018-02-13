@@ -99,8 +99,7 @@ public class GraphTemplateRepositoryImpl implements GraphTemplateRepositoryExten
 			Optional<Datasource> dsOpt = datasourceRepository.findOneByTracksId(trackOpt.get().getId());
 			if (dsOpt.isPresent()) {
 				switch (dsOpt.get().getType()) {
-				case Datasource.TYPE_LOCAL_FALDO:
-				case Datasource.TYPE_LOCAL_SPARQL:
+				case Datasource.TYPE_LOCAL:
 					result.setType(GraphTemplate.GRAPH_TYPE_LOCAL);
 					break;
 				default:

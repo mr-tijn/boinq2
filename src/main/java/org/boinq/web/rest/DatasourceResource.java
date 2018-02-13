@@ -74,7 +74,7 @@ public class DatasourceResource {
         datasource.setName(datasourceDTO.getName());
         datasource.setType(datasourceDTO.getType());
         datasource.setIri(datasourceDTO.getIri());
-        if (Datasource.TYPE_LOCAL_FALDO == datasource.getType()) {
+        if (Datasource.TYPE_LOCAL == datasource.getType()) {
         	datasource.setEndpointUrl(localGraphService.getSparqlEndpoint());
         	datasource.setEndpointUpdateUrl(localGraphService.getUpdateEndpoint());
         	datasource.setMetaEndpointUrl(localGraphService.getMetaEndpoint());

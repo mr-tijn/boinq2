@@ -119,7 +119,7 @@ public class TrackResource {
 			//TODO: check if still needed when using @Transactional
 			datasourceRepository.flush();
 			trackRepository.flush();
-			if (datasource.getType() == Datasource.TYPE_LOCAL_FALDO) {
+			if (datasource.getType() == Datasource.TYPE_LOCAL) {
 				String graphName = localGraphService.createLocalGraph(datasource.getId()+"_"+track.getId().toString());
 				track.setGraphName(graphName);
 				trackRepository.save(track);

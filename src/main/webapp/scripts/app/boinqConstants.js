@@ -4,17 +4,12 @@ angular.module('boinqApp').constant('GlobalConstants', {
 
 
 angular.module('boinqApp').constant('DatasourceConstants', {
-	TYPE_LOCAL_FALDO : 0,
-	TYPE_REMOTE_FALDO : 1,
-	TYPE_LOCAL_SPARQL : 2,
-	TYPE_REMOTE_SPARQL : 3,
-
+	TYPE_LOCAL : 0,
+	TYPE_REMOTE : 1,
 
 	TYPE_ITEMS : {
-		'0' : 'Local Faldo endpoint',
-		'1' : 'Remote Faldo endpoint',
-		'2' : 'Local generic SPARQL',
-		'3' : 'Remote generic SPARQL'
+		'0' : 'Local datasource',
+		'1' : 'Remote datasource',
 	},
 	
 });
@@ -163,7 +158,7 @@ angular.module('boinqApp').constant('NodeConstants',{
 		'1' : 'Literal',
 		'2' : 'Location',
 		'3' : 'Attribute',
-		'4' : 'Typed entity'
+		'4' : 'TypedEntity'
 	},
 	
 	SOURCE_LIST : 0,
