@@ -167,20 +167,25 @@ angular.module('boinqApp').controller("GraphRendererController",["$scope", "$doc
 	}
 	
 	$scope.fromNode = function(edgeTemplate) {
-		if (!$scope.graphTemplate.nodeTemplates) return;
+		if (!$scope.graphTemplate || !edgeTemplate) return;
 		var nodes = $scope.graphTemplate.nodeTemplates.filter(function(nodeTemplate) {return edgeTemplate.from == nodeTemplate.idx});
 		if (nodes && nodes.length) {return nodes[0];}
 	}
 	
 	$scope.toNode = function(edgeTemplate) {
-		if (!$scope.graphTemplate.nodeTemplates) return;
+		if (!$scope.graphTemplate || !edgeTemplate) return;
 		var nodes = $scope.graphTemplate.nodeTemplates.filter(function(nodeTemplate) {return edgeTemplate.to == nodeTemplate.idx});
 		if (nodes && nodes.length) {return nodes[0];}
 	}
 
 	var isLiteral = function(node) {
 		if (node.hasOwnProperty('template')) {
-			return $scope.findById(node.template, $scope.graphTemplate.nodeTemplates).nodeType == NodeConstants.TYPE_LITERAL;
+			if ($scope.graphTemplate && $scope.graphTemplate.$resolved) {
+				var template = $scope.findById(node.template, $scope.graphTemplate.nodeTemplates);
+				return (template && template.nodeType == NodeConstants.TYPE_LITERAL);
+			} else {
+				return false;
+			}
 		} else {
 			return node.nodeType == NodeConstants.TYPE_LITERAL;
 		}
@@ -195,10 +200,12 @@ angular.module('boinqApp').controller("GraphRendererController",["$scope", "$doc
 	};
 	
 	$scope.literals = function(nodes) {
+		if (!nodes) return [];
 		return nodes.filter(function(n) {return isLiteral(n);});
 	};
 	
 	$scope.entities = function(nodes) {
+		if (!nodes) return [];
 		return nodes.filter(function(n) {return !isLiteral(n);});
 	};
 	
@@ -251,8 +258,7 @@ angular.module('boinqApp').controller("GraphRendererController",["$scope", "$doc
 		dragging.startDrag(event, {
 			dragStarted: function(x, y) {
 				lastMouseCoords = {x:x, y:y};
-				var y = $scope.getBridgePos(bridge, $scope.toBridges($scope.selection.graph));
-				$scope.selectLine = {x1: 40, y1:y, x2:40, y2:y};
+				$scope.selectLine = {x1: bridge.toX, y1:bridge.toY, x2:bridge.toX, y2:bridge.toY};
 			},
 			dragging: function(x, y) {
 	            var curCoords = {x:x, y:y};
@@ -349,15 +355,21 @@ angular.module('boinqApp').controller("GraphRendererController",["$scope", "$doc
 	}
 	
 	$scope.inBridgeName = function(bridge) {
+		var name = "UNKNOWN";
 		var fromGraph = $scope.queryDefinition.queryGraphs.filter(function(queryGraph) {return bridge.fromGraphIdx == queryGraph.idx})[0];
-		var fromNodeTemplate = $scope.sourceNodeTemplate(bridge);
-		return fromGraph.name + ":" + fromNodeTemplate.name;
+		if (fromGraph) {
+			name = fromGraph.name;
+		}
+		return name;
 	};
 	
 	$scope.outBridgeName = function(bridge) {
+		var name = "UNKNOWN";
 		var toGraph = $scope.queryDefinition.queryGraphs.filter(function(queryGraph) {return bridge.toGraphIdx == queryGraph.idx})[0];
-		var toNodeTemplate = $scope.targetNodeTemplate(bridge);
-		return toGraph.name + ":" + toNodeTemplate.name;
+		if (toGraph) {
+			name = toGraph.name;
+		}
+		return name;
 	};
 	
 	$scope.horizontalSize = function(templates) {

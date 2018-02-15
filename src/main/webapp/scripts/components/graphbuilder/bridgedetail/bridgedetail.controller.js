@@ -30,32 +30,34 @@ angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeCo
 	};
 	
 	getFromNode = function() {
+		if (unresolved()) return null;
 		if ($scope.selection.bridge.fromNodeIdx != null && $scope.selection.bridge.fromGraphIdx != null) {
 			return getFromGraph().queryNodes.filter(function(node) {return node.idx == $scope.selection.bridge.fromNodeIdx;})[0];
 		}
 	};
 	
 	getToNode = function() {
+		if (unresolved()) return null;
 		if ($scope.selection.bridge.fromNodeIdx != null && $scope.selection.bridge.fromGraphIdx != null) {
 			return getToGraph().queryNodes.filter(function(node) {return node.idx == $scope.selection.bridge.toNodeIdx;})[0];
 		}
 	};
 
-//	getFromTemplate = function() {
-//		var fromNode = getFromNode(); 
-//		var fromTemplate = getTemplate(getFromGraph().template);
-//		if (fromNode != null) {
-//				return fromTemplate.nodeTemplates.filter(function(template) {return template.id == fromNode.template;})[0];
-//		}
-//	};
-//
-//	getToTemplate = function() {
-//		var toNode = getToNode(); 
-//		var toTemplate = getTemplate(getToGraph().template);
-//		if (toNode != null) {
-//			return toTemplate.nodeTemplates.filter(function(template) {return template.id == toNode.template;})[0];
-//		}
-//	};
+	getFromTemplate = function() {
+		if (unresolved()) return null;
+		var fromNode = getFromNode();
+		if (fromNode) {
+			return $scope.fromTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == fromNode.template;})[0]; 
+		}
+	}
+	
+	getToTemplate = function() {
+		if (unresolved()) return null;
+		var toNode = getToNode();
+		if (toNode) {
+			return $scope.toTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == toNode.template;})[0];;
+		}
+	}
 	
 	var unresolved = function() {
 		return !$scope.fromTemplate.$resolved || !$scope.toTemplate.$resolved;
@@ -63,9 +65,9 @@ angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeCo
 	
 	$scope.stringToEntity = function() {
 		if (unresolved()) return false;
-		var from = $scope.fromTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == getFromNode().template;})[0];
-		var to = $scope.toTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == getToNode().template;})[0];;
-		if ($scope.selection.bridge && getFromNode() != null && getToNode() != null) {
+		var from = getFromTemplate();
+		var to = getToTemplate();
+		if ($scope.selection.bridge && from && to) {
 			return (from.nodeType == NodeConstants.TYPE_LITERAL && to.nodeType == NodeConstants.TYPE_ENTITY) || (to.nodeType == NodeConstants.TYPE_LITERAL && from.nodeType == NodeConstants.TYPE_ENTITY)
 			|| (from.nodeType == NodeConstants.TYPE_LITERAL && to.nodeType == NodeConstants.TYPE_TYPEDENTITY) || (to.nodeType == NodeConstants.TYPE_LITERAL && from.nodeType == NodeConstants.TYPE_TYPEDENTITY);
 		} else return false;
@@ -73,19 +75,19 @@ angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeCo
 	
 	$scope.literalToLiteral = function() {
 		if (unresolved()) return false;
-		var from = $scope.fromTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == getFromNode().template;})[0];
-		var to = $scope.toTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == getToNode().template;})[0];;
-		if ($scope.selection.bridge && getFromNode() != null && getToNode() != null) {
+		var from = getFromTemplate();
+		var to = getToTemplate();
+		if ($scope.selection.bridge && from && to) {
 			return (from.nodeType == NodeConstants.TYPE_LITERAL) && (to.nodeType == from.nodeType);
 		} else return false;
 	};
 	
 	$scope.location = function() {
 		if (unresolved()) return false;
-		var from = $scope.fromTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == getFromNode().template;})[0];
-		var to = $scope.toTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == getToNode().template;})[0];;
-		if ($scope.selection.bridge && getFromNode() != null && getToNode() != null) {
-			return (from.nodeType == NodeConstants.TYPE_FALDOENTITY) && (to.nodeType == from.nodeType); 
+		var from = getFromTemplate();
+		var to = getToTemplate();
+		if ($scope.selection.bridge && from && to) {
+			return (fromTmp.nodeType == NodeConstants.TYPE_FALDOENTITY) && (toTmp.nodeType == from.nodeType); 
 		} else return false;
 	};
 	
