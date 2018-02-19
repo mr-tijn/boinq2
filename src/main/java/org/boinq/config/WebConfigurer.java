@@ -52,7 +52,7 @@ public class WebConfigurer implements ServletContextInitializer, EmbeddedServlet
         if (!env.acceptsProfiles(Constants.SPRING_PROFILE_FAST)) {
             initMetrics(servletContext, disps);
         }
-        if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION)) {
+        if (env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION) || env.acceptsProfiles(Constants.SPRING_PROFILE_DOCKER)) {
             initCachingHttpHeadersFilter(servletContext, disps);
             initStaticResourcesProductionFilter(servletContext, disps);
             initGzipFilter(servletContext, disps);
