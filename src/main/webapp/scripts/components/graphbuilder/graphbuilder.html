@@ -20,27 +20,22 @@
 					name="name" ng-model="queryDefinition.name" ng-minlength=1
 					ng-maxlength=250 ng-required="true">
 			</div>
-<!-- 			<div class="form-group">
-				<label>Description</label> <input type="text" class="form-control"
-					name="description" ng-model="queryDefinition.description" ng-minlength=1
-					ng-maxlength=250 ng-required="false">
-			</div>
- -->			
+
 			<div class="form-group">
 				<label>Description</label> 
 				<textarea class="form-control" rows=4 ng-model="queryDefinition.description"></textarea>
 			</div>
 			
-			
-			
-			<div class="form-group">
-				<label>Target Graph</label> <input type="text" class="form-control"
-					name="targetGraph" ng-model="queryDefinition.targetGraph" ng-minlength=1
-					ng-maxlength=250 ng-required="false">
-			</div>
 			<div class="form-group">
 				<label>Result as table <input type="checkbox" 
 					name="targetGraph" ng-model="queryDefinition.resultAsTable" ng-required="true" /></label>
+			</div>
+			
+			
+			<div class="form-group" ng-hide="queryDefinition.resultAsTable">
+				<label>Target Graph</label> <input type="text" class="form-control"
+					name="targetGraph" ng-model="queryDefinition.targetGraph" ng-minlength=1
+					ng-maxlength=250 ng-required="false">
 			</div>
 			
  		</div>

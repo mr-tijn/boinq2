@@ -28,11 +28,11 @@ angular.module('boinqApp').controller("NodeFilterController",['$scope','TermTool
 	};
 	
 	$scope.isEndpoint = function(template) {
-		return (template.nodeType == NodeConstants.TYPE_ENTITY && template.valueSource == NodeConstants.SOURCE_ENDPOINT);
+		return ((template.nodeType == NodeConstants.TYPE_ENTITY || template.nodeType == NodeConstants.TYPE_TYPEDENTITY) && template.valueSource == NodeConstants.SOURCE_ENDPOINT);
 	};
 	
 	$scope.isTermList = function(template) {
-		return (template.nodeType == NodeConstants.TYPE_ENTITY && template.valueSource == NodeConstants.SOURCE_LIST);
+		return ((template.nodeType == NodeConstants.TYPE_ENTITY || template.nodeType == NodeConstants.TYPE_TYPEDENTITY) && template.valueSource == NodeConstants.SOURCE_LIST);
 	};
 	
 	$scope.isNumeric = function(template) {

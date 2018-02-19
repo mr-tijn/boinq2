@@ -15,7 +15,6 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.core.Quad;
-import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.expr.E_Equals;
 import org.apache.jena.sparql.expr.E_GreaterThan;
 import org.apache.jena.sparql.expr.E_GreaterThanOrEqual;
@@ -40,7 +39,6 @@ import org.apache.jena.sparql.expr.NodeValue;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueNode;
 import org.apache.jena.sparql.expr.nodevalue.NodeValueString;
 import org.apache.jena.sparql.modify.request.UpdateModify;
-import org.apache.jena.sparql.path.PathFactory;
 import org.apache.jena.sparql.syntax.Element;
 import org.apache.jena.sparql.syntax.ElementFilter;
 import org.apache.jena.sparql.syntax.ElementGroup;
@@ -48,6 +46,7 @@ import org.apache.jena.sparql.syntax.ElementNamedGraph;
 import org.apache.jena.sparql.syntax.ElementService;
 import org.apache.jena.sparql.syntax.ElementTriplesBlock;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.SKOS;
 import org.apache.jena.vocabulary.XSD;
 import org.boinq.domain.query.EdgeTemplate;
 import org.boinq.domain.query.GraphTemplate;
@@ -61,11 +60,10 @@ import org.boinq.domain.query.QueryNode;
 import org.boinq.generated.vocabularies.FaldoVocab;
 import org.boinq.generated.vocabularies.SioVocab;
 import org.boinq.generated.vocabularies.SoVocab;
+import org.boinq.tools.Counter;
 import org.boinq.tools.queries.Prefixes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import static org.apache.jena.sparql.path.PathFactory.*;
 
 @Service
 public class GenerateQueryService {
@@ -100,12 +98,10 @@ public class GenerateQueryService {
 			UpdateModify updateQuery = new UpdateModify();
 			Set<Triple> insertTriples = buildInsertTriples(variableNames, query);
 			updateQuery.setElement(mainSelect);
-			// TODO: check how binding works
 			for (Triple triple: insertTriples) {
 				updateQuery.getInsertAcc().addQuad(new Quad(NodeFactory.createURI(query.getTargetGraph()), triple));
 			}
-//			buildGraphTemplate(query);
-			// TODO: add prefix map
+			buildGraphTemplate(query);
 			return updateQuery.toString(Prefixes.getCommonPrefixes());
 		}
 	}
@@ -166,8 +162,7 @@ public class GenerateQueryService {
 		for (Set<QueryBridge> cluster: clusters) {
 			String variableName = nextId("xref");
 			for (QueryBridge bridge: cluster) {
-				if (QueryBridge.BRIDGE_TYPE_LITERAL_TO_LITERAL != bridge.getType() &&
-					QueryBridge.BRIDGE_TYPE_LOCATION != bridge.getType()) {
+				if (QueryBridge.BRIDGE_TYPE_ENTITY_TO_ENTITY == bridge.getType()) {
 					variableNames.put(bridge.getFromNode(), variableName);
 					variableNames.put(bridge.getToNode(), variableName);
 				}
@@ -236,11 +231,6 @@ public class GenerateQueryService {
 				if (QueryNode.NODETYPE_ATTRIBUTE == node.getTemplate().getNodeType()) {
 					triples.addTriple(new Triple(nodeFromQueryNode(node, variableNames),RDF.type.asNode(),NodeFactory.createURI(node.getTemplate().getFixedType())));
 					triples.addTriple(new Triple(nodeFromQueryNode(node, variableNames), SioVocab.has_value.asNode(), NodeFactory.createVariable(valueName(node, variableNames))));
-					triples.addTriplePath(new TriplePath(nodeFromQueryNode(node, variableNames), 
-														 pathAlt(pathLink(SioVocab.has_value.asNode()), 
-																 pathAlt(pathLink(SoVocab.has_quality.asNode()), 
-																		 pathLink(RDF.value.asNode()))), 
-														 NodeFactory.createVariable(valueName(node, variableNames))));
 				}
 			}
 			resultMap.put(graph, triples);
@@ -329,18 +319,7 @@ public class GenerateQueryService {
 			graphFilters.put(graph, filterMap);
 		}
 		return graphFilters;
-	}
-	
-	private Boolean isString(String xsdType) {
-		return xsdType.equals(XSD.xstring);
-	}
-	private Boolean isInteger(String xsdType) {
-		return xsdType.equals(XSD.integer) || xsdType.equals(XSD.xlong) || xsdType.equals(XSD.xshort) || xsdType.equals(XSD.xbyte);
-	}
-	private Boolean isFloat(String xsdType) {
-		return xsdType.equals(XSD.xfloat) || xsdType.equals(XSD.xdouble) || xsdType.equals(XSD.decimal);
-	}
-	
+	}	
 
 	private List<ElementFilter> generateFilters(QueryNode node, Map<QueryNode, String> variableNames) {
 		List<ElementFilter> result = new LinkedList<>();
@@ -351,7 +330,7 @@ public class GenerateQueryService {
 			variableName = variableNames.get(node);
 		}
 		ExprVar variable = new ExprVar(variableName);
-		if (QueryNode.NODETYPE_GENERICENTITY == node.getNodeType()) {
+		if (QueryNode.NODETYPE_GENERICENTITY == node.getNodeType() || QueryNode.NODETYPE_TYPEDENTITY == node.getNodeType()) {
 			for (NodeFilter filter: node.getNodeFilters()) {
 				switch (node.getTemplate().getValueSource()) {
 				case NodeTemplate.SOURCE_ENDPOINT:
@@ -472,7 +451,13 @@ public class GenerateQueryService {
 		List<ElementFilter> result = new LinkedList<>();
 		for (QueryBridge bridge: qd.getQueryBridges()) {
 			String fromVarName = variableNames.get(bridge.getFromNode());
+			if (QueryNode.NODETYPE_ATTRIBUTE == bridge.getFromNode().getNodeType()) {
+				fromVarName = valueName(bridge.getFromNode(), variableNames);
+			} 
 			String toVarName = variableNames.get(bridge.getToNode());
+			if (QueryNode.NODETYPE_ATTRIBUTE == bridge.getToNode().getNodeType()) {
+				fromVarName = valueName(bridge.getToNode(), variableNames);
+			} 
 			ExprVar fromVariable = new ExprVar(fromVarName);
 			ExprVar toVariable = new ExprVar(toVarName);
 			if (QueryBridge.BRIDGE_TYPE_LITERAL_TO_LITERAL == bridge.getType()){
@@ -611,55 +596,124 @@ public class GenerateQueryService {
 //	}
 	
 	
-	
 	private Set<Triple> buildInsertTriples(Map<QueryNode, String> variableNames, QueryDefinition query) {
-		Map<QueryNode, String> targetNames = eliminateBridges(variableNames, query);
-		// check if we have only one cluster
-		Set<Set<QueryEdge>> edgeClusters = query.findClusters();
-		if (edgeClusters.size() != 1) return null;
-		// normal triples
 		Set<Triple> triples = new HashSet<>();
 		for (QueryGraph graph: query.getQueryGraphs()) {
 			for (QueryEdge edge: graph.getQueryEdges().stream().filter(QueryEdge::getRetrieve).collect(Collectors.toSet())) {
-				triples.add(new Triple(NodeFactory.createVariable(targetNames.get(edge.getFrom())), NodeFactory.createURI(edge.getTemplate().getTerm()), NodeFactory.createVariable(targetNames.get(edge.getTo()))));
+				triples.add(new Triple(NodeFactory.createVariable(variableNames.get(edge.getFrom())), NodeFactory.createURI(edge.getTemplate().getTerm()), NodeFactory.createVariable(variableNames.get(edge.getTo()))));
 				if (QueryNode.NODETYPE_FALDOLOCATION == edge.getFrom().getTemplate().getNodeType()) {
-					triples.addAll(faldoTriples(targetNames.get(edge.getFrom()), Optional.empty()));
+					triples.addAll(faldoTriples(variableNames.get(edge.getFrom()), Optional.empty()));
 				}
 				if (QueryNode.NODETYPE_FALDOLOCATION == edge.getTo().getTemplate().getNodeType()) {
-					triples.addAll(faldoTriples(targetNames.get(edge.getTo()), Optional.empty()));
+					triples.addAll(faldoTriples(variableNames.get(edge.getTo()), Optional.empty()));
+				}
+				if (QueryNode.NODETYPE_ATTRIBUTE == edge.getFrom().getTemplate().getNodeType()) {
+					triples.add(new Triple(NodeFactory.createVariable(variableNames.get(edge.getFrom())),RDF.type.asNode(),NodeFactory.createURI(edge.getFrom().getTemplate().getFixedType())));
+					triples.add(new Triple(NodeFactory.createVariable(variableNames.get(edge.getFrom())),SioVocab.has_value.asNode(), NodeFactory.createVariable(valueName(edge.getFrom(), variableNames))));
+				}
+				if (QueryNode.NODETYPE_ATTRIBUTE == edge.getTo().getTemplate().getNodeType()) {
+					triples.add(new Triple(NodeFactory.createVariable(variableNames.get(edge.getTo())),RDF.type.asNode(),NodeFactory.createURI(edge.getFrom().getTemplate().getFixedType())));
+					triples.add(new Triple(NodeFactory.createVariable(variableNames.get(edge.getTo())),SioVocab.has_value.asNode(), NodeFactory.createVariable(valueName(edge.getTo(), variableNames))));
 				}
 				if (QueryNode.NODETYPE_TYPEDENTITY == edge.getFrom().getTemplate().getNodeType()) {
-					triples.add(new Triple(NodeFactory.createVariable(targetNames.get(edge.getFrom())),RDF.type.asNode(),NodeFactory.createURI(edge.getFrom().getTemplate().getFixedType())));
+					triples.add(new Triple(NodeFactory.createVariable(variableNames.get(edge.getFrom())),RDF.type.asNode(),NodeFactory.createURI(edge.getFrom().getTemplate().getFixedType())));
 				}
 				if (QueryNode.NODETYPE_TYPEDENTITY == edge.getTo().getTemplate().getNodeType()) {
-					triples.add(new Triple(NodeFactory.createVariable(targetNames.get(edge.getTo())),RDF.type.asNode(),NodeFactory.createURI(edge.getTo().getTemplate().getFixedType())));
+					triples.add(new Triple(NodeFactory.createVariable(variableNames.get(edge.getTo())),RDF.type.asNode(),NodeFactory.createURI(edge.getTo().getTemplate().getFixedType())));
 				}
 			}
 		}
-		// WILL NOT ALLOW RETRIEVING GRAPHS CROSSING LITERAL TO LITERAL BRIDGES FOR NOW
-		// special triples for literal bridges
-//		for (QueryBridge bridge: query.getQueryBridges().stream().filter(bridge -> bridge.getFromNode().getNodeType() == QueryNode.NODETYPE_LITERAL && bridge.getToNode().getNodeType() == QueryNode.NODETYPE_LITERAL).collect(Collectors.toSet())) {
-//			switch (bridge.getLiteralToLiteralMatchType()) {
-//			case QueryBridge.BRIDGE_MATCH_CONTAINS :
-//				triples.add(new Triple(NodeFactory.createVariable(targetNames.get(bridge.getFromNode())), BoinqVocab.contains.asNode(), NodeFactory.createVariable(targetNames.get(bridge.getToNode()))));
-//				break;
-//			case QueryBridge.BRIDGE_MATCH_ISCONTAINEDIN :
-//				triples.add(new Triple(NodeFactory.createVariable(targetNames.get(bridge.getToNode())), BoinqVocab.contains.asNode(), NodeFactory.createVariable(targetNames.get(bridge.getFromNode()))));
-//				break;
-//			}
-//		}
+		// special triples for non-merging bridges
+		for (QueryBridge bridge: query.getQueryBridges()) {
+			switch (bridge.getType()) {
+			case QueryBridge.BRIDGE_TYPE_LITERAL_TO_LITERAL:
+				String fromName = (bridge.getFromNode().getNodeType().equals(QueryNode.NODETYPE_ATTRIBUTE)?valueName(bridge.getFromNode(),variableNames):variableNames.get(bridge.getFromNode()));
+				String toName = (bridge.getToNode().getNodeType().equals(QueryNode.NODETYPE_ATTRIBUTE)?valueName(bridge.getToNode(),variableNames):variableNames.get(bridge.getToNode()));
+				switch (bridge.getLiteralToLiteralMatchType()) {
+				case QueryBridge.BRIDGE_MATCH_CONTAINS :
+					triples.add(new Triple(NodeFactory.createVariable(fromName), SioVocab.contains.asNode(), NodeFactory.createVariable(toName)));
+					break;
+				case QueryBridge.BRIDGE_MATCH_ISCONTAINEDIN :
+					triples.add(new Triple(NodeFactory.createVariable(toName), SioVocab.contains.asNode(), NodeFactory.createVariable(fromName)));
+					break;
+				case QueryBridge.BRIDGE_MATCH_LESS:
+					triples.add(new Triple(NodeFactory.createVariable(fromName), SioVocab.is_lesser_than.asNode() ,NodeFactory.createVariable(toName)));
+					break;
+				case QueryBridge.BRIDGE_MATCH_LESSOREQUAL:
+					triples.add(new Triple(NodeFactory.createVariable(fromName), SioVocab.is_lesser_than_or_equal_to.asNode() ,NodeFactory.createVariable(toName)));
+					break;
+				case QueryBridge.BRIDGE_MATCH_MORE:
+					triples.add(new Triple(NodeFactory.createVariable(fromName), SioVocab.is_greater_than.asNode() ,NodeFactory.createVariable(toName)));
+					break;
+				case QueryBridge.BRIDGE_MATCH_MOREOREQUAL:
+					triples.add(new Triple(NodeFactory.createVariable(fromName), SioVocab.is_greater_than_or_equal_to.asNode() ,NodeFactory.createVariable(toName)));
+					break;
+				case QueryBridge.BRIDGE_MATCH_EQUAL:
+				case QueryBridge.BRIDGE_MATCH_STREQUAL:
+					triples.add(new Triple(NodeFactory.createVariable(fromName), SioVocab.is_equal_to.asNode() ,NodeFactory.createVariable(toName)));
+					break;
+				}
+				break;
+			case QueryBridge.BRIDGE_TYPE_LOCATION:
+				fromName = variableNames.get(bridge.getFromNode());
+				toName = variableNames.get(bridge.getToNode());
+				triples.add(new Triple(NodeFactory.createVariable(fromName), SoVocab.overlaps.asNode() ,NodeFactory.createVariable(toName)));
+				break;
+			case QueryBridge.BRIDGE_TYPE_ENTITY_TO_LITERAL:
+			case QueryBridge.BRIDGE_TYPE_LITERAL_TO_ENTITY:
+				fromName = variableNames.get(bridge.getFromNode());
+				toName = variableNames.get(bridge.getToNode());
+				triples.add(new Triple(NodeFactory.createVariable(fromName), SioVocab.is_related_to.asNode() ,NodeFactory.createVariable(toName)));
+				break;
+			}
+		}
+			
 		return triples;
 	}
 	
+	private Boolean merge(QueryBridge bridge) {
+		return (QueryBridge.BRIDGE_TYPE_ENTITY_TO_ENTITY == bridge.getType());
+	}
+	
+	private EdgeTemplate bridgeEdge(QueryBridge bridge, Map<QueryNode, NodeTemplate> templateMap) {
+		switch(bridge.getType()) {
+		case QueryBridge.BRIDGE_TYPE_ENTITY_TO_ENTITY:
+			return null;
+		case QueryBridge.BRIDGE_TYPE_ENTITY_TO_LITERAL:
+		case QueryBridge.BRIDGE_TYPE_LITERAL_TO_ENTITY:
+			return new EdgeTemplate(templateMap.get(bridge.getFromNode()),templateMap.get(bridge.getToNode()),SioVocab.is_related_to.getURI());
+		case QueryBridge.BRIDGE_TYPE_LITERAL_TO_LITERAL:
+			switch (bridge.getLiteralToLiteralMatchType()) {
+			case QueryBridge.BRIDGE_MATCH_CONTAINS:
+				return new EdgeTemplate(templateMap.get(bridge.getFromNode()),templateMap.get(bridge.getToNode()),SioVocab.contains.getURI());
+			case QueryBridge.BRIDGE_MATCH_ISCONTAINEDIN:
+				return new EdgeTemplate(templateMap.get(bridge.getToNode()),templateMap.get(bridge.getFromNode()),SioVocab.contains.getURI());
+			case QueryBridge.BRIDGE_MATCH_LESS:
+				return new EdgeTemplate(templateMap.get(bridge.getToNode()),templateMap.get(bridge.getFromNode()),SioVocab.is_lesser_than.getURI());
+			case QueryBridge.BRIDGE_MATCH_LESSOREQUAL:
+				return new EdgeTemplate(templateMap.get(bridge.getToNode()),templateMap.get(bridge.getFromNode()),SioVocab.is_lesser_than_or_equal_to.getURI());
+			case QueryBridge.BRIDGE_MATCH_MORE:
+				return new EdgeTemplate(templateMap.get(bridge.getToNode()),templateMap.get(bridge.getFromNode()),SioVocab.is_greater_than.getURI());
+			case QueryBridge.BRIDGE_MATCH_MOREOREQUAL:
+				return new EdgeTemplate(templateMap.get(bridge.getToNode()),templateMap.get(bridge.getFromNode()),SioVocab.is_greater_than_or_equal_to.getURI());
+			case QueryBridge.BRIDGE_MATCH_EQUAL:
+			case QueryBridge.BRIDGE_MATCH_STREQUAL:
+				return new EdgeTemplate(templateMap.get(bridge.getToNode()),templateMap.get(bridge.getFromNode()),SioVocab.is_equal_to.getURI());
+			}
+		case QueryBridge.BRIDGE_TYPE_LOCATION:
+			return new EdgeTemplate(templateMap.get(bridge.getFromNode()),templateMap.get(bridge.getToNode()),SoVocab.overlaps.getURI());
+		}
+		return null;
+	}
 	
 	public GraphTemplate buildGraphTemplate(QueryDefinition query) {
-		Map<QueryNode, String> variableNames = 	generateVariableNames(query);
 		GraphTemplate result = new GraphTemplate();
 		result.setGraphIri(query.getTargetGraph());
 		result.setEdgeTemplates(new HashSet<>());
 		result.setEndpointUrl(localSparqlUpdateEndpoint);
 		result.setType(GraphTemplate.GRAPH_TYPE_LOCAL);
 		// check if we have only one cluster
+		// TODO: remove this
 		Set<Set<QueryEdge>> edgeClusters = query.findClusters();
 		if (edgeClusters.size() != 1) return null;
 		Set<QueryEdge> retrieveEdges = new HashSet<>();
@@ -668,25 +722,38 @@ public class GenerateQueryService {
 				retrieveEdges.add(edge);
 			}
 		}
+		
 		Map<QueryNode, NodeTemplate> templateMap = new HashMap<>();
 		// first map all nodes onto their own templates
 		// then replace those connected by bridge by a common node template
+		Counter idx = new Counter(0);
 		for (QueryEdge edge: retrieveEdges) {
-			templateMap.put(edge.getFrom(), edge.getFrom().getTemplate());
-			templateMap.put(edge.getTo(), edge.getTo().getTemplate());
+			NodeTemplate nodeFrom = new NodeTemplate(edge.getFrom().getTemplate());
+			nodeFrom.setIdx(idx.next());
+			templateMap.put(edge.getFrom(),nodeFrom);
+			NodeTemplate nodeTo= new NodeTemplate(edge.getTo().getTemplate());
+			nodeTo.setIdx(idx.next());
+			templateMap.put(edge.getTo(), nodeTo);
 		}
 		for (Set<QueryBridge> bridgeHub: query.findBridgeHubs()) {
-			// cannot be literal nodes as we do not allow retrieving graphs over literal to literal bridges 
-			NodeTemplate merged = new NodeTemplate();
-			merged.setColor("red");
-			merged.setNodeType(QueryNode.NODETYPE_GENERICENTITY);
 			for (QueryBridge bridge: bridgeHub) {
-				// only for those in retrieve map
-				if (templateMap.containsKey(bridge.getFromNode())) {
-					templateMap.put(bridge.getFromNode(), merged);
-				}
-				if (templateMap.containsKey(bridge.getToNode())) {
-					templateMap.put(bridge.getToNode(), merged);
+				NodeTemplate merged = new NodeTemplate();
+				merged.setColor("red");
+				merged.setNodeType(QueryNode.NODETYPE_GENERICENTITY);
+				merged.setVariablePrefix("merged");
+				merged.setIdx(idx.next());
+				merged.setFilterable(true);
+				merged.setX(100);
+				merged.setY(100);
+				if (merge(bridge)) {
+					if (templateMap.containsKey(bridge.getFromNode())) {
+						templateMap.put(bridge.getFromNode(), merged);
+					}
+					if (templateMap.containsKey(bridge.getToNode())) {
+						templateMap.put(bridge.getToNode(), merged);
+					}
+				} else {
+					result.getEdgeTemplates().add(bridgeEdge(bridge, templateMap));
 				}
 			}
 			// when we do: should add literal case
@@ -697,22 +764,7 @@ public class GenerateQueryService {
 			result.getEdgeTemplates().add(newEdge);
 		}
 		return result;
-	}
-
-	private Map<QueryNode, String> eliminateBridges(Map<QueryNode, String> variableNames, QueryDefinition query) {
-		Map<QueryNode, String> result = new HashMap<>();
-		result.putAll(variableNames);
-		for (QueryBridge bridge: query.getQueryBridges()) {
-			// what about multiple 
-			if (QueryBridge.BRIDGE_TYPE_LITERAL_TO_LITERAL != bridge.getType()) {
-				result.put(bridge.getToNode(), variableNames.get(bridge.getToNode()));
-			}
-		}
-		return result;
-	}
-	
- 	// utility
-	
+	}	
 	
 	private String nextId(String prefix) {
 		if (prefix == null) {

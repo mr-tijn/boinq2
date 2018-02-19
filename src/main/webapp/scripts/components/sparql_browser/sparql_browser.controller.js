@@ -6,13 +6,17 @@ angular.module('boinqApp').controller("SparqlBrowserController",['$scope','callE
 	$scope.updateEndpoints = [];
 	$scope.selectUpdateEndpoint = null;
 	$scope.datasources = Datasource.query(function() {
+		var uniqueEndpoints = new Set();
+		var uniqueUpdateEndpoints = new Set();
 		for (var i = 0; i < $scope.datasources.length; i++) {
 			var datasource = $scope.datasources[i];
-			$scope.endpoints.push(datasource.endpointUrl);
+			uniqueEndpoints.add(datasource.endpointUrl);
 			if (datasource.endpointUpdateUrl != null) {
-				$scope.updateEndpoints.push(datasource.endpointUpdateUrl);
+				uniqueUpdateEndpoints.add(datasource.endpointUpdateUrl);
 			}
 		}
+		$scope.endpoints = Array.from(uniqueEndpoints);
+		$scope.updateEndpoints = Array.from(uniqueUpdateEndpoints);
 	});
 	var processError = function(errorResponse) {
 		$scope.sparqlError = true;

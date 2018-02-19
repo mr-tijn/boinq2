@@ -1,6 +1,7 @@
 package org.boinq.domain.query;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
@@ -87,6 +88,25 @@ public class NodeTemplate implements Serializable {
 	private Integer idx;
 
 	public NodeTemplate() {}
+	public NodeTemplate(NodeTemplate template) {
+		this.assembly = template.assembly;
+		this.color = template.color;
+		this.description = template.description;
+		this.filterable = template.filterable;
+		this.fixedType = template.fixedType;
+		this.fixedValue = template.fixedValue;
+		this.literalXsdType = template.literalXsdType;
+		this.name = template.name;
+		this.nodeType = template.nodeType;
+		this.valuesEndpoint = template.valuesEndpoint;
+		this.valuesGraph = template.valuesGraph;
+		this.valuesRootTerm = template.valuesRootTerm;
+		this.valuesTermList = new LinkedList<>();
+		this.valuesTermList.addAll(template.valuesTermList);
+		this.variablePrefix = template.variablePrefix;
+		this.x = template.x;
+		this.y = template.y;
+	}
     public Long getId() {
         return id;
     }

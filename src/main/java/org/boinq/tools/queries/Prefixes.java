@@ -31,6 +31,7 @@ public class Prefixes {
 			commonPrefixes.setNsPrefix("foaf", FOAF.NS);
 			commonPrefixes.setNsPrefix("xsd", XSD.NS);
 			commonPrefixes.setNsPrefix("gfvo", GfvoVocab.NS);
+			commonPrefixes.setNsPrefix("so", "http://purl.obolibrary.org/obo/so-xp.obo");
 			commonPrefixes.setNsPrefix("sio", "http://semanticscience.org/resource/");
 			commonPrefixes.setNsPrefix("ensembl", "http://rdf.ebi.ac.uk/resource/");
 			commonPrefixes.setNsPrefix("ncit", "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#");

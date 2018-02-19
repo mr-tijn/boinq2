@@ -1,22 +1,31 @@
-angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeConstants','BridgeConstants','GraphTemplate',function($scope,NodeConstants,BridgeConstants,GraphTemplate) {
+angular.module('boinqApp').controller('BridgeDetailController',['$scope','$q','NodeConstants','BridgeConstants','GraphTemplate','TermTools',function($scope,$q,NodeConstants,BridgeConstants,GraphTemplate,TermTools) {
 	console.log('Registering controller BridgeDetailController');
 	
 	$scope.graphTemplates={};
 	$scope.matchTypes = BridgeConstants.MATCH_ITEMS;
 	
-//	getTemplate = function(templateId) {
-//		if ($scope.graphTemplates[templateId] == null) {
-//			$scope.graphTemplates[templateId] = GraphTemplate.get({id:templateId});
-//		}
-//		return $scope.graphTemplates[templateId];
-//	}
 	
-	
-	$scope.$watch('selection.bridge',function() {		
-		$scope.fromTemplate = GraphTemplate.get({id: getFromGraph().template});
-		$scope.toTemplate = GraphTemplate.get({id: getToGraph().template});
+	$scope.$watch('selection.bridge',function() {	
+		$q.all([GraphTemplate.get({id: getFromGraph().template}).$promise,
+				GraphTemplate.get({id: getToGraph().template}).$promise]).then(function(data) {
+					$scope.fromTemplate = data[0];
+					$scope.toTemplate = data[1];
+					computeMatchTypes();
+				});
 	});
-	
+
+	computeMatchTypes = function() {
+		from = getFromTemplate();
+		to = getToTemplate();
+		if (from && to) {
+			if (TermTools.isNumeric(from) && TermTools.isNumeric(to)) {
+				$scope.matchTypes = BridgeConstants.MATCH_ITEMS_NUMERIC;
+			} else {
+				$scope.matchTypes = BridgeConstants.MATCH_ITEMS_STRING;
+			}
+		}
+	};
+
 	getFromGraph = function() {
 		if ($scope.selection.bridge.fromGraphIdx != null) {
 			return $scope.queryDefinition.queryGraphs.filter(function(graph) {return graph.idx == $scope.selection.bridge.fromGraphIdx;})[0];
@@ -30,21 +39,21 @@ angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeCo
 	};
 	
 	getFromNode = function() {
-		if (unresolved()) return null;
+		if (!resolved()) return null;
 		if ($scope.selection.bridge.fromNodeIdx != null && $scope.selection.bridge.fromGraphIdx != null) {
 			return getFromGraph().queryNodes.filter(function(node) {return node.idx == $scope.selection.bridge.fromNodeIdx;})[0];
 		}
 	};
 	
 	getToNode = function() {
-		if (unresolved()) return null;
+		if (!resolved()) return null;
 		if ($scope.selection.bridge.fromNodeIdx != null && $scope.selection.bridge.fromGraphIdx != null) {
 			return getToGraph().queryNodes.filter(function(node) {return node.idx == $scope.selection.bridge.toNodeIdx;})[0];
 		}
 	};
 
 	getFromTemplate = function() {
-		if (unresolved()) return null;
+		if (!resolved()) return null;
 		var fromNode = getFromNode();
 		if (fromNode) {
 			return $scope.fromTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == fromNode.template;})[0]; 
@@ -52,19 +61,19 @@ angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeCo
 	}
 	
 	getToTemplate = function() {
-		if (unresolved()) return null;
+		if (!resolved()) return null;
 		var toNode = getToNode();
 		if (toNode) {
 			return $scope.toTemplate.nodeTemplates.filter(function(tmpl) {return tmpl.id == toNode.template;})[0];;
 		}
 	}
 	
-	var unresolved = function() {
-		return !$scope.fromTemplate.$resolved || !$scope.toTemplate.$resolved;
+	var resolved = function() {
+		return $scope.fromTemplate && $scope.fromTemplate.$resolved && $scope.toTemplate && $scope.toTemplate.$resolved;
 	}
 	
 	$scope.stringToEntity = function() {
-		if (unresolved()) return false;
+		if (!resolved()) return false;
 		var from = getFromTemplate();
 		var to = getToTemplate();
 		if ($scope.selection.bridge && from && to) {
@@ -74,7 +83,7 @@ angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeCo
 	};
 	
 	$scope.literalToLiteral = function() {
-		if (unresolved()) return false;
+		if (!resolved()) return false;
 		var from = getFromTemplate();
 		var to = getToTemplate();
 		if ($scope.selection.bridge && from && to) {
@@ -83,14 +92,13 @@ angular.module('boinqApp').controller('BridgeDetailController',['$scope','NodeCo
 	};
 	
 	$scope.location = function() {
-		if (unresolved()) return false;
+		if (!resolved()) return false;
 		var from = getFromTemplate();
 		var to = getToTemplate();
 		if ($scope.selection.bridge && from && to) {
-			return (fromTmp.nodeType == NodeConstants.TYPE_FALDOENTITY) && (toTmp.nodeType == from.nodeType); 
+			return (from.nodeType == NodeConstants.TYPE_FALDOENTITY) && (to.nodeType == from.nodeType); 
 		} else return false;
 	};
 	
-
 }]);
 

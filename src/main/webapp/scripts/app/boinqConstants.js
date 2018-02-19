@@ -130,7 +130,22 @@ angular.module('boinqApp').constant('BridgeConstants',{
 		{value:'5' , label: 'Contains'},
 		{value:'6' , label: 'Is contained in'},
 		{value:'7' , label: 'Equal'}
-	]
+	],
+
+	MATCH_ITEMS_NUMERIC : [
+		{value:'0' , label:'Less than or equal'},
+		{value:'1' , label: 'Less than'},
+		{value:'2' , label: 'More than or equal'},
+		{value:'3' , label: 'More than'},
+		{value:'4' , label: 'Equal'},
+	],
+	
+	MATCH_ITEMS_STRING: [
+		{value:'5' , label: 'Contains'},
+		{value:'6' , label: 'Is contained in'},
+		{value:'7' , label: 'Equal'}
+	],
+	
 	
 });
 

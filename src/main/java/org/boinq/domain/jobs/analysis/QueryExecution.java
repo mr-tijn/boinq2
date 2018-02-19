@@ -114,13 +114,17 @@ public class QueryExecution extends Analysis {
 				Track newTrack = new Track();
 				newTrack.setName(getName());
 				newTrack.setDescription("Auto generated track resulting from querydefinition " + definition.getName());
+				newTrack.setType(Track.TYPE_GENERIC);
 				newTrack.setGraphTemplate(graphTemplate);
+				newTrack.setGraphName(definition.getTargetGraph());
 				trackRepository.save(newTrack);
 				Datasource local = datasourceRepository.findOneById(LOCALDATASOURCE_ID).get();
 				local.getTracks().add(newTrack);
 				datasourceRepository.save(local);
 				// fill track
 				sparqlClientService.queryUpdate(local.getEndpointUpdateUrl(), query);
+				definition.setStatus(JOB_STATUS_SUCCESS);
+				queryDefinitionRepository.deepsave(definition);
 			} catch (Exception e) {
 				definition.setStatus(JOB_STATUS_ERROR);
 				queryDefinitionRepository.deepsave(definition);

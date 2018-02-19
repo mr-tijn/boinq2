@@ -156,9 +156,9 @@ angular.module('boinqApp').controller('TrackDetailController', ['$scope', 'FileU
 			return string.toLowerCase().replace(/ /g,"_");
 		}
 		if ($scope.track && $scope.track.species && $scope.track.assembly) {
-			return "http://www.boinq.org/resource/" + flatten($scope.track.species) + "/" + flatten($scope.track.assembly) +"/1";
+			return "http://rdf.ebi.ac.uk/resource/ensembl/90/" + flatten($scope.track.species) + "/" + $scope.track.assembly +"/1";
 		} else {
-			return "http://www.boinq.org/resource/UNKNOWN";
+			return "http://rdf.ebi.ac.uk/resource/ensembl/90/";
 		}
 	}
 

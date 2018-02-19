@@ -206,8 +206,7 @@ public class QueryDefinition implements Serializable {
 				.collect(Collectors.toSet());
 		// adjoining bridges
 		Set<QueryBridge> neighbouringBridges = getQueryBridges().stream()
-//				.filter(bridge -> QueryBridge.BRIDGE_TYPE_LITERAL_TO_LITERAL != bridge.getType())
-//				.filter(bridge -> QueryBridge.BRIDGE_TYPE_LOCATION != bridge.getType())
+				.filter(bridge -> QueryBridge.BRIDGE_TYPE_ENTITY_TO_ENTITY == bridge.getType())
 				.filter(bridge -> bridge.adjoins(edge))
 				.collect(Collectors.toSet());
 		// bridged edges
