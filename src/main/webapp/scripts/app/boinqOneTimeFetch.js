@@ -7,13 +7,13 @@ angular.module('boinqApp').factory('boinqOneTimeFetch', ['$q','callEndpoint','En
 	var assemblies = [];
 	var references = [];
     
-	queryPromise = function(response) {
+	var queryPromise = function(response) {
 		return callEndpoint(Endpoints.localQuery, Endpoints.metaGraph, response.query);
 	}
 	
-	findSpeciesPromise = QueryBuilderService.mappingQuery().then(queryPromise);
-	findAssembliesPromises = [];
-	findReferencesPromises = [];
+	var findSpeciesPromise = QueryBuilderService.mappingQuery().then(queryPromise);
+	var findAssembliesPromises = [];
+	var findReferencesPromises = [];
 
 	findSpeciesPromise.then(
 			function (successResponse) {					
@@ -29,7 +29,7 @@ angular.module('boinqApp').factory('boinqOneTimeFetch', ['$q','callEndpoint','En
 				console.error(errorResponse);
 			});
 	
-	findAssemblies = function(speciesLabel) {
+	var findAssemblies = function(speciesLabel) {
 		findAssembliesPromise = QueryBuilderService.assemblyQuery(speciesLabel).then(queryPromise);
 		findAssembliesPromises.push(findAssembliesPromise);
 		findAssembliesPromise.then(function (successResponse) {					
@@ -47,7 +47,7 @@ angular.module('boinqApp').factory('boinqOneTimeFetch', ['$q','callEndpoint','En
 	};
 	
 	
-	findReferences = function(assemblyUri) {
+	var findReferences = function(assemblyUri) {
 		findReferencesPromise = QueryBuilderService.referenceQuery(assemblyUri).then(queryPromise);
 		findReferencesPromises.push(findReferencesPromise);
 		findReferencesPromise.then(
