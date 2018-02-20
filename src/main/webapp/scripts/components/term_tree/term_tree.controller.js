@@ -47,8 +47,8 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 	}
 	
 	$scope.getRootTerms = function() {
-		if ($scope.rootNodesQuery != null) {
-			console.log('Getting query from query builder');
+		if ($scope.rootNodesQuery != null && $scope.rootNodesQuery.length) {
+			console.log('Fetching root terms');
 			startWaiting();
 			callEndpoint($scope.sourceEndpoint, $scope.sourceGraph, $scope.rootNodesQuery).then(
 					function(successResponse) {
@@ -58,7 +58,7 @@ angular.module('boinqApp').controller("TermTreeController",["$scope",'callEndpoi
 					processError);			
 		} else {
 			QueryBuilderService.rootNodesQuery().then(function(response) {
-				console.log('Fetching root terms');
+				console.log('Getting query from query builder');
 				var query = response.query;
 				$scope.rootNodesQuery = query;
 				startWaiting();
