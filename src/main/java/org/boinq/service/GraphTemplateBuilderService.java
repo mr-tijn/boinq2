@@ -447,12 +447,12 @@ public class GraphTemplateBuilderService {
 		pen.up(50);
 		NodeTemplate gq = attributeNode("Phred score", GfvoVocab.Conditional_Genotype_Quality.getURI(), XSD.xstring.getURI(), pen, idx);
 		gq.setVariablePrefix("genotypeQuality");
-		edges.add(link(gtVariant, gq, GfvoVocab.has_attribute.getURI()));
+		edges.add(link(genotype, gq, GfvoVocab.has_attribute.getURI()));
 		
 		pen.right(50);
 		NodeTemplate dp = attributeNode("depth", GfvoVocab.Coverage.getURI(), XSD.xstring.getURI(), pen, idx);
 		dp.setVariablePrefix("genotypeCoverage");
-		edges.add(link(gtVariant, dp, GfvoVocab.has_attribute.getURI()));
+		edges.add(link(genotype, dp, GfvoVocab.has_attribute.getURI()));
 		
 		
 		vcfTemplate.setEdgeTemplates(edges);
