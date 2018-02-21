@@ -257,6 +257,8 @@ public class TripleConversion implements AsynchronousJob {
 		public Map<String, XSDDatatype> infoTypeMap = new HashMap<>();
 		public Map<String,Node> readMap = new HashMap<>();
 		public Map<String,Node> referenceMap = new HashMap<>();
+		public Map<String, Node> attributeTypes = new HashMap<>();
+		public Map<String, XSDDatatype> attributeValueTypes = new HashMap<>();
 		public VCFHeader vcfHeader = new VCFHeader();
 		public SAMFileHeader samHeader = new SAMFileHeader();
 		public Boolean initialize = true;

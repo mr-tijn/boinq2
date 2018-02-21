@@ -41,6 +41,7 @@ import htsjdk.variant.vcf.VCFCodec;
 import htsjdk.variant.vcf.VCFFilterHeaderLine;
 import htsjdk.variant.vcf.VCFFormatHeaderLine;
 import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLineType;
 import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>  {
@@ -108,11 +109,13 @@ public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>
 		infoAttributeValueTypes.put("SB", XSDstring);
 		infoAttributeValueTypes.put("SOMATIC", XSDboolean);
 		infoAttributeValueTypes.put("VALIDATED", XSDboolean);
-		// END is missing
+		// END is missing		
+		
 		
 		// more can be found here:
 		// https://software.broadinstitute.org/gatk/documentation/tooldocs/3.8-0/org_broadinstitute_gatk_tools_walkers_annotator_LowMQ.php#AnnotationModules
 		// https://wiki.nci.nih.gov/display/TCGA/TCGA+Variant+Call+Format+%28VCF%29+Specification
+		// https://www.ncbi.nlm.nih.gov/variation/docs/ClinVar_vcf_files/
 	}
 	
 	
@@ -137,12 +140,12 @@ public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>
 			triples.add(new Triple(sample, RDF.type.asNode(), GfvoVocab.Sample.asNode()));
 			triples.add(new Triple(sample, RDFS.label.asNode(), NodeFactory.createLiteral(name)));
 		}
-		Map<String, XSDDatatype> typeMap = new HashMap<>();
-		typeMap.put("Integer", XSDint);
-		typeMap.put("Float", XSDdouble);
-		typeMap.put("Character", XSDstring);
-		typeMap.put("String", XSDstring);
-		typeMap.put("Flag", XSDboolean); //check:
+		Map<VCFHeaderLineType, XSDDatatype> typeMap = new HashMap<>();
+		typeMap.put(VCFHeaderLineType.Integer, XSDint);
+		typeMap.put(VCFHeaderLineType.Float, XSDdouble);
+		typeMap.put(VCFHeaderLineType.Character, XSDstring);
+		typeMap.put(VCFHeaderLineType.String, XSDstring);
+		typeMap.put(VCFHeaderLineType.Flag, XSDboolean); //check:
 		for (VCFFormatHeaderLine formatHeader : meta.vcfHeader.getFormatHeaderLines()) {
 			String genoTypeName = GENOTYPEBASEURI + formatHeader.getID();
 			Node genotype = tripleGenerator.generateURI(genoTypeName);
@@ -165,6 +168,8 @@ public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>
 			}
 		}
 	}
+	
+	
 	
 	public List<Triple> convert(VariantContext vcfEntry, int start, Metadata meta) {
 		// TODO: CONTIG
@@ -200,7 +205,7 @@ public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>
 		}
 		
 		attributeCount = addAlleleTriples(triples, feature, featureName, vcfEntry, attributeCount);
-		attributeCount = addInfoTriples(triples, feature, featureName, vcfEntry.getAttributes(), attributeCount);
+		attributeCount = addInfoTriples(triples, feature, featureName, vcfEntry.getAttributes(), attributeCount, meta);
 		addGenotypeTriples(triples, feature, featureName, vcfEntry.getGenotypes(), meta);
 		
 		switch (vcfEntry.getType()) {
@@ -268,7 +273,7 @@ public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>
 		return attributeCount;
 	}
 
-	private int addInfoTriples(List<Triple> triples, Node feature, String featureName, Map<String, Object> keyValues, int attributeCount) {
+	private int addInfoTriples(List<Triple> triples, Node feature, String featureName, Map<String, Object> keyValues, int attributeCount, Metadata meta) {
 		for (String key : keyValues.keySet()) {
 			String attributeName = featureName + "/attribute_" + attributeCount++;
 			Node attributeNode = tripleGenerator.generateURI(attributeName);
@@ -288,17 +293,21 @@ public class VCFTripleIterator extends TripleBuilder implements Iterator<Triple>
 				} else {
 					triples.add(new Triple(attributeNode, RDF.value.asNode(), NodeFactory.createLiteral(keyValues.get(key).toString(), attributeValueType)));
 				}
+				meta.attributeTypes.put(key, attributeType);
+				meta.attributeValueTypes.put(key, attributeValueType);
 			} else if (meta.infoMap.get(key) != null) {
 				// unknown info field but described in header
 				Node attributeType = meta.infoMap.get(key);
 				triples.add(new Triple(attributeNode, RDF.type.asNode(), attributeType));
 				XSDDatatype attributeValueType = meta.infoTypeMap.get(key);
 				if (attributeValueType.equals(XSDboolean)) {
-					// why is this ?
+					// tag it
 					triples.add(new Triple(attributeNode, RDF.value.asNode(), NodeFactory.createLiteral(key, XSDstring)));
 				} else {
 					triples.add(new Triple(attributeNode, RDF.value.asNode(), NodeFactory.createLiteral(keyValues.get(key).toString(), attributeValueType)));
 				}
+				meta.attributeTypes.put(key, attributeType);
+				meta.attributeValueTypes.put(key, attributeValueType);
 			} else {
 				// unknown info field, not described in header
 				Node attributeType = NodeFactory.createBlankNode();

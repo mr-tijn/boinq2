@@ -45,7 +45,7 @@ public class GraphTemplateBuilderService {
 			case "GFF":
 				return fromGff(meta.typeList.stream().map(Node::getURI).collect(Collectors.toList()), track.getAssembly());
 			case "VCF":
-				return fromVCF(track.getAssembly());
+				return fromVCF(meta, track.getAssembly());
 			}
 		}
 		return null;
@@ -293,7 +293,7 @@ public class GraphTemplateBuilderService {
 		return bedTemplate;
 	}
 		
-	public GraphTemplate fromVCF(String assembly) {
+	public GraphTemplate fromVCF(Metadata meta, String assembly) {
 		GraphTemplate vcfTemplate = new GraphTemplate();
 		Set<EdgeTemplate> edges = new HashSet<>();
 		
@@ -366,13 +366,13 @@ public class GraphTemplateBuilderService {
 		NodeTemplate location = locationNode(assembly, pen, idx);
 		edges.add(link(mainFeature, location, FaldoVocab.location.toString()));
 
-		int step = 105/(1+VCFTripleIterator.infoAttributeTypes.size());
+		int step = 105/(1+meta.attributeTypes.size());
 		int angle = 30;
 		int off = -1;
-		for (String attr : VCFTripleIterator.infoAttributeTypes.keySet()) {
+		for (String attr : meta.attributeTypes.keySet()) {
 			pen.to(var);
 			pen.angle(100 + 25*off, angle);
-			NodeTemplate attribute = attributeNode(attr, VCFTripleIterator.infoAttributeTypes.get(attr).getURI(), VCFTripleIterator.infoAttributeValueTypes.get(attr).getURI(), pen, idx);
+			NodeTemplate attribute = attributeNode(attr,  meta.attributeTypes.get(attr).getURI(), meta.attributeValueTypes.get(attr).getURI(), pen, idx);
 			edges.add(link(variant, attribute, GfvoVocab.has_attribute.getURI()));
 			angle += step;
 			off *= -1;
